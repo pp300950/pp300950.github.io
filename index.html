@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <title>คลังคำสั่งภาษา C</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/themes/prism-tomorrow.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.27.0/components/prism-c.min.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: url('https://i.imgur.com/lkz1q9L.jpg') no-repeat center
+          center fixed;
+        background-size: cover;
+        color: white;
+        position: relative;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(30, 30, 30, 0.6);
+        z-index: -1;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        max-width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 10px;
+        background: #2a2a2a;
+        border: 1px solid #555;
+        color: white;
+        border-radius: 5px;
+        resize: vertical;
+      }
+      textarea {
+        min-height: 100px;
+        overflow-y: auto;
+        white-space: pre;
+        font-size: x-large;
+      }
+      button {
+        padding: 0.5rem 1rem;
+        margin: 5px 5px 5px 0;
+        border: none;
+        background: #4caf50;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        max-width: 200px;
+      }
+      button.danger {
+        background: #f44336;
+      }
+      .command-item {
+        background: #3a3a3a;
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .command-item:hover {
+        background: #555;
+      }
+      .example-block {
+        background: #2d2d2d;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 5px #000;
+      }
+      pre {
+        background: #1e1e1e;
+        padding: 1rem;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin-top: 10px;
+        border: 1px solid #444;
+      }
+      h2,
+      h3 {
+        margin-top: 0;
+      }
+      .top-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 1rem;
+      }
+      .copy-btn {
+        background: #2196f3;
+        float: right;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: #0d0d0d;
+        color: white;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .bubble-bg {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        z-index: -2;
+      }
+
+      .bubble {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(0, 255, 255, 0.6),
+          transparent
+        );
+        animation: float 20s infinite ease-in-out;
+        filter: blur(2px);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(100vh) scale(0.6);
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-10vh) scale(1);
+          opacity: 0;
+        }
+      }
+
+      .sidebar {
+        width: 30%;
+        background: rgba(46, 46, 46, 0.3);
+        padding: 1rem;
+        overflow-y: auto;
+        border-right: 1px solid #444;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      .settings {
+        max-height: 300px;
+        overflow-y: auto;
+        transition: max-height 0.3s ease;
+        padding: 1rem;
+        border-bottom: 1px solid #444;
+        background-color: rgba(30, 30, 30, 0.9);
+      }
+
+      .container {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+        z-index: 1;
+        position: relative;
+      }
+      .sidebar {
+        width: 30%;
+        height: 100%;
+        overflow-y: auto;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.12);
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 0 8px 8px 0;
+      }
+
+      .content {
+        width: 70%;
+        height: 95%;
+        overflow-y: auto;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 8px 0 0 8px;
+      }
+
+      [contenteditable] {
+        spellcheck: false;
+        -webkit-text-decoration-skip: none;
+        text-decoration: none;
+      }
+      .resizer {
+        width: 5px;
+        cursor: col-resize;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        z-index: 10;
+      }
+
+      .example-block {
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #aaa;
+        border-radius: 10px;
+        background-color: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .example-block textarea {
+        width: 100%;
+        margin-bottom: 10px;
+        font-family: monospace;
+        font-size: 14px;
+      }
+
+      .example-block pre {
+        background-color: #1e1e1e;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+
+      .copy-btn,
+      .danger {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .copy-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .danger {
+        background-color: #f44336;
+        color: white;
+      }
+
+      textarea {
+        resize: none;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bubble-bg">
+      <!-- สร้างฟองน้ำหลายอัน -->
+      <div
+        class="bubble"
+        style="
+          width: 100px;
+          height: 100px;
+          left: 10%;
+          background: rgba(255, 192, 203, 0.5);
+          box-shadow: 0 0 20px rgba(255, 192, 203, 0.5);
+          animation-delay: 0s;
+        "
+      ></div>
+      <div
+        class="bubble"
+        style="
+          width: 120px;
+          height: 120px;
+          left: 35%;
+          background: rgba(255, 165, 0, 0.4);
+          box-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
+          animation-delay: 2s;
+        "
+      ></div>
+      <div
+        class="bubble"
+        style="
+          width: 90px;
+          height: 90px;
+          left: 60%;
+          background: rgba(144, 238, 144, 0.4);
+          box-shadow: 0 0 20px rgba(144, 238, 144, 0.5);
+          animation-delay: 1s;
+        "
+      ></div>
+      <div
+        class="bubble"
+        style="
+          width: 110px;
+          height: 110px;
+          left: 80%;
+          background: rgba(255, 255, 0, 0.4);
+          box-shadow: 0 0 20px rgba(255, 255, 0, 0.5);
+          animation-delay: 6s;
+        "
+      ></div>
+      <div
+        class="bubble"
+        style="
+          width: 70px;
+          height: 70px;
+          left: 20%;
+          background: rgba(173, 216, 230, 0.4);
+          box-shadow: 0 0 20px rgba(173, 216, 230, 0.5);
+          animation-delay: 4s;
+        "
+      ></div>
+      <div
+        class="bubble"
+        style="
+          width: 130px;
+          height: 130px;
+          left: 45%;
+          background: rgba(221, 160, 221, 0.4);
+          box-shadow: 0 0 20px rgba(221, 160, 221, 0.5);
+          animation-delay: 8s;
+        "
+      ></div>
+      <div
+        class="bubble"
+        style="
+          width: 60px;
+          height: 60px;
+          left: 75%;
+          background: rgba(0, 255, 255, 0.4);
+          box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+          animation-delay: 10s;
+        "
+      ></div>
+      <div
+        class="bubble"
+        style="
+          width: 150px;
+          height: 150px;
+          left: 90%;
+          background: rgba(255, 105, 180, 0.4);
+          box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+          animation-delay: 7s;
+        "
+      ></div>
+      <div
+        class="bubble"
+        style="
+          width: 50px;
+          height: 50px;
+          left: 5%;
+          background: rgba(255, 0, 0, 0.3);
+          box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+          animation-delay: 5s;
+        "
+      ></div>
+    </div>
+
+    <button
+      onclick="toggleSettings()"
+      style="position: absolute; top: 10px; right: 15px; z-index: 998"
+    >
+      ⚙️ ตั้งค่า
+    </button>
+
+    <div
+      class="settings"
+      id="settingsPanel"
+      style="
+        display: none;
+        position: absolute;
+        top: 50px;
+        right: 10px;
+        z-index: 2;
+        background-color: rgba(30, 30, 30, 0.95);
+        padding: 1rem;
+        border-radius: 8px;
+        max-width: 300px;
+      "
+    >
+      <label>
+        ฟอนต์:
+        <select id="fontSelect" onchange="updateFont()">
+          <option value="'Segoe UI', sans-serif">Segoe UI</option>
+          <option value="monospace">Monospace</option>
+          <option value="Arial, sans-serif">Arial</option>
+          <option value="Courier New, monospace">Courier New</option>
+        </select>
+      </label>
+      <label>
+        ขนาดตัวอักษร:
+        <select id="fontSizeSelect" onchange="updateFont()">
+          <option value="14px">14px</option>
+          <option value="16px" selected>16px</option>
+          <option value="18px">18px</option>
+          <option value="20px">20px</option>
+          <option value="24px">24px</option>
+          <option value="30px">30px</option>
+          <option value="34px">34px</option>
+        </select>
+      </label>
+      <hr />
+      <button onclick="exportJSON()">📤 บันทึกไฟล์ JSON</button>
+      <br />
+      <label style="display: block; margin-top: 10px">
+        📥 โหลดไฟล์ JSON:
+        <input type="file" accept=".json" onchange="importJSON(event)" />
+      </label>
+
+      <hr />
+      <button onclick="clearAllData()" style="color: red">
+        🗑️ ล้างข้อมูลทั้งหมด
+      </button>
+    </div>
+
+    <div class="container">
+      <div class="sidebar">
+        <div class="top-bar">
+          <input type="text" id="search" placeholder="ค้นหา..." />
+          <button onclick="addCommand()">＋</button>
+        </div>
+        <div id="command-list"></div>
+      </div>
+      <div class="resizer"></div>
+      <!-- ← ตัวลาก -->
+      <div class="content" id="details">
+        <h2>กรุณาเลือกคำสั่ง</h2>
+      </div>
+    </div>
+
+    <script>
+      const resizer = document.querySelector('.resizer');
+      const sidebar = document.querySelector('.sidebar');
+      const content = document.querySelector('.content');
+
+      let isDragging = false;
+
+      resizer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        const containerOffsetLeft =
+          document.querySelector('.container').offsetLeft;
+        const newLeftWidth = e.clientX - containerOffsetLeft;
+        const containerWidth = document.querySelector('.container').offsetWidth;
+
+        const percent = (newLeftWidth / containerWidth) * 100;
+        if (percent > 15 && percent < 85) {
+          sidebar.style.width = `${percent}%`;
+          content.style.width = `${100 - percent}%`;
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      });
+    </script>
+
+    <script>
+      function toggleSettings() {
+        const panel = document.getElementById('settingsPanel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+      }
+
+      let commands = JSON.parse(localStorage.getItem('c_commands') || '[]');
+      let selectedIndex = null;
+
+      function save() {
+        localStorage.setItem('c_commands', JSON.stringify(commands));
+      }
+
+      function renderList() {
+        const keyword = document.getElementById('search').value.toLowerCase();
+        const listEl = document.getElementById('command-list');
+        listEl.innerHTML = '';
+        commands
+          .filter(
+            (cmd) =>
+              cmd.name.toLowerCase().includes(keyword) ||
+              cmd.description.toLowerCase().includes(keyword)
+          )
+          .forEach((cmd, idx) => {
+            const div = document.createElement('div');
+            div.className = 'command-item';
+            div.innerText = cmd.name;
+            div.onclick = () => selectCommand(idx);
+            listEl.appendChild(div);
+          });
+      }
+      let showAllNotes = false;
+      let showCodeEditor = false; // เปลี่ยนเป็น true ถ้าอยากให้แก้ไขได้
+
+      function renderDetails() {
+        const container = document.getElementById('details');
+        if (selectedIndex === null) {
+          container.innerHTML = '<h2>กรุณาเลือกคำสั่ง</h2>';
+          return;
+        }
+
+        const cmd = commands[selectedIndex];
+        container.innerHTML = `
+        <h2 contenteditable spellcheck="false" onblur="editField(${selectedIndex}, 'name', this.innerText)">${
+          cmd.name
+        }</h2>
+       
+        <textarea 
+  placeholder="คำอธิบายคำสั่ง..." 
+  oninput="editField(${selectedIndex}, 'description', this.value); autoResize(this);"
+  style="width: 97%; margin-bottom: 1rem;"
+>${cmd.description || ''}</textarea>
+
+
+        <h3>ตัวอย่าง:</h3>
+        <button onclick="toggleNotes()" style="margin-bottom: 10px;">
+  ${showAllNotes ? '🔽 ซ่อนคำอธิบายตัวอย่าง' : '🔼 แสดงคำอธิบายตัวอย่าง'}
+</button>
+<button onclick="toggleCodeEditor()">🛠️ แก้ไขโค้ด</button>
+
+
+        <div id="examples">
+          ${cmd.examples
+            .map(
+              (ex, i) => `
+            <div class="example-block">
+              ${
+                showCodeEditor
+                  ? `
+  <textarea placeholder="ตัวอย่างโค้ด..." oninput="editExample(${selectedIndex}, ${i}, 'code', this.value);updateOutput(this, ${i})">${ex.code}</textarea>
+`
+                  : ''
+              }
+              
+              ${
+                showAllNotes || ex.note.trim()
+                  ? `<textarea 
+        style="width: 97%; font-size: large; background-color: #fdf6e3; color: #000; padding: 6px; border-radius: 6px; border: 1px solid #ccc; text-decoration: none;" 
+        placeholder="คำอธิบาย..." 
+        oninput="editExample(${selectedIndex}, ${i}, 'note', this.value)"
+      >${ex.note}</textarea>`
+                  : ''
+              }
+
+
+
+
+              <div style="display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                <button class="copy-btn" data-code="${encodeURIComponent(
+                  ex.code
+                )}">คัดลอก</button>
+
+  <button class="danger" onclick="deleteExample(${selectedIndex}, ${i})">ลบตัวอย่าง</button>
+</div>
+
+<pre><code class="language-c" id="preview-${i}">${ex.code}</code></pre>
+
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+        <button onclick="addExample(${selectedIndex})">＋ เพิ่มตัวอย่าง</button>
+        <button class="danger" onclick="deleteCommand(${selectedIndex})" style="float:right">ลบคำสั่ง</button>
+      `;
+        container.querySelectorAll('.copy-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const text = decodeURIComponent(btn.getAttribute('data-code'));
+            copyToClipboard(text);
+          });
+        });
+        setTimeout(() => {
+          document.querySelectorAll('textarea').forEach(autoResize);
+        }, 0);
+
+        Prism.highlightAll();
+      }
+
+      function toggleNotes() {
+        showAllNotes = !showAllNotes;
+        renderDetails();
+      }
+
+      function toggleCodeEditor() {
+        showCodeEditor = !showCodeEditor;
+        renderDetails();
+      }
+
+      function addCommand() {
+        commands.push({ name: 'คำสั่งใหม่', description: '', examples: [] });
+        save();
+        selectedIndex = commands.length - 1;
+        renderList();
+        renderDetails();
+      }
+
+      function updateOutput(textarea, index) {
+        const code = textarea.value;
+        const previewEl = document.getElementById(`preview-${index}`);
+        if (previewEl) {
+          previewEl.textContent = code;
+          Prism.highlightElement(previewEl);
+        }
+      }
+
+      function deleteCommand(idx) {
+        commands.splice(idx, 1);
+        selectedIndex = null;
+        save();
+        renderList();
+        renderDetails();
+      }
+
+      function editField(idx, field, value) {
+        commands[idx][field] = value;
+        save();
+        if (field === 'name') renderList();
+      }
+
+      function addExample(index) {
+        commands[index].examples.push({ code: '', note: '' });
+        save();
+        renderDetails();
+      }
+
+      function editExample(cmdIdx, exIdx, field, value) {
+        commands[cmdIdx].examples[exIdx][field] = value;
+        save();
+      }
+
+      function deleteExample(cmdIdx, exIdx) {
+        commands[cmdIdx].examples.splice(exIdx, 1);
+        save();
+        renderDetails();
+      }
+
+      function selectCommand(idx) {
+        selectedIndex = idx;
+        renderDetails();
+      }
+
+      function updateFont() {
+        const font = document.getElementById('fontSelect').value;
+        const size = document.getElementById('fontSizeSelect').value;
+        document.body.style.fontFamily = font;
+        document.body.style.fontSize = size;
+      }
+
+      function copyToClipboard(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard
+            .writeText(text)
+            .then(() => {
+              alert('คัดลอกแล้ว!');
+            })
+            .catch((err) => {
+              alert('คัดลอกไม่สำเร็จ: ' + err);
+            });
+        } else {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+
+          try {
+            document.execCommand('copy');
+            alert('คัดลอกแล้ว!');
+          } catch (err) {
+            alert('ไม่สามารถคัดลอกได้: ' + err);
+          }
+          document.body.removeChild(textarea);
+        }
+      }
+
+      document.getElementById('search').addEventListener('input', renderList);
+
+      renderList();
+      renderDetails();
+
+      function exportJSON() {
+        const dataStr = JSON.stringify(commands, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'c_commands.json';
+        a.click();
+
+        URL.revokeObjectURL(url);
+      }
+
+      function importJSON(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const importedData = JSON.parse(e.target.result);
+            if (Array.isArray(importedData)) {
+              commands = importedData;
+              save();
+              renderList();
+              renderDetails();
+              alert('นำเข้าข้อมูลสำเร็จ!');
+            } else {
+              alert('ไฟล์ไม่ถูกต้อง');
+            }
+          } catch (err) {
+            alert('เกิดข้อผิดพลาดในการโหลดไฟล์');
+          }
+        };
+        reader.readAsText(file);
+      }
+      function clearAllData() {
+        if (
+          confirm(
+            'คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลทั้งหมด?'
+          )
+        ) {
+          commands = [];
+          save();
+          renderList();
+          renderDetails();
+          alert('ล้างข้อมูลเรียบร้อยแล้ว');
+        }
+      }
+
+      function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+      }
+
+      Prism.highlightAll();
+      
+    </script>
+  </body>
+</html>
