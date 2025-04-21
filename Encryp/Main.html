@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้ารหัสและถอดรหัสข้อมูล JSON</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        textarea, input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result, #decryptionKeyDisplay {
+            margin-top: 20px;
+            white-space: pre-wrap; 
+        }
+        #keyContainer {
+            display: none; 
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+</head>
+<body>
+    <h2>เข้ารหัสข้อมูล JSON</h2>
+    <h3>กรุณาใส่ข้อมูล JSON</h3>
+    <textarea id="jsonInput" rows="10" placeholder='{"key": "value"}'></textarea>
+
+    <button onclick="encryptData()">เข้ารหัสข้อมูล</button>
+    <h3>ผลลัพธ์การเข้ารหัส</h3>
+    <div id="result"></div>
+
+    <div id="keyContainer">
+        <h3>คีย์สำหรับการถอดรหัส</h3>
+        <div id="decryptionKeyDisplay"></div>
+        <button onclick="copyKey()">คัดลอกคีย์</button>
+    </div>
+
+    <h2>ถอดรหัสข้อมูลจากไฟล์</h2>
+    <input type="file" id="fileInput" accept=".txt"><br>
+
+    <h3>คีย์สำหรับการถอดรหัส</h3>
+    <input type="text" id="decryptionKey" placeholder="ใส่คีย์ถอดรหัส">
+
+    <button onclick="decryptData()">ถอดรหัสข้อมูล</button>
+
+    <h3>ผลลัพธ์การถอดรหัส JSON</h3>
+    <div id="decryptedResult"></div>
+    <button id="downloadJsonButton" style="display:none;" onclick="downloadJson()">ดาวน์โหลด JSON</button>
+    <button id="copyJsonButton" style="display:none;" onclick="copyJson()">คัดลอก JSON</button>
+
+    <script>
+        function encryptData() {
+            const jsonInput = document.getElementById('jsonInput').value;
+
+            try {
+                // สุ่มคีย์สำหรับการเข้ารหัส
+                const encryptionKey = CryptoJS.lib.WordArray.random(16).toString();
+
+                const encryptedData = CryptoJS.AES.encrypt(jsonInput, encryptionKey).toString();
+
+                //สร้างไฟล์ .txt
+                const blob = new Blob([encryptedData], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+
+                //สร้างลิงก์ดาวน์โหลด
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'encrypted_data.txt';
+                link.click();
+
+                // แสดงผลลัพธ์การเข้ารหัส
+                document.getElementById('result').innerText = 'เข้ารหัสสำเร็จ: ' + encryptedData;//อย่าลืมลบออก
+
+                document.getElementById('decryptionKeyDisplay').innerText = encryptionKey;
+                document.getElementById('keyContainer').style.display = 'block'; //แสดงคีย์
+
+                //ล้าง URL
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                alert("เกิดข้อผิดพลาดในการเข้ารหัสข้อมูล");
+            }
+        }
+
+        document.getElementById('fileInput').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const encryptedData = e.target.result;
+                    const decryptionKey = document.getElementById('decryptionKey').value;
+
+                    //ถอดรหัส
+                    try {
+                        const decryptedData = CryptoJS.AES.decrypt(encryptedData, decryptionKey);
+                        const originalData = decryptedData.toString(CryptoJS.enc.Utf8);
+
+                        document.getElementById('decryptedResult').innerText = originalData;
+
+                        document.getElementById('downloadJsonButton').style.display = 'inline-block';
+                        document.getElementById('copyJsonButton').style.display = 'inline-block';
+
+                    } catch (error) {
+                        alert("คีย์ถอดรหัสไม่ถูกต้อง");
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function copyKey() {
+            const keyText = document.getElementById('decryptionKeyDisplay').innerText;
+            navigator.clipboard.writeText(keyText).then(() => {
+                alert('คีย์ถูกคัดลอกแล้ว: ' + keyText);
+            }).catch(err => {
+                alert('ไม่สามารถคัดลอกคีย์ได้');
+            });
+        }
+
+        //สำหรับดาวน์โหลJSON
+        function downloadJson() {
+            const jsonData = document.getElementById('decryptedResult').innerText;
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'decrypted_data.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function copyJson() {
+            const jsonData = document.getElementById('decryptedResult').innerText;
+            navigator.clipboard.writeText(jsonData).then(() => {
+                alert('JSON ถูกคัดลอกแล้ว');
+            }).catch(err => {
+                alert('ไม่สามารถคัดลอก JSON ได้');
+            });
+        }
+
+        function decryptData() {
+            const decryptionKey = document.getElementById('decryptionKey').value;
+
+            if (!decryptionKey) {
+                alert("ใส่คีย์ถอดรหัส");
+            }
+        }
+    </script>
+</body>
+</html>

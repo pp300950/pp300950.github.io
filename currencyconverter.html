@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .input-group {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        input[type="number"], select {
+            width: calc(50% - 22px);
+            max-width: 140px; /* Adjusted for better responsiveness */
+        }
+
+        button {
+            width: calc(100% - 22px);
+            max-width: 300px;
+        }
+        
+        #calculator {
+            width: 100%;
+            max-width: 325px;
+            border-radius: 8px; /* Rounded corners */
+            border: none;
+            padding: 20px;
+            background-color: #3a3f47; /* Dark shade for calculator background */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow */
+            display: flex;
+            flex-direction: column;
+        }
+
+        #display {
+            width: calc(100% - 30px);
+            height: 50px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 24px;
+            padding: 10px;
+            border-radius: 5px; /* Rounded corners for display */
+            border: 1px solid #555; /* Darker border for better visibility */
+            background-color: #fff; /* White background for contrast */
+            color: #333; /* Dark text for readability */
+        }
+        #calculator h2{
+            color: white;
+        }
+
+        .keys {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+
+        }
+
+        .keys button {
+            height: 50px;
+            font-size: 18px;
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            color: white; /* White text on the buttons */
+            background-color: #61dafb; /* Light blue background for buttons */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        .keys button:hover {
+            background-color: #21a1f1; /* Slightly darker blue on hover */
+        }
+
+        @media (max-width: 600px) {
+            .keys button {
+                font-size: 16px;
+                padding: 10px;
+            }
+            .calculator {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <select id="modeSelector" onchange="switchMode()">
+            <option value="calculator">เครื่องคิดเลข</option>
+            <option value="currencyConverter">อัตราเเลกเปลี่ยน</option>
+        </select>
+
+        <div id="calculator" class="mode">
+            <h2>เครื่องคิดเลข (เผื่อไม่รู้)</h2>
+            <input type="text" id="display" disabled>
+            <div class="keys">
+                <button onclick="appendNumber('1')">1</button>
+                <button onclick="appendNumber('2')">2</button>
+                <button onclick="appendNumber('3')">3</button>
+                <button onclick="appendOperation('+')">+</button>
+                <button onclick="appendNumber('4')">4</button>
+                <button onclick="appendNumber('5')">5</button>
+                <button onclick="appendNumber('6')">6</button>
+                <button onclick="appendOperation('-')">-</button>
+                <button onclick="appendNumber('7')">7</button>
+                <button onclick="appendNumber('8')">8</button>
+                <button onclick="appendNumber('9')">9</button>
+                <button onclick="appendOperation('*')">*</button>
+                <button onclick="appendNumber('0')">0</button>
+                <button onclick="clearDisplay()">C</button>
+                <button onclick="calculateResult()">=</button>
+                <button onclick="appendOperation('/')">/</button>
+            </div>
+        </div>
+
+        <div id="currencyConverter" class="mode hide">
+            <h1>อัตราเเลกเปลี่ยน</h1>
+            <div class="input-group">
+                <input type="number" id="amount" placeholder="ค่าเงิน" />
+                <select id="fromCurrency"></select>
+            </div>
+            <div class="input-group">
+                <input type="number" id="result" placeholder="ค่าเงินเหมือนกัน" disabled />
+                <select id="toCurrency"></select>
+            </div>
+            <button onclick="convertCurrency()">ตกลง</button>
+        </div>
+    </div>
+
+    <script>
+        let mode = document.getElementById('modeSelector');
+        let calculator = document.getElementById('calculator');
+        let currencyConverter = document.getElementById('currencyConverter');
+
+        function switchMode() {
+            if (mode.value === 'calculator') {
+                calculator.style.display = 'block';
+                currencyConverter.style.display = 'none';
+            } else {
+                calculator.style.display = 'none';
+                currencyConverter.style.display = 'block';
+                fetchCurrencies();
+            }
+        }
+
+        function appendNumber(number) {
+            let display = document.getElementById('display');
+            display.value += number;
+        }
+
+        function appendOperation(operation) {
+            let display = document.getElementById('display');
+            display.value += operation;
+        }
+
+        function clearDisplay() {
+            let display = document.getElementById('display');
+            display.value = '';
+        }
+
+        function calculateResult() {
+            let display = document.getElementById('display');
+            try {
+                display.value = eval(display.value);
+            } catch (e) {
+                display.value = 'Error';
+            }
+        }
+
+        async function fetchCurrencies() {
+            const url = 'https://api.exchangerate-api.com/v4/latest/USD';
+            const response = await fetch(url);
+            const data = await response.json();
+            const fromSelect = document.getElementById('fromCurrency');
+            const toSelect = document.getElementById('toCurrency');
+            fromSelect.innerHTML = '';
+            toSelect.innerHTML = '';
+            for (let key in data.rates) {
+                fromSelect.appendChild(new Option(key, key));
+                toSelect.appendChild(new Option(key, key));
+            }
+        }
+
+        async function convertCurrency() {
+            const amount = document.getElementById('amount').value;
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            const url = `https://api.exchangerate-api.com/v4/latest/${fromCurrency}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            const rate = data.rates[toCurrency];
+            const result = amount * rate;
+            document.getElementById('result').value = result.toFixed(2);
+        }
+    </script>
+</body>
+</html>

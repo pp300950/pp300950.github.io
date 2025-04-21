@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .piano-container {
+            width: 80%;
+            margin: 10px;
+            padding: 5px;
+            overflow-x: auto;
+            border: 1px solid black;
+        }
+
+        .piano {
+            display: flex;
+            min-width: max-content;
+        }
+
+        .key {
+    width: 40px;
+    height: 150px;
+    border: 1px solid black;
+    cursor: pointer;
+    margin: 5px;
+    text-align: center;
+    line-height: 50px; /* Adjusted for better text display */
+    font-size: 22px;
+    overflow: visible; /* Show text that overflows */
+    
+}
+        .key.A:active,
+        .key.A.active,
+        .key.B:active,
+        .key.B.active,
+        .key.C:active,
+        .key.C.active,
+        .key.D:active,
+        .key.D.active,
+        .key.E:active,
+        .key.E.active,
+        .key.F:active,
+        .key.F.active {
+            background-color: rgb(246, 255, 0);
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .key.F {
+            background-color: #9788d6;
+        }
+
+        /* สีน้ำตาลอ่อน */
+        .key.A {
+            background-color: #dd9e9e;
+        }
+
+        .key.B {
+            background-color: #ecb68a;
+        }
+
+        .key.C {
+            background-color: #f7f48b;
+        }
+
+        .key.D {
+            background-color: #9cdf9a;
+        }
+
+        .key.E {
+            background-color: #8bdef7;
+        }
+        /* สไตล์พื้นฐานสำหรับปุ่ม */
+button {
+    background-color: #4CAF50; /* สีพื้นหลังสีเขียว */
+    color: white; /* สีตัวอักษร */
+    padding: 15px 32px; /* การเว้นวรรคด้านใน */
+    text-align: center; /* การจัดตำแหน่งข้อความ */
+    text-decoration: none; /* ไม่มีเส้นใต้ข้อความ */
+    display: inline-block; /* ตัวแสดงบล็อกแบบอินไลน์ */
+    font-size: 16px; /* ขนาดของตัวอักษร */
+    margin: 4px 2px; /* การเว้นวรรครอบๆ ปุ่ม */
+    cursor: pointer; /* แสดงเคอร์เซอร์เป็นมือตอนวางเมาส์อยู่บนปุ่ม */
+    border: none; /* ไม่มีขอบ */
+    border-radius: 5px; /* ขอบมน */
+   
+    transition: 0.3s; /* การเปลี่ยนแปลงแบบมีแอนิเมชัน */
+}
+
+/* สไตล์เมื่อกดปุ่ม */
+button:hover {
+    background-color: #3e8e41; /* ปรับสีพื้นหลังเมื่อเมาส์ชี้ */
+}
+
+/* สไตล์เมื่อกดปุ่มลง */
+button:active {
+    background-color: #3e8e41; /* สีพื้นหลังเมื่อกด */
+    box-shadow: 0 5px #666; /* ปรับเงาให้สั้นลงเมื่อกด */
+    transform: translateY(4px); /* ขยับปุ่มลงเล็กน้อยเมื่อกด */
+}
+
+    </style>
+</head>
+
+<body>
+    <h2 style="color: red;">*หลากต้องการกดปุ่มโน๊ตด้วยคีย์บอร์ด โปรเปลี่ยนภาษาคีย์บอร์ดเป็นภาษาอังกฤษตัวพิมพ์เล็ก</h2>
+    <div class="controls">
+        <button onclick="setLayout('single')">เเบบ1เเถว</button>
+        <button onclick="setLayout('double')">เเบบรถ2เเถว</button>
+    </div>
+    <div class="piano-container" id="container1">
+        <div class="piano" id="piano1"></div>
+    </div>
+    <div class="piano-container" id="container2" style="display:none;">
+        <div class="piano" id="piano2"></div>
+    </div>
+
+    <script>
+        const piano1 = document.getElementById('piano1');
+        const piano2 = document.getElementById('piano2');
+        const container2 = document.getElementById('container2');
+        const notes = ['A', 'B', 'C', 'D', 'E', 'F'];
+        const totalPerNote = 7;
+        let userHasInteracted = false;
+
+        document.addEventListener('click', () => {
+            userHasInteracted = true; // Unlock the audio context on first user interaction
+        });
+
+        const keyMap = {
+            '1': 'A1', '2': 'A2', '3': 'A3', '4': 'A4', '5': 'A5', '6': 'A6', '7': 'A7',
+            '8': 'B1', '9': 'B2', '0': 'B3', '-': 'B4', '=': 'B5', 'q': 'B6', 'w': 'B7',
+            'e': 'C1', 'r': 'C2', 't': 'C3', 'y': 'C4', 'u': 'C5', 'i': 'C6', 'o': 'C7',
+            'p': 'D1', '[': 'D2', ']': 'D3', 'a': 'D4', 's': 'D5', 'd': 'D6', 'f': 'D7',
+            'g': 'E1', 'h': 'E2', 'j': 'E3', 'k': 'E4', 'l': 'E5', ';': 'E6', 'z': 'E7',
+            'x': 'F1', 'c': 'F2', 'v': 'F3', 'b': 'F4', 'n': 'F5', 'm': 'F6', ',': 'F7',
+        };
+
+        function createKeys(piano) {
+            piano.innerHTML = '';
+            notes.forEach(note => {
+                for (let i = 1; i <= totalPerNote; i++) {
+                    const key = document.createElement('div');
+                    key.classList.add('key', note); // เพิ่มคลาสสำหรับสี
+                    const noteName = note + i;
+                    key.dataset.note = noteName;
+                    // Map keyboard keys to piano keys and display them
+                    for (const [kbdKey, kbdNote] of Object.entries(keyMap)) {
+                        if (kbdNote === noteName) {
+                            key.textContent = `${noteName} (${kbdKey})`;
+                            break;
+                        }
+                    }
+                    piano.appendChild(key);
+                    key.addEventListener('mousedown', () => playSound(noteName));
+                }
+            });
+        }
+
+        function playSound(note) {
+            if (!userHasInteracted) return;
+            const audio = new Audio(`sounds/${note}.mp3`);
+            audio.play().then(() => {
+                highlightKey(note);
+            }).catch(error => {
+                console.error("Error playing the sound.", error);
+            });
+        }
+
+        function highlightKey(note) {
+            const keys = document.querySelectorAll('.key');
+            keys.forEach(key => {
+                if (key.dataset.note === note) {
+                    key.classList.add('active');
+                    setTimeout(() => key.classList.remove('active'), 200);
+                }
+            });
+        }
+
+        function setLayout(type) {
+            switch (type) {
+                case 'single':
+                    createKeys(piano1);
+                    container2.style.display = 'none';
+                    break;
+                case 'double':
+                    createKeys(piano1);
+                    createKeys(piano2);
+                    container2.style.display = 'block';
+                    break;
+                case 'full':
+                    createKeys(piano1);
+                    container2.style.display = 'none';
+                    piano1.style.flexWrap = 'wrap';
+                    break;
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (keyMap[event.key] && userHasInteracted) {
+                playSound(keyMap[event.key]);
+            }
+        });
+
+        setLayout('single'); // Initial layout setup
+    </script>
+</body>
+
+</html>

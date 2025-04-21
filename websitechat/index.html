@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าหลัก</title>
+    <style>
+        /* สไตล์ CSS */
+        /* คำสั่ง CSS สำหรับการจัดรูปแบบหน้าเว็บ */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e5ded8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #d6ccc2;
+            overflow: hidden;
+
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #000000;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .profile-dropdown {
+            float: left;
+            overflow: hidden;
+        }
+
+        .profile-img {
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #usernameDisplay {
+            font-size: 30px;
+        }
+
+        a {
+
+            float: right;
+        }
+
+        .profile-dropdown .profile-img {
+            vertical-align: middle;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .profile-dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .profile-dropdown .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: right;
+        }
+
+        .profile-dropdown .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .profile-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .chatroom-list {
+            width: 30%;
+            box-shadow: 5px 20px 40px rgba(0, 0, 0, 0.2);
+            background-color: #e3d5ca;
+            float: left;
+            overflow-y: auto;
+            height: auto;
+            color: #f10606;
+            z-index: 999;
+        }
+
+        .chatroom-list .chatroomuser {
+            display: flex;
+            align-items: center;
+            /* จัดให้เนื้อหาอยู่ตรงกลางในแนวดิ่ง */
+            padding: 10px;
+            /* เพิ่มระยะห่างด้านใน */
+
+        }
+
+        .chatroomuser {
+            border: 5px solid #7ceaf8;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .chatroom-list img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15%;
+            /* เพิ่มระยะห่างด้านขวาของภาพ */
+            flex-shrink: 0;
+            /* ไม่ย่อภาพ */
+        }
+
+        .chatroom-list div {
+            font-size: large;
+            font-weight: 800;
+            color: black;
+
+        }
+
+
+
+        .chatroom {
+            padding: 20px;
+            border-bottom: 1px solid #aaa;
+            cursor: pointer;
+        }
+
+        .chatroom:hover {
+            background-color: #ccc;
+        }
+
+        .chat-container {
+
+            margin-left: 30%;
+            padding: 20px;
+
+        }
+
+        .chat-box {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .chat-send {
+            width: 93%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+
+        .chat-send:hover {
+            background-color: #45a049;
+        }
+
+        .profile {
+            padding-left: 50%;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        /*หน้าต่างเเก้ไขโปรไฟล์*/
+        /* CSS Styles for Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            z-index: 999;
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 5px solid #96896e;
+            width: 80%;
+            border-radius: 5px;
+        }
+
+        .close,.closec {
+            color: #ff2828;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+
+        .close:hover,
+        .close:focus,
+        .closechat:hover,
+        .closechat:focus,
+        .closec:hover,
+        .closec:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* CSS Styles for Profile Picture Preview */
+        #profilePicPreview {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .save {
+            height: 40px;
+            width: 20%;
+            border: none;
+            border-radius: 15px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            transition: 0.7s;
+        }
+
+        .save:hover {
+            width: 40%;
+        }
+
+        #chatMessages {
+            display: flex;
+            overflow-x: auto;
+            /* เพื่อให้สามารถเลื่อนแถบได้ */
+            white-space: nowrap;
+            /* เพื่อให้เนื้อหาไม่ขึ้นบรรทัดใหม่ */
+        }
+
+        .user {
+            display: inline-block;
+            margin-right: 10px;
+            /* ระยะห่างระหว่างผู้ใช้แต่ละคน */
+            cursor: pointer;
+            /* เปลี่ยนเคอร์เซอร์เป็นรูปแบบชี้ */
+        }
+
+        .profile-pic {
+            width: 50px;
+            /* ขนาดของภาพโปรไฟล์ */
+            height: 50px;
+            /* ขนาดของภาพโปรไฟล์ */
+            border-radius: 50%;
+            /* ทำให้ภาพโปรไฟล์เป็นวงกลม */
+            object-fit: cover;
+            /* ปรับขนาดของภาพให้พอดีกับพื้นที่ */
+
+            /* ระยะห่างของภาพโปรไฟล์จากชื่อผู้ใช้ */
+            margin-right: 10px;
+        }
+
+        #chatsearch .profile-pic {
+            width: 50px;
+            /* ขนาดของภาพโปรไฟล์ */
+            height: 50px;
+            /* ขนาดของภาพโปรไฟล์ */
+            border-radius: 50%;
+            /* ทำให้ภาพโปรไฟล์เป็นวงกลม */
+            object-fit: cover;
+            /* ปรับขนาดของภาพให้พอดีกับพื้นที่ */
+            margin-bottom: 5px;
+            /* ระยะห่างของภาพโปรไฟล์จากชื่อผู้ใช้ */
+            margin-right: 10px;
+        }
+
+
+        .username {
+            font-size: 14px;
+            /* ขนาดของตัวอักษรชื่อผู้ใช้ */
+            text-align: center;
+            /* จัดข้อความตามศูนย์กลาง */
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            margin: 5px;
+            /* เพิ่มระยะห่างระหว่างผู้ใช้แต่ละคน */
+            margin-right: 10px;
+        }
+
+
+        #editProfileForm {
+            text-align: center;
+        }
+
+        #usernamePreview {
+            width: 35%;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: larger;
+        }
+
+        #chatsearch {
+            background-color: #e3d5ca;
+            margin-top: 5px;
+            height: auto;
+            width: auto;
+        }
+
+        #chatsearch p {
+            font-size: larger;
+            margin-left: 5%;
+        }
+
+        #chatsearch img {
+            margin: 6px 6px;
+        }
+
+        .card {
+            width: 100%;
+            height: auto;
+            /* background: red; */
+            border: 1px solid #e5e5e5;
+            border-radius: 15px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+        }
+
+        .card .user {
+            max-width: 40px;
+            /* กำหนดความกว้างสูงสุดของรูปภาพ */
+            max-height: 40px;
+            /* กำหนดความสูงสูงสุดของรูปภาพ */
+            width: 100%;
+            /* ทำให้รูปภาพเต็มกว้างภายในขนาดที่กำหนด */
+            height: auto;
+            /* ทำให้ความสูงของรูปภาพปรับตามอัตราส่วนของรูปภาพ */
+            object-fit: cover;
+            /* คุณสมบัตินี้จะป้องกันรูปภาพจากการถูกยืดหรือหดให้พอดีกับขนาดของพื้นที่ */
+            border-radius: 50%;
+            /* ให้รูปภาพมีมุมโค้งเป็นวงกลม */
+        }
+
+        .card .user-detail {
+            display: flex;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+            /* เพิ่มเงาด้านล่าง */
+            width: 95%;
+            border-top-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+
+        }
+
+        .closechat {
+            color: #ff2828;
+            margin: 10px;
+            float: left;
+            font-size: 40px;
+            font-weight: bold;
+            z-index: 99999;
+        }
+
+        .card .user-detail h4 {
+            margin-left: 10px;
+
+        }
+
+        .renderchat {
+            width: 100%;
+            height: calc(100vh - 230px);
+            overflow: scroll;
+            padding-top: 10px;
+        }
+
+        .chat-incoming {
+            width: 100%;
+            display: flex;
+            margin-bottom: 10px;
+            /* align-items: center; */
+        }
+
+        .chat-incoming span {
+            background: #f1f1f1;
+            padding: 5px 20px;
+            border-radius: 5px;
+            margin-left: 10px;
+            /* max-width: 60%; */
+        }
+
+        .chat-outcoming {
+            width: 100%;
+            display: flex;
+            margin-bottom: 10px;
+            justify-content: flex-end;
+            /* align-items: center; */
+        }
+
+        .chat-outcoming span {
+            background: #0084FF;
+            color: #fff;
+            padding: 5px 20px;
+            border-radius: 15px;
+            margin-right: 10px;
+            /* max-width: 60%; */
+        }
+
+        .sendmsg {
+            height: 70px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-control {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+            margin-left: 5px;
+        }
+
+        .btn-primary {
+            padding: 10px 5%;
+            border: none;
+            cursor: pointer;
+            background: #0084FF;
+            color: #fff;
+            border-radius: 25px;
+            margin-left: 10px;
+        }
+
+        .chat-incoming img,
+        .chat-outcoming img {
+            
+            width: 50px;
+            height: 50px;
+            /* ทำให้ความสูงของรูปภาพปรับตามอัตราส่วนของรูปภาพ */
+            object-fit: cover;
+            /* คุณสมบัตินี้จะป้องกันรูปภาพจากการถูกยืดหรือหดให้พอดีกับขนาดของพื้นที่ */
+            border-radius: 50%;
+            /* ให้รูปภาพมีมุมโค้งเป็นวงกลม */
+        }
+
+        #content {
+            z-index: 9999999999;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="menu">
+        <!-- แถบ Navbar -->
+        <div class="navbar">
+
+            <div class="profile-dropdown">
+                <img src="" id="imguser" alt="โปรไฟล์" class="profile-img">
+                <div class="dropdown-content">
+
+                    <a href="#" id="editProfileBtn">แก้ไขโปรไฟล์</a>
+                    <a href="#" id="logoutBtn">ออกจากระบบ</a>
+                </div>
+            </div>
+            <a id="usernameDisplay">แชทแอพ</a>
+        </div>
+
+        <!-- รายการห้องแชท -->
+        <div class="chatroom-list" id="chatroomList">
+            <!-- ห้องแชทจะถูกเติมไว้ที่นี่โดยอัตโนมัติ -->
+        </div>
+
+        <!-- คอนเทนเนอร์แชท -->
+        <div class="chat-container" id="chatcontainer">
+            <!-- ช่องค้นหาผู้ใช้ทั้งหมด-->
+            <div id="chatMessages"></div>
+            <!-- เเถบผู้ใข้ -->
+            <input type="text" id="messageInput" class="chat-box" placeholder="ค้นหาเพื่อนของคุณที่นี่...">
+            <button id="searchButton" class="chat-send">ค้นหา</button>
+            <div id="chatsearch"> </div>
+        </div>
+        <!-- หน้าต่างแก้ไขโปรไฟล์ -->
+        <div id="editProfileModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <!-- เนื้อหาหน้าต่างแก้ไขโปรไฟล์ -->
+                <div class="container2">
+                    <h2>แก้ไขโปรไฟล์</h2>
+                    <!-- ฟอร์มแก้ไขโปรไฟล์ -->
+                    <form id="editProfileForm">
+                        <img src="" id="profilePicPreview" alt="Profile Picture Preview"
+                            style="max-width: 100px; max-height: 100px; margin: 20px auto; border-radius: 50%; object-fit: cover;">
+                        <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+
+                        <!-- เพิ่มปุ่มสำหรับเปลี่ยนภาพโปรไฟล์ -->
+                        <label for="username" style="font-size: larger;">ชื่อผู้ใช้ :</label>
+                        <input type="text" id="usernamePreview" name="username"></input>
+                        <h4 id="userID"></h4>
+                        <h4 id="email"></h4>
+                        <h4 id="date"></h4>
+                        <input type="submit" value="Save" id="save" class="save"></input>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--หน้าเเชท-->
+    <div class="card" id="card" style="display: none;">
+        <div class="modal-content" id="content" style="display: none; position: absolute;">
+            <span class="closec">&times;</span>
+            <div class="container2">
+                <h2>หน้าโปรไฟล์</h2>
+                <form id="editProfileForm">
+                    <img src="" id="profileUser" alt="Profile Picture Preview"
+                        style="max-width: 100px; max-height: 100px; margin: 20px auto; border-radius: 50%; object-fit: cover;">
+                    <h4 id="username"></h4>
+                    <h4 id="userIDc"></h4>
+                    <h4 id="emailc"></h4>
+                    <h4 id="datec"></h4>
+                </form>
+            </div>
+        </div>
+        <span class="closechat">&times;</span>
+        <div class="user-detail" id="detail">
+            <img class="user" id="showPrifile"
+                src="https://digitalmore.co/wp-content/uploads/2023/04/50-Cute-anime-01.jpg" alt="">
+            <h4 id="showUsername">คุณใครเนี่ย ?</h4>
+
+        </div>
+        <div id="render" class="renderchat">
+        </div>
+        <div class="sendmsg">
+
+            <button id="btnSend" class="btn-primary">ส่ง</button>
+            <input id="txtMsg" class="form-control" placeholder="Message..." type="text">
+        </div>
+        
+    </div>
+
+    <script type="module" defer>
+        /*
+
+chat (collection)
+    userAccountID (document)
+        oppositeUserAccountID-oppositeUserAccountID (document) (เริ่มบทสนทนาครั้งแรก)
+            1 (field) (ข้อความแรก)
+                message: (string) (ข้อความ)
+                senderName: (string) (ชื่อผู้ส่งข้อความ)
+            
+        oppositeUserAccountID-oppositeUserAccountID (document) (บทสนทนาอื่นๆ)
+            random6Digits (field) (จำนวนสุ่ม 6 หลัก)
+                message: (string) (ข้อความ)
+                senderName: (string) (ชื่อผู้ส่งข้อความ)
+
+
+        // เพิ่มข้อมูลบัญชีผู้ใช้ลงใน Firestore
+                await addDoc(collection(db, "users"), {
+                    username: username,
+                    email: email,
+                    password: password,
+                    id: userID,
+                    picture: picture,
+                    created_at: serverTimestamp() // เพิ่ม timestamp ปัจจุบันเป็นวันที่สร้างบัญชี
+                });
+        */
+        import { initializeApp, } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, setDoc, serverTimestamp, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { updateDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-storage.js"; // เพิ่มการนำเข้า Firebase Storage API
+        import { getDatabase, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVzawA_NDnkqCHKerT2Gcg4zO9yohWx3U",
+            authDomain: "pangpone-1372b.firebaseapp.com",
+            databaseURL: "https://pangpone-1372b-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "pangpone-1372b",
+            storageBucket: "pangpone-1372b.appspot.com",
+            messagingSenderId: "911442011016",
+            appId: "1:911442011016:web:8434ea79964ceab63a903d",
+            measurementId: "G-S144W2V9SG"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const firestore = getFirestore(app);
+        const storage = getStorage(app); // เพิ่มบรรทัดนี้
+
+
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            // เมื่อหน้าเว็บโหลดเสร็จสมบูรณ์
+            const usergmtemp = localStorage.getItem('userEmail')
+
+            // ดำเนินการโหลดข้อมูลผู้ใช้จากฐานข้อมูล
+            await loadAllUsersData();
+            await loadUsersData(usergmtemp);
+            //โหลดห้องเเชท
+            await loadChatrooms(userDatagm);
+
+
+            doSomethingAfterLoadUsersData();
+
+        });
+
+        let usersData = []; // สร้างตัวแปรที่เป็น global เพื่อเก็บข้อมูลผู้ใช้
+
+        async function loadAllUsersData() {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'users'));
+                let count = 0; // เพิ่มตัวแปรนับจำนวนบัญชีที่เพิ่มเข้า usersData
+
+                querySnapshot.forEach((userDoc) => {
+                    if (count < 2) { // ใส่ค่าโปรไฟล์เเนะนำที่ต้องการ
+                        const userData = userDoc.data();
+                        const { username, email, password, accoutpp, picture, created_at } = userData;
+                        const id = userDoc.id; // ดึง UUID ของเอกสาร (document) ออกมา
+
+                        // เพิ่มอ็อบเจกต์ผู้ใช้ลงในอาร์เรย์พร้อม UUID
+                        if (email !== localStorage.getItem('userEmail')) {
+                            usersData.push({
+                                username: username,
+                                email: email,
+                                password: password,
+                                accoutpp: accoutpp,
+                                picture: picture,
+                                created_at: new Date(created_at.seconds * 1000 + created_at.nanoseconds / 1000000),
+                                id: id // เพิ่ม UUID ลงในอ็อบเจกต์ผู้ใช้
+                            });
+                            count++; // เพิ่มจำนวนบัญชีที่เพิ่มเข้า usersData
+                        }
+                    } else {
+                        return; // หยุดการทำงานเมื่อเกิน 3 บัญชี
+                    }
+                });
+            } catch (error) {
+                console.error('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้:', error);
+            }
+        }
+
+
+
+        console.log("ข้อมูลของทุกคน สุ่มมา :", usersData)
+
+        let userDatagm = [];
+
+        async function loadUsersData(usergmtemp) {
+            try {
+                userDatagm = []; // เคลียร์ข้อมูลใน userDatagm เพื่อให้แน่ใจว่าข้อมูลเป็นข้อมูลล่าสุดที่ถูกโหลดมา
+
+                const querySnapshot = await getDocs(collection(db, 'users'));
+                querySnapshot.forEach((userDoc) => {
+                    const userData = userDoc.data();
+                    const { username, email, password, accoutpp, picture, created_at } = userData;
+                    const id = userDoc.id;
+
+                    // ตรวจสอบว่าเป็นเจ้าของอีเมล์หรือไม่ก่อนที่จะเพิ่มข้อมูลเข้าไปใน usersData
+                    if (usergmtemp && email === usergmtemp) {
+                        // เพิ่มเฉพาะข้อมูลของเจ้าของอีเมล์เท่านั้น
+                        userDatagm.push({
+                            username: username,
+                            email: email,
+                            password: password,
+                            accoutpp: accoutpp,
+                            picture: picture,
+                            created_at: new Date(created_at.seconds * 1000 + created_at.nanoseconds / 1000000),
+                            id: id
+                        });
+                    }
+                });
+
+                if (usergmtemp && userDatagm.length === 0) {
+                    console.log('ไม่พบข้อมูลผู้ใช้ที่มีรหัสผู้ใช้ที่เก็บไว้ใน localStorage');
+                }
+            } catch (error) {
+                console.error('เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้:', error);
+            }
+        }
+
+
+
+
+        // ตัวจับเหตุการณ์ปุ่มออกจากระบบ
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => {
+                // กลับไปที่หน้าเข้าสู่ระบบหรือจัดการออกจากระบบเรียบร้อย
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('เกิดข้อผิดพลาดในการออกจากระบบ:', error);
+            });
+        });
+        //เเสดงผลโปรไฟลืผู้ใช้
+        document.getElementById('save').addEventListener('click', async (event) => {
+            event.preventDefault(); // ป้องกันรีเฟรชหน้าเว็บ
+
+            const newUsername = document.getElementById('usernamePreview').value; // ค่าชื่อใหม่ที่ผู้ใช้ป้อน
+            const selectedFile = document.getElementById('profilePicInput').files[0]; // ไฟล์ภาพที่ผู้ใช้เลือก
+
+            try {
+                // ตรวจสอบว่า userDatagm ไม่ว่างเพื่อให้แน่ใจว่าข้อมูลผู้ใช้ถูกโหลดมาแล้ว
+                if (userDatagm.length > 0) {
+                    const currentUserEmail = localStorage.getItem('userEmail');
+                    const userToUpdate = userDatagm.find(user => user.email === currentUserEmail);
+
+                    if (userToUpdate) {
+                        console.log('พบข้อมูลผู้ใช้:', userToUpdate);
+
+                        if (selectedFile && selectedFile.name) {
+                            // อัปโหลดภาพโปรไฟล์ขึ้น Firebase Storage
+                            const storageRef = ref(storage, `profile/${selectedFile.name}`);
+                            const uploadTask = uploadBytes(storageRef, selectedFile);
+
+                            uploadTask.then(async (snapshot) => {
+                                console.log('อัปโหลดไฟล์เรียบร้อย:', snapshot);
+                                // ดึง URL ของภาพโปรไฟล์ที่อัปโหลด
+                                const downloadURL = await getDownloadURL(storageRef);
+
+                                // อัปเดต URL ของภาพโปรไฟล์ในข้อมูลผู้ใช้
+                                await updateProfilePicture(userToUpdate.id, downloadURL);
+
+                                // อัปเดตชื่อผู้ใช้ใน Firestore
+                                await updateUsername(userToUpdate.id, newUsername);
+
+                                // แสดงข้อความแจ้งเตือนหลังจากทำการอัปเดตข้อมูลเรียบร้อย
+                                alert("อัปเดตข้อมูลผู้ใช้เรียบร้อยแล้ว");
+
+                            }).catch((error) => {
+                                console.error("เกิดข้อผิดพลาดในการอัปโหลดภาพ:", error);
+                            });
+                        } else {
+                            // อัปเดตเฉพาะชื่อผู้ใช้เมื่อไม่มีการเลือกภาพ
+                            await updateUsername(userToUpdate.id, newUsername);
+                            alert("อัปเดตชื่อผู้ใช้เรียบร้อยแล้ว");
+                        }
+                    } else {
+                        console.log("ไม่พบข้อมูลผู้ใช้ที่ตรงกับ userEmail");
+                    }
+                } else {
+                    console.log('โปรดโหลดข้อมูลผู้ใช้ก่อนอัปเดต');
+                }
+            } catch (error) {
+                console.error('เกิดข้อผิดพลาดในการอัปเดตข้อมูลผู้ใช้:', error);
+            }
+
+        });
+
+        // ฟังก์ชันในการแสดงข้อมูลผู้ใช้ในหน้าต่างแก้ไขโปรไฟล์
+        document.getElementById('editProfileBtn').addEventListener('click', async () => {
+            // แสดงหน้าต่างแก้ไขโปรไฟล์
+            console.log("เเก้ไขหน้าต่างโปรไฟล์  ชื่อผู้ใช้บัญชี", userDatagm[0].username, "รหัสประจำบัญชี", userDatagm[0].accoutpp);
+            editProfileModal.style.display = 'block';
+            // เพิ่มการป้องกันการส่งคำสั่งฟอร์ม
+            document.body.style.overflow = 'hidden'; // ป้องกันการเลื่อนหน้า
+            // โหลดข้อมูลผู้ใช้ใหม่ก่อนอัปเดตโปรไฟล์
+            const usergmtemp = localStorage.getItem('userEmail');
+            await loadUsersData(usergmtemp);
+            // อัปเดตข้อมูลผู้ใช้ในหน้าต่างแก้ไขโปรไฟล์
+            updateProfileModal();
+        });
+
+        // ฟังก์ชันในการอัปเดตข้อมูลผู้ใช้ในหน้าต่างแก้ไขโปรไฟล์
+        function updateProfileModal() {
+            const usernamePreviewInput = document.getElementById('usernamePreview');
+            const profilePicPreview = document.getElementById('profilePicPreview');
+            const userID = document.getElementById('userID');
+            const date = document.getElementById('date');
+            const email = document.getElementById('email');
+
+            // เข้าถึงข้อมูลผู้ใช้ภายนอกฟังก์ชัน
+            if (userDatagm.length > 0) {
+                usernamePreviewInput.value = userDatagm[0].username;
+                profilePicPreview.src = userDatagm[0].picture;
+                userID.textContent = "uid : " + userDatagm[0].accoutpp;
+                email.textContent = "email : " + userDatagm[0].email;
+                date.textContent = "date : " + userDatagm[0].created_at.toLocaleString();
+
+            } else {
+                console.log('ไม่พบข้อมูลผู้ใช้');
+            }
+        }
+
+        async function updateUsername(userId, newUsername) {
+            const userDocRef = doc(db, "users", userId);
+            await updateDoc(userDocRef, {
+                username: newUsername
+            });
+
+            console.log("ชื่อผู้ใช้ได้รับการอัปเดตเรียบร้อยแล้ว");
+        }
+
+
+        async function updateProfilePicture(userId, downloadURL) {
+            const userDocRef = doc(db, "users", userId);
+            await updateDoc(userDocRef, {
+                picture: downloadURL
+            });
+            console.log("URL ของภาพโปรไฟล์ได้รับการอัปเดตเรียบร้อยแล้ว");
+        }
+
+        // คำสั่งในการเพิ่มปุ่มสำหรับการเลือกภาพโปรไฟล์
+        const changeProfilePicBtn = document.getElementById('profilePicPreview');
+        const profilePicInput = document.getElementById('profilePicInput');
+
+        changeProfilePicBtn.addEventListener('click', () => {
+            profilePicInput.click(); // คลิกที่ input เพื่อเปิดตัวเลือกไฟล์
+        });
+
+        // ตัวจับเหตุการณ์เมื่อผู้ใช้เลือกภาพใหม่
+        profilePicInput.addEventListener('change', (event) => {
+            const file = event.target.files[0]; // ดึงไฟล์ที่เลือกออกมา
+            const reader = new FileReader(); // สร้าง FileReader object เพื่ออ่านไฟล์
+
+            reader.onload = function () {
+                // เมื่ออ่านไฟล์เสร็จสิ้น
+                const profilePicPreview = document.getElementById('profilePicPreview');
+                profilePicPreview.src = reader.result; // กำหนด src ของรูปภาพใหม่ให้กับ element ที่แสดงตัวอย่างภาพโปรไฟล์
+                const imguser = document.getElementById('imguser');
+                imguser.src = reader.result;
+            }
+
+            if (file) {
+                // อ่านไฟล์เป็น URL data
+                reader.readAsDataURL(file);
+            }
+        });
+
+        /**               สำหรับหน้าต่างเเก้ไขโปรไฟล์               */
+        // สร้างตัวแปรสำหรับหน้าต่างแก้ไขโปรไฟล์
+        const editProfileModal = document.getElementById('editProfileModal');
+
+        // สร้างตัวแปรสำหรับปุ่มปิด
+        const closeButton = document.querySelector('.close');
+
+        // ตัวจับเหตุการณ์เมื่อผู้ใช้คลิกที่ปุ่มปิด
+        closeButton.addEventListener('click', () => {
+            // ปิดหน้าต่างแก้ไขโปรไฟล์
+            editProfileModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        // ตัวจับเหตุการณ์เมื่อผู้ใช้คลิกที่พื้นหลังเพื่อปิดหน้าต่าง
+        window.addEventListener('click', (event) => {
+            if (event.target === editProfileModal) {
+                // ปิดหน้าต่างแก้ไขโปรไฟล์เมื่อคลิกที่พื้นหลัง
+                editProfileModal.style.display = 'none';
+                // คืนค่าการเลื่อนหน้าให้เป็นปกติ
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        //เเสดงโปรไฟลืคนที่เเนะนำ
+        function displayUserDataforrandom(searchResults) {
+            try {
+                // สร้าง div สำหรับแสดงข้อมูลผู้ใช้แต่ละคน
+                const userDiv = document.createElement('div');
+                userDiv.classList.add('user');
+
+                // สร้าง element เพื่อแสดงภาพโปรไฟล์
+                const profilePicElement = document.createElement('img');
+                profilePicElement.src = searchResults.picture;
+                profilePicElement.alt = 'Profile Picture';
+                profilePicElement.classList.add('profile-pic');
+                userDiv.appendChild(profilePicElement);
+
+                // สร้าง element เพื่อแสดงชื่อผู้ใช้
+                const usernameElement = document.createElement('p');
+                usernameElement.textContent = searchResults.username;
+                usernameElement.classList.add('username');
+                userDiv.appendChild(usernameElement);
+
+                // เพิ่มตัวฟังก์ชันที่จะทำงานเมื่อคลิกที่ชื่อผู้ใช้
+                userDiv.addEventListener('click', () => {
+                    // แสดงหน้าต่างแชทสำหรับผู้ใช้นี้
+                    openChatWindow(searchResults);
+                });
+
+                // เพิ่ม div ที่มีข้อมูลผู้ใช้ลงในส่วนของ chatroomList
+                const chatroomList = document.getElementById('chatMessages');
+                chatroomList.appendChild(userDiv);
+            } catch (error) {
+                // แจ้งเตือนผู้ใช้เมื่อมีข้อผิดพลาดเกิดขึ้น
+                console.error('เกิดข้อผิดพลาดในการแสดงข้อมูลผู้ใช้:', error);
+                alert('เกิดข้อผิดพลาดในการแสดงข้อมูลผู้ใช้');
+            }
+        }
+
+
+        // สุ่มเลือกผู้ใช้คนจาก usersData
+        function getRandomUsers(usersData, numUsers, currentUserID) {
+            let selectedUsers = [];
+
+            while (selectedUsers.length < numUsers) {
+                // กรองผู้ใช้ที่ไม่ใช่ผู้ใช้ปัจจุบันและไม่ได้ถูกเลือกไว้แล้ว
+                const filteredUsers = usersData.filter(user => user.id !== currentUserID && !selectedUsers.includes(user));
+
+                // ถ้าไม่มีผู้ใช้ที่เหลือในรายการที่กรองแล้ว ให้หยุดการทำงาน
+                if (filteredUsers.length === 0) break;
+
+                // เลือกผู้ใช้สุ่มจากรายการที่กรองแล้ว
+                const randomIndex = Math.floor(Math.random() * filteredUsers.length);
+                const selectedUser = filteredUsers[randomIndex];
+
+                // เพิ่มผู้ใช้ที่ถูกสุ่มได้เข้าสู่รายการผู้ใช้ที่เลือกแล้ว
+                selectedUsers.push(selectedUser);
+            }
+
+            return selectedUsers;
+        }
+
+        // แสดงผู้ใช้ที่สุ่มมา
+        async function doSomethingAfterLoadUsersData() {
+            //console.log("f(doSomethingAfterLoadUsersData) run")
+            const imguser = document.getElementById('imguser');
+
+            imguser.src = userDatagm[0].picture;
+            // หากมีผู้ใช้น้อยกว่า 3 คน ให้แสดงทั้งหมด
+            const numUsersToShow = Math.min(usersData.length, usersData.length);
+
+            // เลือกผู้ใช้สุ่ม
+            const randomUsers = getRandomUsers(usersData, numUsersToShow);
+
+            // แสดงข้อมูลของผู้ใช้ที่สุ่มมา
+
+            randomUsers.forEach(user => {
+                displayUserDataforrandom(user);
+            });
+
+        }
+        //สร้างเเถบข้อมูลในเเชทลิส  กรณีเเอดเพื่อนกัน
+        function createUserElement(userData) {
+            const userElement = document.createElement('div');
+            userElement.classList.add('user');
+
+            const profilePicElement = document.createElement('img');
+            profilePicElement.src = userData.picture;
+            profilePicElement.alt = 'Profile Picture';
+            profilePicElement.classList.add('profile-pic');
+            userElement.appendChild(profilePicElement);
+
+            const usernameElement = document.createElement('p');
+            usernameElement.textContent = userData.username;
+            usernameElement.classList.add('username');
+            userElement.appendChild(usernameElement);
+
+            userElement.addEventListener('click', () => {
+                openChatWindow(userData);
+            });
+
+            return userElement;
+        }
+
+        // เพิ่ม event listener สำหรับปุ่มค้นหา
+        document.getElementById('searchButton').addEventListener('click', async function () {
+            const searchInput = document.getElementById('messageInput').value.trim(); // รับข้อมูลที่ผู้ใช้ป้อนและตัดช่องว่างด้านหน้าและด้านหลัง
+
+            // ตรวจสอบว่าผู้ใช้ป้อนข้อมูลหรือไม่
+            if (searchInput !== '') {
+                // เรียกใช้ฟังก์ชันสำหรับค้นหาผู้ใช้
+                await searchUsers(searchInput);
+            } else {
+                // แสดงการแจ้งเตือนว่าต้องการป้อนข้อมูลก่อนค้นหา
+                alert('โปรดป้อนข้อมูลก่อนค้นหา');
+            }
+        });
+
+        // ฟังก์ชันสำหรับค้นหาผู้ใช้
+        async function searchUsers(searchInput) {
+            try {
+                const usersRef = collection(db, 'users');
+                const querySnapshot = await getDocs(query(usersRef, orderBy('username')));
+
+                const searchResults = []; // เก็บผลลัพธ์การค้นหา
+
+                querySnapshot.forEach((userDoc) => {
+                    const userData = userDoc.data();
+                    const username = userData.username;
+
+                    // ตรวจสอบว่าชื่อผู้ใช้ในฐานข้อมูลเริ่มต้นด้วยคำค้นหาที่ผู้ใช้ป้อนหรือไม่
+                    if (username.startsWith(searchInput)) {
+                        searchResults.push(userData);
+                    }
+                });
+
+                // ให้ค้นหาผู้ใช้ที่อยู่ใกล้เคียงที่สุดกับคำค้นหา
+                if (searchResults.length === 0) {
+                    const querySnapshotNearby = await getDocs(query(usersRef, orderBy('username').startAt(searchInput).endAt(searchInput + '\uf8ff')));
+
+                    querySnapshotNearby.forEach((userDoc) => {
+                        const userData = userDoc.data();
+                        const { username, email, password, accoutpp, picture, created_at, id } = userData;
+
+                        // เพิ่มข้อมูลลงในอาร์เรย์เหมือนที่ระบุไว้
+                        searchResults.push({
+                            username: username,
+                            email: email,
+                            password: password,
+                            accoutpp: accoutpp,
+                            picture: picture,
+                            created_at: new Date(created_at.seconds * 1000 + created_at.nanoseconds / 1000000),
+                            id: id
+                        });
+                    });
+                }
+
+                // แสดงผลลัพธ์การค้นหาที่ได้ในตัวแปร searchResults
+                // displaySearchResults(searchResults);
+                displayUserData(searchResults);
+
+            } catch (error) {
+                console.error('เกิดข้อผิดพลาดในการค้นหาผู้ใช้:', error);
+                alert("ไม่พบผู้ใช้ที่ท่านค้นหา");
+
+            }
+        }
+        //เเสดงผล  ผลการค้นหา
+        function displayUserData(searchResults) {
+            try {
+                searchResults.forEach(result => { // วนลูปผลลัพธ์การค้นหาทั้งหมด
+                    // สร้าง div สำหรับแสดงข้อมูลผู้ใช้แต่ละคน
+
+                    const userDiv = document.createElement('div');
+                    userDiv.classList.add('user');
+
+                    // สร้าง element เพื่อแสดงภาพโปรไฟล์
+                    const profilePicElement = document.createElement('img');
+                    profilePicElement.src = result.picture; // เข้าถึงภาพโปรไฟล์จาก result
+                    profilePicElement.alt = 'Profile Picture';
+                    profilePicElement.classList.add('profile-pic');
+                    userDiv.appendChild(profilePicElement);
+
+                    // สร้าง element เพื่อแสดงชื่อผู้ใช้
+                    const usernameElement = document.createElement('p');
+                    usernameElement.textContent = result.username; // เข้าถึงชื่อผู้ใช้จาก result
+                    usernameElement.classList.add('username');
+                    userDiv.appendChild(usernameElement);
+
+                    // เพิ่มตัวฟังก์ชันที่จะทำงานเมื่อคลิกที่ชื่อผู้ใช้
+                    userDiv.addEventListener('click', () => {
+                        // แสดงหน้าต่างแชทสำหรับผู้ใช้นี้
+                        openChatWindow(result);
+                    });
+
+                    // เพิ่ม div ที่มีข้อมูลผู้ใช้ลงในส่วนของ chatroomList
+                    const chatroomList = document.getElementById('chatsearch');
+                    chatroomList.innerHTML = ''; // ลบเนื้อหาภายใน chatsearch ทั้งหมด
+                    chatroomList.appendChild(userDiv);
+                });
+            } catch (error) {
+                // แจ้งเตือนผู้ใช้เมื่อเกิดข้อผิดพลาด
+                console.error('เกิดข้อผิดพลาดในการแสดงข้อมูลผู้ใช้:', error);
+                alert('เกิดข้อผิดพลาดในการแสดงข้อมูลผู้ใช้');
+            }
+        }
+
+        // สร้างข้อมูลในฐานข้อมูล กรณีคลิ๊กโปรไฟลืเพื่อเเอดเพื่อน
+        async function loadChatrooms(userData) {
+            const chatroomList = document.getElementById('chatroomList');
+            chatroomList.innerHTML = ''; // เคลียร์ห้องแชทก่อนหน้า
+
+            try {
+                // คิวรี่ห้องแชทของผู้ใช้จาก Firestore
+                //console.log(userData[0].accoutpp)
+                const userChatRef = doc(db, 'chat', userData[0].accoutpp);
+                const userChatSnapshot = await getDoc(userChatRef);
+
+                // ตรวจสอบว่ามีห้องแชทหรือไม่
+                /*if (userChatSnapshot.exists()) {
+                    chatroomList.innerHTML = '<p>ยังไม่มีห้องแชท</p>';
+                    return;
+                }*/
+
+                const chatroomsData = userChatSnapshot.data();
+
+                // วนลูปเพื่อสร้างองค์ประกอบสำหรับแสดงรายชื่อห้องแชท
+                for (const chatroomId in chatroomsData) {
+                    if (Object.hasOwnProperty.call(chatroomsData, chatroomId)) {
+                        const oppositeUserId = chatroomId.substring(chatroomId.lastIndexOf('-') + 1); // ดึง ID ของผู้ใช้จาก ID ของห้องแชท
+                        console.log(oppositeUserId)
+                        // เรียกใช้ฟังก์ชันเพื่อดึงข้อมูลผู้ใช้จาก ID ที่ได้
+                        const oppositeUserData = await getUserDataFromId(oppositeUserId);
+
+                        // สร้าง element สำหรับแสดงข้อมูลห้องแชท
+                        const chatroomElement = document.createElement('div');
+                        chatroomElement.classList.add('chatroomuser'); // เปลี่ยนชื่อคลาสเป็น 'chatroomuser'
+
+                        // แสดงข้อมูลโปรไฟล์และชื่อผู้ใช้ในแถวเดียวกัน
+                        const profilechatlist = document.createElement('img');
+                        profilechatlist.src = oppositeUserData.picture;
+                        chatroomElement.appendChild(profilechatlist);
+
+                        const userProfileElement = document.createElement('div');
+                        userProfileElement.textContent = `${oppositeUserData.username}`;
+                        chatroomElement.appendChild(userProfileElement);
+
+                        chatroomList.appendChild(chatroomElement);
+
+                        chatroomElement.addEventListener('click', () => {
+                            openChatRoom(oppositeUserData);
+                            console.log(oppositeUserData)
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('เกิดข้อผิดพลาดในการโหลดห้องแชท:', error);
+            }
+        }
+
+        // สร้างข้อมูลในฐานข้อมูล กรณีคลิ๊กโปรไฟลืเพื่อเเอดเพื่อน
+        async function openChatWindow(userData) {
+            if (userData && userDatagm) { // เพิ่มการตรวจสอบ userDatagm
+                const chatroomList = document.getElementById('chatroomList');
+
+                console.log("ลบการเเสดงผล")
+                // ตรวจสอบว่าไม่ใช่การคลิกที่โปรไฟล์ของผู้ใช้เอง
+                if (userData.email !== userDatagm[0].email) {
+                    const roomName = `${userDatagm[0].accoutpp}-${userData.accoutpp}`;
+                    const Nameroom = `${userData.accoutpp}-${userDatagm[0].accoutpp}`;
+                    console.log('ห้องแชทระหว่าง: ', roomName);
+
+                    // ตรวจสอบว่ามีห้องแชทระหว่างผู้ใช้ทั้งสองคนอยู่ในฐานข้อมูลหรือไม่
+                    const chatRoomsRef = collection(db, 'chat');
+                    const userChatRef = doc(chatRoomsRef, userDatagm[0].accoutpp);
+                    const userChatSnapshot = await getDoc(userChatRef);
+
+                    if (userChatSnapshot.exists() && userChatSnapshot.data().hasOwnProperty(roomName)) {
+                        alert("คุณมีห้องแชทกับผู้ใช้คนนี้แล้ว");
+                        // แสดงข้อความบอกว่าคุณมีห้องแชทกับผู้ใช้คนนี้แล้ว หรืออื่นๆ ตามที่คุณต้องการจะทำ
+                    } else {
+                        // หากยังไม่มีห้องแชทระหว่างผู้ใช้ทั้งสองคนในฐานข้อมูล
+                        // ให้ทำการอัปเดตค่าในฐานข้อมูลของผู้ใช้ทั้งสองคนเพื่อเพิ่มห้องแชทใหม่
+                        //const userDataRef = doc(chatRoomsRef, userData.accoutpp);
+                        const currentUserRef = doc(chatRoomsRef, userDatagm[0].accoutpp);
+
+
+                        await setDoc(currentUserRef, {
+                            [roomName]: {}
+                        }, { merge: true });  // อัปเดตหรือเพิ่มค่าในฐานข้อมูลโดยไม่แทนที่ค่าเดิม
+
+                        /*await setDoc(userDataRef, {
+                             [Nameroom]: {}
+                         }, { merge: true });*/ // อัปเดตหรือเพิ่มค่าในฐานข้อมูลโดยไม่แทนที่ค่าเดิม
+
+                        console.log('เปิดห้องแชทสำหรับผู้ใช้:', userData.username, "กับคุณ", userDatagm[0].username);
+
+                        // สร้างองค์ประกอบของผู้ใช้และเพิ่มไปยัง chatroomList
+                        /*const userElement = createUserElement(userData);
+                        chatroomList.appendChild(userElement);*/
+                        await loadChatrooms(userDatagm); // แก้ไขการเรียกใช้ฟังก์ชัน
+                        // ทำการเปิดหน้าต่างแชทสำหรับผู้ใช้ที่ถูกคลิก
+                        //openChatRoom(chatRoomName);
+
+
+                    }
+                } else {
+                    alert("คุณไม่สามารถเริ่มการแชทกับตัวเองได้");
+                }
+            } else {
+                console.log('ไม่มีข้อมูลผู้ใช้ที่เลือก');
+            }
+        }
+
+        //เเสดงผลโปรไฟล์
+        async function getUserDataFromId(userId) {
+            try {
+                const userDatatemp = []; // เก็บข้อมูลผู้ใช้ที่ได้จากการค้นหา
+
+                const querySnapshot = await getDocs(collection(db, 'users'));
+                querySnapshot.forEach((userDoc) => {
+                    const userData = userDoc.data();
+                    const { username, email, password, accoutpp, picture, created_at } = userData;
+                    const id = userDoc.id;
+
+                    // ตรวจสอบว่าเป็นผู้ใช้ที่ต้องการหรือไม่
+                    if (accoutpp === userId) {
+                        // เพิ่มข้อมูลผู้ใช้ที่ตรงกับ userId เข้าใน userDatatemp
+                        userDatatemp.push({
+                            username: username,
+                            email: email,
+                            password: password,
+                            accoutpp: accoutpp,
+                            picture: picture,
+                            created_at: new Date(created_at.seconds * 1000 + created_at.nanoseconds / 1000000),
+                            id: id
+                        });
+                    }
+                });
+
+                if (userDatatemp.length > 0) {
+                    // ค้นพบข้อมูลผู้ใช้ ส่งกลับข้อมูล
+                    return userDatatemp[0]; // เรียกใช้ข้อมูลผู้ใช้ที่อยู่ที่ index 0 เนื่องจาก userId เป็น unique
+                } else {
+                    console.log(`ไม่พบข้อมูลผู้ใช้สำหรับ ID: ${userId}`);
+                    return null;
+                }
+            } catch (error) {
+                console.error(`เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้สำหรับ ID: ${userId}`, error);
+                return null;
+            }
+        }
+
+        async function openChatRoom(oppositeUserData) {
+            const menu = document.getElementById('menu');
+            const chatContainer = document.getElementById('card');
+            const roomName = `${userDatagm[0].accoutpp}-${oppositeUserData.accoutpp}`;
+            const nameRoom = `${oppositeUserData.accoutpp}-${userDatagm[0].accoutpp}`;
+            // ทำการเปิดหน้าต่างแชทโดยใช้ชื่อห้องแชท
+            chatContainer.style.display = 'block';
+            menu.style.display = 'none';
+
+            txtMsg.addEventListener('keypress', async (e) => {
+                if (e.key === 'Enter') {
+                    await sendMessage(roomName);
+                }
+            });
+
+            const currentUserRef = doc(db, `chat/${userDatagm[0].accoutpp}`);
+            const userDataRef = doc(db, `chat/${oppositeUserData.accoutpp}`);
+
+            let latestIndex = 0;
+
+
+
+            // เพิ่มข้อมูลเมื่อไม่มีข้อมูลในฐานข้อมูล
+            checkAndAddChatData(currentUserRef, userDataRef, roomName, nameRoom, userDatagm, oppositeUserData)
+                .then(() => {
+                    // หากต้องการดำเนินการเพิ่มเติมหลังจากตรวจสอบและเพิ่มข้อมูล
+                    // สามารถทำต่อได้ที่นี่
+                })
+                .catch((error) => {
+                    console.error("Error checking and adding chat data:", error);
+                });
+
+
+            async function sendMessage() {
+                const roomName = `${userDatagm[0].accoutpp}-${oppositeUserData.accoutpp}`;
+                const nameRoom = `${oppositeUserData.accoutpp}-${userDatagm[0].accoutpp}`;
+                const currentUserRef = doc(db, `chat/${userDatagm[0].accoutpp}`);
+                const userDataRef = doc(db, `chat/${oppositeUserData.accoutpp}`);
+                // ดึงข้อมูลลำดับตัวเลขล่าสุดในห้องแชท
+                const currentUserDoc = await getDoc(currentUserRef);
+                const userDataDoc = await getDoc(userDataRef);
+
+                if (currentUserDoc.exists()) {
+                    const currentUserData = currentUserDoc.data();
+                    const userRoomData = currentUserData[roomName];
+                    if (userRoomData) {
+                        latestIndex = Object.keys(userRoomData).length;
+
+                    }
+                }
+
+                if (userDataDoc.exists()) {
+                    const userData = userDataDoc.data();
+                    const oppositeRoomData = userData[nameRoom];
+                    if (oppositeRoomData) {
+                        latestIndex = Math.max(latestIndex, Object.keys(oppositeRoomData).length);
+                    }
+                }
+
+                console.log(latestIndex)
+                // เพิ่มค่าลำดับตัวเลขใหม่
+                const newIndex = latestIndex + 1;
+                let userID = newIndex.toString();
+                console.log(userID)
+
+                const txtMsg = document.querySelector('#txtMsg');
+                const user = userDatagm[0].username;
+
+                if (txtMsg.value.trim() !== '') {
+                    try {
+                        const currentUserRef = doc(db, `chat/${userDatagm[0].accoutpp}`);
+                        const userDataRef = doc(db, `chat/${oppositeUserData.accoutpp}`);
+
+                        await setDoc(currentUserRef, {
+                            [roomName]: {
+                                [userID]: {
+                                    username: user,
+                                    msg: txtMsg.value
+                                }
+                            }
+                        }, { merge: true });
+
+                        await setDoc(userDataRef, {
+                            [nameRoom]: {
+                                [userID]: {
+                                    username: user,
+                                    msg: txtMsg.value
+                                }
+                            }
+                        }, { merge: true });
+
+                        txtMsg.value = '';
+                        // อัพเดตค่า latestIndex เมื่อมีการเพิ่มข้อมูลในห้องแชท
+                        latestIndex = newIndex;
+                    } catch (error) {
+                        console.error('Error sending message:', error);
+                    }
+                }
+                await openchat(oppositeUserData);
+            }
+
+            await openchat(oppositeUserData);
+        }
+
+        async function openchat(oppositeUserData) {
+            const roomName = `${userDatagm[0].accoutpp}-${oppositeUserData.accoutpp}`;
+            const roomRef = doc(db, `chat/${userDatagm[0].accoutpp}`);
+
+            onSnapshot(roomRef, (docSnapshot) => {
+                const data = docSnapshot.data();
+                console.log(data)
+                if (data && data.hasOwnProperty(roomName)) {
+                    const roomData = data[roomName];
+                    let html = '';
+
+                    for (const key in roomData) {
+                        if (Object.hasOwnProperty.call(roomData, key)) {
+                            const message = roomData[key];
+                            const sender = message.username;
+                            const messageContent = message.msg || '';
+                            const senderProfile = oppositeUserData.picture || 'https://cdn.pixabay.com/photo/2021/11/24/05/19/user-6820232_640.png';
+                            const senderName = oppositeUserData.username || 'Unknown';
+                            const senderProfileU = userDatagm[0].picture || 'https://cdn.pixabay.com/photo/2021/11/24/05/19/user-6820232_640.png';
+                            const usernamee = document.getElementById('showUsername');
+                            const profilee = document.getElementById('showPrifile');
+
+                            if (sender !== userDatagm[0].username.trim()) {
+                                html += `<div class="chat-incoming">
+                            <img class="user" src="${senderProfile}" alt="">
+                            <span>${senderName}: ${messageContent}</span>
+                        </div>`;
+                            } else {
+                                html += `<div class="chat-outcoming">
+                            <span>${messageContent}</span>
+                            <img class="user" src="${senderProfileU}" alt="">
+                        </div>`;
+                            }
+
+                            // ตรวจสอบว่า element มีค่า null หรือไม่
+                            if (usernamee && profilee) {
+                                usernamee.textContent = oppositeUserData.username;
+                                profilee.src = oppositeUserData.picture;
+                            }
+                            //เลื่อนลงล่างสุด
+                            const chatContainer = document.getElementById('render');
+                            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                        }
+                    }
+
+                    document.querySelector('#render').innerHTML = html;
+                } else {
+                    console.log("ไม่มีห้องแชทที่กำลังพยายามเข้าถึงในฐานข้อมูล.");
+                }
+            });
+            document.getElementById('showPrifile').addEventListener('click', () => {
+                const content = document.getElementById('content');
+                const closec = document.querySelector('.closec');
+                const profileUser = document.getElementById('profileUser');
+                const username = document.getElementById('username');
+                const userIDc = document.getElementById('userIDc');
+                const datec = document.getElementById('datec');
+                const emailc = document.getElementById('emailc');
+
+                profileUser.src = oppositeUserData.picture;
+                username.textContent = "ชื่อผู้ใช้ : " + oppositeUserData.username;
+                userIDc.textContent = "รหัสประจำบัญชี : " + oppositeUserData.accoutpp;
+                emailc.textContent = "อีเมล : " + oppositeUserData.email;
+                datec.textContent = "วันที่สร้าง : " + oppositeUserData.created_at.toLocaleString();
+
+                content.style.display = 'block';
+
+                // ตัวจับเหตุการณ์เมื่อผู้ใช้คลิกที่ปุ่มปิด
+                closec.addEventListener('click', () => {
+                    // ปิดหน้าต่างแก้ไขโปรไฟล์
+                    content.style.display = 'none';
+                });
+            });
+        }
+
+        async function checkAndAddChatData(currentUserRef, userDataRef, roomName, nameRoom, userDatagm, oppositeUserData) {
+            // ดึงข้อมูลของห้องแชทของผู้ใช้ปัจจุบัน
+            const currentUserDoc = await getDoc(currentUserRef);
+            // ดึงข้อมูลของห้องแชทของผู้ใช้อีกฝ่าย
+            const userDataDoc = await getDoc(userDataRef);
+
+            // ตรวจสอบว่ามีข้อมูลในฐานข้อมูลหรือไม่
+            if (currentUserDoc.exists() && userDataDoc.exists()) {
+                // ดึงข้อมูลห้องแชทของผู้ใช้ปัจจุบัน
+                const currentUserData = currentUserDoc.data();
+                // ดึงข้อมูลห้องแชทของผู้ใช้อีกฝ่าย
+                const userData = userDataDoc.data();
+
+                // ตรวจสอบว่ามีข้อมูลในห้องแชทของผู้ใช้ปัจจุบันหรือไม่
+                if (currentUserData[roomName] && userData[nameRoom]) {
+                    // ถ้ามีข้อมูลอยู่แล้ว ให้แจ้งเตือนผู้ใช้ว่าข้อมูลมีอยู่แล้ว
+                    console.log("ข้อมูลที่พยายามเพิ่มเข้าไปในฐานข้อมูลมีอยู่แล้ว.");
+                } else {
+                    // ถ้าไม่มีข้อมูลอยู่ ให้เพิ่มข้อมูลใหม่
+                    const newUserMessage = {
+                        username: userDatagm[0].username,
+                        msg: "สวัสดี คุณ " + oppositeUserData.username
+                    };
+
+                    const newOppositeMessage = {
+                        username: userDatagm[0].username,
+                        msg: "สวัสดี คุณ " + oppositeUserData.username
+                    };
+
+                    // เพิ่มข้อมูลในห้องแชทของผู้ใช้ปัจจุบัน
+                    await setDoc(currentUserRef, { [roomName]: { ["1"]: newUserMessage } }, { merge: true });
+                    // เพิ่มข้อมูลในห้องแชทของผู้ใช้อีกฝ่าย
+                    await setDoc(userDataRef, { [nameRoom]: { ["1"]: newOppositeMessage } }, { merge: true });
+                }
+            }
+        }
+
+        // สร้างตัวแปรสำหรับหน้าต่างแก้ไขโปรไฟล์
+        const card = document.getElementById('card');
+        // สร้างตัวแปรสำหรับปุ่มปิด
+        const closeButtoncard = document.querySelector('.closechat');
+        // ตัวจับเหตุการณ์เมื่อผู้ใช้คลิกที่ปุ่มปิด
+        closeButtoncard.addEventListener('click', () => {
+            // ปิดหน้าต่างแก้ไขโปรไฟล์
+            card.style.display = 'none';
+            menu.style.display = 'block';
+            document.body.style.overflow = 'auto';
+        });
+
+        // ตัวจับเหตุการณ์เมื่อผู้ใช้คลิกที่พื้นหลังเพื่อปิดหน้าต่าง
+        window.addEventListener('click', (event) => {
+            if (event.target === card) {
+                // ปิดหน้าต่างแก้ไขโปรไฟล์เมื่อคลิกที่พื้นหลัง
+                card.style.display = 'none';
+                menu.style.display = 'block';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>

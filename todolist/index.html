@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-do List</title>
+    <style>
+      :root {
+        --main-color: #4caf50;
+        --text-color: #333;
+      }
+
+      body {
+        font-family: sans-serif;
+        background: #f2f2f2;
+        padding: 30px;
+        margin: 0;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 1400px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      @media (max-width: 768px) {
+        body {         
+          padding: 7px;
+        }
+
+        .container {
+          max-width: 1600px;
+        }
+      }
+
+      .todo-form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      #todo-input,
+      #todo-description {
+        flex: 1;
+        padding: 14px;
+        font-size: 1rem;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+      }
+
+      #add-btn {
+        padding: 14px 20px;
+        font-size: 1rem;
+        background-color: var(--main-color);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      #add-btn:hover {
+        background-color: #388e3c;
+      }
+
+      #todo-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      #todo-list li {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-direction: row;
+      }
+
+      #todo-list li > div:first-child {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .todo-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      button {
+        font-size: 1rem;
+        padding: 10px 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .completed {
+        text-decoration: line-through;
+        color: gray;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .modal-box {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 800px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        box-sizing: border-box;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .modal-box h2 {
+        margin: 0;
+        text-align: center;
+      }
+
+      .modal-box input[type='text'] {
+        padding: 12px;
+        font-size: 1.3rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .modal-box textarea {
+        padding: 12px;
+        font-size: 1.2rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .modal-box .modal-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .modal-box button {
+        flex: 1;
+        padding: 10px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        background-color: var(--main-color);
+        color: white;
+        transition: background-color 0.2s;
+      }
+
+      .modal-box button:hover {
+        background-color: #388e3c;
+      }
+
+      @keyframes pop {
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes check-pop {
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+        70% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @media (min-width: 768px) {
+        .modal-box input[type='text'] {
+          padding: 12px;
+          font-size: 1.6rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .modal-box textarea {
+          padding: 12px;
+          font-size: 1.6rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .modal-box button {
+          font-size: 1.75rem;
+        }
+
+        .container {
+          flex-direction: row;
+          justify-content: space-between;
+        }
+
+        .todo-left {
+          width: 45%;
+        }
+
+        .todo-right {
+          width: 50%;
+        }
+
+        #todo-input,
+        #add-btn,
+        #todo-description {
+          font-size: 1rem;
+        }
+
+        #todo-list li {
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .todo-actions button {
+          font-size: 1.1rem;
+        }
+
+        body {
+          font-size: 1.3rem;
+        }
+      }
+
+      .checkmark {
+        color: green;
+        font-size: 2rem;
+        animation: check-pop 0.4s ease;
+      }
+
+      .todo-text {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      .completed {
+        text-decoration: line-through;
+        color: gray;
+        position: relative;
+        animation: check-pop 0.3s ease;
+      }
+      body.night-mode {
+        background: #121212;
+        color: #747474;
+      }
+
+      body.night-mode .container {
+        background: #1e1e1e;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+      }
+
+      body.night-mode input,
+      body.night-mode select,
+      body.night-mode button {
+        background-color: #333333;
+        color: #f0f0f0;
+        border: 1px solid #555;
+      }
+
+      #themeToggleBtn {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 60px;
+        height: 60px;
+        background: white;
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: transform 0.3s ease, background-color 0.5s ease;
+        z-index: 1000;
+      }
+
+      #themeToggleBtn:active {
+        transform: translateX(20px);
+      }
+
+      body.night-mode #themeToggleBtn {
+        background: #333;
+        color: white;
+      }
+      body {
+        transition: background-color 0.5s ease, color 0.5s ease;
+      }
+
+      .container,
+      input,
+      select,
+      button {
+        transition: background-color 0.5s ease, color 0.5s ease,
+          border-color 0.5s ease;
+      }
+
+      .completed-text {
+        text-decoration: line-through;
+        color: gray;
+      }
+
+      #share-link a {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: #4e9af1;
+        text-decoration: none;
+        font-weight: 500;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      #share-link button {
+        margin-top: 5px;
+      }
+
+      .todo-actions {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      @media (max-width: 375px) {
+        .todo-actions {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-evenly;
+        }
+
+        .todo-actions button {
+          flex: 1;
+          max-width: 80px;
+        }
+      }
+
+      .todo-actions button {
+        font-size: 0.9rem;
+        padding: 8px 10px;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="todo-left">
+        <select id="language-selector">
+          <option value="en">English</option>
+          <option value="th">ไทย</option>
+        </select>
+        <h1>📋 สิ่งที่ต้องทำ</h1>
+        <div class="todo-form">
+          <input
+            type="text"
+            id="todo-input"
+            placeholder="พิมพ์สิ่งที่ต้องทำ..."
+          />
+          <input
+            type="text"
+            id="todo-description"
+            placeholder="รายละเอียด..."
+          />
+
+          <button id="add-btn">➕ เพิ่ม</button>
+        </div>
+        <p id="share-link"></p>
+      </div>
+
+      <div class="todo-right">
+        <div style="margin-bottom: 10px">
+          <label id="sort-label" for="sort-order">🔽 เรียงลำดับ:</label>
+          <select id="sort-order">
+            <option value="updated-desc">ล่าสุดอยู่บน</option>
+            <option value="updated-asc">ล่าสุดอยู่ล่าง</option>
+            <option value="alpha-asc">A → Z</option>
+            <option value="alpha-desc">Z → A</option>
+          </select>
+        </div>
+        <div id="share-link"></div>
+        <ul id="todo-list"></ul>
+      </div>
+
+      <!-- Modal fixed -->
+      <div id="edit-modal" style="display: none" class="modal-overlay">
+        <div class="modal-box">
+          <h2>✏️ แก้ไขรายการ</h2>
+          <input
+            type="text"
+            id="edit-input"
+            placeholder="พิมพ์รายการที่จะแก้ไข..."
+          />
+          <textarea
+            id="edit-detail"
+            placeholder="รายละเอียดเพิ่มเติม..."
+            rows="4"
+            style="width: 100%; margin-top: 10px"
+          ></textarea>
+          <div class="modal-buttons">
+            <button onclick="saveEdit()">💾 บันทึก</button>
+            <button onclick="closeEditModal()">❌ ยกเลิก</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Success -->
+      <div id="success-modal" style="display: none" class="modal-overlay">
+        <div class="modal-box" style="text-align: center">
+          <div class="checkmark">✔</div>
+          <h2>แก้ไขสำเร็จ</h2>
+          <button onclick="closeSuccessModal()">ตกลง</button>
+        </div>
+      </div>
+    </div>
+    <button id="themeToggleBtn" aria-label="Toggle Theme">
+      <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+      const translations = {
+        en: {
+          title: '📋 To-Do List',
+          placeholderInput: 'Type a task...',
+          placeholderDesc: 'Details...',
+          addButton: '➕ Add',
+          sortLabel: '🔽 Sort:',
+          sortUpdatedDesc: 'Newest first',
+          sortUpdatedAsc: 'Oldest first',
+          sortAlphaAsc: 'A → Z',
+          sortAlphaDesc: 'Z → A',
+          editTitle: '✏️ Edit Task',
+          editPlaceholder: 'Edit task title...',
+          //editDetailPlaceholder: 'More details...',
+          saveButton: '💾 Save',
+          cancelButton: '❌ Cancel',
+          successTitle: 'Edit Successful',
+          successButton: 'OK',
+          copySuccess: 'Link copied!',
+          invalidLink: 'The link is invalid.',
+          shareLink: 'Share link',
+          titleRequired: 'Please enter a title.',
+        },
+        th: {
+          title: '📋 สิ่งที่ต้องทำ',
+          placeholderInput: 'พิมพ์สิ่งที่ต้องทำ...',
+          placeholderDesc: 'รายละเอียด...',
+          addButton: '➕ เพิ่ม',
+          sortLabel: '🔽 เรียงลำดับ:',
+          sortUpdatedDesc: 'ล่าสุดอยู่บน',
+          sortUpdatedAsc: 'ล่าสุดอยู่ล่าง',
+          sortAlphaAsc: 'A → Z',
+          sortAlphaDesc: 'Z → A',
+          editTitle: '✏️ แก้ไขรายการ',
+          editPlaceholder: 'พิมพ์รายการที่จะแก้ไข...',
+          //editDetailPlaceholder: 'รายละเอียดเพิ่มเติม...',
+          saveButton: '💾 บันทึก',
+          cancelButton: '❌ ยกเลิก',
+          successTitle: 'แก้ไขสำเร็จ',
+          successButton: 'ตกลง',
+          copySuccess: 'คัดลอกลิงก์แล้ว',
+          invalidLink: 'ลิงก์ไม่ถูกต้อง',
+          shareLink: 'แชร์ลิงก์',
+          titleRequired: 'กรุณากรอกชื่อรายการ',
+        },
+      };
+
+      function applyTranslations(language) {
+        const t = translations[language] || translations.en;
+
+        document.querySelector('h1').textContent = t.title;
+        document.getElementById('todo-input').placeholder = t.placeholderInput;
+        document.getElementById('todo-description').placeholder =
+          t.placeholderDesc;
+        document.getElementById('add-btn').textContent = t.addButton;
+        document.getElementById('sort-label').textContent = t.sortLabel;
+
+        const sortOrder = document.getElementById('sort-order');
+        sortOrder.options[0].text = t.sortUpdatedDesc;
+        sortOrder.options[1].text = t.sortUpdatedAsc;
+        sortOrder.options[2].text = t.sortAlphaAsc;
+        sortOrder.options[3].text = t.sortAlphaDesc;
+
+        document.querySelector('#edit-modal h2').textContent = t.editTitle;
+        document.getElementById('edit-input').placeholder = t.editPlaceholder;
+        document.getElementById('edit-detail').placeholder = t.placeholderDesc;
+
+        const modalButtons = document.querySelectorAll('.modal-buttons button');
+        modalButtons[0].textContent = t.saveButton;
+        modalButtons[1].textContent = t.cancelButton;
+
+        document.querySelector('#success-modal h2').textContent =
+          t.successTitle;
+        document.querySelector('#success-modal button').textContent =
+          t.successButton;
+      }
+
+      applyTranslations('en');
+
+      document
+        .getElementById('language-selector')
+        .addEventListener('change', (e) => {
+          const selectedLanguage = e.target.value;
+          localStorage.setItem('language', selectedLanguage);
+          applyTranslations(selectedLanguage);
+        });
+
+      const toggleBtn = document.getElementById('themeToggleBtn');
+      const themeIcon = document.getElementById('theme-icon');
+
+      if (localStorage.getItem('theme') === 'night') {
+        document.body.classList.add('night-mode');
+        themeIcon.textContent = '🌙';
+      } else {
+        document.body.classList.remove('night-mode');
+        themeIcon.textContent = '☀️';
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('night-mode');
+        const isNight = document.body.classList.contains('night-mode');
+        themeIcon.textContent = isNight ? '🌙' : '☀️';
+        localStorage.setItem('theme', isNight ? 'night' : 'day');
+      });
+
+      const input = document.getElementById('todo-input');
+      const addBtn = document.getElementById('add-btn');
+      const list = document.getElementById('todo-list');
+
+      let editingTodoId = null;
+      let todos =
+        getTodosFromURL() || JSON.parse(localStorage.getItem('todos')) || [];
+      renderTodos();
+      document
+        .getElementById('sort-order')
+        .addEventListener('change', renderTodos);
+
+      addBtn.addEventListener('click', addTodo);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') addTodo();
+      });
+
+      function saveAndRender() {
+        localStorage.setItem('todos', JSON.stringify(todos));
+        renderTodos();
+      }
+
+      function addTodo() {
+        const text = input.value.trim();
+        const description = document
+          .getElementById('todo-description')
+          .value.trim();
+        if (!text) return;
+        const id = Date.now();
+        todos.push({
+          id,
+          title: text,
+          detail: description,
+          done: false,
+          updated: new Date().toISOString(),
+          expanded: false,
+        });
+        input.value = '';
+        document.getElementById('todo-description').value = '';
+        saveAndRender();
+      }
+
+      function renderTodos() {
+        list.innerHTML = '';
+        const sortOrder = document.getElementById('sort-order').value;
+        const sortedTodos = [...todos];
+
+        switch (sortOrder) {
+          case 'updated-desc':
+            sortedTodos.sort(
+              (a, b) => new Date(b.updated) - new Date(a.updated)
+            );
+            break;
+          case 'updated-asc':
+            sortedTodos.sort(
+              (a, b) => new Date(a.updated) - new Date(b.updated)
+            );
+            break;
+          case 'alpha-asc':
+            sortedTodos.sort((a, b) => a.title.localeCompare(b.title));
+            break;
+          case 'alpha-desc':
+            sortedTodos.sort((a, b) => b.title.localeCompare(a.title));
+            break;
+        }
+
+        sortedTodos.forEach((todo, idx) => {
+          const li = document.createElement('li');
+          const updated = todo.updated ? formatDate(todo.updated) : '';
+          const detailText = typeof todo.detail === 'string' ? todo.detail : '';
+          const detail = detailText.replace(/\n/g, '<br>');
+
+          const detailDisplay = todo.expanded
+            ? `<div class="todo-detail ${
+                todo.done ? 'completed-text' : ''
+              }">${detail}</div>`
+            : `<div class="todo-detail ${
+                todo.done ? 'completed-text' : ''
+              }" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${detailText.split('\n')[0]}
+              </div>`;
+
+          li.innerHTML = `
+        <div class="todo-content" onclick="toggleExpand(${
+          todo.id
+        })" style="cursor:pointer;">
+          <strong class="todo-text ${todo.done ? 'completed-text' : ''}">${
+            todo.title
+          }</strong> <small> ${updated}</small><br>
+          ${detailDisplay}
+        </div>
+    <div class="todo-actions">
+      ${
+        todo.done
+          ? `<button onclick="deleteTodoById(${todo.id}); event.stopPropagation();">🗑️</button>`
+          : `<button onclick="toggleDoneById(${todo.id}); event.stopPropagation();">✅</button>
+             <button onclick="editTodoById(${todo.id}); event.stopPropagation();">✏️</button>
+             <button onclick="deleteTodoById(${todo.id}); event.stopPropagation();">🗑️</button>`
+      }
+    </div>
+    ${todo.done ? '<div class="checkmark">✔</div>' : ''}
+  `;
+
+          document.getElementById('todo-list').appendChild(li);
+          list.appendChild(li);
+        });
+        updateShareURL();
+      }
+
+      function toggleExpand(id) {
+        todos = todos.map((todo) => {
+          if (todo.id === id) {
+            todo.expanded = !todo.expanded;
+          } else {
+            todo.expanded = false;
+          }
+          return todo;
+        });
+        renderTodos();
+      }
+
+      document.addEventListener('click', (e) => {
+        const clickedInsideTodo = e.target.closest('li');
+        if (!clickedInsideTodo) {
+          todos = todos.map((todo) => ({ ...todo, expanded: false }));
+          renderTodos();
+        }
+      });
+
+      function editTodoById(id) {
+        const todo = todos.find((t) => t.id === id);
+        if (!todo) return;
+
+        document.getElementById('edit-input').value = todo.title || '';
+        document.getElementById('edit-detail').value = todo.detail || '';
+        editingTodoId = id;
+        document.getElementById('edit-modal').style.display = 'block';
+      }
+
+      function findTodoIndexById(id) {
+        return todos.findIndex((t) => t.id === id);
+      }
+
+      function toggleDoneById(id) {
+        const idx = findTodoIndexById(id);
+        if (idx === -1) return;
+        todos[idx].done = !todos[idx].done;
+        todos[idx].updated = new Date().toISOString();
+        saveAndRender();
+      }
+
+      function deleteTodoById(id) {
+        const idx = findTodoIndexById(id);
+        if (idx === -1) return;
+        todos.splice(idx, 1);
+        saveAndRender();
+      }
+
+      function formatDate(str) {
+        const d = new Date(str);
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+        const hours = d.getHours().toString().padStart(2, '0');
+        const minutes = d.getMinutes().toString().padStart(2, '0');
+        return `${day}/${month} ${hours}:${minutes}`;
+      }
+
+      function encodeBase64Unicode(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+      }
+
+      function decodeBase64Unicode(str) {
+        return decodeURIComponent(escape(atob(str)));
+      }
+
+      function updateShareURL() {
+        const encoded = encodeBase64Unicode(JSON.stringify(todos));
+        const url = `${location.origin}${location.pathname}?list=${encoded}`;
+        const shortText = `${url.substring(0, 60)}...`;
+
+        const shareEl = document.getElementById('share-link');
+        const t = getCurrentTranslation();
+        shareEl.innerHTML = `
+  🔗 ${t.shareLink}: <a href="${url}" target="_blank">${shortText}</a>
+  <button onclick="copyLink('${url}')" style="margin-left:5px;">📋</button>`;
+      }
+
+      function copyLink(url) {
+        const tempInput = document.createElement('input');
+        tempInput.value = url;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+
+        const t = getCurrentTranslation();
+        showSuccessModal(t.copySuccess, '✔');
+      }
+
+      function getTodosFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('list')) {
+          try {
+            return JSON.parse(decodeBase64Unicode(params.get('list')));
+          } catch (e) {
+            const t = getCurrentTranslation();
+            alert(t.invalidLink);
+          }
+        }
+        return null;
+      }
+
+      let editIndex = null;
+
+      function editTodo(index) {
+        editIndex = index;
+        document.getElementById('edit-input').value = todos[index].text;
+        document.getElementById('edit-modal').style.display = 'flex';
+      }
+
+      function getCurrentTranslation() {
+        const lang = localStorage.getItem('language') || 'en';
+        return translations[lang] || translations.en;
+      }
+
+      function saveEdit() {
+        const t = getCurrentTranslation();
+        const newTitle = document.getElementById('edit-input').value.trim();
+        const newDetail = document.getElementById('edit-detail').value.trim();
+
+        if (!newTitle) {
+          showSuccessModal(t.titleRequired, '❌');
+          return;
+        }
+
+        const todo = todos.find((t) => t.id === editingTodoId);
+        if (!todo) return;
+        todo.title = newTitle;
+        todo.detail = newDetail;
+        todo.updated = new Date().toISOString();
+
+        saveAndRender();
+        closeEditModal();
+
+        showSuccessModal(t.successTitle, '✔');
+      }
+
+      function closeEditModal() {
+        document.getElementById('edit-modal').style.display = 'none';
+        editingTodoId = null;
+      }
+      function showSuccessModal(message, icon = '✔') {
+        const modal = document.getElementById('success-modal');
+        modal.querySelector('.checkmark').textContent = icon;
+        modal.querySelector('h2').textContent = message;
+        modal.style.display = 'flex';
+      }
+
+      function closeSuccessModal() {
+        document.getElementById('success-modal').style.display = 'none';
+      }
+    </script>
+  </body>
+</html>

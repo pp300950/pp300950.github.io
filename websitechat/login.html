@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ</title>
+    <style>
+        /* CSS เพื่อจัดรูปแบบหน้าเว็บ */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="loginForm">
+        <h2>Login ถ้าไม่อยากโดนล็อก</h2>
+        <input type="text" id="email" placeholder="อีเมล" required>
+        <input type="password" id="password" placeholder="รหัสผ่าน" required>
+        <input type="submit" value="เข้าสู่ระบบ">
+        <p>หากยังไม่มีบัญชีผู้ใช้ <a href="signup.html" id="signupLink">สร้างบัญชี</a></p>
+    </form>
+
+    <script type="module" defer>
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVzawA_NDnkqCHKerT2Gcg4zO9yohWx3U",
+            authDomain: "pangpone-1372b.firebaseapp.com",
+            databaseURL: "https://pangpone-1372b-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "pangpone-1372b",
+            storageBucket: "pangpone-1372b.appspot.com",
+            messagingSenderId: "911442011016",
+            appId: "1:911442011016:web:8434ea79964ceab63a903d",
+            measurementId: "G-S144W2V9SG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        document.getElementById("loginForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+
+            const usersRef = collection(db, 'users');
+            const querySnapshot = await getDocs(query(usersRef, where('email', '==', email)));
+            if (querySnapshot.empty) {
+                // ถ้าไม่มีชื่อผู้ใช้ในระบบ
+                alert("อีเมลไม่ถูกต้องหรือยังไม่มีบัญชีผู้ใช้");
+            } else {
+                // ถ้ามีชื่อผู้ใช้ในระบบ
+                querySnapshot.forEach((doc) => {
+                    const user = doc.data();
+                    if (user.password !== password) {
+                        // ถ้ารหัสผ่านไม่ตรงกัน
+                        alert("รหัสผ่านไม่ถูกต้อง");
+                    } else {
+                        // เก็บข้อมูลอีเมลของผู้ใช้ใน sessionStorage
+ 
+                        localStorage.setItem('userEmail', email);
+
+                        // ทำตามการที่คุณต้องการหลังจากล็อกอินสำเร็จ เช่น เปลี่ยนไปหน้าใหม่
+                        window.location.href = "index.html";
+                    }
+                });
+            }
+        });
+
+
+        /*document.getElementById("signupLink").addEventListener("click", function (event) {
+            event.preventDefault();
+            // เปลี่ยนไปหน้าสร้างบัญชีผู้ใช้
+            window.location.href = "signup.html";
+        });*/
+
+    </script>
+</body>
+
+</html>

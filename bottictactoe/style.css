@@ -1,0 +1,38 @@
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    margin-bottom: 10px;
+    justify-items: center;
+    align-items: center;
+  }
+  
+  .cell {
+    width: 100px;
+    height: 100px;
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    cursor: pointer;
+  }
+  
+  .score {
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  @media screen and (min-width: 600px) {
+    .board {
+      width: 300px;
+      height: 300px;
+    }
+  
+    .cell {
+      width: 90px;
+      height: 90px;
+      font-size: 36px;
+    }
+  }

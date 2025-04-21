@@ -653,6 +653,7 @@
 
       function copyToClipboard(text) {
         if (navigator.clipboard && window.isSecureContext) {
+          // ใช้ Clipboard API ปกติ
           navigator.clipboard
             .writeText(text)
             .then(() => {
@@ -662,13 +663,13 @@
               alert('คัดลอกไม่สำเร็จ: ' + err);
             });
         } else {
+          // ใช้ fallback สำหรับ HTTP
           const textarea = document.createElement('textarea');
           textarea.value = text;
-          textarea.style.position = 'fixed';
+          textarea.style.position = 'fixed'; // ป้องกัน scroll jump
           document.body.appendChild(textarea);
           textarea.focus();
           textarea.select();
-
           try {
             document.execCommand('copy');
             alert('คัดลอกแล้ว!');
@@ -723,7 +724,7 @@
       function clearAllData() {
         if (
           confirm(
-            'คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลทั้งหมด?'
+            'คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้!'
           )
         ) {
           commands = [];
@@ -740,7 +741,6 @@
       }
 
       Prism.highlightAll();
-      
     </script>
   </body>
 </html>

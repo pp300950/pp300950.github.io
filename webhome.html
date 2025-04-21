@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <script>
+        function copyText(elementId) {
+            var text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(function () {
+                console.log('Async: Copying to clipboard was successful!');
+                alert('คัดลอกข้อความเเล้ว นั่นคือชื่อเฟส นำมันไปค้นหาเป้าหมายของคุณ!  จุดสังเกตุ :เค้ามีโปรไฟล์เหมือนโลโก้เว็ปไซต์นี้');
+            }, function (err) {
+                console.error('Async: Could not copy text: ', err);
+                alert('คัดลอกผิดพลาด');
+            });
+        }
+    </script>
+    <link rel="stylesheet" href="styles2.css">
+    <title>Home Page</title>
+</head>
+
+<body>
+    <div id="menu-overlay"></div>
+    <div id="menu-toggle" class="closed" data-title="Menu">
+        <i class="fa fa-bars"></i>
+        <i class="fa fa-times"></i>
+    </div>
+    <header id="main-header">
+        <nav id="sidenav">
+            <div id="sidenav-header">
+                <div id="profile-picture">
+                    <img src="https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-loading-icon-load-vector-flat-png-image_4918664.png"
+                        id="profileImage" />
+                </div>
+                <a href="#" id="profile-link">.-...-.-.-.--.--.-...--.</a>
+            </div>
+            <div id="account-actions">
+                <!--<a href="#" id="messages" data-title="Messages" data-newmessages="99+"><i class="fa fa-inbox"></i></a>-->
+                <!-- <a href="#" data-title="Settings"><i class="fa fa-cog"></i></a> -->
+                <a href="#" onclick="logout()" data-title="Logout"><i class="fa fa-sign-out"></i></a>
+
+            </div>
+            <ul id="main-nav">
+                <li class="active">
+                    <a href="#" id="homeLink">
+                        <i class="fa fa-home"></i>
+                        หน้าต่างหลัก
+                    </a>
+                </li class="active">
+                <script>
+                    document.getElementById('homeLink').addEventListener('click', function (event) {
+                        event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
+                        window.scrollTo(0, 0); // เลื่อนหน้าเพจไปที่ด้านบนของหน้า
+                    });
+                </script>
+                <li>
+                    <a href="#" id="problem">
+                        <i class="fa fa-life-ring"></i>
+                        หัวข้อการสืบ
+                    </a>
+                </li class="active">
+                <li>
+                    <a href="#" id="problemfixed">
+                        <i class="fa fa-check-square"></i>
+                        ปัญหาที่เเก้เเล้ว
+                    </a>
+                </li class="active">
+                <li>
+                    <a href="#" id="rank">
+                        <i class="fa fa-calendar"></i>
+                        อันดับ
+                    </a>
+                </li class="active">
+                <li>
+                    <a href="#" id="profile">
+                        <i class="fa fa-user"></i>
+                        โปรไฟล์ฉัน
+                    </a>
+                </li class="active">
+                <li>
+                    <a href="#" id="about">
+                        <i class="fa fa-users-line"></i>
+                        เกี่ยวข้อง
+                    </a>
+                </li class="active">
+            </ul>
+        </nav>
+        <form id="admin-search">
+            <input type="text" id="search-field" placeholder="Search" />
+            <label for="search-field" id="search-label" title="Search"><i class="fa fa-search"></i></label>
+        </form>
+        <div id="header_logo">
+            <a href="#">Logo</a>
+        </div>
+    </header>
+    <section id="content">
+        <div id="page1">
+            <nav id="tabs">
+                <ul>
+                    <li data-target="knowledge">เกมอะไร?</li>
+                    <li data-target="activity">วิธีเล่น</li>
+                    <li data-target="friends">อัปเดตล่าสุด?</li>
+                </ul>
+            </nav>
+            <div class="bb">
+                <div class="tab-target targeted" id="knowledge">
+                    <p>เกมนี้เป็นเกมที่จะให้คุณเล่นเป็นนักสืบ</p>
+                    <p>ซึ่งเราจะมีเเต่ละปัญหาให้ผู้เล่นได้เเก้
+                        โดยปัญหาเหล่านั้นจะเป็นปัญหาที่จะให้ผู้เล่นได้เข้าไปสืบเเละค้นบัญชีเฟสบุ๊คตามลิงค์ที่เราได้จัดเตรียมไว้
+                        ซึ่งเราจะมีปัญหาเเละข้อมูลรายละเอียดให้เป็นคำใบ้ในการสืบ</p>
+
+                    <p>เเต่ละปัญหาจะมีความเเตกต่างกันออกไป
+                        บางปัญหาอาจจะเเค่สืบภายในบัญชีนั้นบัญชีเดียวเเต่บางปัญหาอาจจะมีการให้เเก้ปริศนาที่ถูกทิ้งไว้ในบัญชีเฟสนั้น
+                        หรือเเม้กระทั่งการสืบไปจนถึงเพื่อนในเฟสของบัญชีนั้นเลย</p>
+
+                    <p>
+                        มันปลอดภัยใช่ไหม?</p>
+                    <p>ใช่มันปลอดภัย
+                        บัญชีเฟสบุ๊คที่เราได้จัดเตรียมไว้ไม่ใช่บัญชีที่มีคนใช้จริงหรือเป็นบัญชีผู้อื่นเเต่อย่างใด
+                        เป็นบัญชีที่เราสร้างขึ้นมาเพื่อใช้สำหรับเกมเท่านั้น ซึ่งทุกบัญชีจะมีโลโก้ตัว C สีฟ้า
+                        เพื่อบอกว่าบัญชีนั้นคือบัญชี ของทางเราจริงๆ</p>
+
+                    <p> ฉันมีเรื่องค่องใจเกี่ยวกับเว็ปไซต์นี้</p>
+                    <p>เรายินดีรับฟังปัญหาของท่านเเละยินดีเเก้ไขเเละให้การช่วยเหลือ
+                        หากชื่อบัญชีของเรามีลักษณะคล้ายบัญชีเฟสบุ๊คของท่านโปรดติดต่อมาที่
+                        Facebook <a href="https://web.facebook.com/profile.php?id=100042189738832">Phongsakorn
+                            Phabjansing</a>
+                        หรือ Gmail: <a href="mailto:toaiseriesandcat@gmail.com">toaiseriesandcat@gmail.com</a>
+                        เเละยังสามารถใช้ช่องทางดังกล่าวสำหรับการเสนอโจทย์ใหม่ๆให้กับทางเราได้ด้วย
+                        รวมถึงการเเจ้งปัญหาต่างๆเกี่ยวกับเว็ปไซต์
+                    </p>
+
+                </div>
+                <div class="tab-target" id="activity">
+                    <p>ปุ่มอะไรเยอะเเยะ?</p>
+                    <p>เราเสียใจที่ได้ยินเเบบนั้น โดยในเเทปเลื่อนสีน้ำเงินจะมีทั้งหมด 6 ปุ่ม
+                        *ปุ่มเเรกคือหน้าหลัก เป็นหน้าปัจจุบัน ที่จะบอกถึงรายละเอียดของเว็ปไซต์นี้
+                        *ปุ่มหัวข้อการสืบ ซึ่งจะเต็มไปด้วยการ์ดมากมาย ให้ท่านได้ลองเเก้ปัญหา
+                        โดยเมื่อพบการ์ดที่ชอบให้กดที่รูปคน ซึ่งอยู่ด้านล่างหัวข้อของการ์ดเเล้ว
+                        การ์ดจะพลิกไปด้านหลังเเละจะมีข้อมูลตัวหนังสือเกี่ยวกับโจทย์โผล่ขึ้นมา
+                        *ปุ่มปัญหาที่เเก้เเล้ว โดยหากท่านได้ลองเเก้ปัยหาไปบ้างเเล้ว
+                        โจทย์ที่ท่านได้เเก้เเล้วจะเเสดงที่หน้านี้
+                        ซึ่งจะบอกข้อมูลคะเเนนที่ท่านได้จากทั้งข้อที่ตอบถูกเเละตอบผิด
+                        *หน้าโปรไฟล์ เป็นหน้าที่ท่านสามารถเเก้ไขชื่อเเละรูปโปรไฟล์ของท่านได้
+                        *หน้าเกี่ยวข้อง
+                        เป็นหน้าที่จะเเสดงรายชื่อผู้ที่เกี่ยวข้องในการสร้างเว็ปไซต์นี้รวมถึงเจ้าของรูปภาพที่เราได้นำมาใช้
+                    </p>
+                    <p>วิธีเล่น</p>
+                    <p>เมื่อคุณอยู่ที่หน้าหลักเเล้วให้กดไปที่ ==> หัวข้อการสืบสวน
+                        โดยในหน้านั้นจะมีการ์ดหลากสีซึ่งเต็มไปด้วยโจทย์ที่ท่านต้องไปสืบโดยหากเจอการ์ดที่ท่านต้องการเเล้วเเล้วให้คลิ๊กที่
+                        ==> รายละเอียด (ไอค่อนรูปคนด้านล่างหัวข้อการ์ด)</p>
+                    <p>เมื่อคลิ๊กหน้ารายละเอียด</p>
+                    <p> การ์ดใบนั้นจะหงายไปด้านหลังเเทนซึ่งจะมีข้อมูลเบาะเเส
+                        เเละชื่อเฟสที่ท่านจะคัดลอกไปวางค้นหาเองหรือจะคลิ๊กที่ชื่อเพื่อให้ระบบลิงค์ไปให้ก็ได้เช่นกัน
+                        โดยในการสืบค้นท่านควรอ่านเบาะเเสประกอบไปด้วยเพือให้หาคำตอบได้ง่าย
+                        เมื่อท่านได้คำตอบมาเเล้วที่ด้านล่างของการ์ดจะมีเเถบบาร์ที่ถ้ากดจะมีตัวเลือกชื่อของเป้าหมายทั้งหมดอยู่
+                        ให้ท่านเลือกได้ตามต้องการเเละกดยันยันเเล้วระบบจะส่งคำตอบของท่านไปตรวจสอบซึ่งจะมีข้อความขึ้นเเจ้งเตือนหลังจากนั้นว่าท่านตอบถูกหรือไม่
+                        หากตอบถูกการ์ดใบนั้นจะหายไปเเละท่านยังสามารถดูประวัติการตอบได้ที่เมนู ==> ปัญหาที่เเก้เเล้ว
+                        ในการตอบเเต่ละครั้งหากตอบถูกผู้ใช้จะได้รับคะเเนนซึ่งจะไปเเสดงผลในกระดานอันดับด้วย ==> อันดับ</p>
+
+                    <p>หน้าจอของฉันเป็นสีดำมีเเค่ตัวหนังสือ</p>
+                    <p>ในบางครั้ง เบาร์เซอร์ก็ไม่รองรับเว็ปไซต์ของเราในบางอุปกรณ์ โปรดลองเปลี่ยนไปเปิดหน้าเว็ปไซต์บน
+                        Chrome</p>
+                </div>
+                <div class="tab-target" id="friends">
+                    <p>อัปเดตล่าสุด</p>
+                    <p>3/8/2567 <a>เพิ่มให้การให้คะเเนนของเเต่ละข้อมีความเเตกต่างกันตามความยาก</a></p>
+                    <p>2/8/2567 <a>ปรับปรุงระบบการเพิ่มโจทย์, เเละเเก้ไขโจทย์</a></p>
+                    <p>29/7/2567 <a>เพิ่มระบบตรวจสอบการอัปเดตโจทย์ , เพิ่มปัญหาข้อที่ 2</a></p>
+                    <p>28/7/2567 <a>เปลี่ยนระบบการจัดการข้อมูลหลังบ้าน</a></p>
+                    <p>27/7/2567 <a>ปรับปรุงการเเสดงผลบนมือถือ</a></p>
+                    <p>24/5/2567 <a>เเก้ไขระบบการเลือกเเละปรับปรุงฐานข้อมูล</a></p>
+                    <p>22/5/2567 <a>เพิ่มเเถบบาร์ของหน้าเพจผู้เกี่ยวข้อง , เพิ่มปัญหาข้อที่ 1</a></p>
+                    <p>21/5/2567 <a>เพิ่มระบบเเก้ไขโปรไฟล์เเละระบบอันดับ , ปรับปรุงเรื่องความปลอดภัยเล็กน้อย</a></p>
+                    <p>18/5/2567 <a>ปรับปรุงให้ผู้ใช้สามารถดูประวัติการตอบได้</a></p>
+                </div>
+            </div>
+        </div>
+        <div id="page2">
+        </div>
+        <div id="page3">
+            <div class="checklist-wrapper">
+                <div style="font-size: x-large;" id="score-summary" class="score-summary"></div>
+                <div id="checklist-container" class="checklist-container">
+                </div>
+            </div>
+        </div>
+        <div id="page4">
+            <div class="container2">
+                <h1>User Rankings</h1>
+                <table id="rankings">
+                    <thead>
+                        <tr>
+                            <th>Top</th>
+                            <th>User</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankings-body"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="page5">
+            <div class="profile-container">
+                <div class="profile-imagee">
+                    <label for="profileImageInput">
+                        <img style="cursor: pointer;" id="profileImagee" alt="Profile Image">
+                    </label>
+                    <input id="profileImageInput" type="file" accept="image/*" style="display: none;">
+                </div>
+                <div class="profile-info">
+                    <input type="text" id="username" placeholder="Username">
+                    <p id="email"></p>
+                    <p id="createdAt"></p>
+                    <button id="updateButton">อัปเดตโปรไฟล์</button>
+                </div>
+            </div>
+        </div>
+        <div id="page6">
+            <div class="container3">
+                <header class="header3">
+                    <h1>ข้อมูลผู้ที่เกี่ยวข้อง</h1>
+                </header>
+                <section class="main">
+                    <div class="profile3">
+                        <div class="profile-info3">
+                            <h2>UIweb</h2>
+                            <h3>Jess Couch</h3>
+                            <p>เว็บไซต์: <a href="https://www.designcouch.com/" target="_blank">www.designcouch.com</a>
+                            </p>
+                            <p>ต้นฉบับ: <a href="https://codepen.io/designcouch/pen/rNYbqp"
+                                    target="_blank">https://codepen.io/designcouch/pen/rNYbqp</a></p>
+                        </div>
+                    </div>
+                    <div class="profile3">
+                        <div class="profile-info3">
+                            <h2>Loginpage and signuppage</h2>
+                            <p>เว็บไซต์: <a href="https://dribbble.com/tags/dripple"
+                                    target="_blank">cdn.dribbble.com</a></p>
+                        </div>
+                    </div>
+                    <div class="profile3">
+                        <img src="https://cdn.pixabay.com/photo/2024/01/16/08/42/man-8511623_640.jpg"
+                            alt="Profile Image" width="150">
+                        <div class="profile-info3">
+                            <h2>รูปภาพจาก</h2>
+                            <p>เว็บไซต์: <a href="https://www.pixabay.com/" target="_blank">www.pixabay.com</a></p>
+                        </div>
+                    </div>
+                    <div class="profile3">
+                        <img src="https://www.shutterstock.com/th/blog/wp-content/uploads/sites/16/2020/10/shutterstock_341205635.jpg"
+                            alt="Profile Image from Shutterstock" width="150" height="150">
+                        <div class="profile-info3">
+                            <h2>รูปภาพจาก</h2>
+                            <p>เว็บไซต์: <a href="https:/www.shutterstock.com/" target="_blank">www.shutterstock.com</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="profile3">
+                        <img src="https://png.pngtree.com/png-vector/20220607/ourmid/pngtree-loading-icon-load-vector-flat-png-image_4918664.png"
+                            alt="Profile Image from Shutterstock" width="150" height="150">
+                        <div class="profile-info3">
+                            <h2>รูปภาพจาก</h2>
+                            <p>เว็บไซต์: <a
+                                    href="https://th.pngtree.com/free-png-vectors/%E0%B8%81%E0%B8%B3%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B9%82%E0%B8%AB%E0%B8%A5%E0%B8%94"
+                                    target="_blank">www.pngtree.com</a></p>
+                        </div>
+                    </div>
+                    <div class="profile3">
+                        <img src="https://img.pikbest.com/wp/202344/banana-leaf-exquisite-green-lines-highlighting-the-texture-of-a_9933356.jpg!bw700"
+                            alt="Profile Image from Shutterstock" width="150" height="150">
+                        <div class="profile-info3">
+                            <h2>รูปภาพจาก</h2>
+                            <p>เว็บไซต์: <a
+                                    href="https://www.google.com/url?sa=i&url=https%3A%2F%2Fth.pikbest.com%2Fbackgrounds%2Fbanana-leaf-exquisite-green-lines-highlighting-the-texture-of-a_9933356.html&psig=AOvVaw2WNoKiqh4Nex3tMkS1gMgV&ust=1716457268428000&source=images&cd=vfe&opi=89978449&ved=0CAQQjB1qFwoTCMDs1eP7oIYDFQAAAAAdAAAAABAE"
+                                    target="_blank">www.pikbest.com</a>
+                            </p>
+                        </div>
+                    </div>
+                    <h1>ทีมผู้พัฒนา<h1>
+                            <div class="profile3">
+                                <img src="https://png.pngtree.com/png-clipart/20190418/ourmid/pngtree-hand-drawn-cute-boy-png-image_960757.jpg"
+                                    alt="Profile Image from Shutterstock" width="150">
+                                <div class="profile-info3">
+                                    <h2>Pangpone</h2>
+                                    <p>Facebook: <a href="https://web.facebook.com/profile.php?id=100042189738832"
+                                            target="_blank">Phongsakorn Phabjansing</a></p>
+                                </div>
+                            </div>
+                            <div class="profile3">
+                                <img src="https://png.pngtree.com/element_our/20190530/ourmid/pngtree-couple-avatar-girl-avatar-cartoon-cute-image_1263417.jpg"
+                                    alt="Profile Image" width="150">
+                                <div class="profile-info3">
+                                    <h2>Semi</h2>
+                                    <p>Facebook: <a href="https://web.facebook.com/SemiJinaruka" target="_blank">Semi
+                                            Jinaruka</a></p>
+                                </div>
+                            </div>
+                </section>
+                <footer class="footer">
+                    <p>&copy; 2024 บลาๆ !#@7%#$!^@&#*</p>
+                </footer>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://kit.fontawesome.com/1e0e692548.js" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script id="rendered-js">
+        $(window).on('load', function () {
+            // ใช้ class .wrapper สำหรับการโหลดการ์ด
+            $('.wrapper').addClass('loaded');
+        });
+
+        // ใช้ event delegation เพื่อให้ .more-info ทำงานกับการ์ดที่ถูกสร้างใหม่
+        $(document).on('click', '.more-info', function (event) {
+            event.preventDefault(); // ป้องกันการรีโหลดหน้า
+            const cardNumber = $(this).data('type');
+            $(`#card${cardNumber}`).toggleClass('flip');
+        });
+
+        // ใช้ event delegation เพื่อให้ #background ทำงานกับการ์ดที่ถูกสร้างใหม่
+        $(document).on('click', '#background', function () {
+            $('.card').removeClass('flip');
+        });
+    </script>
+
+    <script type="module" defer>
+
+        /*/////////////////////////  ปัญหา & ที่ต้องปรับปรุง  /////////////////////////////////
+        --Note--
+        
+
+        *************  หลังทำระบบหลังบ้านเเละหน้าบ้านเสร็จ  ************
+        ทำได้เลย
+        
+        # เเละข้อมูลด้านล่างนี้อาจจะเพิ่มให้สามารถกำหนดที่หลังบ้านได้เเล้วให้ผู้ใช้โหลดมาใช้ทุกครั้งที่รีหน้า
+        หรือมีการเปลี่ยนเเปลงข้อมูลในส่วนนี้
+
+        /////////////////////////  ข้อมูล  ///////////////////*/
+
+        //ไทป์ของข้อมูลเเต่ละข้อ รวมกันได้เดี๋ยวระบบเเยกเอง ห้ามใช้คีย์เหมือนกัน
+        /*let originalOptionTexts = {
+            "1": "Guess Yoyo",
+            "2": "Kan Korn",
+            "3": "Buntita Wx",
+            "4": "แม่เรียกไป ซักผ้า",
+            "5": "งดทัก กินข้าวอยู่",
+            "6": "Kan Korn",
+            "7": "Sunan Fangki",
+            "8": "Mook Salami",
+            "9": "Dep Jan"
+        };*/
+
+        // คีย์ของคำตอบในแต่ละข้อ
+
+
+        ////////////////////////////////////////////////////////////////////
+
+        import { initializeApp, } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, setDoc, serverTimestamp, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { updateDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-storage.js"; // เพิ่มการนำเข้า Firebase Storage API
+        import { getDatabase, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-database.js";
+
+        let db;
+        let storage;
+
+        const colors = [
+            'rgb(39, 138, 196)',
+            'rgb(209, 20, 20)',
+            'rgb(25, 105, 49)',
+            'rgb(20, 33, 209)',
+            'rgb(156, 20, 209)'
+        ];
+
+
+        // ประกาศตัวแปร savedTypeA นอกฟังก์ชัน
+        let savedTypeA = null;
+        let originalOptionTexts = {};
+        let keys = [""];
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('config.php');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const firebaseConfig = await response.json();
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                const storage = getStorage(app);
+                const auth = getAuth(app);
+                const uid = localStorage.getItem('userId');
+
+                if (!uid) {
+                    console.log('No UID found in LocalStorage.');
+                    return;
+                }
+
+                // ดึงข้อมูลจากฐานข้อมูลหลัก
+                const mainDocRef = doc(db, "ask", "9DbbG0bzo4P51dHfLK6a");
+                const mainDocSnap = await getDoc(mainDocRef);
+
+                if (!mainDocSnap.exists()) {
+                    console.error("ไม่พบข้อมูลหลักใน ask collection!");
+                    return;
+                }
+
+                const mainData = mainDocSnap.data();
+                const mainKeys = Object.keys(mainData).filter(key => key.startsWith('a'));
+
+                // ตรวจสอบและเพิ่มอาเรย์ที่ขาดหายไป
+                const userDocRef = doc(db, "users", uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                try {
+                    let index = 1;
+                    const querySnapshot = await getDocs(collection(db, 'datavalue/8hfRFIlA0yBWB2cWsjys/items'));
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+
+                        if (data.questionOptions && Array.isArray(data.questionOptions)) {
+                            data.questionOptions.forEach(option => {
+                                originalOptionTexts[String(index)] = option; 
+                                index++;
+                            });
+                        }
+                    });
+
+                } catch (error) {
+                    console.error("Error fetching documents: ", error);
+                }
+                console.log("originalOptionTexts:", originalOptionTexts);
+               
+
+                try {
+                    const answerSnapshot = await getDocs(collection(db, 'answer'));
+                    const count = answerSnapshot.size;
+
+                    for (let i = 1; i <= count; i++) {
+                        keys.push(`a${i}`);
+                    }
+                } catch (error) {
+                    console.error("Error fetching documents: ", error);
+                }
+                console.log(keys)
+
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+
+                    mainKeys.forEach(key => {
+                        if (!userData.hasOwnProperty(key)) {
+                            userData[key] = mainData[key];
+                        } else if (Array.isArray(userData[key]) && Array.isArray(mainData[key])) {
+                            // ตรวจสอบและปรับปรุงจำนวนสมาชิกของอาเรย์ให้เท่ากัน
+                            if (userData[key].length !== mainData[key].length) {
+                                userData[key] = mainData[key];
+                            }
+                        }
+                    });
+
+                    await setDoc(userDocRef, userData, { merge: true });
+                } else {
+                    console.error("ไม่พบข้อมูลผู้ใช้ใน users collection!");
+                    return;
+                }
+                document.getElementById('updateButton').addEventListener('click', () => {
+                    updateUserData(uid, db, storage);
+                });
+
+                async function loadAndDisplayData() {
+                    const page2 = document.getElementById('page2');
+                    page2.innerHTML = ''; // Clear previous content
+
+                    function extractNumbers(text) {
+                        return text.replace(/\D/g, '');
+                    }
+
+                    const querySnapshot = await getDocs(collection(db, 'datavalue/8hfRFIlA0yBWB2cWsjys/items'));
+
+                    // Sort documents based on card number extracted from title
+                    const sortedDocs = querySnapshot.docs.sort((a, b) => {
+                        const numA = extractNumbers(a.data().title);
+                        const numB = extractNumbers(b.data().title);
+                        return numA - numB;
+                    });
+
+                    sortedDocs.forEach((doc) => {
+                        const data = doc.data();
+                        const content = document.createElement('div');
+
+                        const numberCrad = data.title;
+                        var numbers = extractNumbers(numberCrad);
+                        const cardNumber = numbers || '';
+
+                        const selectOptions = data.facebookLinks.map((link, i) => {
+                            const color = colors[i % colors.length];
+                            return `<option style="color: ${color}" value="${i}">${link.name}</option>`;
+                        }).join('');
+
+                        const cardColor = data.colorCode || '#ffffff'; // Default to white if no color is specified
+                        const backgroundImage = data.imageURL ? `url(${data.imageURL})` : ''; // Use empty string if no URL is provided
+
+                        content.innerHTML = `
+                    <header id="content-header">
+                        <div id="wrapper-${cardNumber}" class="wrapper">
+                            <div id="content">
+                                <div id="card${cardNumber}" class="card" >
+                                    <div id="front">
+                                        <div id="top-pic" style="background-image: ${backgroundImage};"></div>
+                                        <div id="avatar"></div>
+                                        <div id="info-box" style="background-color: ${cardColor};">
+                                            <div class="info">
+                                                <h1>${data.title}</h1>
+                                                <h3>${data.detail}</h3>
+                                            </div>
+                                        </div>
+                                        <div id="social-bar">
+                                            <a href="javascript:void(0)" class="more-info" data-type="${cardNumber}" id="showTypeInfoBtn-${cardNumber}">
+                                                <i class="fa fa-user"></i>
+                                                <h4>รายละเอียด</h4>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div id="back">
+                                        <div class="back-info">     
+                                            <h1 style="color: rgb(0, 0, 0); margin: 15px;">${data.question.text}</h1>
+                                            <h2 style="margin: 15px; color: rgb(233, 103, 103);">${data.headerText}</h2>
+                                            <ul style="list-style: none; white-space: nowrap;">
+                                                ${data.additionalInfo.map(info => `<li style="text-decoration: none;margin-top: 5px;display: inline-block;"><a>${info}</a></li>`).join('')}
+                                            </ul>
+                                            <h2 style="margin: 15px;">เบาะเเสที่พบคือ <h3>${data.hint}</h3></h2>
+                                            <h1 style="margin-top: 15px;margin-left: 100px;">#เป้าหมาย#</h1>
+                                            <h5 style="margin-top: 20px; margin-bottom: 5px;">สามารถคลิ๊กที่ชื่อได้เลย</h5>
+                                            <ul style="list-style: none; white-space: nowrap;">
+                                                ${data.facebookLinks.map((link, i) => {
+                            const color = colors[i % colors.length];
+                            return `
+                                                    <li style="list-style: none; white-space: nowrap;">
+                                                        <a style="text-decoration: none;margin-top: 5px;display: inline-block; color: ${color};" href="${link.url}">
+                                                            <h1 id="textToCopy${i}">${link.name}</h1>
+                                                        </a>
+                                                        <i onclick="copyText('textToCopy${i}')" class="fa-solid fa-copy" style="font-size: x-large; margin-left: 10px;"></i>
+                                                    </li>`;
+                        }).join('')}
+                                            </ul>
+                                            <select id="targetSelect${cardNumber}" style="margin-top: 15px;" data-type="a${cardNumber}">
+                                                <option value="none">เลือกคำตอบ</option>
+                                                ${selectOptions}
+                                            </select>
+                                            <button id="submit-button-${cardNumber}">ส่งคำตอบ</button>
+                                        </div>
+                                        <div id="social-bar">
+                                            <a href="javascript:void(0)" class="more-info" data-type="${cardNumber}">
+                                                <i class="fa fa-undo"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="background" >
+                                    <div id="background-image"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                `;
+                        console.log("สร้างการ์ดเเล้วจร้า");
+                        page2.appendChild(content);
+
+                        // เพิ่ม Event Listener สำหรับปุ่มที่สร้างขึ้น
+                        const showTypeInfoBtn = document.getElementById(`showTypeInfoBtn-${cardNumber}`);
+                        if (showTypeInfoBtn) {
+                            showTypeInfoBtn.addEventListener('click', function () {
+                                savedTypeA = `a${this.dataset.type}`;
+                                console.log(`ค่าไทป์ของ '${savedTypeA}'`);
+                            });
+                        }
+
+                        // เพิ่ม Event Listener สำหรับปุ่ม submit
+                        const submitButton = document.getElementById(`submit-button-${cardNumber}`);
+                        if (submitButton) {
+                            submitButton.addEventListener('click', async () => {
+                                let selectedTargetNumber = document.getElementById(`targetSelect${cardNumber}`).value;
+                                // เพิ่มค่า selectedTargetNumber ขึ้น 1
+                                selectedTargetNumber = parseInt(selectedTargetNumber) + 1;
+                                await checkAnswer(selectedTargetNumber, cardNumber ,data);
+                            });
+                        }
+                    });
+                }
+
+                await loadAndDisplayData();
+
+                // เรียกใช้ฟังก์ชันอื่นๆ เมื่อการตรวจสอบและอัปเดตเสร็จสิ้น
+                await fetchUserData(uid);
+                await removeEmptyOptionsOnStart();
+                await hideCardsWithHighValues2(uid);
+                await displayChecklist();
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+
+        //เมื่อเริ่ม
+        document.addEventListener('DOMContentLoaded', function () {
+
+            event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
+            window.scrollTo(0, 0); // เลื่อนหน้าเพจไปที่ด้านบนของหน้า
+            const profileImageInput = document.getElementById('profileImageInput');
+            const profileImageElement = document.getElementById('profileImagee');
+
+            profileImageInput.addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function () {
+                    profileImageElement.src = reader.result;
+                }
+                reader.readAsDataURL(file);
+            });
+
+        });
+
+        //เปลี่ยนชื่อ
+        async function updateUserData(uid, db, storage) {
+            const username = document.getElementById('username').value;
+            const profileImageInput = document.getElementById('profileImageInput');
+
+            if (username.length > 15) {
+                alert('ชื่อผู้ใช้ต้องไม่เกิน 15 ตัวอักษร');
+                document.getElementById('username').value = '';
+                return; //หยุดการทำงานของฟังก์ชันถ้าชื่อผู้ใช้ยาวเกินไป
+            }
+
+            // ตรวจสอบว่ามีการเลือกไฟล์ภาพใหม่หรือไม่
+            if (profileImageInput.files.length > 0) {
+                const file = profileImageInput.files[0];
+
+                const storageRef = ref(storage, `profile_pictures/${uid}/${file.name}`);
+                const uploadTask = uploadBytes(storageRef, file); // แก้ไขเป็น uploadBytes แทน uploadString
+
+                uploadTask.then(async (snapshot) => {
+                    const downloadURL = await getDownloadURL(snapshot.ref);
+
+                    // อัปเดตข้อมูลผู้ใช้ใน Firebase Firestore
+                    const userDocRef = doc(db, "users", uid);
+                    await updateDoc(userDocRef, {
+                        username: username,
+                        profilePicture: downloadURL // อัปเดต URL ของภาพโปรไฟล์ใหม่
+                    });
+                    fetchUserData(uid)
+                    alert('Profile updated successfully!');
+
+                }).catch((error) => {
+                    console.error('Error uploading profile picture:', error);
+                    alert('การอัปเดตผิดพลาด  โปรดลองอีกครั้ง');
+                });
+            } else {
+                // ถ้าไม่มีการเลือกไฟล์ภาพใหม่เพียงแค่อัปเดตชื่อผู้ใช้
+                const userDocRef = doc(db, "users", uid);
+                await updateDoc(userDocRef, { username: username });
+                fetchUserData(uid)
+                alert('การอัปเดตโปรไฟล์สำเร็จ!');
+            }
+        }
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // ตั้งค่าให้ page1 แสดงขึ้นมาเมื่อโหลดหน้าเว็บครั้งแรก
+            document.getElementById('page1').classList.add('active2');
+            //  document.getElementById('page2').classList.remove('active2');
+        });
+        document.getElementById('homeLink').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('page1').classList.add('active2');
+            document.getElementById('page2').classList.remove('active2');
+            document.getElementById('page3').classList.remove('active2');
+            document.getElementById('page4').classList.remove('active2');
+            document.getElementById('page5').classList.remove('active2');
+            document.getElementById('page6').classList.remove('active2');
+        });
+        document.getElementById('problem').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('page1').classList.remove('active2');
+            document.getElementById('page2').classList.add('active2');
+            document.getElementById('page3').classList.remove('active2');
+            document.getElementById('page4').classList.remove('active2');
+            document.getElementById('page5').classList.remove('active2');
+            document.getElementById('page6').classList.remove('active2');
+        });
+        document.getElementById('problemfixed').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('page1').classList.remove('active2');
+            document.getElementById('page2').classList.remove('active2');
+            document.getElementById('page3').classList.add('active2');
+            document.getElementById('page4').classList.remove('active2');
+            document.getElementById('page5').classList.remove('active2');
+            document.getElementById('page6').classList.remove('active2');
+        });
+        document.getElementById('rank').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('page1').classList.remove('active2');
+            document.getElementById('page2').classList.remove('active2');
+            document.getElementById('page3').classList.remove('active2');
+            document.getElementById('page4').classList.add('active2');
+            document.getElementById('page5').classList.remove('active2');
+            document.getElementById('page6').classList.remove('active2');
+        });
+        document.getElementById('profile').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('page1').classList.remove('active2');
+            document.getElementById('page2').classList.remove('active2');
+            document.getElementById('page3').classList.remove('active2');
+            document.getElementById('page4').classList.remove('active2');
+            document.getElementById('page5').classList.add('active2');
+            document.getElementById('page6').classList.remove('active2');
+        });
+        document.getElementById('about').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('page1').classList.remove('active2');
+            document.getElementById('page2').classList.remove('active2');
+            document.getElementById('page3').classList.remove('active2');
+            document.getElementById('page4').classList.remove('active2');
+            document.getElementById('page5').classList.remove('active2');
+            document.getElementById('page6').classList.add('active2');
+        });
+        $('#menu-toggle,#menu-overlay').click(function () {
+            $('body').toggleClass('open-menu');
+        });
+        $('#main-nav li a').click(function () {
+            $('#main-nav li').removeClass('active');
+            $(this).parent().addClass('active')
+        });
+        $('#tabs li').click(function () {
+            var clickTarget = $(this).attr('data-target');
+            $('.tab-target').removeClass('targeted');
+            $('#' + clickTarget).addClass("targeted");
+            $('#tabs li').removeClass('active');
+            $(this).addClass('active')
+        });
+        $('#admin-search input').on('focus', function () {
+            $('#header_logo').addClass('hidden');
+        });
+        $('#admin-search input').on('blur', function () {
+            $('#header_logo').removeClass('hidden');
+        });
+
+        function logout() {
+            //ล้างข้อมูลใน localStorage หรือจัดการ session
+            localStorage.removeItem('email');
+            localStorage.removeItem('password');
+            localStorage.removeItem('rememberMe');
+            console.log('Logged out successfully!');
+            window.location.href = 'login.html'; // ส่งผู้ใช้กลับไปหน้าล็อกอินหรือหน้าหลัก
+
+        };
+
+        //ข้อมูลที่ใช้ในโปรไฟล์
+        async function fetchUserData(uid) {
+            const userDocRef = doc(db, "users", uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                console.log("User Data:", userDocSnap.data());
+                const userData = userDocSnap.data();
+
+                document.getElementById('profile-link').textContent = userDocSnap.data().username;
+                document.getElementById('profileImage').src = userDocSnap.data().profilePicture;
+                document.getElementById('profileImagee').src = userDocSnap.data().profilePicture;
+                document.getElementById('username').value = userDocSnap.data().username;
+                document.getElementById('email').textContent = 'อีเมลล์ ' + userDocSnap.data().email;
+                document.getElementById('createdAt').textContent = 'สร้างบัญชีเมื่อ ' + new Date(userDocSnap.data().createdAt.seconds * 1000).toLocaleString();
+                populateRankings(); //อัปเดตค่าในตารางอันดับ
+            } else {
+                console.log("No user data found!");
+            }
+        }
+
+        // ฟังก์ชันสำหรับทำงานเฉพาะตอนเริ่มต้น
+        async function removeEmptyOptionsOnStart() {
+            try {
+                const uid = localStorage.getItem('userId');
+                if (!uid) {
+                    console.log("No userId found in localStorage!");
+                    return;
+                }
+
+                const userDocRef = doc(db, "users", uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+
+                    // ค้นหา keys ที่ขึ้นต้นด้วย 'a'
+                    const arrayKeys = Object.keys(userData).filter(key => key.startsWith('a'));
+
+                    // วนลูปเช็คค่าของแต่ละอาเรย์และลบตัวเลือกที่ไม่ใช่ค่าว่างออกจาก <select>
+                    arrayKeys.forEach(key => {
+                        console.log("key :", key)
+                        const array = userData[key];
+                        console.log("array :", array)
+                        // กำหนด ID ของ <select> ตาม key
+                        const selectId = `targetSelect${key.slice(1)}`;
+                        console.log("selectId :", selectId)
+                        Object.entries(array).forEach(([itemKey, value]) => {
+                            if (value !== 0) {
+                                itemKey = itemKey - 1;//ลบออก 1 เพราะค่าในฐานข้อมูลเก้บเริ่มที่ 0 เเต่ส่วนนี้มันเริ่มนับที่ 1 
+                                console.log("itemKey :", itemKey)
+                                const optionToRemove = document.querySelector(`#${selectId} option[value="${itemKey}"]`);
+                                if (optionToRemove) {
+                                    optionToRemove.remove();
+                                    console.log("optionToRemove :", optionToRemove)
+                                } else {
+                                    console.log(`Option with value ${itemKey} not found in ${selectId}`);
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    console.log("No user data found!");
+                }
+            } catch (error) {
+                console.error("Error removing options: ", error);
+            }
+        }
+
+        //ทำงาน หลังเช็คคำตอบเเละเมื่อเริ่ม
+        async function hideCardsWithHighValues(uid, questionNumber) {
+            const userDocRef = doc(db, "users", uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const a1 = userData[savedTypeA];
+
+                // วนลูปเช็คค่าของอาเรย์ a1 และปิดการแสดงผลของการ์ดที่มีค่ามากกว่า 5 การ์ดที่ตอบไปเเล้ว เเละตอบถูก
+                Object.entries(a1).forEach(([key, value]) => {
+                    if (value > 5) {
+                        console.log(value);
+                        const cardToHide = document.querySelector(`#wrapper-${questionNumber}`);
+                        if (cardToHide) {
+                            cardToHide.classList.add('hidden');
+                        }
+                    }
+                });
+                //  displayChecklist();  ยังไม่เเน่นอน
+            } else {
+                console.log("No user data found!");
+            }
+        }
+
+        // ฟังก์ชันสำหรับซ่อนการ์ดที่มีค่าสูง
+        async function hideCardsWithHighValues2(uid) {
+            const userDocRef = doc(db, "users", uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+
+                // วนลูปเช็คค่าของอาเรย์ที่มีชื่อขึ้นต้นด้วย 'a' และปิดการแสดงผลของการ์ดที่มีค่ามากกว่า 5
+                Object.entries(userData).forEach(([key, value]) => {
+                    if (key.startsWith('a') && typeof value === 'object') {
+                        // ตัดเอาแค่ตัวเลขจาก key
+                        const questionNumber = key.replace(/\D/g, '');
+
+                        Object.entries(value).forEach(([innerKey, innerValue]) => {
+                            if (innerValue > 5) {
+                                console.log("innerValue:" + innerValue);
+                                console.log("innerKey:" + innerKey);
+                                // ใช้ questionNumber สำหรับการเลือกการ์ดที่ต้องการซ่อน
+                                const cardToHide = document.querySelector(`#wrapper-${questionNumber}`);
+                                if (cardToHide) {
+                                    cardToHide.classList.add('hidden');
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                console.log("No user data found!");
+            }
+        }
+        //innerValue
+        // ใช้ค่าตาม id ปุ่มกด หรือไทป์ข้อมูลที่ส่งมา
+        async function checkAnswer(selectedTargetNumber, questionNumber ,data) {
+
+            console.log("typeA:" + savedTypeA);
+            console.log("questionNumber:" + questionNumber);
+            const uid = localStorage.getItem('userId');
+            const key = keys[questionNumber]; // ใช้ key ตามดัชนี selectedTargetNumber
+            const userDocRef = doc(db, "answer", key);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                console.log("ข้อมูลผู้ใช้:", userDocSnap.data());
+                const userData = userDocSnap.data();
+
+                const userUpdateRef = doc(db, "users", uid);
+                const userUpdateSnap = await getDoc(userUpdateRef);
+
+                if (userUpdateSnap.exists()) {
+                    const userUpdateData = userUpdateSnap.data();
+
+                    if (savedTypeA && userUpdateData[savedTypeA]) {
+                        if (userData[selectedTargetNumber] === "") {
+                            console.log(`เลขที่ ${selectedTargetNumber} มีค่าว่าง`);
+                            alert("คุณตอบผิด โปรดทบทวนคำตอบอีกครั้ง");
+
+                            if (userUpdateData[savedTypeA][selectedTargetNumber] == 0) {
+                                userUpdateData[savedTypeA][selectedTargetNumber] = data.scoreIncorrect;
+                                await setDoc(userUpdateRef, userUpdateData);
+                                console.log(`อัพเดทค่า ${savedTypeA} เป็น ติดลบ สำเร็จที่เลขที่ ${selectedTargetNumber}`);
+                            }
+                        } else {
+                            console.log(`เลขที่ ${selectedTargetNumber} ไม่มีค่าว่าง`);
+                            alert("คำตอบของคุณถูกต้อง คุณคือนักสืบคุณภาพ");
+
+                            userUpdateData[savedTypeA][selectedTargetNumber] = data.scoreCorrect;
+                            await setDoc(userUpdateRef, userUpdateData);
+                            console.log(`อัพเดทค่า ${savedTypeA} เป็น ค่าบวก สำเร็จที่เลขที่ ${selectedTargetNumber}`);
+
+                            // เก็บข้อมูลวันเวลาเมื่อผู้ใช้ตอบถูก
+                          /*  const timestamp = new Date().toISOString();
+                            if (!userUpdateData.correctAnswers) {
+                                userUpdateData.correctAnswers = [];
+                            }
+                            userUpdateData.correctAnswers.push({ questionNumber: selectedTargetNumber, timestamp });
+                            
+                            await updateDoc(userUpdateRef, { correctAnswers: userUpdateData.correctAnswers });
+                            */
+                            await hideCardsWithHighValues(uid, questionNumber); // ซ่อนการ์ดเมื่อผู้ใช้ตอบถูก
+
+                        }
+                        await removeEmptyOptionsOnStart(); // ล้างค่าตัวเลือกที่ตอบแล้ว
+                    } else {
+                        console.log("ไม่พบข้อมูลไทป์ที่ถูกต้องใน userUpdateData หรือ savedTypeA ไม่ถูกกำหนด!");
+                    }
+                } else {
+                    console.log("ไม่พบข้อมูลผู้ใช้!");
+                }
+            }
+
+            await displayChecklist();
+            populateRankings(); // อัปเดตค่าในตารางอันดับ
+        }
+
+        // ฟังก์ชันสำรองเพื่อเรียกค่า optionText จาก originalOptionTexts
+        function getOptionText(optionTexts, value) {
+            return optionTexts[value] || `ข้อที่ ${value}`;
+        }
+
+        // ฟังก์ชันเพื่อลบค่าที่ตำแหน่ง 0 ของอาเรย์ใน userData
+        function removeZeroIndexInArrays(userData) {
+            Object.keys(userData).forEach(key => {
+                if (key.startsWith('a') && Array.isArray(userData[key])) {
+                    userData[key].splice(0, 1); // ลบค่าที่ตำแหน่ง 0 ของอาเรย์
+                }
+            });
+        }
+
+        async function displayChecklist() {
+            const uid = localStorage.getItem('userId');
+            const userDocRef = doc(db, "users", uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const checklistContainer = document.getElementById('checklist-container');
+
+                let totalScore = 0;
+                let answeredCount = 0;
+                let hasPositiveValue = false;
+                checklistContainer.innerHTML = "";  // เคลียร์เนื้อหาก่อนหน้าทั้งหมด
+
+                // ลบข้อความ "คุณยังไม่ผ่านปริศนาสักข้อ" ถ้ามีอยู่ใน checklistContainer
+                const noPassMessage = checklistContainer.querySelector('.no-pass-message');
+                if (noPassMessage) {
+                    checklistContainer.removeChild(noPassMessage);
+                }
+
+                // เพิ่มเงาเล็กน้อยที่ด้านหลังของแถบ
+                checklistContainer.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                // สำเนาของ originalOptionTexts เพื่อใช้ใน loop นี้
+                let currentOptionTexts = { ...originalOptionTexts };
+                let optionKeys = Object.keys(currentOptionTexts);
+                let currentOptionCount = optionKeys.length;
+                // Loop ผ่านทุกอาเรย์ที่ขึ้นต้นด้วย 'a'
+                for (let i = 1; i <= Object.keys(userData).length; i++) {
+                    const arrayName = `a${i}`;
+                    if (userData[arrayName]) {
+                        const aArray = userData[arrayName];
+                        delete aArray[0]; // ลบสมาชิกตัวลำดับที่ 0 เพราะไม่ใช้
+                        // เพิ่มหัวข้อของแถบเป็น "ข้อที่ i" ด้านบนสุดและตรงกลาง
+                        const header = document.createElement('div');
+                        header.innerText = `ข้อที่ ${i}`;
+                        header.style.fontWeight = 'bold';
+                        header.style.textAlign = 'center'; // จัดตำแหน่งให้เป็นกลาง
+                        header.style.width = '100%';
+                        const boxContainer = document.createElement('div');
+                        boxContainer.style.border = '1px solid #ddd';
+                        boxContainer.style.margin = '10px 0';
+                        boxContainer.style.padding = '10px';
+                        boxContainer.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                        boxContainer.appendChild(header);
+                        // Loop ผ่านสมาชิกของ aArray เพื่อตรวจสอบค่าเป็นบวก
+                        Object.entries(aArray).forEach(([key, value]) => {
+                            if (value > 0) {
+                                hasPositiveValue = true;
+                            }
+                        });
+
+                        // ถ้ามีสมาชิกที่มีค่าเป็นบวก
+                        if (hasPositiveValue) {
+                            Object.entries(aArray).forEach(([key, value]) => {
+                                const listItem = document.createElement('div');
+                                listItem.className = 'checklist-item';
+                                const checkbox = document.createElement('input');
+                                checkbox.type = 'checkbox';
+                                checkbox.disabled = true;
+                                const label = document.createElement('label');
+                                label.style.display = 'inline-block';
+                                const optionText = getOptionText(currentOptionTexts, optionKeys.shift()); // ใช้ค่าและลบออกจาก optionKeys
+                                label.innerText = `${optionText} : ${value} คะแนน`;
+                                if (value > 0) {
+                                    listItem.classList.add('green-check');
+                                    answeredCount++;
+                                } else if (value < 0) {
+                                    listItem.classList.add('red-check');
+                                    answeredCount++;
+                                }
+                                listItem.appendChild(checkbox);
+                                listItem.appendChild(label);
+                                boxContainer.appendChild(listItem);
+                                totalScore += value;
+                            });
+
+                            checklistContainer.appendChild(boxContainer);
+
+                        }
+                        hasPositiveValue = false; // รีเซ็ตค่า hasPositiveValue สำหรับการ loop ถัดไป
+                    }
+                }
+                const scoreSummary = document.getElementById('score-summary');
+                scoreSummary.innerText = `คุณตอบคำถามไปทั้งหมด ${answeredCount} ข้อ จาก ${currentOptionCount} ข้อ และมีคะแนนรวม ${totalScore} คะแนน`;
+                // อัปเดต originalOptionTexts ให้เป็น currentOptionTexts สำหรับการเรียกใช้ฟังก์ชันครั้งถัดไป
+                originalOptionTexts = currentOptionTexts;
+            } else {
+                console.log("ไม่พบข้อมูลผู้ใช้!");
+            }
+        }
+
+        //เมื่อเริ่ม ลูปได้ ตามจำนวน a ที่มีของเเต่ละคน ทำงานเมื่อผู้ใช้อัปเดตโปรไฟล์
+        async function populateRankings() {
+            const tbody = document.getElementById('rankings-body');
+            tbody.innerHTML = '';
+
+            try {
+                const querySnapshot = await getDocs(collection(db, 'users'));
+                const users = [];
+                querySnapshot.forEach(doc => {
+                    const userData = doc.data();
+                    let totalScore = 0;
+
+                    // รวมคะแนนจากทุกอาเรย์ที่ขึ้นต้นด้วย 'a'
+                    for (let i = 1; i <= Object.keys(userData).length; i++) {
+                        const arrayName = `a${i}`;
+                        if (userData[arrayName]) {
+                            totalScore += userData[arrayName].reduce((acc, curr) => acc + curr, 0);
+                        }
+                    }
+
+                    users.push({
+                        profile: userData.profilePicture,
+                        username: userData.username,
+                        score: totalScore
+                    });
+                });
+
+                // เรียงลำดับผู้ใช้ตามคะแนน
+                users.sort((a, b) => b.score - a.score);
+
+                users.forEach((user, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${index + 1}</td>
+                <td><img src="${user.profile}" alt="Profile" width="50"> ${user.username}</td>
+                <td>${user.score}</td>`;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('การดึงข้อมูลผิดพลาด:', error);
+            }
+        }
+
+    </script>
+</body>
+
+</html>

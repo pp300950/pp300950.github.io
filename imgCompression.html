@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Compression</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+
+  #output {
+    text-align: center;
+  }
+
+  #output img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+  }
+
+  #fileInput {
+    display: none;
+  }
+
+  #uploadBtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #uploadBtn:hover {
+    background-color: #45a049;
+  }
+
+  #downloadBtn {
+    background-color: #008CBA;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  #downloadBtn:hover {
+    background-color: #0073e6;
+  }
+
+
+  #sliderContainer {
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  #compressionSlider {
+    width: 100%;
+  }
+
+  #compressionValue {
+    margin-top: 5px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<button id="uploadBtn">Upload Image</button>
+<input type="file" accept="image/*" id="fileInput">
+<h5 style="color: red;">*ปรับค่าความละเอียดตามต้องการ</h5>
+<div id="sliderContainer">
+  <input type="range" min="0" max="1" step="0.1" value="0.5" id="compressionSlider">
+  <label for="compressionSlider">ค่าการบีบอัดรูปภาพ</label>
+  <span id="compressionValue"></span>
+</div>
+<div id="output"></div>
+<div id="fileSize"></div>
+<a id="downloadBtn" download="compressed_image.jpg" style="display: none;">Download Compressed Image</a>
+<script>
+const uploadBtn = document.getElementById('uploadBtn');
+const fileInput = document.getElementById('fileInput');
+const downloadBtn = document.getElementById('downloadBtn');
+
+uploadBtn.addEventListener('click', function() {
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const img = new Image();
+    img.src = e.target.result;
+
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // Set canvas dimensions to match image
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // Draw image onto canvas
+      ctx.drawImage(img, 0, 0);
+
+      // Get compression quality from slider
+      const compressionSlider = document.getElementById('compressionSlider');
+      const compressionValueElement = document.getElementById('compressionValue');
+
+      compressionSlider.addEventListener('input', function() {
+        const compressionValue = parseFloat(this.value);
+        compressionValueElement.textContent = `Compression Quality: ${compressionValue.toFixed(2)}`;
+
+        // Get compressed image data
+        const compressedImageData = canvas.toDataURL('image/jpeg', compressionValue);
+
+        // Display compressed image
+        const output = document.getElementById('output');
+        output.innerHTML = `<img src="${compressedImageData}" alt="Compressed Image">`;
+
+        // Show download button
+        downloadBtn.style.display = 'block';
+        downloadBtn.href = compressedImageData;
+
+        // Calculate file size before and after compression
+        const originalFileSize = (file.size / 1024).toFixed(2); // in KB
+        const compressedFileSize = (compressedImageData.length / 1024).toFixed(2); // in KB
+
+        // Display file sizes
+        const fileSizeElement = document.getElementById('fileSize');
+        fileSizeElement.innerHTML = `Original File Size: ${originalFileSize} KB <br> Compressed File Size: ${compressedFileSize} KB`;
+      });
+
+      // Trigger input event to initially display compressed image
+      compressionSlider.dispatchEvent(new Event('input'));
+    };
+  };
+
+  reader.readAsDataURL(file);
+});
+
+</script>
+</body>
+</html>

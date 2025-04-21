@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>JSON to Lua Converter</title>
+    <style>
+      textarea {
+        width: 100%;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>พิกัดเลื่อนจากตำเเหน่งเดิม:</p>
+<label>X:</label>
+<input type="number" id="shiftX" value=""><br>
+<label>Y:</label>
+<input type="number" id="shiftZ" value=""><br>
+<label>Z:</label>
+<input type="number" id="shiftY" value=""><br>
+
+
+    <h1>เเปลงโค้ด JSON เป็น Lua</h1>
+    <p>ใส่โค้ด JSON:</p>
+    <textarea id="json"></textarea>
+    <button onclick="convert()">เเสดงผลโค้ด</button>
+    <p>โค้ด Lua :</p>
+    <textarea id="lua"></textarea>
+    
+    
+    <script>
+    function convert() {
+  const json = document.getElementById("json").value;
+  const shiftX = Number(document.getElementById("shiftX").value);
+  const shiftY = Number(document.getElementById("shiftY").value);
+  const shiftZ = Number(document.getElementById("shiftZ").value);
+  let lua = "";
+
+  try {
+    const data = JSON.parse(json);
+    for (let i = 0; i < data.length; i++) {
+      const block = data[i];
+      const color = convertColor(block.c);
+      const x = block.x + shiftX;
+      const z = block.y + shiftY;
+      const y = block.z + shiftZ;
+      lua += `Block:replaceBlock(${color}, ${x}, ${y}, ${z}, FACE_DIRECTION.DIR_POS_Y)\n`;
+    }
+  } catch (e) {
+    lua = "Invalid JSON";
+  }
+
+  document.getElementById("lua").value = lua;
+}
+function convertColor(color) {
+  switch (color) {
+    case "#ffffff":
+      return 667;
+    case "#ff9800":
+      return 668;
+    case "#9c27b0":
+      return 669;
+    case "#b2ebf2":
+      return 670;
+    case "#ffff00":
+      return 671;
+    case "#8bc34a":
+      return 672;
+    case "#e91e63":
+      return 673;
+    case "#9e9e9e":
+      return 674;
+    case "#bdbdbd":
+      return 675;
+    case "#2196f3":
+      return 676;
+    case "#673ab7":
+      return 677;
+    case "#2196f3":
+      return 678;
+    case "#795548":
+      return 679;
+    case "#4caf50":
+      return 680;
+    case "#f44336":
+      return 681;
+    case "#000000":
+      return 682;
+    default:
+      return color;
+  }
+}
+
+    </script>
+  </body>
+</html>

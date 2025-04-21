@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .balance {
+            font-size: 18px;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #auctionItem {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #auctionItem img {
+            width: 300px;
+            height: 300px;
+            object-fit: contain;
+        }
+
+        #itemDescription {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        #currentBid {
+            font-size: 24px;
+            color: green;
+            margin-bottom: 10px;
+        }
+
+        #bidControls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #bidInput {
+            width: 80px;
+            text-align: center;
+            font-size: 20px;
+            margin: 0 10px;
+        }
+
+        #confirmBid {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #biddersList {
+            margin-top: 20px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .bidder {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+            background-color: #dadada;
+
+            margin: 5px 0;
+        }
+
+        #timer {
+            font-size: 20px;
+            color: red;
+            margin-top: 20px;
+        }
+
+        /* สำหรับจำนวนผู้เข้าร่วมประมูล */
+        #participantsCount {
+            position: fixed;
+            top: 85px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            z-index: 1000;
+        }
+
+        #chatContainer {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            top: 75px;
+            background-color: white;
+            border: 1px solid #ccc;
+            width: 100vw;
+            height: 60vh;
+            max-width: 400px;
+            max-height: 500px;
+            z-index: 1000;
+        }
+
+        #chatBox {
+            width: 100%;
+            height: 80%;
+            overflow-y: auto;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chatInput {
+            width: calc(100% - 50px);
+            padding: 10px;
+            box-sizing: border-box;
+            margin-right: 10px;
+        }
+
+        #sendButton {
+            padding: 20px;
+            cursor: pointer;
+            background-color: rgb(53, 92, 219);
+            color: rgb(255, 255, 255);
+            border: none;
+            border-radius: 15px;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #e1f7d5;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+            margin-right: 20px;
+        }
+
+        .other-message {
+            align-self: flex-start;
+            background-color: #f1f0f0;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+        }
+
+        .other-message-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            margin-left: 10px;
+        }
+
+        .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <span class="icon" id="chat"">💬 แชท</span>
+        <span class=" icon" onclick="goHome()">🏠 โฮม</span>
+        <script>
+            function goHome() {
+                window.location.href = 'Home.html';
+            }
+        </script>
+        <span class="balance">💰 เงินของคุณ: <span id="userBalance">0</span> บาท</span>
+    </header>
+
+    <!-- จำนวนผู้เข้าร่วมประมูล -->
+    <div id="participantsCount">เข้าร่วมประมูล: <span id="numParticipants">0</span></div>
+    <div id="loadingMessage" style="display: block; font-size: xx-large; color: #28a745;margin-top: 60px;">
+        กรุณารอสักครู่ <div id="auction-timer" style="display: inline;color: #ff2828; font-size: xx-large;">0</div>
+        วินาที...</div>
+    <div id="loadingMessage2" style="display: none;  font-size: xx-large;
+     color: #a7289c;margin-top: 60px; text-align: center;">
+        +++ เริ่มประมูลได้จร้า +++
+    </div>
+
+    <div id="chatContainer">
+        <div id="chatBox"></div>
+        <div style="display: flex; align-items: center;">
+            <input type="text" id="chatInput" placeholder="พิมพ์ข้อความ...">
+            <button id="sendButton">ส่ง</button>
+        </div>
+    </div>
+
+    <main>
+        <div id="auctionItem">
+            <img src="https://via.placeholder.com/300" alt="สินค้าที่ประมูล" id="pictur">
+            <div id="itemDescription">ชื่อสินค้า</div>
+            <div id="details">รายละเอียดสินค้า บลาๆๆๆ</div>
+            <div id="minbid">ราคาเริ่มต้น: 0 บาท</div>
+            <div id="currentBid">ราคาปัจจุบัน: <span id="currentBidValue">0</span> บาท</div>
+
+            <div id="bidControls">
+                <button onclick="changeBid(-10)">🔽 ลดราคา</button>
+                <input type="number" id="bidInput" value="10" readonly>
+                <button onclick="changeBid(10)">🔼 เพิ่มราคา</button>
+                <button id="confirmBid" style="margin-left: 10px;">ประมูล</button>
+            </div>
+            <div id="timer">เวลาที่เหลือ: <span id="timeLeft">0</span> วินาที</div>
+        </div>
+
+        <div id="biddersList">
+            <h3>ผู้เข้าร่วมประมูล</h3>
+            <div id="bidders"></div>
+        </div>
+    </main>
+
+    <script>
+        let currentBid = parseInt(bidInput.value);
+
+        function changeBid(amount) {
+            const bidInput = document.getElementById('bidInput');
+            let a = currentBid + amount; //ค่าเงินในอนาคต = ค่าเงินที่จะลงในปัจจุบัน + ค่าเงิน (+10 หรือ -10)
+            if (a > 0) { //ตรวจค่าเงินที่จะลงในปัจจุบันไม่ให้ต่ำกว่า 1
+                currentBid += amount;
+                bidInput.value = currentBid;
+            } else {
+                alert('ขั้นต่ำ 10 บาท');
+            }
+            console.log("เงินที่จะลงในปัจจุบัน: " + currentBid)
+        }
+
+
+    </script>
+    <script type="module" defer>
+
+        import { initializeApp, } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-auth.js";
+        import {
+            getFirestore, collection, addDoc, where, setDoc, serverTimestamp, getDocs, getDoc, doc,
+            updateDoc, query, orderBy, onSnapshot
+        } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { getStorage, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-storage.js"; // เพิ่มการนำเข้า Firebase Storage API
+        import { getDatabase, set, push, ref, onValue, remove, get, child } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVzawA_NDnkqCHKerT2Gcg4zO9yohWx3U",
+            authDomain: "pangpone-1372b.firebaseapp.com",
+            databaseURL: "https://pangpone-1372b-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "pangpone-1372b",
+            storageBucket: "pangpone-1372b.appspot.com",
+            messagingSenderId: "911442011016",
+            appId: "1:911442011016:web:8434ea79964ceab63a903d",
+            measurementId: "G-S144W2V9SG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const firestore = getFirestore(app);
+        const storage = getStorage(app);
+        const getdata = getDatabase(app);
+
+        let statusbid = false;
+        let add_once = false;
+        let status_time = false;
+        let bidstat = false;
+        let totalBids = 0;
+        let newtotal = 0;
+        let temp_value = 0;
+        let newtotal_temp = 0;
+        let countdown; // ตัวแปรนี้จะใช้เก็บ interval ที่กำลังทำงานอยู่  ป้องกันการทำงานทับซ้อนของตัวนับเวลา
+        let userE;
+        let bid3 = true;
+        let state_end = false;
+
+        function toggleChat() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.style.display = chatContainer.style.display === 'none' ? 'block' : 'none';
+
+            // เมื่อเปิดแชท ให้เลื่อนลงไปที่ข้อความล่าสุด
+            if (chatContainer.style.display === 'block') {
+                const chatBox = document.getElementById('chatBox');
+                chatBox.scrollTop = chatBox.scrollHeight; // เลื่อนให้แสดงข้อความล่าสุด
+            }
+        }
+
+        function sendMessage() {
+            const userEmail = localStorage.getItem('userEmail') || "";
+            const chatBox = document.getElementById('chatBox');
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+
+            if (message) {
+                // ส่งข้อความไปยัง Firebase
+                set(push(ref(getdata, 'chat')), {
+                    user: userEmail,
+                    msg: message,
+                    timestamp: Date.now() // ใช้ Date.now() เพื่อเก็บเวลาในรูปแบบ millisecond
+                });
+
+                chatInput.value = ''; // เคลียร์ช่องกรอกข้อความ
+
+                // เลื่อนให้แสดงข้อความล่าสุด
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        
+let lastUserEmail = null; 
+let messages = []; 
+
+async function displayMessage(userEmail, message, timestamp) {
+    const chatBox = document.getElementById('chatBox');
+    const currentUserEmail = localStorage.getItem('userEmail');
+
+    let username;
+    let profileImageUrl;
+
+    try {
+        const userQuery = query(collection(db, 'usersgame'), where('email', '==', userEmail));
+        const querySnapshot = await getDocs(userQuery);
+
+        if (!querySnapshot.empty) {
+            querySnapshot.forEach(doc => {
+                const userData2 = doc.data();
+                username = userData2.username;
+                profileImageUrl = userData2.picture;
+            });
+        } else {
+            console.error('ไม่พบผู้ใช้ที่มีอีเมลนี้');
+            return;
+        }
+    } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้:', error);
+        return;
+    }
+
+    // ตรวจสอบว่ามีข้อความที่ตรงกับ userEmail และ timestamp นี้ใน messages หรือไม่
+    if (!messages.some(msg => msg.userEmail === userEmail && msg.timestamp === timestamp)) {
+        messages.push({ userEmail, message, timestamp, username, profileImageUrl });
+        messages.sort((a, b) => a.timestamp - b.timestamp);
+
+        chatBox.innerHTML = '';
+
+        messages.forEach(msg => {
+    const messageElement = document.createElement('div');
+
+    if (msg.userEmail === currentUserEmail) {
+        messageElement.className = 'user-message';
+        messageElement.textContent = msg.message;
+    } else {
+        // สร้าง element แสดงชื่อผู้ใช้ให้อยู่ด้านนอกของ otherMessageContainer
+        const usernameElement = document.createElement('div');
+        usernameElement.className = 'other-user';
+        usernameElement.style.marginBottom = '5px'; 
+        usernameElement.textContent = msg.username;
+        usernameElement.style.marginLeft = '15px'; 
+
+        // สร้าง container สำหรับรูปโปรไฟล์และกล่องข้อความ
+        const otherMessageContainer = document.createElement('div');
+        otherMessageContainer.className = 'other-message-container';
+
+        const profilePic = document.createElement('img');
+        profilePic.src = msg.profileImageUrl || 'defaultProfilePic.png';
+        profilePic.className = 'profile-pic';
+        profilePic.alt = `${msg.username}'s profile picture`;
+
+        const otherMessage = document.createElement('div');
+        otherMessage.className = 'other-message';
+        otherMessage.textContent = msg.message;
+
+        otherMessageContainer.appendChild(profilePic);
+        otherMessageContainer.appendChild(otherMessage);
+
+        // เพิ่ม usernameElement และ otherMessageContainer เข้าไปใน chatBox ตามลำดับ
+        chatBox.appendChild(usernameElement);
+        chatBox.appendChild(otherMessageContainer);
+    }
+
+    chatBox.appendChild(messageElement);
+    lastUserEmail = msg.userEmail;
+});
+
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+}
+
+function loadChatMessages() {
+    const chatBox = document.getElementById('chatBox');
+
+    const chatRef = ref(getdata, 'chat');
+    onValue(chatRef, (snapshot) => {
+        let newMessages = [];
+
+        snapshot.forEach((childSnapshot) => {
+            const childData = childSnapshot.val();
+            if (!messages.some(msg => msg.userEmail === childData.user && msg.timestamp === childData.timestamp)) {
+                newMessages.push(childData);
+            }
+        });
+
+        newMessages.sort((a, b) => a.timestamp - b.timestamp);
+
+        newMessages.forEach((childData) => {
+            displayMessage(childData.user, childData.msg, childData.timestamp);
+        });
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+}
+
+
+
+
+        // เพิ่ม event listeners เมื่อ DOM ถูกโหลด
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatToggle = document.getElementById('chat');
+            const sendButton = document.getElementById('sendButton');
+
+            chatToggle.addEventListener('click', toggleChat);
+            sendButton.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', sendMessage1);
+
+            // โหลดข้อมูลแชทเมื่อเริ่มต้น
+            loadChatMessages();
+        });
+
+        function sendMessage1(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+
+
+
+
+
+
+
+        async function clearBidData() {
+            try {
+                await remove(ref(getdata, 'bid'));
+                await remove(ref(getdata, 'countall'));
+            } catch (error) {
+                console.error('Error clearing bid data:', error);
+            }
+        }
+
+        async function confirmBid() {
+            if (statusbid) {
+                let bidInputValue = parseInt(document.getElementById('bidInput').value);
+
+                const userEmail = localStorage.getItem('userEmail');
+
+                set(push(ref(getdata, 'bid')), {
+                    user: userEmail,
+                    bid: bidInputValue
+                });
+
+            } else if (!bid3) {
+                alert("โปรดรอเวลาเริ่มประมูล");
+            } else {
+                alert("โปรดรอเวลาเริ่มประมูล")
+            }
+        }
+
+        // ฟังก์ชันเริ่มนับเวลา
+        function startTimer(duration, display) {
+            const userEmail = localStorage.getItem('userEmail') || "";
+            if (status_time) {
+                bidstat = true;
+                let timers = duration, seconds;
+
+                // ตรวจสอบว่ามีการนับเวลาอยู่หรือไม่ หากมีให้หยุดก่อนเริ่มใหม่
+                if (countdown) {
+                    clearInterval(countdown);
+                }
+
+                countdown = setInterval(async function () {
+                    seconds = parseInt(timers, 10);
+
+                    // อัปเดตตัวแสดงเวลาที่เหลือ
+                    display.textContent = seconds;
+
+                    if (--timers < 0) {
+                        clearInterval(countdown);
+                        bid3 = false;
+                        state_end = true;
+
+                        await addItemToBag();
+                        requestNewProduct();
+                        clearBidData();
+                        alert("คุณชนะการประมูล ของจะถูกเพิ่มในคลัง โปรดกลับไปที่หน้าหลัก");
+                    }
+                }, 1000);
+            }
+        }
+
+        // ฟังก์ชันเพิ่มไอเท็มลงกระเป๋า
+        async function addItemToBag() {
+            // ดึงข้อมูลจาก localStorage
+            const userEmail = localStorage.getItem('userEmail');
+            let img = localStorage.getItem('img');
+            let name = localStorage.getItem('name');
+            let bid = localStorage.getItem('bid');
+            let details = localStorage.getItem('details');
+
+            let addforWinUser = {
+                name: name,
+                description: details,
+                image: img,
+                price: bid,
+                bid: newtotal,
+                date: new Date() // ใช้ timestamp จากฝั่งไคลเอนต์แทน
+            };
+
+            // ตรวจสอบว่าผู้ใช้เป็นเจ้าของบัญชี
+            if (userE === userEmail) {
+
+                console.log("ผ่านเงื่อนไขพร้อมเพิ่มข้อมูล")
+
+                const userRef = collection(db, "usersgame");
+                const querySnapshot = await getDocs(query(userRef, where("email", "==", userEmail)));
+
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach(async (doc) => {
+                        // ดึงข้อมูล bag ของผู้ใช้
+                        let currentBag = doc.data().bag || [];
+                        let currentMoney = doc.data().money || 0;
+
+                        // เพิ่มไอเท็มใหม่ลงไป
+                        currentBag.push(addforWinUser);
+                        let updatedMoney = currentMoney - newtotal;
+
+                        // อัปเดตbagในฐานข้อมูล
+                        await updateDoc(doc.ref, {
+                            bag: currentBag,
+                            money: updatedMoney // อัปเดตเงิน
+                        });
+
+                        console.log("อัปเดต bag สำเร็จ");
+                    });
+                } else {
+                    console.log("ไม่พบผู้ใช้ที่มีอีเมลนี้");
+                }
+            } else {
+                console.log(" ไม่มีผู้ชนะประมูล ")
+            }
+        }
+
+        async function requestNewProduct() {
+            const userEmail = localStorage.getItem('userEmail');
+            let bid = localStorage.getItem('bid');
+            let userMoney = localStorage.getItem('userMoney');
+
+            const response = await fetch('auction.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    status: 'red',
+                    user_email: userEmail,
+                    user_money: userMoney,
+                    min_bid: bid
+                })
+            });
+        }
+
+        function startTimer2(duration, display) {
+            let timers = duration, seconds;
+
+            // ตรวจสอบว่ามีการนับเวลาอยู่หรือไม่ หากมีให้หยุดก่อนเริ่มใหม่
+            if (countdown) {
+                clearInterval(countdown);
+            }
+
+            countdown = setInterval(async function () {
+                if (!bidstat) {
+                    seconds = parseInt(timers, 10);
+
+                    // อัปเดตตัวแสดงเวลาที่เหลือ
+                    display.textContent = seconds;
+
+                    // ถ้านับถอยหลังเสร็จ (0 วินาที)
+                    if (--timers < 0) {
+                        clearInterval(countdown);
+                        requestNewProduct();
+                        clearBidData();
+                        wait();
+                    }
+                } else {
+                    clearInterval(countdown); // ถ้า bidstat เปลี่ยนเป็น true หยุดการนับเวลา
+                }
+            }, 1000);
+        }
+
+        function backend() {
+            let timeLeft2 = 3; // ตั้งเวลาเริ่มต้น
+
+            const timer2 = setInterval(() => {
+                if (timeLeft2 <= 0) {
+                    clearInterval(timer2); // หยุดนับเวลา
+                    loadingMessage2.style.display = 'none';
+                } else {
+                    timeLeft2--;
+                }
+            }, 1000);
+        }
+
+        function wait() {
+            let timeLeft3 = 5; // ตั้งเวลาเริ่มต้น
+
+            const timer3 = setInterval(() => {
+                if (timeLeft3 <= 0) {
+                    clearInterval(timer3); // หยุดนับเวลา
+                    console.log("ครบ5วิ")
+                } else {
+                    timeLeft3--;
+                }
+            }, 1000);
+        }
+
+        function countStart() {
+            const timerDisplay = document.getElementById('auction-timer');
+            let timeLeft = 5; // ตั้งเวลาเริ่มต้น
+            status_time = true;
+
+            const timer = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timer); // หยุดนับเวลา
+                    loadingMessage.style.display = 'none'; // ซ่อนข้อความหลังจาก 10 วินาที
+                    loadingMessage2.style.display = 'block';
+                    // เริ่มนับเวลาหลังจากการประมูลเริ่มต้น
+                    let timeLeftElement = document.getElementById('timeLeft');
+                    startTimer2(10, timeLeftElement); // เครื่องนับเวลาเริ่มเเรก
+                    statusbid = true;
+                    backend();
+                } else {
+                    timerDisplay.innerHTML = `${timeLeft}`;
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+
+        async function addBidder(userE, bidAmount) {
+    let userName = '';
+    const biddersList = document.getElementById('bidders');
+    
+    // ตรวจสอบว่าไม่มีผู้บิดซ้ำในรายการ
+    let existingBidder = Array.from(biddersList.children).find(bidder =>
+        bidder.querySelector('span').textContent === userE
+    );
+
+    if (existingBidder) {
+        return;
+    }
+
+    // ดึงข้อมูลชื่อผู้ใช้จาก Firestore โดยใช้อีเมล
+    try {
+        const userQuery = query(collection(db, 'usersgame'), where('email', '==', userE));
+        const querySnapshot = await getDocs(userQuery);
+        if (!querySnapshot.empty) {
+            querySnapshot.forEach(doc => {
+                const userData2 = doc.data();
+                userName = userData2.username;
+            });
+        } else {
+            console.error('ไม่พบผู้ใช้ที่มีอีเมลนี้');
+            userName = userE;
+        }
+    } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้:', error);
+        userName = userE;
+    }
+
+    let bid = parseInt(localStorage.getItem('bid')) || 0;
+
+    // คำนวณค่า total ใหม่สำหรับผู้บิด
+    let newTotal;
+    if (add_once) {
+        newTotal = bidAmount + newtotal;
+        temp_value = newtotal_temp;
+        newtotal_temp = newTotal;
+    } else {
+        add_once = true;
+        newTotal = bidAmount + newtotal + bid;
+        newtotal_temp = newTotal;
+        temp_value = bid;
+    }
+
+    const bidderEntry = {
+        userName,
+        bidAmount,
+        newTotal,
+        temp_value
+    };
+
+    // เพิ่มผู้บิดลงในอาร์เรย์
+    messages.push(bidderEntry);
+
+    // จัดเรียงอาร์เรย์ messages ใหม่ตาม bidAmount จากมากไปน้อย
+    messages.sort((a, b) => b.bidAmount - a.bidAmount);
+
+    // ล้างรายการใน biddersList ก่อนแสดงผล
+    biddersList.innerHTML = '';
+
+    // แสดงผู้บิดเรียงตาม bidAmount
+    messages.forEach(msg => {
+        const bidderElement = document.createElement('div');
+        bidderElement.className = 'bidder';
+        bidderElement.innerHTML = `
+            <span>${msg.userName}</span>
+            <span style="color:red;">${" + " + msg.bidAmount} บาท</span>
+            <span>บิด: <span>${msg.temp_value} บาท</span> 
+            <span style="color: green;">${" &#x2192; " + msg.newTotal} บาท</span>
+        `;
+        biddersList.appendChild(bidderElement);
+    });
+}
+
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            const confirmBidButton = document.getElementById('confirmBid');
+            confirmBidButton.addEventListener('click', confirmBid);
+
+            let img = localStorage.getItem('img');
+            let name = localStorage.getItem('name');
+            let bid = localStorage.getItem('bid');
+            let userEmail = localStorage.getItem('userEmail');
+            let userMoney = localStorage.getItem('userMoney');
+            let details = localStorage.getItem('details');
+
+            let bid2 = parseInt(localStorage.getItem('bid')) || 0;
+
+            const itemImage = document.getElementById('itemDescription');
+            const pictur = document.getElementById('pictur');
+            const userBalance = document.getElementById('userBalance');
+            const minbid = document.getElementById('minbid');
+            const detail = document.getElementById('details');
+
+            const currentBidDisplay = document.getElementById('currentBidValue');
+
+            itemImage.textContent = name;
+            pictur.src = img;
+            userBalance.textContent = userMoney;
+            minbid.textContent = "ขั้นต่ำ: " + bid2 + " บาท";
+            detail.textContent = "รายละเอียด: " + details;
+
+            onValue(ref(getdata, 'bid'), (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const biddersList = document.getElementById('bidders');
+                    biddersList.innerHTML = ''; // ล้างรายการผู้บิดก่อน
+
+                    totalBids = Object.values(data).reduce((sum, bid) => sum + (bid.bid || 0), 0);
+                    currentBidDisplay.textContent = totalBids + bid2;
+
+                    Object.values(data).forEach(bidInfo => {
+                        userE = bidInfo.user;
+                        let bidAmount = bidInfo.bid;
+                        addBidder(userE, bidAmount); // เพิ่มลงในรายการผู้บิด
+                    });
+
+                    startTimer(10, document.getElementById('timeLeft'));
+                } else {
+                    console.log('ไม่พบข้อมูลใน bid');
+                }
+            });
+        });
+
+        /*********************     สำหรับช่วงเริ่มต้น     ************************/
+        document.addEventListener('DOMContentLoaded', async function () {
+            let minBid = localStorage.getItem('bid');
+            let userMoney = localStorage.getItem('userMoney');
+            let countUsers = localStorage.getItem('countUsers');
+            const userEmail = localStorage.getItem('userEmail') || "";
+            let bid2 = parseInt(localStorage.getItem('bid')) || 0;
+
+            const currentBidDisplay = document.getElementById('currentBidValue');
+            const currentBidValue = parseInt(currentBidDisplay.innerText);
+
+            currentBidDisplay.textContent = totalBids + bid2;
+
+
+            if (userMoney !== null && minBid !== null) {
+                console.log("อีเมลทั้งหมดที่เข้าร่วมการประมูล:", countUsers);
+
+                // ตรวจสอบจำนวนอีเมล
+                if (countUsers < 2) {  /********************   ใช้จริงต้องปรับนี่เป็น 2     ************************/
+                    clearBidData();
+                    alert('จำนวนผู้เข้าร่วมประมูลน้อยกว่า 2 คน');
+                    window.location.href = 'Home.html';
+                }
+
+                onValue(ref(getdata, 'countall'), (snapshot) => {
+                    const data = snapshot.val();
+                    let emailExists = false;
+
+                    // ถ้ามีข้อมูลใน snapshot
+                    if (data) {
+                        // วนลูปเพื่อตรวจสอบอีเมลในฐานข้อมูล
+                        for (const key in data) {
+                            if (data[key].user === userEmail) {
+                                emailExists = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // ถ้าไม่พบอีเมล ทำการส่งข้อมูล
+                    if (!emailExists) {
+                        if (!state_end) {
+                            window.location.href = 'Home.html';
+                        }
+                    } else {
+                        countStart();
+                    }
+                });
+            }
+
+            const numParticipants = document.getElementById('numParticipants');
+            numParticipants.innerHTML = countUsers;
+
+        });
+    </script>
+</body>

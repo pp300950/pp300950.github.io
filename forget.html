@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+    <title>Forgot Password</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="login__content">
+            <img src="assets/bg-login.png" alt="login image" class="login__img">
+
+            <form action="" class="login__form">
+                <div>
+                    <h1 class="login__title">
+                        <span>คือก็ยังต้องใช้</span> รหัสผ่าน
+                    </h1>
+                    <p class="login__description">
+                       นึกดีๆเซ่!
+                    </p>
+                </div>
+
+                <div>
+                    <div class="login__inputs">
+                        <div>
+                            <label for="input-email" class="login__label">อีเมลล์</label>
+                            <input type="email" placeholder="ป้อนที่อยู่อีเมลล์" required class="login__input"
+                                id="input-email">
+                        </div>
+
+                        <div>
+                            <label for="input-pass" class="login__label">รหัสผ่าน</label>
+
+                            <div class="login__box">
+                                <input type="password" placeholder="ป้อนรหัสผ่านที่ท่านลืม" required class="login__input"
+                                    id="input-pass">
+                                <i class="ri-eye-off-line login__eye" id="input-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="login__check">
+                        <input type="checkbox" class="login__check-input" id="input-check">
+                        <label for="input-check" class="login__check-label">จำหน้าฉันไว้</label>
+                    </div>
+
+                    <label for="input-pass" class="login__label" style="text-align: right; color: rgb(63, 13, 182);">เห็นข้างล่างนี่ไหม  สร้างบัญชีใหม่เลย</label>
+                </div>
+
+                <div>
+                    <div class="login__buttons">
+                        <button class="login__button">เข้าสู่ระบบ</button>
+                        <button type="button" class="login__button login__button-ghost">สร้างบัญชี</button>
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <script>
+           
+            document.querySelector('.login__button.login__button-ghost').addEventListener('click', function () {
+                window.location.href = 'signup.html';  // นำไปยังหน้าสร้างบัญชี
+            });
+
+        </script>
+        <script src="assets/main.js"></script>
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+            import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                // ดึงข้อมูลการตั้งค่าจากไฟล์ PHP
+                try {
+                    const response = await fetch('config.php');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const firebaseConfig = await response.json();
+
+                    // Initialize Firebase
+                    const app = initializeApp(firebaseConfig);
+                    const auth = getAuth(app);
+
+                    const rememberMe = localStorage.getItem('rememberMe');
+                    const storedEmail = localStorage.getItem('email');
+                    const storedPassword = localStorage.getItem('password');
+
+                    if (rememberMe === 'true' && storedEmail && storedPassword) {
+                        try {
+                            const userCredential = await signInWithEmailAndPassword(auth, storedEmail, storedPassword);
+                            console.log('เข้าสู่ระบบอัตโนมัติ:', userCredential.user);
+                            localStorage.setItem('userId', userCredential.user.uid); // เก็บ userId
+                            window.location.href = 'webhome.html';  // Redirect on successful auto-login
+                        } catch (error) {
+                            console.error('Auto-login failed:', error);
+                            // แจ้งผู้ใช้หรือทำการบางอย่างเมื่อเข้าสู่ระบบอัตโนมัติไม่สำเร็จ
+                        }
+                    }
+
+                    document.querySelector('.login__form').addEventListener('submit', async (e) => {
+                        e.preventDefault(); // Prevent default form submission
+                        const email = document.getElementById('input-email').value;
+                        const password = document.getElementById('input-pass').value;
+                        const rememberMe = document.getElementById('input-check').checked;
+
+                        try {
+                            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                            console.log('Logged in:', userCredential.user);
+                            localStorage.setItem('email', email);
+                            localStorage.setItem('password', password);
+                            localStorage.setItem('userId', userCredential.user.uid); // เก็บ userId
+                            if (rememberMe) {
+                                localStorage.setItem('rememberMe', 'true');  // ตั้งค่า rememberMe เป็น 'true'
+                            } else {
+                                localStorage.removeItem('email');
+                                localStorage.removeItem('password');
+                                localStorage.removeItem('rememberMe');  // ลบ rememberMe
+                            }
+
+                            window.location.href = 'webhome.html'; // Redirect on successful login
+                        } catch (error) {
+                            console.error('Login failed:', error);
+                            alert('อีเมลล์หรือรหัสผ่านไม่ถูกต้อง');
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error fetching configuration:', error);
+                }
+            });
+        </script>
+</body>
+</html>

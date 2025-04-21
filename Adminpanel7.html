@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        div {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .data-list {
+            margin-top: 20px;
+        }
+
+        .data-list li {
+            margin-bottom: 10px;
+        }
+
+        .data-list a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Admin Panel</h1>
+    <script type="module" defer>
+        import { initializeApp, } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, setDoc, serverTimestamp, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { updateDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-storage.js"; // เพิ่มการนำเข้า Firebase Storage API
+        import { getDatabase, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDN8Fp80rRWJ_vucMeh5bGVWfgE8Vj1zlc",
+            authDomain: "myweb-840a2.firebaseapp.com",
+            projectId: "myweb-840a2",
+            storageBucket: "myweb-840a2.appspot.com",
+            messagingSenderId: "177736263941",
+            appId: "1:177736263941:web:f64638dffcc0ac1f2def6c",
+            measurementId: "G-VV2HNMF0BT"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+
+
+
+        async function initializeData() {
+    const mainDocRef = doc(db, "ask", "9DbbG0bzo4P51dHfLK6a");
+    const mainDocSnap = await getDoc(mainDocRef);
+
+    if (!mainDocSnap.exists()) {
+        console.error("ไม่พบข้อมูลหลักใน ask collection!");
+        return;
+    }
+
+    const mainData = mainDocSnap.data();
+    const mainKeys = Object.keys(mainData).filter(key => key.startsWith('a'));
+
+    // ดึงข้อมูลจาก answer collection
+    const answerCollectionRef = collection(db, 'answer');
+    const answerSnapshot = await getDocs(answerCollectionRef);
+    const answerKeys = answerSnapshot.docs.map(doc => doc.id);
+
+    console.log("Keys in 'answer':", answerKeys);
+
+    // ดึงข้อมูลและอัปเดตสำหรับแต่ละ key ใน answer
+    for (const key of answerKeys) {
+        const answerDocRef = doc(db, 'answer', key);
+        const answerDocSnap = await getDoc(answerDocRef);
+        const answerData = answerDocSnap.data() || {};
+        const answerFieldCount = Object.keys(answerData).length;
+
+        console.log(`Key: ${key}, Answer Field Count: ${answerFieldCount}`);
+
+        // ตรวจสอบอาเรย์ใน ask
+        if (mainKeys.includes(key)) {
+            const currentArray = mainData[key] || [];
+            console.log(`Current Array for ${key}:`, currentArray);
+
+            // เพิ่มค่า 1 ให้กับจำนวนสมาชิกใน answer
+            const newArrayLength = answerFieldCount + 1;
+
+            // ถ้าขนาดของอาเรย์ใน ask น้อยกว่าจำนวนฟิลด์ใน answer
+            if (Array.isArray(currentArray)) {
+                if (currentArray.length < newArrayLength) {
+                    // เพิ่มค่า 0 เข้าไปในอาเรย์
+                    const newArray = [...currentArray, ...Array(newArrayLength - currentArray.length).fill(0)];
+                    console.log(`Updating ${key} with new Array:`, newArray);
+                    await updateDoc(mainDocRef, { [key]: newArray });
+                } else if (currentArray.length > newArrayLength) {
+                    // ลดขนาดอาเรย์ให้ตรงกับ answer
+                    const trimmedArray = currentArray.slice(0, newArrayLength);
+                    console.log(`Trimming ${key} to Array:`, trimmedArray);
+                    await updateDoc(mainDocRef, { [key]: trimmedArray });
+                }
+            } else {
+                // ถ้าปัจจุบันไม่ใช่อาเรย์ ให้เปลี่ยนเป็นอาเรย์ของ 0s
+                const newArray = Array(newArrayLength).fill(0);
+                console.log(`Setting ${key} to Array of 0s:`, newArray);
+                await updateDoc(mainDocRef, { [key]: newArray });
+            }
+        } else {
+            // สร้างอาเรย์ใหม่ใน ask ถ้าไม่มี
+            const newArray = Array(answerFieldCount + 1).fill(0);
+            console.log(`Adding new Array ${key}:`, newArray);
+            await updateDoc(mainDocRef, { [key]: newArray });
+        }
+    }
+
+    // ตรวจสอบและลบเอกสารที่ไม่มีใน answer
+    for (const key of mainKeys) {
+        if (!answerKeys.includes(key)) {
+            // ถ้า key ใน ask ไม่มีใน answer ให้ลบออกจาก ask
+            console.log(`Deleting ${key} from ask`);
+            await updateDoc(mainDocRef, { [key]: deleteField() });
+        }
+    }
+}
+        async function loadData() {
+            const list = document.getElementById('dataList');
+            list.innerHTML = '';
+
+            try {
+                const querySnapshot = await getDocs(collection(db, 'data'));
+                querySnapshot.forEach((doc) => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <strong>${doc.id}</strong>: ${JSON.stringify(doc.data())}
+                        <a href="#" onclick="editData('${doc.id}')">Edit</a>
+                    `;
+                    list.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error("Error fetching documents: ", error);
+            }
+        }
+        function toggleForms() {
+            const selectedForm = document.getElementById('formSelector').value;
+            document.getElementById('addFormContainer').style.display = selectedForm === 'add' ? 'block' : 'none';
+            document.getElementById('editFormContainer').style.display = selectedForm === 'edit' ? 'block' : 'none';
+            document.getElementById('manageAnswerDataContainer').style.display = selectedForm === 'manage' ? 'block' : 'none';
+            document.getElementById('manageAnswerDataContainer2').style.display = selectedForm === 'manage2' ? 'block' : 'none';
+
+            /* if (selectedForm === 'manage') {
+                 populateAnswerTypeSelector();
+             } else if(selectedForm === 'manage2'){
+                 populateAnswerTypeSelector();
+             }*/
+        }
+        async function populateEditSelect() {
+            const select = document.getElementById('editId');
+            select.innerHTML = '<option value="" disabled selected>Select ID</option>';
+
+            try {
+                const querySnapshot = await getDocs(collection(db, 'data'));
+                querySnapshot.forEach((doc) => {
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.textContent = doc.id;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching documents: ", error);
+            }
+        }
+        async function populateTypes() {
+            const typeSelector = document.getElementById('answerTypeSelector');
+            typeSelector.innerHTML = '<option value="" disabled selected>Select Type</option>'; // Reset options
+
+            try {
+                const colRef = collection(db, 'answer');
+                const colSnap = await getDocs(colRef);
+                colSnap.forEach((doc) => {
+                    const type = doc.id; // The document ID
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    typeSelector.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching types: ", error);
+            }
+        }
+        async function fetchData() {
+            const type = document.getElementById('answerTypeSelector').value;
+            const dataContainer = document.getElementById('dataContainer');
+            const dataList2 = document.getElementById('dataList2');
+            dataList2.innerHTML = '';
+
+            if (type) {
+                dataContainer.style.display = 'block';
+                try {
+                    const docRef = doc(db, 'answer', type);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        for (const key in data) {
+                            const li = document.createElement('li');
+                            li.textContent = `${key}: ${data[key]}`;
+                            dataList2.appendChild(li);
+                        }
+                    } else {
+                        console.log("No such document!");
+                    }
+                } catch (error) {
+                    console.error("Error fetching documents: ", error);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('formSelector').addEventListener('change', toggleForms);
+
+            async function toggleForms() {
+                const selectedForm = document.getElementById('formSelector').value;
+                if (selectedForm === 'add') {
+                    document.getElementById('addFormContainer').style.display = 'block';
+                    document.getElementById('editFormContainer').style.display = 'none';
+                    document.getElementById('manageAnswerDataContainer').style.display = 'none';
+                    document.getElementById('manageAnswerDataContainer2').style.display = 'none';
+                } else if (selectedForm === 'edit') {
+                    document.getElementById('addFormContainer').style.display = 'none';
+                    document.getElementById('editFormContainer').style.display = 'block';
+                    document.getElementById('manageAnswerDataContainer').style.display = 'none';
+                    document.getElementById('manageAnswerDataContainer2').style.display = 'none';
+                    populateEditSelect();
+                } else if (selectedForm === 'manage') {
+                    document.getElementById('addFormContainer').style.display = 'none';
+                    document.getElementById('editFormContainer').style.display = 'none';
+                    document.getElementById('manageAnswerDataContainer').style.display = 'block';
+                    document.getElementById('manageAnswerDataContainer2').style.display = 'none';
+                } else {
+                    document.getElementById('addFormContainer').style.display = 'none';
+                    document.getElementById('editFormContainer').style.display = 'none';
+                    document.getElementById('manageAnswerDataContainer').style.display = 'none';
+                    document.getElementById('manageAnswerDataContainer2').style.display = 'block';
+                }
+            }
+
+            async function populateEditSelect() {
+                const select = document.getElementById('editId');
+                select.innerHTML = '<option value="" disabled selected>Select ID</option>';
+
+                try {
+                    const querySnapshot = await getDocs(collection(db, 'datavalue/8hfRFIlA0yBWB2cWsjys/items'));
+                    if (querySnapshot.empty) {
+                        console.log("No documents found.");
+                    } else {
+                        querySnapshot.forEach((doc) => {
+                            const option = document.createElement('option');
+                            option.value = doc.id;
+                            option.textContent = doc.id;
+                            select.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error fetching documents: ", error);
+                }
+            }
+
+            async function updateDataList() {
+                const ul = document.getElementById('dataList');
+                if (ul) {
+                    ul.innerHTML = '';
+                    const querySnapshot = await getDocs(collection(db, 'datavalue/8hfRFIlA0yBWB2cWsjys/items'));
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const li = document.createElement('li');
+                        li.textContent = `${doc.id} - ${data.title}: ${data.detail}`;
+                        dataList.appendChild(li);
+                    });
+                } else {
+                    console.error("Data list element not found.");
+                }
+            }
+
+            document.getElementById('editForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('editId').value;
+                if (!id) {
+                    alert('Please select an ID to edit.');
+                    return;
+                }
+
+                try {
+                    const docRef = doc(db, 'datavalue/8hfRFIlA0yBWB2cWsjys/items', id);
+                    await updateDoc(docRef, {
+                        title: document.getElementById('editTitle').value || '',
+                        detail: document.getElementById('editDetail').value || '',
+                        questionText: document.getElementById('editQuestionText').value || '',
+                        headerText: document.getElementById('editHeaderText').value || '',
+                        additionalInfo: JSON.parse(document.getElementById('editAdditionalInfo').value || '{}'),
+                        hint: document.getElementById('editHint').value || '',
+                        facebookLinks: JSON.parse(document.getElementById('editFacebookLinks').value || '[]'),
+                        questionOptions: JSON.parse(document.getElementById('editQuestionOptions').value || '[]'),
+                        scoreCorrect: parseInt(document.getElementById('editScoreCorrect').value, 10) || 0,
+                        scoreIncorrect: parseInt(document.getElementById('editScoreIncorrect').value, 10) || 0,
+                        imageURL: document.getElementById('editImageURL').value || '',
+                        colorCode: document.getElementById('editColorCode').value || '',
+                        updatedAt: serverTimestamp()
+                    });
+                    alert('Data updated successfully');
+                    clearForm();
+                    updateDataList();
+                } catch (error) {
+                    console.error("Error updating document: ", error);
+                }
+            });
+
+            document.getElementById('editId').addEventListener('change', async (event) => {
+                const docId = event.target.value;
+                if (docId) {
+                    const docRef = doc(db, 'datavalue/8hfRFIlA0yBWB2cWsjys/items', docId);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        document.getElementById('editTitle').value = data.title || '';
+                        document.getElementById('editDetail').value = data.detail || '';
+                        document.getElementById('editQuestionText').value = (data.question && data.question.text) || '';
+                        document.getElementById('editHeaderText').value = data.headerText || '';
+                        document.getElementById('editAdditionalInfo').value = JSON.stringify(data.additionalInfo) || '';
+                        document.getElementById('editHint').value = data.hint || '';
+                        document.getElementById('editFacebookLinks').value = JSON.stringify(data.facebookLinks) || '';
+                        document.getElementById('editQuestionOptions').value = JSON.stringify(data.questionOptions) || '';
+                        document.getElementById('editScoreCorrect').value = data.scoreCorrect || '';
+                        document.getElementById('editScoreIncorrect').value = data.scoreIncorrect || '';
+                        document.getElementById('editImageURL').value = data.imageURL || '';
+                        document.getElementById('editColorCode').value = data.colorCode || '';
+                    }
+                }
+            });
+
+            function clearForm() {
+                document.getElementById('addForm').reset();
+                document.getElementById('editForm').reset();
+                document.getElementById('editAnswerForm').reset();
+            }
+
+            // Initial update of data list
+            updateDataList();
+        });
+        document.getElementById('editAnswerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const key = document.getElementById('answerKey').value;
+            const value = document.getElementById('answerValue').value;
+            const type = document.getElementById('answerTypeSelector').value;
+
+            if (!key || !value || !type) {
+                alert('Please fill out all fields and select a type.');
+                return;
+            }
+
+            try {
+                const docRef = doc(db, 'answer', type);
+                await updateDoc(docRef, {
+                    [key]: value
+                });
+                alert('Data updated successfully');
+                fetchData(); // Refresh data list
+            } catch (error) {
+                console.error("Error updating document: ", error);
+            }
+        });
+
+        document.getElementById('manageAnswerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newAnswerId = document.getElementById('newAnswerId').value;
+            const newAnswerValues = JSON.parse(document.getElementById('newAnswerValues').value);
+
+            if (!newAnswerId || !newAnswerValues) {
+                alert('Please fill out both fields.');
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, 'answer', newAnswerId), newAnswerValues);
+                alert('New answer data added successfully');
+                populateTypes(); // Refresh types in the dropdown
+            } catch (error) {
+                console.error("Error adding document: ", error);
+            }
+        });
+
+        window.onload = () => {
+            initializeData();
+            populateTypes();
+            document.getElementById('answerTypeSelector').addEventListener('change', fetchData);
+        };
+    </script>
+
+    <div>
+        <h2>Form Selection</h2>
+        <select id="formSelector">
+            <option value="add">Add Data</option>
+            <option value="edit">Edit Data</option>
+            <option value="manage">Edit Answer </option>
+            <option value="manage2">Add Answer</option>
+        </select>
+    </div>
+
+    <!-- Add New Data Form -->
+    <div id="addFormContainer">
+        <h2>Add Data</h2>
+        <form id="addForm">
+            <div class="form-group">
+                <label for="addTitle">หัวข้อการสืบ:</label>
+                <input type="text" id="addTitle" placeholder="ปัญหาที่ 1 , ปัญหาที่ 2" required>
+            </div>
+            <div class="form-group">
+                <label for="addDetail">รายละเอียด:</label>
+                <input type="text" id="addDetail" placeholder="ทำอาหาร , ความเชื่อมโยง" required>
+            </div>
+            <div class="form-group">
+                <label for="addQuestionText">คำถาม:</label>
+                <input type="text" id="addQuestionText" placeholder="ใน4บัญชีนี้ใครที่ทำอาหารไม่เป็นจริงๆ" required>
+            </div>
+            <div class="form-group">
+                <label for="addHeaderText">ข้อกำหนด:</label>
+                <input type="text" id="addHeaderText" placeholder="กำหนดให้ เวลาในปัจจุบันคือปี 2023" required>
+            </div>
+            <div class="form-group">
+                <label for="addAdditionalInfo">ข้อมูลเพิ่มเติม (JSON):</label>
+                <textarea id="addAdditionalInfo" placeholder='["คำใบ้ คำเเนะนำตัวหน้าเฟส ,", "ความสมเหตุสมผล"]'
+                    required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="addHint">ตัวช่วย:</label>
+                <textarea id="addHint" placeholder="เบาะเเสที่พบคือ ทุกคนมีอายุจริงตามวันเกิดที่ตั้งในโพสต์เท่านั้น"
+                    required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="addFacebookLinks">Facebook Links (JSON):</label>
+                <textarea id="addFacebookLinks" placeholder='[{"name": "ชื่อเฟส", "url": "URLเฟส"}]'
+                    required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="addQuestionOptions">Options (JSON):</label>
+                <textarea id="addQuestionOptions" placeholder='["Option1", "Option2"]' required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="addScoreCorrect">คะแนนตอบถูก:</label>
+                <input type="number" id="addScoreCorrect" placeholder="คะแนนตอบถูก" required>
+            </div>
+            <div class="form-group">
+                <label for="addScoreIncorrect">คะแนนตอบผิด:</label>
+                <input type="number" id="addScoreIncorrect" placeholder="คะแนนตอบผิด" required>
+            </div>
+            <div class="form-group">
+                <label for="addImageURL">ที่มาของรูปภาพ:</label>
+                <input type="text" id="addImageURL" placeholder="URL ของรูปภาพ" required>
+            </div>
+            <div class="form-group">
+                <label for="addColorCode">รหัสสี:</label>
+                <input type="color" id="addColorCode" value="#ffffff" required>
+            </div>
+            <button type="submit">Add Data</button>
+        </form>
+    </div>
+
+    <!-- Edit Data Form -->
+    <div id="editFormContainer" style="display:none;">
+        <h2>Edit Data</h2>
+        <form id="editForm">
+            <div class="form-group">
+                <label for="editId">ID:</label>
+                <select id="editId" required>
+                    <option value="" disabled selected>Select ID</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editTitle">หัวข้อการสืบ:</label>
+                <input type="text" id="editTitle" placeholder="Enter the title of the data" required>
+            </div>
+            <div class="form-group">
+                <label for="editDetail">รายละเอียด:</label>
+                <input type="text" id="editDetail" placeholder="Enter the detail of the data" required>
+            </div>
+            <div class="form-group">
+                <label for="editQuestionText">คำถาม:</label>
+                <input type="text" id="editQuestionText" placeholder="Enter the question text" required>
+            </div>
+            <div class="form-group">
+                <label for="editHeaderText">ข้อกำหนด:</label>
+                <input type="text" id="editHeaderText" placeholder="Enter the header text" required>
+            </div>
+            <div class="form-group">
+                <label for="editAdditionalInfo">ข้อมูลเพิ่มเติม (JSON):</label>
+                <textarea id="editAdditionalInfo"
+                    placeholder='Enter additional info in JSON format (e.g., ["hint1", "hint2"])' required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editHint">ตัวช่วย:</label>
+                <textarea id="editHint" placeholder="Provide a hint related to the data" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editFacebookLinks">Facebook Links (JSON):</label>
+                <textarea id="editFacebookLinks"
+                    placeholder='Enter Facebook links in JSON format (e.g., [{"name": "Name", "url": "URL"}])'
+                    required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editQuestionOptions">Options (JSON):</label>
+                <textarea id="editQuestionOptions"
+                    placeholder='Enter question options in JSON format (e.g., ["Option1", "Option2"])'
+                    required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editScoreCorrect">คะแนนตอบถูก:</label>
+                <input type="number" id="editScoreCorrect" placeholder="คะเเนนเมื่อตอบถูก" required>
+            </div>
+            <div class="form-group">
+                <label for="editScoreIncorrect">คะแนนตอบผิด:</label>
+                <input type="number" id="editScoreIncorrect" placeholder="คะเเนนเมื่อตอบผิด" required>
+            </div>
+            <div class="form-group">
+                <label for="editImageURL">ที่มาของรูปภาพ:</label>
+                <input type="text" id="editImageURL" placeholder="URL ของรูปภาพ" required>
+            </div>
+            <div class="form-group">
+                <label for="editColorCode">รหัสสี:</label>
+                <input type="color" id="editColorCode" value="#ffffff" required>
+            </div>
+            <button type="submit">Update Data</button>
+        </form>
+    </div>
+    <div id="manageAnswerDataContainer" style="display:none;">
+        <h2>Edite Answer</h2>
+        <div>
+            <h2>Select Data Type</h2>
+            <select id="answerTypeSelector">
+                <option value="" disabled selected>Select Type</option>
+            </select>
+        </div>
+
+        <div id="dataContainer" style="display:none;">
+            <h2>Edit Data</h2>
+            <form id="editAnswerForm">
+                <div class="form-group">
+                    <label for="answerKey">Key:</label>
+                    <input type="text" id="answerKey" placeholder="ป้อนคีย์ค่าที่ต้องการเเก้ไข" required>
+                </div>
+                <div class="form-group">
+                    <label for="answerValue">Value:</label>
+                    <input type="text" id="answerValue" placeholder="ป้อนค่าของคีย์" required>
+                </div>
+                <button type="submit">Update Data</button>
+            </form>
+        </div>
+
+        <div id="displayDataContainer">
+            <h2>Display Data</h2>
+            <ul id="dataList2" class="data-list">
+            </ul>
+        </div>
+    </div>
+
+    <div id="manageAnswerDataContainer2" style="display:none;">
+        <h2>Add Answer</h2>
+        <form id="manageAnswerForm">
+            <div class="form-group">
+                <label for="newAnswerId">ID ของค่าใหม่:</label>
+                <input type="text" id="newAnswerId" placeholder="ป้อนชื่อข้อใหม่ a อะไร" required>
+            </div>
+            <div class="form-group">
+                <label for="newAnswerValues">ค่าของค่าใหม่ (JSON):</label>
+                <label for="newAnswerValues">{"key1":"value1", "key2":"value2"}</label>
+                <textarea id="newAnswerValues" placeholder='{"key1":"value1", "key2":"value2", ...}'
+                    required></textarea>
+            </div>
+            <button type="submit">Add Answer Data</button>
+        </form>
+    </div>
+
+    <div class="data-list">
+        <h2>Data List</h2>
+        <ul id="dataList">
+        </ul>
+    </div>
+
+</body>
+
+</html>

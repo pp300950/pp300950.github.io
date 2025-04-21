@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardgame</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        .card {
+            width: 100%;
+            height: 90vh;
+            /* background: red; */
+            border: 1px solid #e5e5e5;
+            border-radius: 15px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .user {
+            max-width: 40px;
+            max-height: 40px;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-detail {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-detail h4 {
+            margin-left: 10px;
+        }
+
+        .renderchat {
+            width: 100%;
+            height: calc(100vh - 230px);
+            overflow: scroll;
+            padding-top: 10px;
+        }
+
+        .chat-incoming {
+            width: 100%;
+            display: flex;
+            margin-bottom: 10px;
+            /* align-items: center; */
+        }
+
+        .chat-incoming span {
+            background: #f1f1f1;
+            padding: 5px 20px;
+            border-radius: 5px;
+            margin-left: 10px;
+            /* max-width: 60%; */
+        }
+
+        .chat-outcoming {
+            width: 100%;
+            display: flex;
+            margin-bottom: 10px;
+            justify-content: flex-end;
+            /* align-items: center; */
+        }
+
+        .chat-outcoming span {
+            background: #0084FF;
+            color: #fff;
+            padding: 5px 20px;
+            border-radius: 5px;
+            margin-right: 10px;
+            /* max-width: 60%; */
+        }
+
+        .sendmsg {
+            height: 70px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            background: #0084FF;
+            color: #fff;
+            border-radius: 25px;
+            margin-left: 10px;
+        }
+
+        .system-message {
+            color: #4bcc76;
+        }
+
+        .error-message {
+            color: rgb(58, 190, 207);
+        }
+
+        /* CSS for number buttons */
+        #randomButtons {
+            display: flex;
+            /* ให้เป็น Flex Container */
+            flex-wrap: wrap;
+            /* ให้ Flex Item ขึ้นบรรทัดใหม่เมื่อขนาดเกินขอบเขต */
+            justify-content: center;
+            /* จัดจุดตัดศูนย์กลางของ Flex Container */
+            align-items: center;
+            /* จัดให้ Flex Item อยู่ตรงกลางในแนวตั้ง */
+            height: 100%;
+            /* กำหนดความสูงของ Flex Container */
+        }
+
+        .btn-number {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 25px;
+            margin: 5px;
+            /* เพิ่มระยะห่างระหว่างปุ่ม */
+            background-color: #e2bd29;
+            color: #fff;
+        }
+
+        /* CSS สำหรับหน้าล็อกอิน */
+        .login-form {
+            width: 80%;
+            margin: auto auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-form input[type="text"],
+        .login-form input[type="password"],
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .login-form button {
+            background-color: #0084FF;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+        }
+
+        .login-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .login-form input[type="text"]:focus,
+        .login-form input[type="password"]:focus {
+            outline: none;
+            border-color: #0084FF;
+            box-shadow: 0 0 5px rgba(0, 132, 255, 0.5);
+        }
+
+        .card {
+            display: none;
+        }
+    </style>
+</head>
+
+<body style="padding: 20px;">
+    <!-- ใส่วนของหน้าล็อกอินในบอดี้ -->
+    <div id="loginForm" class="login-form">
+        <h2>เข้าสู่ระบบ</h2>
+        <input type="text" id="username" placeholder="ชื่อผู้ใช้"><br>
+        <input type="password" id="password" placeholder="รหัสผ่าน"><br>
+        <button id="loginBtn">เข้าสู่ระบบ</button>
+        <h3>เกมไพ่</h3>
+        <h4> วิธีเล่น :
+            เมื่อเริ่มให้ผู้เล่นกดปุ่มสร้างตัวเลขซึ่งจะสร้างตัวเลขขึ้นมาให้7ตัวเป็นเลข1-4เเละให้ผลัดกันลง
+            โดยถ้าผู้เล่นคนใดลงไพ่ไปเเล้วทำให้เเต้มรวมเท่ากับ21เเต้ม คนนั่นจะชนะทันที
+            เเต่หากผู้เล่นลงไปเเล้วทำให้เเต้มมันเกิน21ขึ้นไป ถือว่าผู้เล่นที่เล่นก่อนหน้าผู้เล่นคนนั้นเป็นผู้ชนะ
+            เมื่อจบเกมให้กดปุ่มเริ่มเกมใหม่ห้องเเชทจะถูกรีเซ็ท</h4>
+        <h3>good luck!</h3>
+        <h2>คำเตือน</h2>
+        <h3>ออกเเบบมาสำหรับผู้เล่น2คนเเต่ถ้าจะเล่น3-4คนเกมจะเล่นจบเร็วมาก
+            ขณะเล่นไม่ควรพิมพ์ข้อความคุยกันเเบบที่มีตัวเลขเพราะระบบจะตรวจสอบข้อมูลที่เป็นตัวเลขจากข้อความในห้องเเชทนั้น
+            เเละหากเข้าไปเเล้วเห็นคนอื่นเล่นอยู่ควรอยู่ดูเป็นผู้ชมที่ดีเเละเมื่อเค้าเล่นจบค่อยขอเล่นด้วย
+            มันมีห้องเดียวเเบ่งๆกันเล่น</h3>
+    </div>
+    <div class="card" id="card">
+        <div class="user-detail">
+            <img class="user" src="https://digitalmore.co/wp-content/uploads/2023/04/50-Cute-anime-01.jpg" alt="">
+            <h4 id="showUsername">คุณใครเนี่ย ?</h4>
+        </div>
+        <div id="render" class="renderchat">
+        </div>
+        <div class="sendmsg">
+            <!-- เพิ่มปุ่มสำหรับสร้างเลขสุ่ม -->
+            <button id="btnGenerate" class="btn-primary">สุ่มตัวเลข</button>
+
+            <!-- เพิ่มตำแหน่งสำหรับปุ่มสุ่มเลข  -->
+            <div id="randomButtons">
+
+            </div>
+            <button id="btnSend" class="btn-primary">ส่ง</button>
+            <input id="txtMsg" class="form-control" placeholder="Message..." type="text">
+            <button id="btnNewGame" class="btn-primary">เริ่มเกมใหม่</button>
+        </div>
+    </div>
+    <script type="module" defer>
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-app.js";
+        import { getDatabase, set, push, ref, onValue } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-database.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVzawA_NDnkqCHKerT2Gcg4zO9yohWx3U",
+            authDomain: "pangpone-1372b.firebaseapp.com",
+            databaseURL: "https://pangpone-1372b-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "pangpone-1372b",
+            storageBucket: "pangpone-1372b.appspot.com",
+            messagingSenderId: "911442011016",
+            appId: "1:911442011016:web:8434ea79964ceab63a903d",
+            measurementId: "G-S144W2V9SG"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        // Reference DOM elements
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginButton = document.getElementById('loginBtn');
+        const chatContainer = document.getElementById('card');
+        // Function to handle login
+        function handleLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            if (username !== '' && password !== '') {
+                // Save the username to localStorage
+                localStorage.setItem('username', username);
+                chatContainer.style.display = 'block';
+                loginForm.style.display = 'none';
+                // Update the username display
+                document.getElementById('showUsername').textContent = `${username} ผู้น่ารัก`;
+
+
+                // Listen for Enter key press in the message input field
+                // Event listener for sending messages when button is clicked
+                btnSend.addEventListener('click', () => {
+                    sendMessage();
+                });
+                // Event listener for sending messages when button is clicked
+                btnSend.addEventListener('click', () => {
+                    sendMessage();
+                });
+                txtMsg.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+                // Function to send message
+                function sendMessage() {
+                    const user = localStorage.getItem('username'); // Get the username from localStorage
+                    if (txtMsg.value.trim() !== '') {
+                        set(push(ref(db, 'gamecard')), {
+                            username: user,
+                            msg: txtMsg.value
+                        });
+                        txtMsg.value = ''; // Clear message input field after sending
+                    }
+                }
+            } else {
+                alert('โปรดใส่รหัสผ่าน ');
+            }
+        }
+        // Event listener for login button
+        loginButton.addEventListener('click', handleLogin);
+        // Listen for changes in Firebase database and update chat messages
+        onValue(ref(db, 'gamecard'), (snapshot) => {
+            const data = snapshot.val();
+            let html = '';
+            for (const key in data) {
+                if (Object.hasOwnProperty.call(data, key)) {
+                    const message = data[key];
+                    const sender = message.username || 'Anonymous';
+                    const messageContent = message.msg || '';
+                    if (sender !== usernameInput.value.trim()) {
+                        html += `<div class="chat-incoming">
+                                <img class="user" src="https://cdn.pixabay.com/photo/2021/11/24/05/19/user-6820232_640.png" alt="">
+                                <span>${sender}: ${messageContent}</span>
+                             </div>`;
+                    } else {
+                        html += `<div class="chat-outcoming">
+                                <span>${messageContent}</span>
+                                <img class="user" src="https://digitalmore.co/wp-content/uploads/2023/04/50-Cute-anime-01.jpg" alt="">
+                             </div>`;
+                    }
+                }
+            }
+            document.querySelector('#render').innerHTML = html;
+        });
+        // Event listener for sending messages when button is clicked
+        btnSend.addEventListener('click', () => {
+            sendMessage();
+        });
+        // Event listener for generating random numbers
+        // Initialize total points outside the event listener
+        let totalPoints = 0;
+        // Define a callback function to handle totalPoints updates
+
+        btnGenerate.addEventListener('click', () => {
+            // Check if the button has been disabled
+            if (!btnGenerate.disabled) {
+                // Clear previous random buttons
+                document.getElementById('randomButtons').innerHTML = '';
+                // Generate 7 random buttons
+                for (let i = 0; i < 7; i++) {
+                    // Create a button element
+                    const button = document.createElement('button');
+                    button.textContent = Math.floor(Math.random() * 4) + 1; // Generate random number between 1 and 4
+                    button.classList.add('btn', 'btn-number'); // Add button styling and custom class for number buttons
+                    button.addEventListener('click', () => {
+                        // Remove the button when clicked
+                        button.remove();
+                        // Send the number associated with the button to the chat
+                        sendMessage(button.textContent);
+                        if (totalPoints === 21) {
+                            set(push(ref(db, 'gamecard')), {
+                                username: 'ระบบ',
+                                msg: `<span class="system-message">ชนะ! คะแนนรวมเท่ากับ 21</span>`
+                            });
+                        } else if (totalPoints > 21) {
+                            // Send losing message if totalPoints is greater than 21
+                            set(push(ref(db, 'gamecard')), {
+                                username: 'ระบบ',
+                                msg: `<span class="error-message">ผู้เล่นคนก่อนหน้านี้ชนะ</span>`
+                            });
+                        }
+                    });
+                    // Append the button to the container
+                    document.getElementById('randomButtons').appendChild(button);
+                }
+                // Disable the button after generating random numbers
+                btnGenerate.disabled = true;
+                // Change button color to gray
+                btnGenerate.style.backgroundColor = '#cccccc';
+            }
+        });
+        // Listen for changes in Firebase database and update chat messages
+        onValue(ref(db, 'gamecard'), (snapshot) => {
+            const data = snapshot.val();
+            totalPoints = 0; // Reset totalPoints
+            // Initialize total points counter
+            let html = '';
+            let winner = '';
+            for (const key in data) {
+                if (Object.hasOwnProperty.call(data, key)) {
+                    const message = data[key];
+                    const sender = message.username || 'Anonymous';
+                    const messageContent = message.msg || '';
+                    // Parse the message content to extract numbers and sum them up
+                    const numbers = messageContent.match(/\d+/g); // Extract numbers from the message
+                    if (numbers) {
+                        numbers.forEach(number => {
+                            totalPoints += parseInt(number); // Sum up the numbers
+                        });
+                    }
+                    if (sender !== usernameInput.value.trim()) {
+                        html += `<div class="chat-incoming">
+                        <img class="user" src="https://cdn.pixabay.com/photo/2021/11/24/05/19/user-6820232_640.png" alt="">
+                        <span>${sender}: ${messageContent}</span>
+                     </div>`;
+                    } else {
+                        html += `<div class="chat-outcoming">
+                        <span>${messageContent}</span>
+                        <img class="user" src="https://digitalmore.co/wp-content/uploads/2023/04/50-Cute-anime-01.jpg" alt="">
+                     </div>`;
+                    }
+                }
+            }
+            // Display the total points in the chat
+            html += `<div class="chat-incoming">
+            <span>เเต้มรวม : ${totalPoints}</span>
+         </div>`;
+            document.querySelector('#render').innerHTML = html;
+            // Call the callback function to handle totalPoints update
+
+            // Scroll to the bottom of the chat after rendering new content
+            scrollToBottom();
+        });
+        // Function to scroll to the bottom of the chat
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('render');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function sendMessage(msg) {
+            const user = localStorage.getItem('username'); // Get the username from localStorage
+            if (msg.trim() !== '') {
+                set(push(ref(db, 'gamecard')), {
+                    username: user,
+                    msg: msg
+                });
+                txtMsg.value = ''; // Clear message input field after sending
+            }
+        }
+
+
+
+        // Event listener for the new game button
+        const btnNewGame = document.getElementById('btnNewGame');
+        btnNewGame.addEventListener('click', () => {
+            // Clear all data in the gamecard
+            const gamecardRef = ref(db, 'gamecard');
+            set(gamecardRef, null);
+            // Reset the state of the random number button
+            btnGenerate.disabled = false;
+            btnGenerate.style.backgroundColor = '#0084FF';
+
+            document.getElementById('randomButtons').innerHTML = '';
+
+        });
+        function resetButtonState() {
+            // Reset the state of the random number button
+            const btnGenerate = document.getElementById('btnGenerate');
+            btnGenerate.disabled = false;
+            btnGenerate.style.backgroundColor = '#0084FF';
+        }
+
+        // Call the resetButtonState function when starting a new game
+        btnNewGame.addEventListener('click', () => {
+            // Clear all data in the gamecard
+            const gamecardRef = ref(db, 'gamecard');
+            set(gamecardRef, null);
+            // Generate 7 random buttons
+            for (let i = 0; i < 7; i++) {
+                // Create a button element
+                const button = document.createElement('button');
+                button.textContent = Math.floor(Math.random() * 4) + 1; // Generate random number between 1 and 4
+                button.classList.add('btn', 'btn-number'); // Add button styling and custom class for number buttons
+                button.addEventListener('click', () => {
+                    // Remove the button when clicked
+                    button.remove();
+                    // Send the number associated with the button to the chat
+                    sendMessage(button.textContent);
+                    if (totalPoints === 21) {
+                        set(push(ref(db, 'gamecard')), {
+                            username: 'ระบบ',
+                            msg: `<span class="system-message">ชนะ! คะแนนรวมเท่ากับ 21</span>`
+                        });
+                    } else if (totalPoints > 21) {
+                        // Send losing message if totalPoints is greater than 21
+                        set(push(ref(db, 'gamecard')), {
+                            username: 'ระบบ',
+                            msg: `<span class="error-message">ผู้เล่นคนก่อนหน้านี้ชนะ</span>`
+                        });
+                    }
+                });
+
+                // Reset the button state
+                resetButtonState();
+                // Append the button to the container
+
+                document.getElementById('randomButtons').appendChild(button);
+
+            }
+
+            //ปิดการใช้งานปุ่มสร้างตัวเลย
+            function resetButtonState() {
+                // Reset the state of the random number button
+                const btnGenerate = document.getElementById('btnGenerate');
+                btnGenerate.disabled = false;
+                btnGenerate.style.backgroundColor = '#0084FF';
+            }
+        });
+
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-do List</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="todo-left">
+        <!-- Language selector dropdown for switching between languages -->
+        <select id="language-selector">
+          <option value="en">English</option>
+          <option value="th">ไทย</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="zh">中文</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+          <option value="ru">Русский</option>
+        </select>
+
+        <!-- Main title for the to-do list -->
+        <h1>📋 To-Do List</h1>
+
+        <div class="todo-form">
+          <input type="text" id="todo-input" placeholder="Type a task..." />
+          <input type="text" id="todo-description" placeholder="Details..." />
+
+          <!-- Label and input field for setting reminder time -->
+          <label id="reminder-label">⏰ Set Reminder Time</label>
+          <input type="datetime-local" id="todo-time" />
+
+          <!-- Button to add a task to the list -->
+          <button id="add-btn">➕ Add</button>
+        </div>
+
+        <p id="share-link"></p>
+      </div>
+
+      <div class="todo-right">
+        <div style="margin-bottom: 10px">
+          <!-- Sorting options for tasks -->
+          <label id="sort-label" for="sort-order">🔽 Sort:</label>
+          <select id="sort-order">
+            <option value="updated-desc">Newest on top</option>
+            <option value="updated-asc">Oldest on top</option>
+            <option value="alpha-asc">A → Z</option>
+            <option value="alpha-desc">Z → A</option>
+          </select>
+        </div>
+
+        <div id="share-link"></div>
+        <ul id="todo-list"></ul>
+      </div>
+
+    <!-- Settings button for opening settings modal -->
+    <button
+      id="settingsBtn"
+      aria-label="Settings"
+      style="position: fixed; top: 50px; right: 50px; z-index: 10"
+    >
+      ⚙️
+    </button>
+
+    <!-- Modal for user settings -->
+    <div id="settings-modal" style="display: none" class="modal-overlay">
+      <div class="settings-modal-box">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h2 id="settings-title">⚙️ Settings</h2>
+          <!-- Close button for the settings modal -->
+          <button onclick="closeSettingsModal()" id="settings-close">❌</button>
+        </div>
+
+        <!-- Label and select dropdown for changing font style -->
+        <label for="font-select" id="label-font">🎨 Font Style</label>
+        <select id="font-select">
+          <option value="Arial">Arial</option>
+          <option value="Tahoma">Tahoma</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Sarabun">Sarabun</option>
+        </select>
+
+        <!-- Label and input for adjusting font size -->
+        <label for="font-size-input" id="label-font-size">🔠 Font Size</label>
+        <input
+          type="number"
+          id="font-size-input"
+          value="22"
+          min="10"
+          max="36"
+        />
+
+        <!-- Label and input for entering the user's email address -->
+        <label for="user-email-input" id="label-email">📧 Your Email</label>
+        <input
+          type="email"
+          id="user-email-input"
+          placeholder="example@email.com"
+        />
+
+        <!-- Button to save the settings -->
+        <button id="save-settings-btn" onclick="applySettings()">
+          💾 Save Settings
+        </button>
+      </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <script src="https://unpkg.com/blockly/python_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/javascript_compressed.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #toolbox {
+            display: flex;
+            flex-direction: column;
+            width: 250px;
+            max-width: 370px;
+            background-color: #f0f0f0;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            position: relative;
+            transition: width 0.3s;
+        }
+
+        .resize-handle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 10px;
+            height: 100%;
+            cursor: ew-resize;
+            background-color: #ccc;
+        }
+
+        #blocklyDiv {
+            flex-grow: 1;
+            height: 100%;
+            background-color: #ffffff;
+            transition: width 0.3s;
+        }
+
+        #runButton, #copyButton {
+            position: absolute;
+            top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #runButton {
+            right: 100px;
+        }
+
+        #copyButton {
+            right: 45px;
+            top: 70px;
+        }
+
+        #runButton:hover {
+            background-color: #45a049;
+        }
+
+        #copyButton:hover {
+            background-color: #0056b3;
+        }
+
+        #output {
+            height: 200px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #ccc;
+            display: none; 
+            transition: height 0.3s;
+            overflow: auto;
+        }
+
+        #collapseButton {
+            position: absolute;
+            z-index: 999;
+            top: 120px;
+            right: 30px;
+            padding: 10px 20px;
+            background-color: #ddd;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #collapseButton:hover {
+            background-color: #ccc;
+        }
+
+        .collapsed {
+            height: 0;
+            overflow: hidden;
+            padding: 0;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            #container {
+                flex-direction: column;
+            }
+
+            #toolbox {
+                width: 100%;
+                height: 20%;
+                border-right: none;
+                border-bottom: 1px solid #ccc;
+            }
+
+            #blocklyDiv {
+                width: 100%;
+                height: 50%;
+            }
+
+            .resize-handle {
+                cursor: ns-resize;
+                height: 10px;
+                width: 100%;
+                bottom: 0;
+                right: auto;
+            }
+
+            #collapseButton {
+                padding: 5px 10px;
+                top: 50px;
+                right: 160px;
+            }
+
+            #runButton {
+                padding: 5px 10px;
+                top: 50px;
+            }
+
+            #copyButton {
+                padding: 5px 10px;
+                top: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="toolbox">
+            <select id="languageSelect" onchange="changeLanguage()">
+    <option value="en">English</option>
+    <option value="th">Thai</option>
+    <option value="zh">Chinese</option>
+    <option value="es">Spanish</option>
+    <option value="fr">French</option>
+    <option value="de">German</option>
+</select>
+
+            <div id="categoryList"></div>
+            <div class="resize-handle"></div>
+        </div>
+        <div id="blocklyDiv"></div>
+    </div>
+    <textarea id="code" rows="10" cols="50" style="display:none;"></textarea>
+    <button id="runButton" onclick="runCode()">Run</button>
+    <button id="copyButton" onclick="copyCode()">Copy Code</button>
+    <button id="collapseButton" onclick="toggleOutput()">Toggle Output</button>
+    
+    <div id="tab">
+        <pre id="output"></pre>
+        <pre id="jsOutput"></pre>
+    </div>
+
+    <script>
+    var workspace;
+    var isOutputCollapsed = false;
+
+    const languageData = {
+    en: {
+        "Run": "Run",
+        "Copy Code": "Copy Code",
+        "Toggle Output": "Toggle Output",
+        "Collapse Output": "Collapse Output",
+        "Expand Output": "Expand Output",
+        "Variables": "Variables",
+        "Logic": "Logic",
+        "Loops": "Loops",
+        "Math": "Math",
+        "Text": "Text",
+        "Lists": "Lists",
+        "Functions": "Functions",
+        "set %1 to int %2": "set %1 to int %2",
+        "set %1 to str %2": "set %1 to str %2"
+    },
+    th: {
+        "Run": "รัน",
+        "Copy Code": "คัดลอกโค้ด",
+        "Toggle Output": "สลับผลลัพธ์",
+        "Collapse Output": "ยุบผลลัพธ์",
+        "Expand Output": "ขยายผลลัพธ์",
+        "Variables": "ตัวแปร",
+        "Logic": "ตรรกะ",
+        "Loops": "ลูป",
+        "Math": "คณิตศาสตร์",
+        "Text": "ข้อความ",
+        "Lists": "รายการ",
+        "Functions": "ฟังก์ชั่น",
+        "set %1 to int %2": "กำหนด %1 เป็น int %2",
+        "set %1 to str %2": "กำหนด %1 เป็น str %2"
+    },
+    zh: {
+        "Run": "运行",
+        "Copy Code": "复制代码",
+        "Toggle Output": "切换输出",
+        "Collapse Output": "折叠输出",
+        "Expand Output": "展开输出",
+        "Variables": "变量",
+        "Logic": "逻辑",
+        "Loops": "循环",
+        "Math": "数学",
+        "Text": "文本",
+        "Lists": "列表",
+        "Functions": "函数",
+        "set %1 to int %2": "将 %1 设置为整数 %2",
+        "set %1 to str %2": "将 %1 设置为字符串 %2"
+    },
+    es: {
+        "Run": "Ejecutar",
+        "Copy Code": "Copiar Código",
+        "Toggle Output": "Alternar Salida",
+        "Collapse Output": "Colapsar Salida",
+        "Expand Output": "Expandir Salida",
+        "Variables": "Variables",
+        "Logic": "Lógica",
+        "Loops": "Bucles",
+        "Math": "Matemáticas",
+        "Text": "Texto",
+        "Lists": "Listas",
+        "Functions": "Funciones",
+        "set %1 to int %2": "establecer %1 a int %2",
+        "set %1 to str %2": "establecer %1 a str %2"
+    },
+    fr: {
+        "Run": "Exécuter",
+        "Copy Code": "Copier le Code",
+        "Toggle Output": "Basculer la Sortie",
+        "Collapse Output": "Réduire la Sortie",
+        "Expand Output": "Agrandir la Sortie",
+        "Variables": "Variables",
+        "Logic": "Logique",
+        "Loops": "Boucles",
+        "Math": "Mathématiques",
+        "Text": "Texte",
+        "Lists": "Listes",
+        "Functions": "Fonctions",
+        "set %1 to int %2": "définir %1 à int %2",
+        "set %1 to str %2": "définir %1 à str %2"
+    },
+    de: {
+        "Run": "Ausführen",
+        "Copy Code": "Code Kopieren",
+        "Toggle Output": "Ausgabe Umschalten",
+        "Collapse Output": "Ausgabe Minimieren",
+        "Expand Output": "Ausgabe Erweitern",
+        "Variables": "Variablen",
+        "Logic": "Logik",
+        "Loops": "Schleifen",
+        "Math": "Mathematik",
+        "Text": "Text",
+        "Lists": "Listen",
+        "Functions": "Funktionen",
+        "set %1 to int %2": "%1 auf int %2 setzen",
+        "set %1 to str %2": "%1 auf str %2 setzen"
+    }
+};
+
+    function changeLanguage() {
+        const selectedLang = document.getElementById('languageSelect').value;
+        const elementsToUpdate = {
+            "runButton": languageData[selectedLang]["Run"],
+            "copyButton": languageData[selectedLang]["Copy Code"],
+            "collapseButton": isOutputCollapsed ? languageData[selectedLang]["Expand Output"] : languageData[selectedLang]["Collapse Output"]
+        };
+
+        for (const [id, translation] of Object.entries(elementsToUpdate)) {
+            document.getElementById(id).textContent = translation;
+        }
+
+        const categoryElements = document.querySelectorAll('#toolbox .blocklyTreeLabel');
+        const categories = ["Variables", "Logic", "Loops", "Math", "Text", "Lists", "Colour", "Functions"];
+        categoryElements.forEach((element, index) => {
+            element.textContent = languageData[selectedLang][categories[index]];
+        });
+
+        updateBlocklyMessages(selectedLang);
+        workspace.updateToolbox(generateToolboxXml(selectedLang));
+    }
+
+    function updateBlocklyMessages(lang) {
+        Blockly.Blocks['variables_set_int'].message0 = languageData[lang]["set %1 to int %2"];
+        Blockly.Blocks['variables_set_str'].message0 = languageData[lang]["set %1 to str %2"];
+    }
+
+    function generateToolboxXml(lang) {
+        return `
+            <xml id="toolbox-categories" style="display: none">
+                <category name="${languageData[lang]["Variables"]}" custom="VARIABLE" colour="#A65C81">
+                    <block type="variables_set_int"></block>
+                    <block type="variables_set_str"></block>
+                </category>
+                <category name="${languageData[lang]["Logic"]}" colour="#5C81A6">
+                    <block type="controls_if"></block>
+                    <block type="logic_compare"></block>
+                    <block type="logic_operation"></block>
+                </category>
+                <category name="${languageData[lang]["Loops"]}" colour="#5CA65C">
+                    <block type="controls_repeat_ext"></block>
+                    <block type="controls_whileUntil"></block>
+                </category>
+                <category name="${languageData[lang]["Math"]}" colour="#5C68A6">
+                    <block type="math_number"></block>
+                    <block type="math_arithmetic"></block>
+                </category>
+                <category name="${languageData[lang]["Text"]}" colour="#5CA6A6">
+                    <block type="text"></block>
+                    <block type="text_print"></block>
+                    <block type="text_join"></block>
+                    <block type="text_length"></block>
+                </category>
+                <category name="${languageData[lang]["Lists"]}" colour="#745CA6">
+                    <block type="lists_create_with"></block>
+                    <block type="lists_repeat"></block>
+                    <block type="lists_length"></block>
+                    <block type="lists_isEmpty"></block>
+                    <block type="lists_indexOf"></block>
+                    <block type="lists_getIndex"></block>
+                    <block type="lists_setIndex"></block>
+                </category>
+             
+                <category name="${languageData[lang]["Functions"]}" custom="PROCEDURE" colour="#995CA6"></category>
+            </xml>
+        `;
+    }
+
+    function initializeBlockly() {
+        Blockly.defineBlocksWithJsonArray([
+            {
+                "type": "variables_set_int",
+                "message0": "set %1 to int %2",
+                "args0": [
+                    { "type": "input_value", "name": "VAR" },
+                    { "type": "field_number", "name": "VALUE", "value": 0 }
+                ],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 230,
+                "tooltip": "",
+                "helpUrl": ""
+            },
+            {
+                "type": "variables_set_str",
+                "message0": "set %1 to str %2",
+                "args0": [
+                    { "type": "input_value", "name": "VAR" },
+                    { "type": "field_input", "name": "VALUE", "text": "" }
+                ],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 160,
+                "tooltip": "",
+                "helpUrl": ""
+            }
+        ]);
+
+        workspace = Blockly.inject('blocklyDiv', {
+            toolbox: generateToolboxXml('en'),
+            grid: { spacing: 20, length: 3, colour: '#ccc', snap: true },
+            trashcan: true,
+            zoom: { controls: true, wheel: true }
+        });
+    }
+
+    function runCode() {
+        var code = Blockly.JavaScript.workspaceToCode(workspace);
+        var pythonCode = Blockly.Python.workspaceToCode(workspace);
+        try {
+            eval(code);
+        } catch (e) {
+            console.error(e);
+        }
+        document.getElementById('output').textContent = pythonCode;
+        document.getElementById('output').style.display = 'block';
+        
+    }
+
+    function copyCode() {
+    const codeToCopy = document.getElementById("code").innerText;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(codeToCopy).then(function() {
+            alert("Code copied to clipboard!");
+        }, function(err) {
+            console.error("Could not copy text: ", err);
+        });
+    } else {
+        alert("Clipboard functionality not supported. Please copy manually.");
+    }
+}
+
+
+
+    function toggleOutput() {
+        const outputDiv = document.getElementById('tab');
+        
+        const selectedLang = document.getElementById('languageSelect').value;
+
+        isOutputCollapsed = !isOutputCollapsed;
+        if (isOutputCollapsed) {
+            outputDiv.classList.add('collapsed');
+            
+            document.getElementById('collapseButton').textContent = languageData[selectedLang]["Expand Output"];
+        } else {
+            outputDiv.classList.remove('collapsed');
+            
+            document.getElementById('collapseButton').textContent = languageData[selectedLang]["Collapse Output"];
+        }
+    }
+
+    function resizeToolbox(event) {
+        event.preventDefault();
+        document.addEventListener('mousemove', resizeToolboxWidth);
+        document.addEventListener('mouseup', stopResizingToolbox);
+    }
+
+    function resizeToolboxWidth(event) {
+        const toolboxWidth = event.clientX;
+        document.getElementById('toolbox').style.width = toolboxWidth + 'px';
+    }
+
+    function stopResizingToolbox() {
+        document.removeEventListener('mousemove', resizeToolboxWidth);
+        document.removeEventListener('mouseup', stopResizingToolbox);
+    }
+
+    document.querySelector('.resize-handle').addEventListener('mousedown', resizeToolbox);
+    window.addEventListener('resize', () => workspace.resize());
+    window.addEventListener('load', () => {
+        initializeBlockly();
+        changeLanguage();
+    });
+    </script>
+</body>
+</html>

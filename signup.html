@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+    <title>Sign Up Page</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="login__content">
+            <img src="assets/bg-login.png" alt="login image" class="login__img">
+            <form action="" class="login__form">
+                <div>
+                    <h1 class="login__title">
+                        สร้าง <span>บัญชีผู้ใช้</span>
+                    </h1>
+                    <p class="login__description">
+                        เข้าร่วมกับพวกเรา! โปรดสร้างบัญชี.
+                    </p>
+                </div>
+
+                <div class="login__inputs">
+                    <div>
+                        <label for="input-username" class="login__label">ชื่อผู้ใช้</label>
+                        <input type="text" placeholder="เลือกชื่อผู้ใช้" required class="login__input"
+                            id="input-username">
+                    </div>
+                    <div>
+                        <label for="input-email" class="login__label">อีเมลล์</label>
+                        <input type="email" placeholder="ป้อนที่อยู่อีเมลล์" required class="login__input"
+                            id="input-email">
+                    </div>
+                    <div>
+                        <label for="input-pass" class="login__label">รหัสผ่าน</label>
+                        <input type="password" placeholder="ป้อนรหัสผ่าน" required class="login__input" id="input-pass">
+                    </div>
+                    <div>
+                        <label for="input-pass-confirm" class="login__label">ยืนยันรหัสผ่าน</label>
+                        <input type="password" placeholder="ป้อนรหัสผ่านอีกครั้ง" required class="login__input"
+                            id="input-pass-confirm">
+                    </div>
+                </div>
+
+                <div class="login__buttons">
+                    <button type="button" class="login__button login__button-ghost">เข้าสู่ระบบ</button>
+                    <button type="submit" class="login__button">สร้างบัญชี</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.login__button.login__button-ghost').addEventListener('click', function () {
+            window.location.href = 'login.html';  // นำไปยังหน้าเข้าสู่ระบบ
+        });
+    </script>
+    <script src="assets/main.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // ดึงข้อมูลการตั้งค่าจากไฟล์ PHP
+            try {
+                const response = await fetch('config.php');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const firebaseConfig = await response.json();
+
+                // Initialize Firebase
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const auth = getAuth(app);
+
+                const form = document.querySelector('.login__form');
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById('input-username').value;
+                    const email = document.getElementById('input-email').value;
+                    const password = document.getElementById('input-pass').value;
+                    const passwordConfirm = document.getElementById('input-pass-confirm').value;
+
+                    if (password !== passwordConfirm) {
+                        alert('รหัสผ่านไม่ตรงกัน');
+                        return;
+                    }
+
+                    try {
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        const user = userCredential.user;
+                        console.log('User created:', user);
+                        const pictureUrl = "https://p16-va.lemon8cdn.com/tos-alisg-v-a3e477-sg/o0iL4A2yeEMgBuhAizivD2yCQSrPIjSAeKJgEB~tplv-tej9nj120t-origin.webp";
+
+                        // บันทึกข้อมูลผู้ใช้เพิ่มเติมใน Firestore
+                        const db = getFirestore(initializeApp(firebaseConfig));
+                        await setDoc(doc(db, "users", user.uid), {
+                            username: username,
+                            email: email,
+                            profilePicture: pictureUrl,  // เพิ่ม URL รูปโปรไฟล์
+                            createdAt: serverTimestamp(), // เพิ่มฟิลด์ createdAt เป็น serverTimestamp
+                            a1: [0, 0, 0, 0, 0], // ให้ a1 เป็นอาเรย์ว่าง
+                            a2: [0, 0, 0, 0, 0], // ให้ a1 เป็นอาเรย์ว่าง
+                          
+                        });
+                        
+                        window.location.href = 'login.html'; // Redirect to a welcome page or dashboard
+                    } catch (error) {
+                        console.error('Error signing up:', error.message);
+                        alert(`อีเมลล์นี้ถูกใช้เเล้ว`);
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching configuration:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>

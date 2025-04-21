@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สร้างบัญชีผู้ใช้</title>
+    <style>
+        /* CSS เพื่อจัดรูปแบบหน้าเว็บ */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        h5 {
+            color: #45a049;
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="signupForm">
+        <h2>สร้างบัญชีผู้ใช้</h2>
+        <h5># ไวรุ่นสร้างตัว</h5>
+        <input type="text" id="username" placeholder="ชื่อผู้ใช้" required>
+        <input type="text" id="email" placeholder="อีเมล" required>
+        <input type="password" id="password" placeholder="รหัสผ่าน" required>
+        <input type="password" id="confirmPassword" placeholder="ยืนยันรหัสผ่าน" required>
+        <input type="submit" value="สร้างบัญชี">
+        <p>หากมีบัญชีผู้ใช้อยู่แล้ว <a href="#" id="loginLink">เข้าสู่ระบบ</a></p>
+    </form>
+
+    <script type="module" defer>
+
+        import { initializeApp, } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, setDoc, serverTimestamp, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { updateDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-storage.js"; // เพิ่มการนำเข้า Firebase Storage API
+        import { getDatabase, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.12.0/firebase-database.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVzawA_NDnkqCHKerT2Gcg4zO9yohWx3U",
+            authDomain: "pangpone-1372b.firebaseapp.com",
+            databaseURL: "https://pangpone-1372b-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "pangpone-1372b",
+            storageBucket: "pangpone-1372b.appspot.com",
+            messagingSenderId: "911442011016",
+            appId: "1:911442011016:web:8434ea79964ceab63a903d",
+            measurementId: "G-S144W2V9SG"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        document.getElementById("signupForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+    var username = document.getElementById("username").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("confirmPassword").value;
+    const picture = 'https://cdn.pixabay.com/photo/2021/11/24/05/19/user-6820232_640.png';
+
+    if (password !== confirmPassword) {
+        alert("รหัสผ่านไม่ตรงกัน");
+        return;
+    }
+
+    try {
+        // ตรวจสอบว่ามีการใช้งานอีเมลนี้แล้วหรือไม่
+        const methods = await fetchSignInMethodsForEmail(auth, email);
+        if (methods && methods.length > 0) {
+            alert("อีเมลนี้ถูกใช้งานแล้ว");
+            return;
+        }
+
+        // สร้างบัญชีผู้ใช้
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // สร้าง userID
+        const userID = generateUserID();
+
+        // สร้างอ้างอิงเอกสารสำหรับห้องแชท
+        const currentUserRef = doc(db, 'chat', userID);
+
+        // เพิ่มห้องแชทใหม่ใน Firestore
+        await setDoc(currentUserRef, {}, { merge: true });
+
+        // เก็บรายละเอียดผู้ใช้ใน Firestore
+        /* await addDoc(collection(db, "users"), {
+            username: username,
+            email: email,
+            password: password,
+            accoutpp: userID,
+            picture: picture,
+            created_at: serverTimestamp(),
+            id: user.uid
+        }); */
+
+        // เก็บอีเมลใน Local Storage เมื่อลงทะเบียนสำเร็จ
+        localStorage.setItem('userEmail', email);
+
+        // เปลี่ยนไปยังหน้าหลัก
+        window.location.href = "index.html";
+
+    } catch (error) {
+        if (error.code === "auth/invalid-email") {
+            alert("อีเมลไม่ถูกต้อง");
+        } else {
+            console.error(error);
+            alert("เกิดข้อผิดพลาดในการสร้างบัญชีผู้ใช้");
+        }
+    }
+});
+
+        document.getElementById("loginLink").addEventListener("click", function (event) {
+            event.preventDefault();
+            // เปลี่ยนไปหน้าล็อกอิน
+            window.location.href = "login.html";
+        });
+
+        function generateUserID() {
+            let userID = "";
+            const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            const charactersLength = characters.length;
+            for (let i = 0; i < 6; i++) {
+                userID += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return userID;
+        }
+
+    </script>
+</body>
+
+</html>
