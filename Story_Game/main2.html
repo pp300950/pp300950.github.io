@@ -156,7 +156,16 @@
         flex-wrap: wrap; 
         justify-content: center;
       }
-    
+      #playerName {
+  background-color: black;
+  color: white;
+  border: 1px solid white;
+}
+#playerName::placeholder {
+  color: white;
+  opacity: 0.8; /* ปรับความโปร่งแสงตามต้องการ */
+}
+
   }
   #dialogue-box.collapsed {
   transform: translateY(85%);
@@ -231,7 +240,7 @@
   window.addEventListener('resize', checkOrientation);
   window.addEventListener('orientationchange', checkOrientation);
 
-  const dialogueData = [
+      const dialogueData = [
         {
           id: 'start',
           text: 'ยินดีต้อนรับสู่โลกแห่งการเจรจา, {name} ที่นี่คุณจะได้เรียนรู้ถึงความสำคัญของคำพูด และการตัดสินใจในภารกิจที่อาจเปลี่ยนชะตาของประเทศชาติ',
