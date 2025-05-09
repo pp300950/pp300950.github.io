@@ -1,0 +1,22 @@
+{
+    "name": "วันๆของผม",
+    "short_name": "วันๆของผม",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#000000",
+    "description": "เกมแนวบทสนทนาในบทบาทนักการทูต",
+    "icons": [
+      {
+        "src": "Pic/test.jpeg",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "Pic/test.jpeg",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
