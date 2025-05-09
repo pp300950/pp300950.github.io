@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <title id="page-title">วันๆของผม</title>
+    <style>
+      html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: black;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+#game, #background, #name-input-screen {
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+#game {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 2;
+}
+
+#name-input-screen {
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 100);
+
+}
+
+#dialogue-box {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+      #background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      #background img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 1.5s ease-in-out;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      #game {
+        display: flex;
+        flex-direction: column;
+        height: calc(var(--vh, 1vh) * 100);
+
+        justify-content: flex-end;
+      }
+
+      #dialogue-box {
+        background: rgba(49, 49, 49, 0.85);
+        color: #f0f0f0;
+        padding: 2rem;
+        font-size: 1.5rem;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        border-top: 4px solid #00bcd4;
+        border-radius: 12px 12px 0 0;
+        z-index: 2;
+      }
+
+      #choices {
+        margin-top: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .choice,
+      #next-btn {
+        background: linear-gradient(to right, #00c6ff, #0072ff);
+        color: white;
+        padding: 0.75rem 1rem;
+        border: none;
+        font-size: 1.25rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .choice:hover,
+      #next-btn:hover {
+        background: linear-gradient(to right, #0072ff, #00c6ff);
+      }
+
+      #name-input-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
+        z-index: 10;
+      }
+
+      #name-input-screen input,
+      #name-input-screen button {
+        font-size: 1.25rem;
+        padding: 0.5rem 1rem;
+        margin-top: 1rem;
+      }
+      #rotate-warning {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        width: 100%;
+        height: 100%;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      @media (max-width: 768px) {
+        #dialogue-box {
+          font-size: 0.7rem;
+          padding: 0.7rem;
+        }
+        #dialogue-title {
+          font-size: 0.9rem !important;
+        }
+        .choice,
+        #next-btn {
+          font-size: 0.7rem;
+          padding: 0.3rem 0.55rem;
+        }
+        #choices {
+          margin-top: 0.2rem;
+          gap: 0.2rem;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        #playerName {
+          background-color: black;
+          color: white;
+          border: 1px solid white;
+        }
+        #playerName::placeholder {
+          color: white;
+          opacity: 0.8; /* ปรับความโปร่งแสงตามต้องการ */
+        }
+      }
+      #dialogue-box.collapsed {
+        transform: translateY(85%);
+      }
+
+      #dialogue-box {
+        transition: transform 0.5s ease;
+      }
+      #drag-handle {
+        width: 100%;
+        height: 20px;
+        background: #888;
+        cursor: ns-resize;
+        border-radius: 12px 12px 0 0;
+        position: absolute;
+        top: -20px;
+        left: 0;
+      }
+      #background img {
+        will-change: opacity;
+      }
+      #dialogue-box {
+        will-change: transform;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="background">
+      <img id="background-img" src="Pic/rigis.jpeg" />
+    </div>
+
+    <div id="game">
+      <div id="rotate-warning">เเนะนำให้เล่นเเนวนอน</div>
+
+      <div id="name-input-screen">
+        <div>ป้อนชื่อตัวละครของคุณ</div>
+        <input type="text" id="playerName" placeholder="ชื่อของคุณ" />
+        <button onclick="startGame()">เริ่มเกม</button>
+      </div>
+
+      <div id="dialogue-box">
+        <div
+          id="dialogue-title"
+          style="
+            font-weight: bold;
+            font-size: 1.8rem;
+            color: rgb(236, 213, 111);
+            text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black,
+              1px 1px 0 black;
+            margin-bottom: 0.5rem;
+          "
+        ></div>
+        <div id="dialogue-text"></div>
+        <div id="choices"></div>
+        <button id="next-btn" style="display: none" onclick="nextScene()">
+          ถัดไป
+        </button>
+      </div>
+    </div>
+    <script>
+      function setVhUnit() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }
+    
+      window.addEventListener('resize', setVhUnit);
+      window.addEventListener('load', setVhUnit);
+    </script>
+    
+    <script>
+      function checkOrientation() {
+        const warning = document.getElementById('rotate-warning');
+        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+        if (isMobile && window.innerHeight > window.innerWidth) {
+          warning.style.display = 'flex'; // แนวตั้ง
+        } else {
+          warning.style.display = 'none'; // แนวนอน
+        }
+      }
+
+      window.addEventListener('load', checkOrientation);
+      window.addEventListener('resize', checkOrientation);
+      window.addEventListener('orientationchange', checkOrientation);
+
+      
+      const dialogueData = [
+        {
+          id: 'start',
+          text: 'ยินดีต้อนรับสู่โลกแห่งการเจรจา, {name} ที่นี่คุณจะได้เรียนรู้ถึงความสำคัญของคำพูด และการตัดสินใจในภารกิจที่อาจเปลี่ยนชะตาของประเทศชาติ',
+          background: 'Pic/checkhand.jpeg',
+          choices: [],
+        },
+        {
+          id: 'intro1',
+          text: 'คุณจะได้รับบทเป็นนักเจรจา ทุกคำพูดของคุณมีพลังที่จะเปลี่ยนแปลงทุกสิ่ง คำพูดของคุณจะเป็นตัวกำหนดอนาคต!',
+          background: 'Pic/present2.jpeg',
+          choices: [],
+        },
+        {
+          id: 'intro2',
+          text: 'ที่นี่คือสถานทูต เป็นที่ทำงานของคุณ คุณเข้าทำงานในวันเเรกก็มีภารกิจเข้ามาเเล้ว!',
+          background: 'Pic/placWork.jpeg',
+          choices: [],
+        },
+        {
+          id: 'intro3',
+          title:
+            'ข่าวลือเรื่องการลักลอบขนส่งอาวุธข้ามพรมแดนประเทศเราไปที่ประเทศเซเนียร์',
+          text: 'หน่วยข่าวกรองรายงานว่ามีการลักลอบขนอาวุธจากประเทศของคุณไปที่เขตเเดนของเซเนียร์ คุณในฐานะนักการทูตต้องตัดสินใจว่าจะรับมืออย่างไร',
+          background: 'Pic/box.jpeg',
+          choices: [],
+        },
+        {
+          id: 'mission1',
+          text: 'คุณควรเคลื่อนไหวอย่างไร ในการกระทำครั้งนี้?',
+          background: 'Pic/present.jpeg',
+          choices: [
+            {
+              text: 'ประกาศผ่านสื่อระหว่างประเทศว่าฝ่ายตรงข้ามกำลังละเมิดอธิปไตยของคุณ',
+              next: 'event2',
+            },
+            {
+              text: 'ขอเข้าพบตัวแทนของประเทศเซเนียร์เพื่อพูดคุยอย่างสันติ',
+              next: 'event1',
+            },
+            {
+              text: 'ส่งกองกำลังลาดตระเวนพร้อมแถลงการณ์เตือนอย่างแข็งกร้าว',
+              next: 'event3',
+            },
+          ],
+        },
+        {
+          id: 'event1',
+          text: 'คุณเลือกที่จะหลีกเลี่ยงความขัดแย้งและพยายามเจรจากับฝ่ายตรงข้าม เเละคุณก็ได้รับคำเชิญไปเจรจากับนักการทูตฝ่ายตรงข้ามที่ดูเป็นมิตรมาก!',
+          background: 'Pic/checkhand3.jpeg',
+          choices: [
+            { text: 'ไปตามคำเชิญ', next: 'event1-1' },
+            { text: 'ไม่ไปตามคำเชิญ', next: 'event1-2' },
+          ],
+        },
+        {
+          id: 'event2',
+          text: 'คุณเลือกที่จะทำให้เกิดการโต้แย้งรุนแรงและเพิ่มความตึงเครียดระหว่างประเทศ โดยนักการทูตจากประเทศเซเนียร์ได้ติดต่อมาเพื่อขอเจรจาทันที โดยการส่งนักการทูตที่มีความเชี่ยวชาญในการเจรจาระหว่างประเทศมา!',
+          background: 'Pic/argue.jpeg',
+          choices: [
+            { text: 'อนุญาตให้เค้าเข้าพบ', next: 'event2-1' },
+            { text: 'ไม่อนุญาตให้เค้าเข้าพบ', next: 'event2-2' },
+          ],
+        },
+        {
+          id: 'event2-1',
+          text: 'นักการทูตท่าทางเย็นชาเเละเข้งขึมได้เข้ามาภายในห้องของคุณเเละเริ่มพูดคุยกับคุณทันที',
+          background: 'Pic/openthedoor.jpeg',
+          choices: [{ text: 'ต่อไป', next: 'event2-1-1' }],
+        },
+        {
+          id: 'event2-2',
+          text: 'คุณปฏิเสธไม่พบกับนักการทูตของเซเนียร์ เเละเล่นเกมบอลต่อ(ภายในห้องรัฐสภา)',
+          background: 'Pic/playgame.jpeg',
+          choices: [{ text: 'ต่อไป', next: 'event2-2-1' }],
+        },
+        {
+          id: 'event2-2-1',
+          title: 'ทันใดนั้น!?',
+          text: 'นักการทูตของเซเนียร์ ก็ถีบประตูห้องเข้ามาด้วยท่าทางเข้งขึม ก่อนเดินตรงมาดึงหูของคุณไปคุยที่ห้องรับเเขก',
+          background: 'Pic/openthedor2.jpeg',
+          choices: [{ text: 'ต่อไป', next: 'event2-1-1' }],
+        },
+        {
+          id: 'event2-1-1',
+          title: 'นักการทูตคนนั้นได้กล่าวว่า',
+          text: 'ผมชื่อเจฟ เป็นตัวเเทนจากประเทศเซเนียร์ เรารู้ดีว่าท่านรู้สึกไม่ดีเกี่ยวกับการเคลื่อนไหวทางทหารของประเทศเราในบริเวณชายเเดน',
+          background: 'Pic/talk.jpeg',
+          choices: [{ text: 'ต่อไป', next: 'event2-1-1-1' }],
+        },
+        {
+          id: 'event2-1-1-1',
+          title: 'เจฟได้กล่าวต่อว่า',
+          text: 'ผมมาที่นี่เพื่อขอให้คุณลบสิ่งที่ประเทศของคุณได้ประกาศออกไปผ่านสื่อออกให้หมด เนื่องจากสิ่งที่ประกาศนั้นไม่ใช่ความจริงเลย พวกคุณกำลังเข้าใจผิด',
+          background: 'Pic/talk.jpeg',
+          choices: [
+            {
+              text: 'ถ้าเช่นนั้นคุณช่วยบอกได้หรือไม่ถึงเหตุผลที่เซเนียร์ลักลอบขนอาวุธ จากประเทศของเราไปที่เซเนียร์',
+              next: '',
+            },
+            {
+              text: 'หยิบหน้ากากลงอาคมขึ้นมาใส่เเละสวดเพื่อขอให้ผีช่วยให้การเจรจาครั้งนี้สำเร็จ',
+              next: 'event2-1-1-1-2',
+            },
+            {
+              text: 'ผมขอ 20 บาทเอาไว้ซื้อบุหรี่ได้ไหมลืมเอาเงินมา ส่วนเรื่องลบข่าวผมคิดไว้อยู่เเล้วว่าจะลองไปคุยดู เพราะไม่อยากให้เรื่องวุ่นวายมากไปกว่านี้',
+              next: 'event2-1-1-1-1',
+            },
+          ],
+        },
+        {
+          id: 'event2-1-1-1-2',
+          title: 'เจฟนั่งดูคุณพูดคนเดียวสักพัก',
+          text: 'โอเคร... ดูเหมือนคุณจะเชื่อเรื่องเหนือธรรมชาติ เเต่จำเป็นต้องทำต่อหน้าผมเลยหรอ?',
+          background: 'Pic/mask.jpeg',
+          choices: [
+            {
+              text: 'ถัดไป',
+              next: 'event2-1-1-1-2-1',
+            },
+           
+          ],
+        },
+        {
+          id: 'event2-1-1-1-2-1',
+          title: 'เจฟที่คิดว่าคุณเเปลกก็เลยเดินออกจากห้องไป',
+          text: 'เเละเดินกลับมาพร้อมหน้ากากตุ๊กตาหมีรุ่นลิมมิเต็ด สะท้อนทุกความเสียหายจากทุกศาสนาในโลก',
+          background: 'Pic/teddi.jpeg',
+          choices: [
+            {
+              text: 'ถัดไป',
+              next: '',
+            },
+           
+          ],
+        },
+        {
+          id: 'event2-1-1-1-1',
+          title: 'เจฟตอบขึ้นมาทันทีว่า',
+          text: 'ผมให้ 6,000 เอาไปซื้อบุหรี่สูบสักลังนึ่งนะ ขอบคุณที่ช่วยผม',
+          background: 'Pic/20thb.jpeg',
+          choices: [
+            {
+              text: 'รับเงิน',
+              next: 'event2-1-1-1-1.1',
+            },
+            {
+              text: 'ไม่รับเงิน',
+              next: 'event2-1-1-1-1.2',
+            },
+          ],
+        },
+        {
+          id: 'event2-1-1-1-1.2',
+          text: 'เจฟถามคุณว่าทำไมไม่รับเงินไป?',
+          background: 'Pic/talk.jpeg',
+          choices: [
+            {
+              text: 'ผมเป็นคนดี ไม่รับสินบน',
+              next: 'event2-1-1-1-1.2/1',
+            },
+          ],
+        },
+        {
+          id: 'event2-1-1-1-1.2/1',
+          title: 'เจฟใช้มือตบเข้าที่ขมับขวาของคุณเเล้วพูดว่า',
+          text: '"อย่ากวนตีน เมื่อกี้คุณพึ่งขอเงินผม" เเล้วตะคอกให้คุณรับเงินของเขาไป',
+          background: 'Pic/hand.jpeg',
+          choices: [
+            {
+              text: 'รับเงิน (เพราะกลัวโดนเข้าขยับซ้ายด้วย ถ้าไม่รับ)',
+              next: 'event2-1-1-1-1.1',
+            },
+          ],
+        },
+        {
+          id: 'event2-1-1-1-1.1',
+          text: 'หลังจากนั้นคุณก็ได้พูดคุยกับเจฟเรื่องที่เซเนียร์มีการลักลอบขนอาวุธบริเวณชายเเดน ซึ่งเจฟก็ได้หาข้อเเก้ต่างมากมายมาใช้พูดกับคุณ เเต่คุณก็มีไหวพริบดีเเละดูออกทั้งหมด',
+          background: 'Pic/talk.jpeg',
+          choices: [
+            {
+              text: 'ต่อไป',
+              next: 'event2-1-1-1-1.1-1/1',
+            },
+          ],
+        },
+        {
+          id: 'event2-1-1-1-1.1-1/1',
+          text: 'คุณได้พูดต่อรองเเละทำข้อตกลงกับเจฟอยู่นานเเม้คุณจะยังไม่ทราบเเน่ชัด ว่าเกิดอะไรขึ้นที่บริเวณชายเเดนกันเเน่ การกระทำของคุณทำให้เจฟนิ่งไปสักพักก่อนจะเดินตรงไปที่ประตูทางออกทันที',
+          background: 'Pic/talk.jpeg',
+          choices: [
+            {
+              text: 'ต่อไป',
+              next: 'event2-1-1-1-1.1-1/1.1',
+            },
+          ],
+        },
+        {
+          id: 'event2-1-1-1-1.1-1/1.1',
+          title: 'เจฟได้พูดก่อนออกจากห้องว่า',
+          text: 'คุณ{name} คุณเป็นคนที่ฉลาดนะ เเต่ในการเจรจาครั้งนี้คุณน่ะ-เเพ้เเล้วล่ะ... ก่อนจะเดินออกจากห้องไป',
+          background: 'Pic/exit.jpeg',
+          choices: [
+            {
+              text: 'คุณรู้สึกสงสัยเกี่ยวกับสิ่งที่เค้าพูด',
+              next: 'ending2',
+            },
+          ],
+        },
+        {
+          id: 'ending2',
+          text: 'ในวันต่อมาคุณถูกจับเนื่องจากมีข่าวว่าคุณรับสินบน เเม้คุณจะปฏิเสธว่าเจฟเเค่ให้เงินคุณไปซื้อบุหรี่เล้กน้อยเท่านั้นเเต่เงิน 540,000 บาทนั้นสูงเกินไปสำหรับบุหรี่เเละเข้าข่ายรับสินบน',
+          background: 'Pic/polic.jpeg',
+          choices: [
+            {
+              text: 'คุณเเก้ต่างว่ามันเเค่ 6,000 บาทเอง เด้งไป5เเสนได้ไง',
+              next: 'chap1',
+            },
+          ],
+        },
+        {
+          id: 'chap1',
+          text: 'ตำรวจอธิบายว่า ค่าเงินบาทกับของเซเนียร์ต่างกัน ค่าเงินของเซเนียร์อัตราเเลกเปลี่ยนเป็นเงินบาทคือ1ต่อ90 ดังนั้น 6,000เซเนียร์ = 540,000 บาท',
+          background: 'Pic/polic.jpeg',
+          choices: [
+            {
+              text: 'คุณพึ่งจะรู้ว่า ที่เจฟกล่าว"คุณเเพ้เเล้ว"หมายถึงอะไร',
+              next: 'ending1',
+            },
+          ],
+        },
+        {
+          id: 'event3',
+          text: 'คุณเลือกที่จะเพิ่มความตึงเครียดระหว่างชายเเดน ซึ่งคุณได้รับการติดต่อจากนักการทูตที่เก่งกาจและได้รับเชิญไปเจรจาท่ามกลางความตึงเครียด',
+          background: 'Pic/argue.jpeg',
+          choices: [
+            { text: 'อนุญาตให้เค้าเข้าพบ', next: '' },
+            { text: 'ไม่อนุญาตให้เค้าเข้าพบ', next: '' },
+          ],
+        },
+        {
+          id: 'event1-1',
+          title: 'ท่านได้รับการกล่าวต้อนรับจากนักการทูตผู้นั้น',
+          text: '"ยินดีต้อนรับค่ะ ดิชั้นชื่ออันนาเป็นตัวเเทนของประเทศเซเนียร์ค่ะ ท่านคงจะเป็นคุณ {name} สินะคะ การมาที่นี่ของท่านเป็นสัญญาณที่ดีที่จะช่วยให้สถานการณ์นี้ไม่บานปลายไปมากกว่านี้ค่ะ"',
+          background: 'Pic/cute_person.jpeg',
+          choices: [
+            {
+              text: 'กล่าวถามถึงเหตุผล ของการลักลอบขนส่งอาวุธข้ามพรมแดนกับอีกอันนา',
+              next: 'event1-1-1',
+            },
+            { text: 'ชมว่าเธอสวยมากเลยก่อนจะขอเบอร์ของเธอ เเละชวนเธอออกเดท ชั่งเรื่องงาน', next: 'event1-1-2' },
+            {
+              text: 'ขู่อันนาว่าหากพวกเรายังพบเห็นประเทศพวกคุณทำลับๆล่อๆ บริเวณเขตเเดนระหว่างประเทศของเรา เราจะเลิกขายไฟฟ้าให้เเก่ประเทศคุณ!',
+              next: 'event1-1-3',
+            },
+          ],
+        },
+        {
+          id: 'event1-1-2',
+          title: 'อันนารู้สึกถูกคุมคามจากการกระทำของคุณเธอจึงเรียก หน่วยรักษาความปลอดภัยหน้าห้องมา',
+          text: 'ก่อนจะมีผู้ชายคนนึ่งท่าทางเข้มขึงเดินตรงเข้ามาในห้องเเละกระชากคอเสื้อคุณขึ้น คุณโดนเข้าไปหมัดนึ่งจังๆที่ตาขวาก่อนหมดสติไป',
+          background: 'Pic/boyfriend.jpeg',
+          choices: [
+            {
+              text: 'ต่อไป',
+              next: '',
+            },
+           
+          ],
+        },
+        
+        {
+          id: 'event1-1-3',
+          title: 'อันนาจึงตอบกลับว่า',
+          text: 'ค่ะ ดิชั้นเข้าใจดีสำหรับข้อกังวลของคุณค่ะ ประเทศของเรายึดมั่นในหลักแห่งความโปร่งใสและการเคารพในอธิปไตยของประเทศเพื่อนบ้านเสมอค่ะ หากมีพฤติกรรมใดที่อาจก่อให้เกิดความเข้าใจผิด ทางเราพร้อมเปิดการหารืออย่างจริงใจเพื่อชี้แจงและร่วมมือกันในทางสร้างสรรค์ เพราะเราเชื่อว่าความมั่นคงและความมั่งคั่งของภูมิภาคขึ้นอยู่กับความสัมพันธ์ที่แน่นแฟ้นและความไว้เนื้อเชื่อใจกันระหว่างประเทศค่ะ',
+          background: 'Pic/cute_person.jpeg',
+          choices: [
+            {
+              text: 'ชวนอันนาไปคุยต่อที่ร้านอาหาร (เนียนออกเดท)',
+              next: 'event1-1-3-1',
+            },
+          ],
+        },
+        {
+          id: 'event1-1-3-1',
+          text: 'คุณใช้โอกาสนี้ในการถามอันนา เกี่ยวกับข้อมูลทางการเมืองของเซเนียร์จากอันนา เเละได้ทราบว่าที่เซเนียร์เองในตอนนี้มีประเทศอย่าง ประเทศชินิส คอยหนุนหลังอยู่ รอเสียบทันทีที่ประเทศของคุณเลิกขายไฟฟ้าให้เเก่เซเนียร์',
+          background: 'Pic/bar.jpeg',
+          choices: [
+            {
+              text: 'ต่อไป',
+              next: 'event1-1-3-1.1',
+            },
+          ],
+        },
+        {
+          id: 'event1-1-3-1.1',
+          text: 'ซึ่งคุณทราบดีว่าประเทศชินิส เป็นประเทศคู่เเข่งของประเทศคุณ ซึ่งหากประเทศชินีส ได้เซเนียร์ไปครองอาจจะทำให้ชินีสสามารถขยายอาณาเขตออกมาได้ไกลมากขึ้น รวมถึงกำลังทางทหารที่มากขึ้นด้วย',
+          background: 'Pic/bar.jpeg',
+          choices: [
+            {
+              text: 'ต่อไป',
+              next: 'event1-1-3-1.1-1#1',
+            },
+          ],
+        },
+        {
+          id: 'event1-1-3-1.1-1#1',
+          text: 'เมื่อคุณเริ่มรู้สึกว่าเรื่องเหล่านี้มันเเปลกๆ คุณก็เลยเนียนขอเบอร์อันนาเอาไว้ก่อนพวกคุณจะเเยกย้ายกัน',
+          background: 'Pic/bar.jpeg',
+          choices: [
+            {
+              text: 'ต่อไป',
+              next: 'event1-1-3-1.1-1',
+            },
+          ],
+        },
+
+
+
+
+        {
+          id: 'event1-1-3-1.1-1',
+          title: 'หลายวันต่อมา',
+          text: 'คุณได้นำเรื่องที่อันนาบอกมาคิด เนื่องจากเรื่องของการขนส่งอาวุธข้ามประเทศนั้น ตัวอันนาก็ยังไม่ทราบดี เพราะเธอเองก็เพียงถูกส่งมาเพื่อดูเชิงของประเทศเราเพียงเท่านั้น',
+          background: 'Pic/think.jpeg',
+          choices: [
+            {
+              text: 'โทรหาอันนา',
+              next: 'event1-1-3-1.1-1-1',
+            },
+          ],
+        },
+        {
+          id: 'event1-1-3-1.1-1-1',
+          text: 'คุณติดต่อหาอันนาเเละบอกกับเธอว่าคุณสงสัยว่าภายในประเทศเซเนียร์ เเละประเทศของผมนั้นอาจจะมีใส้ศึกอยู่ภายในประเทศ เนื่องจากมีการเคลื่อนไหวผิดปกติ ที่เเม้เเต่คนในประเทศยังไม่ทราบ',
+          background: 'Pic/phone.jpeg',
+          choices: [
+            {
+              text: 'ต่อไป',
+              next: 'event1-1-3-1.1-1-1.1',
+            },
+          ],
+        },
+        {
+          id: 'event1-1-3-1.1-1-1.1',
+          text: 'อันนาตอบว่าเธอเองก็คิดเช่นนั้น พวกคุณทั้งสองจึงนัดกันไปตรวจสอบที่บริเวณชายเเดนที่มีการรายงาน ว่าพบการขนอาวุธข้ามประเทศ',
+          background: 'Pic/plan.jpeg',
+          choices: [
+            {
+              text: '',
+              next: '',
+            },
+          ],
+        },
+        {
+          id: 'event1-2',
+          text: 'เมื่อคุณเลือกที่จะปฎิเสธคำเชิญ ทางประเทศของคุณจึงได้ส่งนักการทูตระดับรองไปเเทน ซึ่งผลลัพธ์ของการเจรจาไม่เป็นที่น่าพอใจนัก',
+          background: 'Pic/person.jpeg',
+          choices: [
+            {
+              text: 'ต่อไป',
+              next: 'event1-2-1',
+            },
+          ],
+        },
+        {
+          id: 'event1-2-1',
+          text: 'นักการทูตที่ประเทศของคุณส่งไปได้ยินยอมที่จะขายเขตเเดนของประเทศที่อยู่ติดกับเขตเเดนของเซเนียร์ ให้กับเซเนียร์ไป การกระทำในครั้งนี้ทำให้ประเทศของคุณเสียดินเเดนไปบางส่วน เเม้ประเทศคุณจะเป็นฝ่ายที่คอยขายไฟฟ้าให้เเก่เซเนียร์ก็ตาม เเละคุณไม่ทราบถึงเหตุผลของการขายชาติดังกล่าวเลย',
+          background: 'Pic/person.jpeg',
+          choices: [
+            {
+              text: 'ต่อไป',
+              next: 'event1-2-1.1',
+            },
+          ],
+        },
+        {
+          id: 'event1-2-1.1',
+          text: 'คุณถูกปลดจากตำเเหน่งนักการทูตของประเทศ ก่อนที่นักการทูตคนที่ขายดินเเดนของประเทศให้กับเซเนียร์ จะได้รับตำเเหน่งนักการทูตของประเทศเเทน เค้าคนนั้นมีชื่อว่า เจอร์มี่ เเม้คุณจะสงสัยว่ามันเกิดอะไรขึ้นกันเเน่เเต่ก็ทำอะไรได้ไม่มาก',
+          background: 'Pic/dismiss.jpeg',
+          choices: [
+            {
+              text: 'ตัดสินใจสิ้นสุดการทำงานในสายอาชีพนี้ เเล้วไปขายหมูปิ้ง',
+              next: 'event1-2-1.1-1',
+            },
+            {
+              text: 'เริ่มการสืบสวนเจอร์มี่อย่างลับๆ',
+              next: '',
+            },
+          ],
+        },
+        {
+          id: 'event1-2-1.1-1',
+          text: 'คุณใช้ชีวิตเป็นพ่อค้าขายหมูปิ้งอย่างสงบสุข',
+          background: 'Pic/grillPork.jpeg',
+          choices: [
+            {
+              text: 'รายละเอียดของเกมส์นี้',
+              next: 'ending1',
+            },
+          ],
+        },
+        {
+          id: 'event1-1-1',
+          title: 'อันนาตอบว่า',
+          text: 'การขนย้ายอาวุธไม่ได้มีเจตนาร้ายนะคะ เราจำเป็นต้องซื้ออาวุธจากประเทศของคุณเพื่อเสริมสร้างความมั่นคงภายในประเทศ อาวุธเหล่านี้เราติดต่อซื้อจากบริษัทเอกชนภายในประเทศของคุณค่ะ',
+          background: 'Pic/cute_person.jpeg',
+          choices: [
+            {
+              text: 'เเต่ภายในประเทศของผมไม่มีบริษัทผลิตอาวุธปืนนะครับ!?',
+              next: 'event1-1-1.1',
+            },
+          ],
+        },
+        {
+          id: 'event1-1-1.1',
+          text: 'คุณกล่าวถามอันนาด้วยความสงสัย เนื่องจากประเทศของคุณไม่มีการผลิตอาวุธภายในประเทศ รวมถึงฝั่งเซเนียร์เองเเม้จะอ้างว่ามีการซื้ออย่างถูกต้องเเต่ทำไม หน่วยข่าวกรองรายงานว่าเป็นการลักลอบขนอาวุธข้ามพรมเเดน',
+          background: 'Pic/ask.jpeg',
+          choices: [
+            {
+              text: 'คุณมองอันนาด้วยสายตาที่รู้สึกสงสัย',
+              next: '',
+            },
+          ],
+        },
+        {
+          id: 'ending1',
+          text: 'เรื่องราวของคุณจบลงที่นี่ ขอบคุณที่ร่วมผจญภัยกับเรา!',
+          background: 'Pic/test.jpeg',
+          choices: [
+            {
+              text: 'ดูข้อมูลผู้สร้าง',
+              next: 'go-to-credits',
+            },
+          ],
+        },
+        {
+          id: 'go-to-credits',
+          text: '',
+          background: '',
+          choices: [],
+        },
+      ];
+
+      function resizeFullScreenElements() {
+        const fullScreenElements = ['game', 'name-input-screen', 'background'];
+        fullScreenElements.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.style.width = window.innerWidth + 'px';
+            el.style.height = window.innerHeight + 'px';
+          }
+        });
+      }
+
+      window.addEventListener('load', resizeFullScreenElements);
+      window.addEventListener('resize', resizeFullScreenElements);
+
+      const preloadImages = dialogueData
+        .map((node) => node.background)
+        .filter(Boolean);
+      preloadImages.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
+
+      let currentNode = null;
+      let nextNodeId = null;
+      let typingTimeouts = []; //เก็บ timeout IDs สำหรับการพิมพ์
+
+      function startGame() {
+        playerName =
+          document.getElementById('playerName').value.trim() || 'ผู้เล่น';
+        document.getElementById('name-input-screen').style.display = 'none';
+
+        // ตั้งค่าเริ่มต้นของพื้นหลังให้ใช้ test.jpeg
+        const bg = document.getElementById('background');
+        bg.innerHTML = ''; // ลบภาพที่มีอยู่
+        const img = document.createElement('img');
+        img.src = 'Pic/rigis.jpeg'; // ใช้ test.jpeg เป็นพื้นหลังเริ่มต้น
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover'; // ปรับให้ภาพพอดีกับพื้นที่
+        bg.appendChild(img);
+        document.title = `วันๆของ ${playerName}`;
+
+        loadNode('start');
+      }
+      function typeText(element, text, speed = 30, name = '') {
+        // ล้างข้อความและ timeout เดิม
+        element.innerHTML = '';
+        typingTimeouts.forEach(clearTimeout); // ยกเลิกการพิมพ์ก่อนหน้า
+        typingTimeouts = [];
+
+        let i = 0;
+        let rendered = '';
+
+        function type() {
+          if (i < text.length) {
+            rendered += text[i];
+            element.innerHTML = rendered.replace(
+              '%%NAME%%',
+              `<span style="color: yellow;">${name}</span>`
+            );
+            i++;
+            const timeoutId = setTimeout(type, speed);
+            typingTimeouts.push(timeoutId); // เก็บไว้เพื่อเคลียร์ภายหลัง
+          }
+        }
+
+        type();
+      }
+
+      function fadeToBackground(newSrc) {
+        const bg = document.getElementById('background');
+
+        // สร้างภาพใหม่
+        const newImg = document.createElement('img');
+        newImg.src = newSrc;
+        newImg.style.width = '100%';
+        newImg.style.height = '100%';
+        newImg.style.objectFit = 'cover';
+        newImg.style.opacity = '0';
+        newImg.style.position = 'absolute';
+        newImg.style.top = '0';
+        newImg.style.left = '0';
+        newImg.style.transition = 'opacity 1.5s ease-in-out';
+
+        bg.appendChild(newImg); // เพิ่มภาพใหม่ทับภาพเก่า
+
+        // เริ่ม fade-in
+        requestAnimationFrame(() => {
+          newImg.style.opacity = '1';
+        });
+
+        // ลบภาพเก่าเมื่อภาพใหม่แสดงเสร็จ
+        setTimeout(() => {
+          const images = bg.querySelectorAll('img');
+          if (images.length > 1) {
+            bg.removeChild(images[0]); // ลบภาพก่อนหน้า
+          }
+        }, 1600); // รอเวลา fade ครบ
+      }
+
+      function loadNode(id) {
+        const node = dialogueData.find((n) => n.id === id);
+        currentNode = node;
+        nextNodeId = null;
+
+        const rawText = node.text.replace('{name}', `%%NAME%%`);
+        const dialogueElement = document.getElementById('dialogue-text');
+        typeText(dialogueElement, rawText, 30, playerName);
+
+        const bg = document.getElementById('background');
+        let safeBackground = node.background.replace(/\\/g, '/');
+
+        fadeToBackground(safeBackground);
+
+        const titleElement = document.getElementById('dialogue-title');
+        if (node.title) {
+          titleElement.innerText = node.title;
+          titleElement.style.display = 'block';
+        } else {
+          titleElement.innerText = '';
+          titleElement.style.display = 'none';
+        }
+
+        const choicesDiv = document.getElementById('choices');
+        const nextBtn = document.getElementById('next-btn');
+        choicesDiv.innerHTML = '';
+
+        if (id === 'go-to-credits') {
+          window.location.href = 'credits.html';
+          return;
+        }
+
+        if (node.choices.length === 0) {
+          //ไม่มีตัวเลือก ให้แสดงปุ่ม "ถัดไป" ถ้ามี next
+          const index = dialogueData.findIndex((n) => n.id === id);
+          const nextEntry = dialogueData[index + 1];
+          if (nextEntry) {
+            nextNodeId = nextEntry.id;
+            nextBtn.style.display = 'block';
+          } else {
+            nextBtn.style.display = 'none';
+          }
+        } else {
+          nextBtn.style.display = 'none';
+          node.choices.forEach((choice) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice';
+            btn.innerText = choice.text;
+            btn.onclick = () => loadNode(choice.next);
+            choicesDiv.appendChild(btn);
+          });
+        }
+      }
+
+      function nextScene() {
+        if (nextNodeId) {
+          loadNode(nextNodeId);
+        }
+      }
+    </script>
+  </body>
+</html>
