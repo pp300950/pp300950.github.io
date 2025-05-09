@@ -119,70 +119,75 @@
         margin-top: 1rem;
       }
       #rotate-warning {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    top: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.95);
-    color: white;
-    width: 100%;
-    height: 100%;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    #dialogue-box {
-      font-size: 0.7rem;
-      padding: 0.7rem;
-    }
-    #dialogue-title {
-      font-size: 0.9rem !important;
-    }
-    .choice,
-    #next-btn {
-      font-size: 0.7rem;
-      padding: 0.3rem 0.55rem;
-    }
-    #choices {
-        margin-top: 0.2rem;
-        gap: 0.2rem;
-        flex-direction: row;
-        flex-wrap: wrap; 
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.95);
+        color: white;
+        width: 100%;
+        height: 100%;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
         justify-content: center;
+        text-align: center;
+        padding: 2rem;
       }
-      #playerName {
-  background-color: black;
-  color: white;
-  border: 1px solid white;
-}
-#playerName::placeholder {
-  color: white;
-  opacity: 0.8; /* ปรับความโปร่งแสงตามต้องการ */
-}
 
-  }
-  #dialogue-box.collapsed {
-  transform: translateY(85%);
-}
+      @media (max-width: 768px) {
+        #dialogue-box {
+          font-size: 0.7rem;
+          padding: 0.7rem;
+        }
+        #dialogue-title {
+          font-size: 0.9rem !important;
+        }
+        .choice,
+        #next-btn {
+          font-size: 0.7rem;
+          padding: 0.3rem 0.55rem;
+        }
+        #choices {
+          margin-top: 0.2rem;
+          gap: 0.2rem;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        #playerName {
+          background-color: black;
+          color: white;
+          border: 1px solid white;
+        }
+        #playerName::placeholder {
+          color: white;
+          opacity: 0.8; /* ปรับความโปร่งแสงตามต้องการ */
+        }
+      }
+      #dialogue-box.collapsed {
+        transform: translateY(85%);
+      }
 
+      #dialogue-box {
+        transition: transform 0.5s ease;
+      }
+      #drag-handle {
+        width: 100%;
+        height: 20px;
+        background: #888;
+        cursor: ns-resize;
+        border-radius: 12px 12px 0 0;
+        position: absolute;
+        top: -20px;
+        left: 0;
+      }
+      #background img {
+  will-change: opacity;
+}
 #dialogue-box {
-  transition: transform 0.5s ease;
-}
-#drag-handle {
-  width: 100%;
-  height: 20px;
-  background: #888;
-  cursor: ns-resize;
-  border-radius: 12px 12px 0 0;
-  position: absolute;
-  top: -20px;
-  left: 0;
+  will-change: transform;
 }
 
     </style>
@@ -193,10 +198,8 @@
     </div>
 
     <div id="game">
-      <div id="rotate-warning">
-        เเนะนำให้เล่นเเนวนอน
-      </div>
-      
+      <div id="rotate-warning">เเนะนำให้เล่นเเนวนอน</div>
+
       <div id="name-input-screen">
         <div>ป้อนชื่อตัวละครของคุณ</div>
         <input type="text" id="playerName" placeholder="ชื่อของคุณ" />
@@ -204,7 +207,6 @@
       </div>
 
       <div id="dialogue-box">
-        
         <div
           id="dialogue-title"
           style="
@@ -224,21 +226,19 @@
       </div>
     </div>
     <script>
-    
+      function checkOrientation() {
+        const warning = document.getElementById('rotate-warning');
+        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+        if (isMobile && window.innerHeight > window.innerWidth) {
+          warning.style.display = 'flex'; // แนวตั้ง
+        } else {
+          warning.style.display = 'none'; // แนวนอน
+        }
+      }
 
-        function checkOrientation() {
-    const warning = document.getElementById('rotate-warning');
-    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    if (isMobile && window.innerHeight > window.innerWidth) {
-      warning.style.display = 'flex'; // แนวตั้ง
-    } else {
-      warning.style.display = 'none'; // แนวนอน
-    }
-  }
-
-  window.addEventListener('load', checkOrientation);
-  window.addEventListener('resize', checkOrientation);
-  window.addEventListener('orientationchange', checkOrientation);
+      window.addEventListener('load', checkOrientation);
+      window.addEventListener('resize', checkOrientation);
+      window.addEventListener('orientationchange', checkOrientation);
 
       const dialogueData = [
         {
@@ -360,7 +360,6 @@
               text: 'ถัดไป',
               next: 'event2-1-1-1-2-1',
             },
-           
           ],
         },
         {
@@ -373,7 +372,6 @@
               text: 'ถัดไป',
               next: '',
             },
-           
           ],
         },
         {
@@ -490,7 +488,10 @@
               text: 'กล่าวถามถึงเหตุผล ของการลักลอบขนส่งอาวุธข้ามพรมแดนกับอีกอันนา',
               next: 'event1-1-1',
             },
-            { text: 'ชมว่าเธอสวยมากเลยก่อนจะขอเบอร์ของเธอ เเละชวนเธอออกเดท ชั่งเรื่องงาน', next: 'event1-1-2' },
+            {
+              text: 'ชมว่าเธอสวยมากเลยก่อนจะขอเบอร์ของเธอ เเละชวนเธอออกเดท ชั่งเรื่องงาน',
+              next: 'event1-1-2',
+            },
             {
               text: 'ขู่อันนาว่าหากพวกเรายังพบเห็นประเทศพวกคุณทำลับๆล่อๆ บริเวณเขตเเดนระหว่างประเทศของเรา เราจะเลิกขายไฟฟ้าให้เเก่ประเทศคุณ!',
               next: 'event1-1-3',
@@ -499,7 +500,8 @@
         },
         {
           id: 'event1-1-2',
-          title: 'อันนารู้สึกถูกคุมคามจากการกระทำของคุณเธอจึงเรียก หน่วยรักษาความปลอดภัยหน้าห้องมา',
+          title:
+            'อันนารู้สึกถูกคุมคามจากการกระทำของคุณเธอจึงเรียก หน่วยรักษาความปลอดภัยหน้าห้องมา',
           text: 'ก่อนจะมีผู้ชายคนนึ่งท่าทางเข้มขึงเดินตรงเข้ามาในห้องเเละกระชากคอเสื้อคุณขึ้น คุณโดนเข้าไปหมัดนึ่งจังๆที่ตาขวาก่อนหมดสติไป',
           background: 'Pic/boyfriend.jpeg',
           choices: [
@@ -507,10 +509,9 @@
               text: 'ต่อไป',
               next: '',
             },
-           
           ],
         },
-        
+
         {
           id: 'event1-1-3',
           title: 'อันนาจึงตอบกลับว่า',
@@ -556,9 +557,6 @@
             },
           ],
         },
-
-
-
 
         {
           id: 'event1-1-3-1.1-1',
@@ -683,6 +681,14 @@
           choices: [],
         },
       ];
+
+      const preloadImages = dialogueData
+        .map((node) => node.background)
+        .filter(Boolean);
+      preloadImages.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
 
       let currentNode = null;
       let nextNodeId = null;
