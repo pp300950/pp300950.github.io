@@ -254,16 +254,17 @@
       window.addEventListener('resize', setVhUnit);
       window.addEventListener('load', setVhUnit);
 
-      // แสดง rotate-warning ทันทีที่โหลดหน้า
-      window.addEventListener('load', () => {
-        const warning = document.getElementById('rotate-warning');
-        warning.style.display = 'flex';
+     // แสดง rotate-warning ทันทีที่โหลดหน้า
+window.addEventListener('load', () => {
+  const warning = document.getElementById('rotate-warning');
+  warning.style.display = 'flex';
 
-        // หากผู้ใช้กดที่ rotate-warning ให้ซ่อนไป
-        warning.addEventListener('click', () => {
-          warning.style.display = 'none';
-        });
-      });
+  // ซ่อน rotate-warning อัตโนมัติหลังจาก 3 วินาที
+  setTimeout(() => {
+    warning.style.display = 'none';
+  }, 3000); // 3000 มิลลิวินาที = 3 วินาที
+});
+
 
       const dialogueData = [
         {
