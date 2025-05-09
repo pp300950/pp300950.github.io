@@ -155,36 +155,38 @@
         padding: 2rem;
       }
 
-      @media (max-width: 768px) {
-        #dialogue-box {
-          font-size: 0.7rem;
-          padding: 0.7rem;
-        }
-        #dialogue-title {
-          font-size: 0.9rem !important;
-        }
-        .choice,
-        #next-btn {
-          font-size: 0.7rem;
-          padding: 0.3rem 0.55rem;
-        }
-        #choices {
-          margin-top: 0.2rem;
-          gap: 0.2rem;
-          flex-direction: row;
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-        #playerName {
-          background-color: black;
-          color: white;
-          border: 1px solid white;
-        }
-        #playerName::placeholder {
-          color: white;
-          opacity: 0.8; /* ปรับความโปร่งแสงตามต้องการ */
-        }
-      }
+      @media (max-width: 768px), (pointer: coarse) {
+  /* CSS สำหรับมือถือหรือหน้าจอเล็ก */
+  #dialogue-box {
+    font-size: 0.7rem;
+    padding: 0.7rem;
+  }
+  #dialogue-title {
+    font-size: 0.9rem !important;
+  }
+  .choice,
+  #next-btn {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.55rem;
+  }
+  #choices {
+    margin-top: 0.2rem;
+    gap: 0.2rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  #playerName {
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+  }
+  #playerName::placeholder {
+    color: white;
+    opacity: 0.8;
+  }
+}
+
       #dialogue-box.collapsed {
         transform: translateY(85%);
       }
