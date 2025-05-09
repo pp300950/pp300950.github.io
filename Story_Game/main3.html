@@ -2,37 +2,55 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#000000" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <title id="page-title">วันๆของผม</title>
     <style>
-      html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: black;
-  overflow: hidden;
-  touch-action: manipulation;
-}
-#game, #background, #name-input-screen {
-  height: calc(var(--vh, 1vh) * 100);
-}
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        font-family: 'Segoe UI', sans-serif;
+        background-color: black;
+        overflow: hidden;
+        touch-action: manipulation;
+      }
+      html,
+      body {
+        overflow: hidden;
+        position: fixed;
+        inset: 0;
+      }
+      body {
+        position: fixed;
+        inset: 0;
+      }
 
-#game {
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-  justify-content: flex-end;
-  position: relative;
-  z-index: 2;
-}
+      #game,
+      #background,
+      #name-input-screen {
+        height: calc(var(--vh, 1vh) * 100);
+      }
+
+      #game {
+        display: flex;
+        flex-direction: column;
+        width: 100vw;
+        justify-content: flex-end;
+        position: relative;
+        z-index: 2;
+      }
 
 #name-input-screen {
   width: 100vw;
