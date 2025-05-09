@@ -19,12 +19,13 @@
       body {
         margin: 0;
         padding: 0;
-        min-height: 100vh; 
+        height: 100%; 
         width: 100%;
         font-family: 'Segoe UI', sans-serif;
         background-color: black;
-        overflow: hidden;
+        /*overflow: hidden;*/
         touch-action: manipulation;
+        /*overflow-x: hidden;*/
       }
     
       #game,
@@ -36,23 +37,22 @@
       #game {
         display: flex;
         flex-direction: column;
-        width: 100vw;
+        width: 100vh;
         justify-content: flex-end;
         position: relative;
         z-index: 2;
       }
 
-#name-input-screen {
-  width: 100vw;
-  height: calc(var(--vh, 1vh) * 100);
 
-}
+      #name-input-screen {
+        width: 100vw;
+        height: calc(var(--vh, 1vh) * 100);
+      }
 
-#dialogue-box {
-  width: 100%;
-  box-sizing: border-box;
-}
-
+      #dialogue-box {
+        width: 100%;
+        box-sizing: border-box;
+      }
 
       #background {
         position: absolute;
@@ -243,16 +243,18 @@
         </button>
       </div>
     </div>
+    <div class="spacer" style="height: 100px;"></div>
+
     <script>
       function setVhUnit() {
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
       }
-    
+
       window.addEventListener('resize', setVhUnit);
       window.addEventListener('load', setVhUnit);
     </script>
-    
+
     <script>
       function checkOrientation() {
         const warning = document.getElementById('rotate-warning');
@@ -268,7 +270,6 @@
       window.addEventListener('resize', checkOrientation);
       window.addEventListener('orientationchange', checkOrientation);
 
-      
       const dialogueData = [
         {
           id: 'start',
@@ -712,6 +713,7 @@
           choices: [],
         },
       ];
+
 
       function resizeFullScreenElements() {
         const fullScreenElements = ['game', 'name-input-screen', 'background'];
