@@ -3,43 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title id="page-title">วันๆของผม</title>
-    <script>
-      let playerName = ''; // ตัวแปร global เก็บชื่อผู้เล่น
-
-      function startGame() {
-        // ดึงค่าจาก input
-        const inputElement = document.getElementById('playerName');
-        playerName = inputElement.value.trim(); // เก็บชื่อและตัดช่องว่าง
-
-        if (playerName === '') {
-          alert('กรุณาป้อนชื่อก่อนเริ่มเกม');
-          return;
-        }
-
-        document.getElementById('name-input-screen').style.display = 'none';
-        document.getElementById('game-screen').style.display = 'block';
-        document.getElementById('player-name-display').innerText = playerName;
-      }
-    </script>
-
     <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        font-family: 'Segoe UI', sans-serif;
-        background-color: black;
-        overflow: hidden;
-      }
+      html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: black;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+#game, #background, #name-input-screen {
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+#game {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 2;
+}
+
+#name-input-screen {
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 100);
+
+}
+
+#dialogue-box {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 
       #background {
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
         z-index: 1;
         overflow: hidden;
       }
@@ -57,7 +62,8 @@
       #game {
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+
         justify-content: flex-end;
       }
 
@@ -184,12 +190,11 @@
         left: 0;
       }
       #background img {
-  will-change: opacity;
-}
-#dialogue-box {
-  will-change: transform;
-}
-
+        will-change: opacity;
+      }
+      #dialogue-box {
+        will-change: transform;
+      }
     </style>
   </head>
   <body>
@@ -225,6 +230,16 @@
         </button>
       </div>
     </div>
+    <script>
+      function setVhUnit() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }
+    
+      window.addEventListener('resize', setVhUnit);
+      window.addEventListener('load', setVhUnit);
+    </script>
+    
     <script>
       function checkOrientation() {
         const warning = document.getElementById('rotate-warning');
@@ -681,6 +696,20 @@
           choices: [],
         },
       ];
+
+      function resizeFullScreenElements() {
+        const fullScreenElements = ['game', 'name-input-screen', 'background'];
+        fullScreenElements.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.style.width = window.innerWidth + 'px';
+            el.style.height = window.innerHeight + 'px';
+          }
+        });
+      }
+
+      window.addEventListener('load', resizeFullScreenElements);
+      window.addEventListener('resize', resizeFullScreenElements);
 
       const preloadImages = dialogueData
         .map((node) => node.background)
