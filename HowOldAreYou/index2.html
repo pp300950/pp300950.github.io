@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ทายอายุฉันสิ! - Akinator Version</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Mitr', sans-serif;
+            background-color: #fce7f3; /* Pink-100 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+            position: relative; /* For the cute elements */
+            overflow: hidden; /* Hide overflowing cute elements */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .question-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #d946ef; /* Fuchsia-600 */
+            margin-bottom: 2.5rem;
+        }
+        .answer-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .btn {
+            background-color: #f472b6; /* Pink-500 */
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .btn:hover {
+            background-color: #ec4899; /* Pink-600 */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .result-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d946ef; /* Fuchsia-600 */
+            margin-bottom: 1.5rem;
+        }
+        .reset-btn {
+            background-color: #a78bfa; /* Violet-400 */
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+        .reset-btn:hover {
+            background-color: #8b5cf6; /* Violet-500 */
+        }
+        .cute-element {
+            position: absolute;
+            opacity: 0.1;
+        }
+        .star { top: 10%; left: 5%; font-size: 40px; color: #facc15; transform: rotate(20deg); } /* Yellow-400 */
+        .heart { bottom: 10%; right: 5%; font-size: 30px; color: #fb7185; transform: rotate(-30deg); } /* Rose-400 */
+        .cloud { top: -20px; right: -20px; font-size: 80px; color: #a78bfa; opacity: 0.05; } /* Violet-400 */
+        .rainbow { bottom: -30px; left: -30px; font-size: 70px; color: #f472b6; opacity: 0.08; transform: rotate(10deg);} /* Pink-500 */
+
+        @media (min-width: 640px) {
+            .answer-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+            .btn {
+                width: auto;
+                flex-grow: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cute-element star">🌟</div>
+        <div class="cute-element heart">💖</div>
+        <div class="cute-element cloud">☁️</div>
+        <div class="cute-element rainbow">🌈</div>
+
+        <div id="game-area">
+            <h1 class="text-3xl font-bold text-fuchsia-700 mb-6">ทายอายุฉันสิ!</h1>
+            <p id="question-text" class="question-text">คุณพร้อมที่จะให้ฉันทายอายุของคุณแล้วหรือยัง?</p>
+            <div id="answer-buttons" class="answer-buttons">
+                <button class="btn" onclick="startGame()">เริ่มกันเลย!</button>
+            </div>
+        </div>
+        <div id="result-area" class="hidden">
+            <h1 class="text-3xl font-bold text-fuchsia-700 mb-6">ฉันเดาอายุของคุณ!</h1>
+            <p id="guessed-age" class="result-text"></p>
+            <button class="reset-btn" onclick="resetGame()">ลองอีกครั้ง</button>
+        </div>
+    </div>
+
+    <script>
+        // กำหนดคำถามและตรรกะการเดาอายุ
+        // แต่ละคำถามมี:
+        //   text: ข้อความคำถาม
+        //   yes: { type: 'nextQuestion' / 'guess', value: 'questionId' / ageRange, message: 'ข้อความเดาเฉพาะ' }
+        //   no: { type: 'nextQuestion' / 'guess', value: 'questionId' / ageRange, message: 'ข้อความเดาเฉพาะ' }
+        //   ถ้า 'guess' value จะเป็น [minAge, maxAge]
+        const questions = {
+            'start': {
+                text: "คุณพร้อมที่จะให้ฉันทายอายุของคุณแล้วหรือยัง?",
+                yes: { type: 'nextQuestion', value: 'q_initial_age_group' },
+                no: { type: 'guess', value: [2, 100], message: "ฉันเดาว่าคุณอายุอยู่ในช่วง 2 ถึง 100 ปี! (ฉันยังเดาไม่ได้แม่นยำ)" }
+            },
+            'q_initial_age_group': {
+                text: "คุณอายุ 18 ปีขึ้นไปใช่หรือไม่?", // แบ่งกลุ่มอายุหลักสำหรับผู้บรรลุนิติภาวะ
+                yes: { type: 'nextQuestion', value: 'q_adult_group' },
+                no: { type: 'nextQuestion', value: 'q_minor_group' }
+            },
+            // --- กลุ่มผู้เยาว์ (อายุต่ำกว่า 18 ปี) ---
+            'q_minor_group': {
+                text: "คุณยังเรียนชั้นประถมอยู่ใช่ไหม (ป.1 - ป.6)?",
+                yes: { type: 'nextQuestion', value: 'q_primary_school' },
+                no: { type: 'nextQuestion', value: 'q_secondary_school' }
+            },
+            'q_primary_school': {
+                text: "คุณอายุ 9 ขวบขึ้นไปใช่ไหม?",
+                yes: { type: 'nextQuestion', value: 'q_primary_upper' }, // 9-12 ปี
+                no: { type: 'nextQuestion', value: 'q_primary_lower' }  // 6-8 ปี
+            },
+            'q_primary_lower': {
+                text: "คุณอายุ 7 ขวบขึ้นไปใช่ไหม?",
+                yes: { type: 'guess', value: [7, 8], message: "ฉันเดาว่าคุณอายุประมาณ 7-8 ปี!" },
+                no: { type: 'nextQuestion', value: 'q_kindergarten' } // 2-6 ปี
+            },
+            'q_kindergarten': {
+                text: "คุณเคยไปโรงเรียนอนุบาลแล้วใช่ไหม?",
+                yes: { type: 'guess', value: [4, 6], message: "ฉันเดาว่าคุณอายุประมาณ 4-6 ปี!" },
+                no: { type: 'guess', value: [2, 3], message: "ฉันเดาว่าคุณอายุประมาณ 2-3 ปี!" }
+            },
+            'q_primary_upper': {
+                text: "คุณอายุ 11 ขวบขึ้นไปใช่ไหม?",
+                yes: { type: 'guess', value: [11, 12], message: "ฉันเดาว่าคุณอายุประมาณ 11-12 ปี!" },
+                no: { type: 'guess', value: [9, 10], message: "ฉันเดาว่าคุณอายุประมาณ 9-10 ปี!" }
+            },
+            'q_secondary_school': {
+                text: "คุณกำลังเรียนชั้นมัธยมปลาย (ม.4 - ม.6) หรือ ปวช./ปวส. ใช่ไหม?",
+                yes: { type: 'nextQuestion', value: 'q_upper_secondary' }, // 15-18 ปี
+                no: { type: 'nextQuestion', value: 'q_lower_secondary' }  // 12-14 ปี
+            },
+            'q_lower_secondary': {
+                text: "คุณอายุ 14 ขวบขึ้นไปใช่ไหม?",
+                yes: { type: 'guess', value: [14, 14], message: "ฉันเดาว่าคุณอายุประมาณ 14 ปี!" },
+                no: { type: 'guess', value: [12, 13], message: "ฉันเดาว่าคุณอายุประมาณ 12-13 ปี!" }
+            },
+            'q_upper_secondary': {
+                text: "คุณอายุ 17 ขวบขึ้นไปใช่ไหม?",
+                yes: { type: 'guess', value: [17, 18], message: "ฉันเดาว่าคุณอายุประมาณ 17-18 ปี!" },
+                no: { type: 'guess', value: [15, 16], message: "ฉันเดาว่าคุณอายุประมาณ 15-16 ปี!" }
+            },
+
+            // --- กลุ่มผู้ใหญ่ (อายุ 18 ปีขึ้นไป) ---
+            'q_adult_group': {
+                text: "คุณมีอายุ 30 ปีขึ้นไปใช่หรือไม่?",
+                yes: { type: 'nextQuestion', value: 'q_adult_30_plus' },
+                no: { type: 'nextQuestion', value: 'q_adult_18_29' }
+            },
+            'q_adult_18_29': {
+                text: "คุณกำลังเรียนมหาวิทยาลัย หรือเพิ่งเรียนจบใหม่ๆ ใช่ไหม?",
+                yes: { type: 'nextQuestion', value: 'q_uni_grad' }, // 18-23 ปี
+                no: { type: 'guess', value: [24, 29], message: "ฉันเดาว่าคุณอายุประมาณ 24-29 ปี!" } // เริ่มทำงานมาซักพัก
+            },
+            'q_uni_grad': {
+                text: "คุณอายุ 20 ปีขึ้นไปใช่ไหม?",
+                yes: { type: 'guess', value: [20, 23], message: "ฉันเดาว่าคุณอายุประมาณ 20-23 ปี!" },
+                no: { type: 'guess', value: [18, 19], message: "ฉันเดาว่าคุณอายุประมาณ 18-19 ปี!" }
+            },
+            'q_adult_30_plus': {
+                text: "คุณมีอายุ 45 ปีขึ้นไปใช่หรือไม่?",
+                yes: { type: 'nextQuestion', value: 'q_adult_45_plus' },
+                no: { type: 'nextQuestion', value: 'q_adult_30_44' }
+            },
+            'q_adult_30_44': {
+                text: "คุณมีบุตรแล้วใช่ไหม?",
+                yes: { type: 'guess', value: [30, 40], message: "ฉันเดาว่าคุณอายุประมาณ 30-40 ปี!" },
+                no: { type: 'guess', value: [30, 44], message: "ฉันเดาว่าคุณอายุประมาณ 30-44 ปี!" } // กว้างหน่อยถ้าไม่มีบุตร
+            },
+            'q_adult_45_plus': {
+                text: "คุณเกษียณจากการทำงานแล้วใช่ไหม?",
+                yes: { type: 'nextQuestion', value: 'q_retired_group' },
+                no: { type: 'nextQuestion', value: 'q_working_senior' } // 45-59 ปี
+            },
+            'q_working_senior': {
+                text: "คุณอายุ 55 ปีขึ้นไปใช่ไหม?",
+                yes: { type: 'guess', value: [55, 59], message: "ฉันเดาว่าคุณอายุประมาณ 55-59 ปี!" },
+                no: { type: 'guess', value: [45, 54], message: "ฉันเดาว่าคุณอายุประมาณ 45-54 ปี!" }
+            },
+            'q_retired_group': {
+                text: "คุณมีหลานแล้วใช่ไหม?",
+                yes: { type: 'nextQuestion', value: 'q_grandparent' }, // 60+ มีหลาน
+                no: { type: 'guess', value: [60, 70], message: "ฉันเดาว่าคุณอายุประมาณ 60-70 ปี!" } // 60+ ยังไม่มีหลาน
+            },
+            'q_grandparent': {
+                text: "คุณอายุ 75 ปีขึ้นไปใช่ไหม?",
+                yes: { type: 'guess', value: [75, 100], message: "ฉันเดาว่าคุณอายุประมาณ 75 ปีขึ้นไป!" },
+                no: { type: 'guess', value: [60, 74], message: "ฉันเดาว่าคุณอายุประมาณ 60-74 ปี!" }
+            }
+        };
+
+        // DOM elements
+        const gameArea = document.getElementById('game-area');
+        const resultArea = document.getElementById('result-area');
+        const questionText = document.getElementById('question-text');
+        const answerButtonsDiv = document.getElementById('answer-buttons');
+        const guessedAgeText = document.getElementById('guessed-age');
+
+        let currentQuestionId = 'start'; // เริ่มต้นที่คำถามแรก
+
+        function startGame() {
+            currentQuestionId = 'q_initial_age_group'; // เริ่มต้นที่คำถามแบ่งกลุ่มอายุหลัก
+            displayQuestion(currentQuestionId);
+        }
+
+        function displayQuestion(qId) {
+            const q = questions[qId];
+            if (!q) {
+                // Fallback if question ID is invalid or unexpected path
+                displayGuess({ type: 'guess', value: [2, 100], message: "ฉันเดาว่าคุณอายุอยู่ในช่วง 2 ถึง 100 ปี! (ฉันยังเดาไม่ได้แม่นยำ)" });
+                return;
+            }
+
+            questionText.textContent = q.text;
+            answerButtonsDiv.innerHTML = ''; // Clear previous buttons
+
+            // สร้างปุ่ม "ใช่"
+            const yesBtn = document.createElement('button');
+            yesBtn.className = 'btn';
+            yesBtn.textContent = 'ใช่';
+            yesBtn.onclick = () => handleAnswer(q.yes);
+            answerButtonsDiv.appendChild(yesBtn);
+
+            // สร้างปุ่ม "ไม่"
+            const noBtn = document.createElement('button');
+            noBtn.className = 'btn';
+            noBtn.textContent = 'ไม่';
+            noBtn.onclick = () => handleAnswer(q.no);
+            answerButtonsDiv.appendChild(noBtn);
+        }
+
+        function handleAnswer(nextAction) {
+            if (nextAction.type === 'nextQuestion') {
+                currentQuestionId = nextAction.value;
+                displayQuestion(currentQuestionId);
+            } else if (nextAction.type === 'guess') {
+                displayGuess(nextAction); // ส่ง object nextAction ทั้งหมดไป
+            }
+        }
+
+        function displayGuess(guessAction) {
+            gameArea.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            const [minAge, maxAge] = guessAction.value;
+            let guessMessage = '';
+
+            if (guessAction.message) {
+                guessMessage = guessAction.message; // ใช้ข้อความที่กำหนดมาโดยเฉพาะ
+            } else if (minAge === maxAge) {
+                guessMessage = `ฉันเดาว่าคุณอายุประมาณ ${minAge} ปี!`;
+            } else {
+                guessMessage = `ฉันเดาว่าคุณอายุอยู่ในช่วง ${minAge} - ${maxAge} ปี!`;
+            }
+
+            guessedAgeText.textContent = guessMessage;
+        }
+
+        function resetGame() {
+            gameArea.classList.remove('hidden');
+            resultArea.classList.add('hidden');
+            currentQuestionId = 'start'; // รีเซ็ตไปที่คำถามเริ่มต้น
+            displayQuestion(currentQuestionId); // แสดงคำถามเริ่มต้นอีกครั้ง
+        }
+
+        // เริ่มเกมเมื่อหน้าเว็บโหลดเสร็จ
+        document.addEventListener('DOMContentLoaded', () => {
+            // เพื่อให้ปุ่ม "เริ่มกันเลย!" ทำงานเมื่อโหลดหน้าเว็บครั้งแรก
+            questionText.textContent = questions['start'].text;
+            answerButtonsDiv.innerHTML = '';
+            const startBtn = document.createElement('button');
+            startBtn.className = 'btn';
+            startBtn.textContent = 'เริ่มกันเลย!';
+            startBtn.onclick = () => handleAnswer(questions['start'].yes); // ให้ปุ่ม "เริ่มกันเลย" นำไปที่ q_initial_age_group
+            answerButtonsDiv.appendChild(startBtn);
+        });
+    </script>
+</body>
+</html>
