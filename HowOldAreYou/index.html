@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ทายอายุฉันสิ! - Akinator Version</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Mitr', sans-serif;
+            background-color: #fce7f3; /* Pink-100 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+            position: relative; /* For the cute elements */
+            overflow: hidden; /* Hide overflowing cute elements */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .question-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #d946ef; /* Fuchsia-600 */
+            margin-bottom: 2.5rem;
+        }
+        .answer-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .btn {
+            background-color: #f472b6; /* Pink-500 */
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .btn:hover {
+            background-color: #ec4899; /* Pink-600 */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .result-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d946ef; /* Fuchsia-600 */
+            margin-bottom: 1.5rem;
+        }
+        .reset-btn {
+            background-color: #a78bfa; /* Violet-400 */
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+        .reset-btn:hover {
+            background-color: #8b5cf6; /* Violet-500 */
+        }
+        .cute-element {
+            position: absolute;
+            opacity: 0.1;
+        }
+        .star { top: 10%; left: 5%; font-size: 40px; color: #facc15; transform: rotate(20deg); } /* Yellow-400 */
+        .heart { bottom: 10%; right: 5%; font-size: 30px; color: #fb7185; transform: rotate(-30deg); } /* Rose-400 */
+        .cloud { top: -20px; right: -20px; font-size: 80px; color: #a78bfa; opacity: 0.05; } /* Violet-400 */
+        .rainbow { bottom: -30px; left: -30px; font-size: 70px; color: #f472b6; opacity: 0.08; transform: rotate(10deg);} /* Pink-500 */
+
+        @media (min-width: 640px) {
+            .answer-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+            .btn {
+                width: auto;
+                flex-grow: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cute-element star">🌟</div>
+        <div class="cute-element heart">💖</div>
+        <div class="cute-element cloud">☁️</div>
+        <div class="cute-element rainbow">🌈</div>
+
+        <div id="game-area">
+            <h1 class="text-3xl font-bold text-fuchsia-700 mb-6">ทายอายุฉันสิ!</h1>
+            <p id="question-text" class="question-text">คุณพร้อมที่จะให้ฉันทายอายุของคุณแล้วหรือยัง?</p>
+            <div id="answer-buttons" class="answer-buttons">
+                <button class="btn" onclick="startGame()">เริ่มกันเลย!</button>
+            </div>
+        </div>
+        <div id="result-area" class="hidden">
+            <h1 class="text-3xl font-bold text-fuchsia-700 mb-6">ฉันเดาอายุของคุณ!</h1>
+            <p id="guessed-age" class="result-text"></p>
+            <button class="reset-btn" onclick="resetGame()">ลองอีกครั้ง</button>
+        </div>
+    </div>
+
+    <script>
+        // กำหนดคำถามและตรรกะการเดาอายุ
+        // แต่ละคำถามมี:
+        //   text: ข้อความคำถาม
+        //   yes: { type: 'nextQuestion' / 'guess', value: 'questionId' / ageRange }
+        //   no: { type: 'nextQuestion' / 'guess', value: 'questionId' / ageRange }
+        //   ถ้า 'guess' value จะเป็น [minAge, maxAge]
+        const questions = {
+            'start': {
+                text: "คุณพร้อมที่จะให้ฉันทายอายุของคุณแล้วหรือยัง?",
+                yes: { type: 'nextQuestion', value: 'q1' },
+                no: { type: 'guess', value: [2, 100] } // หากไม่พร้อม ให้เดาว่า 2-100 (กรณีนี้จะแสดงผลลัพธ์ทันที)
+            },
+            'q1': { // แบ่งช่วงอายุใหญ่
+                text: "คุณเกิดก่อนปี 2000 ใช่หรือไม่?",
+                yes: { type: 'nextQuestion', value: 'q2_old' },
+                no: { type: 'nextQuestion', value: 'q2_young' }
+            },
+            'q2_young': { // กลุ่มเกิดหลังปี 2000
+                text: "คุณยังเรียนหนังสืออยู่ในโรงเรียน (ประถม, มัธยม) ใช่หรือไม่?",
+                yes: { type: 'nextQuestion', value: 'q3_school' },
+                no: { type: 'nextQuestion', value: 'q3_adult' }
+            },
+            'q3_school': { // กลุ่มนักเรียน
+                text: "คุณใช้ TikTok เป็นประจำใช่ไหม?",
+                yes: { type: 'guess', value: [12, 18] }, // วัยรุ่น
+                no: { type: 'guess', value: [6, 12] }  // เด็กประถม
+            },
+            'q3_adult': { // กลุ่มเรียนจบ/ทำงานแล้ว (หลังปี 2000)
+                text: "คุณเคยทำงานประจำมาแล้วใช่ไหม?",
+                yes: { type: 'guess', value: [22, 35] }, // วัยเริ่มทำงาน
+                no: { type: 'guess', value: [18, 22] }  // วัยมหาวิทยาลัย
+            },
+            'q2_old': { // กลุ่มเกิดก่อนปี 2000
+                text: "คุณเกษียณจากการทำงานแล้วใช่ไหม?",
+                yes: { type: 'nextQuestion', value: 'q3_retired' },
+                no: { type: 'nextQuestion', value: 'q3_working_old' }
+            },
+            'q3_retired': { // กลุ่มเกษียณแล้ว
+                text: "คุณชอบใช้เวลาอยู่กับหลานๆ ใช่ไหม?",
+                yes: { type: 'guess', value: [60, 100] }, // ผู้สูงอายุ มีหลาน
+                no: { type: 'guess', value: [55, 70] }  // ผู้สูงอายุ ไม่มีหลาน/ยังไม่เกษียณเต็มตัว
+            },
+            'q3_working_old': { // กลุ่มทำงาน (เกิดก่อนปี 2000 แต่ยังไม่เกษียณ)
+                text: "คุณมีอายุมากกว่า 40 ปีใช่ไหม?",
+                yes: { type: 'guess', value: [40, 55] }, // วัยกลางคน
+                no: { type: 'guess', value: [30, 40] }  // วัยทำงานตอนปลาย
+            },
+            // เพิ่มคำถามสำหรับเด็กเล็กมากๆ
+            'q4_very_young': {
+                text: "คุณเคยไปโรงเรียนอนุบาลแล้วใช่ไหม?",
+                yes: { type: 'guess', value: [4, 6] },
+                no: { type: 'guess', value: [2, 4] }
+            }
+        };
+
+        // DOM elements
+        const gameArea = document.getElementById('game-area');
+        const resultArea = document.getElementById('result-area');
+        const questionText = document.getElementById('question-text');
+        const answerButtonsDiv = document.getElementById('answer-buttons');
+        const guessedAgeText = document.getElementById('guessed-age');
+
+        let currentQuestionId = 'start'; // เริ่มต้นที่คำถามแรก
+
+        function startGame() {
+            currentQuestionId = 'q1'; // เริ่มต้นที่คำถามแรกจริงๆ
+            displayQuestion(currentQuestionId);
+        }
+
+        function displayQuestion(qId) {
+            const q = questions[qId];
+            if (!q) {
+                // Fallback if question ID is invalid or unexpected path
+                displayGuess([2, 100]); // Guess a broad range as a fallback
+                return;
+            }
+
+            questionText.textContent = q.text;
+            answerButtonsDiv.innerHTML = ''; // Clear previous buttons
+
+            // สร้างปุ่ม "ใช่"
+            const yesBtn = document.createElement('button');
+            yesBtn.className = 'btn';
+            yesBtn.textContent = 'ใช่';
+            yesBtn.onclick = () => handleAnswer(q.yes);
+            answerButtonsDiv.appendChild(yesBtn);
+
+            // สร้างปุ่ม "ไม่"
+            const noBtn = document.createElement('button');
+            noBtn.className = 'btn';
+            noBtn.textContent = 'ไม่';
+            noBtn.onclick = () => handleAnswer(q.no);
+            answerButtonsDiv.appendChild(noBtn);
+        }
+
+        function handleAnswer(nextAction) {
+            if (nextAction.type === 'nextQuestion') {
+                currentQuestionId = nextAction.value;
+                displayQuestion(currentQuestionId);
+            } else if (nextAction.type === 'guess') {
+                displayGuess(nextAction.value);
+            }
+        }
+
+        function displayGuess(ageRange) {
+            gameArea.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            const [minAge, maxAge] = ageRange;
+            let guessMessage = '';
+
+            if (minAge === maxAge) {
+                guessMessage = `ฉันเดาว่าคุณอายุประมาณ ${minAge} ปี!`;
+            } else if (minAge === 2 && maxAge === 100) {
+                 guessMessage = `ฉันเดาว่าคุณอายุอยู่ในช่วง 2 ถึง 100 ปี! (ฉันยังเดาไม่ได้แม่นยำ)`;
+            }
+             else {
+                guessMessage = `ฉันเดาว่าคุณอายุอยู่ในช่วง ${minAge} - ${maxAge} ปี!`;
+            }
+
+            guessedAgeText.textContent = guessMessage;
+        }
+
+        function resetGame() {
+            gameArea.classList.remove('hidden');
+            resultArea.classList.add('hidden');
+            currentQuestionId = 'start'; // รีเซ็ตไปที่คำถามเริ่มต้น
+            displayQuestion(currentQuestionId); // แสดงคำถามเริ่มต้นอีกครั้ง
+        }
+
+        // เริ่มเกมเมื่อหน้าเว็บโหลดเสร็จ
+        document.addEventListener('DOMContentLoaded', () => {
+            // เพื่อให้ปุ่ม "เริ่มกันเลย!" ทำงานเมื่อโหลดหน้าเว็บครั้งแรก
+            questionText.textContent = "คุณพร้อมที่จะให้ฉันทายอายุของคุณแล้วหรือยัง?";
+            answerButtonsDiv.innerHTML = '';
+            const startBtn = document.createElement('button');
+            startBtn.className = 'btn';
+            startBtn.textContent = 'เริ่มกันเลย!';
+            startBtn.onclick = startGame;
+            answerButtonsDiv.appendChild(startBtn);
+        });
+    </script>
+</body>
+</html>
