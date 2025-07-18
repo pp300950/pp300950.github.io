@@ -206,68 +206,106 @@
     </div>
 
     <script>
-        // ข้อมูลตัวอย่างที่เพิ่มขึ้นเพื่อความหลากหลาย
-        // *** เตือนก่อน นี่เป็นข้อมูลสมมุติ ไม่ได้อ้างอิงจากข้อมูลทางวิทยาศาสตร์จริง
+        // กำหนดขนาดนิ้วโป้งที่เป็นไปได้ตามที่คุณต้องการ
+        const availableThumbSizes = [4.9, 5.2, 5.4, 5.6];
+
+        // ชุดข้อมูลที่ปรับปรุงแล้ว
+        // *** ข้อควรระวัง: นี่เป็นข้อมูลสมมุติ ไม่ได้อ้างอิงจากข้อมูลทางวิทยาศาสตร์จริง
         const thumbData = [
-            // อายุ, ส่วนสูง, น้ำหนัก, ขนาดนิ้วโป้ง (ซม.)
-            { age: 18, height: 160, weight: 50, thumbSize: 4.8 },
-            { age: 20, height: 175, weight: 65, thumbSize: 5.2 },
-            { age: 22, height: 170, weight: 60, thumbSize: 5.0 },
-            { age: 25, height: 180, weight: 75, thumbSize: 5.5 },
-            { age: 28, height: 165, weight: 55, thumbSize: 4.9 },
-            { age: 30, height: 172, weight: 70, thumbSize: 5.3 },
-            { age: 35, height: 168, weight: 68, thumbSize: 5.1 },
-            { age: 40, height: 178, weight: 80, thumbSize: 5.6 },
-            { age: 45, height: 163, weight: 62, thumbSize: 4.7 },
-            { age: 50, height: 170, weight: 72, thumbSize: 5.4 },
-            { age: 21, height: 185, weight: 70, thumbSize: 5.7 }, 
-            { age: 19, height: 155, weight: 48, thumbSize: 4.6 }, 
-            { age: 33, height: 175, weight: 85, thumbSize: 5.8 }, 
-            { age: 26, height: 168, weight: 60, thumbSize: 5.1 },
-            { age: 38, height: 173, weight: 78, thumbSize: 5.5 },
-            { age: 24, height: 162, weight: 52, thumbSize: 4.8 },
-            { age: 29, height: 177, weight: 70, thumbSize: 5.4 },
-            { age: 31, height: 166, weight: 63, thumbSize: 5.0 },
-            { age: 42, height: 170, weight: 75, thumbSize: 5.3 },
-            { age: 17, height: 158, weight: 49, thumbSize: 4.7 }
+            // ตัวอย่างข้อมูลจริงที่คุณให้มา
+            { age: 18, height: 175, weight: 47, thumbSize: 5.2 },
+
+            // เน้นขนาด 4.9 สำหรับคนน้ำหนักเยอะ (70-80+ กก.)
+            { age: 25, height: 168, weight: 72, thumbSize: 4.9 },
+            { age: 30, height: 170, weight: 75, thumbSize: 4.9 },
+            { age: 35, height: 172, weight: 78, thumbSize: 4.9 },
+            { age: 40, height: 175, weight: 80, thumbSize: 4.9 },
+            { age: 45, height: 165, weight: 70, thumbSize: 4.9 },
+            { age: 28, height: 169, weight: 73, thumbSize: 4.9 },
+            { age: 32, height: 171, weight: 76, thumbSize: 4.9 },
+            { age: 38, height: 174, weight: 79, thumbSize: 4.9 },
+            { age: 42, height: 167, weight: 71, thumbSize: 4.9 },
+
+            // ขนาด 5.2 (คนส่วนสูงปานกลาง/สูง, น้ำหนักปานกลาง/เบา)
+            { age: 20, height: 170, weight: 60, thumbSize: 5.2 },
+            { age: 22, height: 178, weight: 68, thumbSize: 5.2 },
+            { age: 24, height: 165, weight: 55, thumbSize: 5.2 },
+            { age: 27, height: 180, weight: 63, thumbSize: 5.2 },
+            { age: 30, height: 173, weight: 66, thumbSize: 5.2 },
+
+            // ขนาด 5.4 (คนสูงขึ้น, น้ำหนักหลากหลาย)
+            { age: 26, height: 182, weight: 70, thumbSize: 5.4 },
+            { age: 33, height: 175, weight: 65, thumbSize: 5.4 },
+            { age: 37, height: 185, weight: 75, thumbSize: 5.4 },
+            { age: 40, height: 170, weight: 60, thumbSize: 5.4 },
+
+            // ขนาด 5.6 (คนสูงมาก, น้ำหนักหลากหลาย)
+            { age: 29, height: 190, weight: 78, thumbSize: 5.6 },
+            { age: 34, height: 188, weight: 72, thumbSize: 5.6 },
+            { age: 39, height: 192, weight: 80, thumbSize: 5.6 },
+            { age: 43, height: 187, weight: 74, thumbSize: 5.6 },
+
+            // เพิ่มความหลากหลายเพิ่มเติม (กระจายตามเงื่อนไข)
+            { age: 19, height: 162, weight: 52, thumbSize: 4.9 }, // น้ำหนักน้อย แต่ก็มี 4.9
+            { age: 21, height: 180, weight: 58, thumbSize: 5.2 },
+            { age: 31, height: 177, weight: 82, thumbSize: 4.9 }, // น้ำหนักเยอะ เน้น 4.9
+            { age: 48, height: 172, weight: 76, thumbSize: 4.9 },
+            { age: 23, height: 183, weight: 67, thumbSize: 5.4 },
+            { age: 36, height: 195, weight: 85, thumbSize: 5.6 },
+            { age: 17, height: 160, weight: 50, thumbSize: 4.9 },
+            { age: 55, height: 170, weight: 85, thumbSize: 4.9 },
+            { age: 20, height: 165, weight: 60, thumbSize: 4.9 },
+            { age: 25, height: 178, weight: 70, thumbSize: 4.9 },
+            { age: 30, height: 180, weight: 75, thumbSize: 5.2 },
+            { age: 40, height: 185, weight: 80, thumbSize: 5.4 }
         ];
 
         // ฟังก์ชันสำหรับหาค่าเฉลี่ยจากข้อมูลใกล้เคียง
         function getPredictedThumbSize(age, height, weight) {
             let sumThumbSize = 0;
             let count = 0;
-            const threshold = 10; 
+            // เพิ่มความสำคัญให้กับน้ำหนักและส่วนสูงมากขึ้นโดยปรับ threshold
+            const ageThreshold = 8; // ความใกล้เคียงอายุ
+            const heightThreshold = 10; // ความใกล้เคียงส่วนสูง
+            const weightThreshold = 10; // ความใกล้เคียงน้ำหนัก
+
+            const scores = [];
 
             thumbData.forEach(data => {
                 const ageDiff = Math.abs(age - data.age);
                 const heightDiff = Math.abs(height - data.height);
                 const weightDiff = Math.abs(weight - data.weight);
 
-                // หากข้อมูลอยู่ในช่วงที่ใกล้เคียง ให้รวมเข้ากับการคำนวณ
-                if (ageDiff <= threshold && heightDiff <= threshold && weightDiff <= threshold) {
-                    sumThumbSize += data.thumbSize;
-                    count++;
-                }
+                // ยิ่งใกล้เคียงมาก คะแนนยิ่งน้อย
+                const totalDiff = ageDiff + heightDiff + weightDiff;
+                scores.push({ data: data, diff: totalDiff });
             });
 
-            if (count > 0) {
-                return sumThumbSize / count; // ส่งคืนค่าเฉลี่ย
-            } else {
-                // หากไม่พบข้อมูลที่ใกล้เคียง ให้ใช้วิธีหาตัวที่ใกล้ที่สุดแบบเดิม
-                let closestData = thumbData[0];
-                let minDiff = Infinity;
+            // เรียงลำดับจากข้อมูลที่ใกล้เคียงที่สุด
+            scores.sort((a, b) => a.diff - b.diff);
 
-                thumbData.forEach(data => {
-                    const diff = Math.abs(age - data.age) +
-                                 Math.abs(height - data.height) +
-                                 Math.abs(weight - data.weight);
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        closestData = data;
-                    }
-                });
-                return closestData.thumbSize;
+            // ใช้ค่าเฉลี่ยจากข้อมูลที่ใกล้เคียงที่สุด 3-5 ตัวแรก
+            const numNeighbors = Math.min(5, scores.length); // ไม่เกิน 5 ตัว หรือเท่ากับจำนวนข้อมูลที่มี
+            for (let i = 0; i < numNeighbors; i++) {
+                sumThumbSize += scores[i].data.thumbSize;
+                count++;
             }
+
+            let predicted = (count > 0) ? (sumThumbSize / count) : thumbData[0].thumbSize;
+
+            // ปัดค่าให้ตรงกับ availableThumbSizes ที่กำหนด
+            // หาขนาดที่ใกล้เคียงที่สุดใน availableThumbSizes
+            let closestSize = availableThumbSizes[0];
+            let minDiff = Math.abs(predicted - closestSize);
+
+            for (let i = 1; i < availableThumbSizes.length; i++) {
+                const diff = Math.abs(predicted - availableThumbSizes[i]);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestSize = availableThumbSizes[i];
+                }
+            }
+            return closestSize;
         }
 
         function predict() {
@@ -289,12 +327,20 @@
             // ใช้ฟังก์ชันใหม่ในการทำนาย
             let predictedSize = getPredictedThumbSize(age, height, weight);
 
-            // เพิ่มความสุ่มเล็กน้อยเพื่อความสนุกและลดความซ้ำซาก
-            const randomness = (Math.random() - 0.5) * 0.5; // สุ่มค่าระหว่าง -0.25 ถึง 0.25
-            predictedSize = (predictedSize + randomness).toFixed(1); // ปัดทศนิยม 1 ตำแหน่ง
+            // เพิ่มความสุ่มเล็กน้อย (ภายในกรอบของ availableThumbSizes)
+            // ถ้าอยากให้ผลลัพธ์มีโอกาสคลาดเคลื่อนบ้าง
+            if (Math.random() < 0.3) { // 30% โอกาสที่จะสุ่มขยับไปขนาดใกล้เคียง
+                const currentIndex = availableThumbSizes.indexOf(predictedSize);
+                const shift = Math.random() < 0.5 ? -1 : 1; // ขยับขึ้นหรือลง 1 index
+                const newIndex = currentIndex + shift;
 
-            resultDiv.textContent = `นิ้วโป้งของคุณน่าจะประมาณ ${predictedSize} ซม.`;
-            resultDiv.style.color = var(--secondary-color); // Reset to normal color
+                if (newIndex >= 0 && newIndex < availableThumbSizes.length) {
+                    predictedSize = availableThumbSizes[newIndex];
+                }
+            }
+
+            resultDiv.textContent = `นิ้วโป้งของคุณน่าจะประมาณ ${predictedSize.toFixed(1)} ซม.`;
+            resultDiv.style.color = 'var(--secondary-color)';
             // Trigger animation
             setTimeout(() => {
                 resultDiv.classList.add('show');
