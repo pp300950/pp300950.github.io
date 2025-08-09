@@ -8,13 +8,20 @@
       body {
         font-family: sans-serif;
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: flex-start;
         min-height: 100vh;
         background-color: #f0f2f5;
         margin: 0;
         padding: 20px;
         box-sizing: border-box;
+      }
+
+      .wrapper {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        justify-content: center;
       }
 
       .container {
@@ -25,6 +32,63 @@
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         text-align: center;
+      }
+
+      .notes-panel {
+        width: 100%;
+        max-width: 400px;
+        background-color: #fff;
+        padding: 20px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .notes-panel h2 {
+        margin-top: 0;
+        color: #333;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      .notes-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 10px;
+        background-color: #f1f1f1;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+
+      .notes-toolbar button,
+      .notes-toolbar select,
+      .notes-toolbar input[type='color'] {
+        padding: 5px 10px;
+        font-size: 0.9em;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        background-color: #fff;
+      }
+
+      .notes-toolbar button:hover {
+        background-color: #e9e9e9;
+      }
+
+      #circuit-notes {
+        width: 100%;
+        flex-grow: 1;
+        min-height: 200px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 1em;
+        resize: vertical;
+        text-align: left; /* จัดข้อความให้ชิดซ้าย */
+        outline: none; /* ลบเส้นขอบ focus */
       }
 
       h1 {
@@ -53,8 +117,8 @@
       #data-sheet-image {
         width: 100%;
         height: auto;
-        max-height: 400px; /* กำหนดความสูงสูงสุดที่ต้องการ เช่น 400px */
-        object-fit: contain; /* ปรับขนาดภาพให้พอดีกับพื้นที่โดยไม่บิดเบี้ยว */
+        max-height: 400px;
+        object-fit: contain;
         display: block;
       }
 
@@ -122,6 +186,20 @@
         font-size: 1em;
       }
 
+      .search-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .search-container input {
+        width: 200px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
       #add-data-btn {
         width: 100%;
       }
@@ -160,7 +238,7 @@
       .data-item button:hover {
         background-color: #c82333;
       }
-      /* เพิ่มโค้ดนี้ */
+
       .data-item .edit-form {
         display: flex;
         flex-direction: column;
@@ -186,96 +264,95 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="controls">
-        <button id="prev-btn">◀️</button>
-        <div class="search-box">
+    <div class="wrapper">
+      <div class="container">
+        <div class="controls">
+          <button id="prev-btn">◀️</button>
+          <div class="search-box">
+            <input
+              type="text"
+              id="ic-short-name-input"
+              placeholder="ใส่ตัวย่อ IC เช่น 02"
+            />
+          </div>
+          <button id="next-btn">▶️</button>
+        </div>
+
+        <div class="search-container">
           <input
             type="text"
-            id="ic-short-name-input"
-            placeholder="ใส่ตัวย่อ IC เช่น 02"
+            id="gate-name-search"
+            placeholder="ค้นหาด้วยชื่อ Gate เช่น AND"
           />
         </div>
-        <button id="next-btn">▶️</button>
+
+        <div class="viewer-container">
+          <h2 id="plan-name"></h2>
+          <div class="image-display">
+            <img id="data-sheet-image" src="" alt="Data Sheet" />
+          </div>
+        </div>
+
+        <div class="settings-container">
+          <button id="toggle-settings-btn">ตั้งค่าข้อมูล</button>
+          <div id="settings-panel" class="hidden">
+            <h3>จัดการข้อมูล</h3>
+            <div id="data-list"></div>
+            <div class="input-group">
+              <label for="new-image-url">URL รูปภาพ:</label>
+              <input
+                type="text"
+                id="new-image-url"
+                placeholder="Paste image URL here"
+              />
+            </div>
+            <div class="input-group">
+              <label for="new-plan-name">ชื่อวงจร:</label>
+              <input
+                type="text"
+                id="new-plan-name"
+                placeholder="e.g., SN74LS00"
+              />
+            </div>
+            <div class="input-group">
+              <label for="new-gate-name">ชื่อเกต (Gate):</label>
+              <input
+                type="text"
+                id="new-gate-name"
+                placeholder="e.g., Quad 2-Input NOR Gate"
+              />
+            </div>
+            <button id="add-data-btn">เพิ่มข้อมูล</button>
+          </div>
+        </div>
       </div>
 
-      <div class="viewer-container">
-        <h2 id="plan-name"></h2>
-        <div class="image-display">
-          <img id="data-sheet-image" src="" alt="Data Sheet" />
+      <div class="notes-panel">
+        <h2>โน้ตเกี่ยวกับวงจร</h2>
+        <div class="notes-toolbar">
+          <button id="bold-btn"><b>B</b></button>
+          <button id="italic-btn"><i>I</i></button>
+          <button id="underline-btn"><u>U</u></button>
+          <input type="color" id="color-picker" />
+          <select id="font-size-select">
+            <option value="1">Small</option>
+            <option value="2">Normal</option>
+            <option value="3">Large</option>
+            <option value="4">Extra Large</option>
+          </select>
         </div>
-     
-      </div>
-
-      <div class="settings-container">
-        <button id="toggle-settings-btn">ตั้งค่าข้อมูล</button>
-        <div id="settings-panel" class="hidden">
-          <h3>จัดการข้อมูล</h3>
-          <div id="data-list"></div>
-          <div class="input-group">
-            <label for="new-image-url">URL รูปภาพ:</label>
-            <input
-              type="text"
-              id="new-image-url"
-              placeholder="Paste image URL here"
-            />
-          </div>
-          <div class="input-group">
-            <label for="new-plan-name">ชื่อวงจร:</label>
-            <input
-              type="text"
-              id="new-plan-name"
-              placeholder="e.g., SN74LS00"
-            />
-          </div>
-          <div class="input-group">
-            <label for="new-gate-name">ชื่อเกต (Gate):</label>
-            <input
-              type="text"
-              id="new-gate-name"
-              placeholder="e.g., Quad 2-Input NOR Gate"
-            />
-          </div>
-          <button id="add-data-btn">เพิ่มข้อมูล</button>
-        </div>
+        <div
+          id="circuit-notes"
+          contenteditable="true"
+          placeholder="เขียนโน้ตอธิบายวงจรที่นี่..."
+        ></div>
       </div>
     </div>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const searchInput = document.getElementById('ic-short-name-input');
-
-        function searchIC() {
-    const icShortName = searchInput.value.trim();
-
-    // ถ้าช่องค้นหาว่างเปล่า ให้แสดงภาพปัจจุบัน
-    if (!icShortName) {
-        if (dataSheets.length > 0) {
-            displayDataSheet(currentImageIndex);
-        } else {
-            planName.textContent = 'ไม่มีข้อมูล';
-            dataSheetImage.src = '';
-        }
-        return;
-    }
-    
-    // ค้นหาโดยใช้ includes() เพื่อตรวจสอบว่า icShortName เป็นส่วนหนึ่งของชื่อ IC หรือไม่
-    // ทำให้สามารถป้อนแค่ '04' หรือ '4' ก็สามารถหา 74LS04 ได้
-    const foundIndex = dataSheets.findIndex(item => item.name.includes(icShortName));
-
-    if (foundIndex !== -1) {
-        currentImageIndex = foundIndex;
-        displayDataSheet(currentImageIndex);
-    } else {
-        // กรณีไม่พบข้อมูล
-        planName.textContent = `ไม่พบข้อมูลสำหรับ ${icShortName}`;
-        dataSheetImage.src = '';
-    }
-}
-        // เปลี่ยน Event Listener จาก 'keydown' เป็น 'input'
-        searchInput.addEventListener('input', searchIC);
-
-        // Select all necessary elements from the DOM
+        const gateNameSearchInput = document.getElementById('gate-name-search');
         const dataSheetImage = document.getElementById('data-sheet-image');
         const planName = document.getElementById('plan-name');
         const prevBtn = document.getElementById('prev-btn');
@@ -289,6 +366,14 @@
         const newGateNameInput = document.getElementById('new-gate-name');
         const addDataBtn = document.getElementById('add-data-btn');
         const dataList = document.getElementById('data-list');
+
+        // ส่วนของโน้ตที่เพิ่มเข้ามา
+        const circuitNotes = document.getElementById('circuit-notes');
+        const boldBtn = document.getElementById('bold-btn');
+        const italicBtn = document.getElementById('italic-btn');
+        const underlineBtn = document.getElementById('underline-btn');
+        const colorPicker = document.getElementById('color-picker');
+        const fontSizeSelect = document.getElementById('font-size-select');
 
         let currentImageIndex = 0;
         let dataSheets = [];
@@ -304,42 +389,41 @@
           dataSheets = [
             {
               name: '74LS02',
-              gate: 'Quad 2-Input NOR Gate',
+              gate: 'NOR Gate',
               url: 'https://www.jotrin.com/Userfiles/editor/20231114/11422974HC02%20pinout.png',
             },
             {
               name: '74LS04',
-              gate: 'Hex Inverter',
+              gate: 'Inverter',
               url: 'https://avelectronics.cc/wp-content/uploads/2018/09/7404.png',
             },
             {
               name: '74LS08',
-              gate: 'Quad 2-Input AND Gate',
+              gate: 'AND Gate',
               url: 'starFile/74ls08.png',
             },
             {
               name: '74LS32',
-              gate: 'Quad 2-Input OR Gate',
-              url: 'https://www.jinftry.com/image/catalog/technologies/74LS32%20Circuit.png',
+              gate: 'OR Gate',
+              url: 'starFile/74ls32.png',
             },
             {
               name: '74LS83',
-              gate: 'Binary Full Adder',
+              gate: 'Full Adder',
               url: 'data:image/png;base64,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',
             },
             {
               name: '74LS86',
-              gate: 'Quad 2-Input XOR Gate',
+              gate: 'XOR Gate',
               url: 'https://electronica.bysmax.com/_next/image?url=%2Fstatic%2Fimages%2F74LS86-pinout.jpg&w=1200&q=75',
             },
             {
               name: '74LS151',
-              gate: '8-Line to 1-Line Data Selector/Multiplexer',
+              gate: 'Multiplexer',
               url: 'starFile/74ls151.png',
             },
           ];
 
-          // แสดงข้อมูลแรก
           if (dataSheets.length > 0) {
             displayDataSheet(currentImageIndex);
           } else {
@@ -349,7 +433,17 @@
           renderDataList();
         }
 
-        // --- Function to display the data sheet at a given index ---
+        function saveNotes() {
+          localStorage.setItem('circuitNotes', circuitNotes.innerHTML);
+        }
+
+        function loadNotes() {
+          const savedNotes = localStorage.getItem('circuitNotes');
+          if (savedNotes) {
+            circuitNotes.innerHTML = savedNotes;
+          }
+        }
+
         function displayDataSheet(index) {
           if (dataSheets.length > 0) {
             const currentItem = dataSheets[index];
@@ -362,7 +456,6 @@
           }
         }
 
-        // --- Function to render the list of data in the settings panel ---
         function renderDataList() {
           dataList.innerHTML = '';
           dataSheets.forEach((item, index) => {
@@ -370,26 +463,74 @@
             div.classList.add('data-item');
             const gateText = item.gate ? ` (${item.gate})` : '';
             div.innerHTML = `
-            <div>
+              <div>
                 <span class="data-text">${item.name}${gateText}</span>
                 <div class="edit-form hidden">
-                    <input type="text" class="edit-plan-name" value="${item.name}" placeholder="ชื่อวงจร" />
-                    <input type="text" class="edit-gate-name" value="${item.gate}" placeholder="ชื่อเกต" />
-                    <input type="text" class="edit-image-url" value="${item.url}" placeholder="URL รูปภาพ" />
-                    <button class="save-edit-btn" data-index="${index}">บันทึก</button>
-                    <button class="cancel-edit-btn" data-index="${index}">ยกเลิก</button>
+                  <input type="text" class="edit-plan-name" value="${item.name}" placeholder="ชื่อวงจร" />
+                  <input type="text" class="edit-gate-name" value="${item.gate}" placeholder="ชื่อเกต" />
+                  <input type="text" class="edit-image-url" value="${item.url}" placeholder="URL รูปภาพ" />
+                  <button class="save-edit-btn" data-index="${index}">บันทึก</button>
+                  <button class="cancel-edit-btn" data-index="${index}">ยกเลิก</button>
                 </div>
-            </div>
-            <div>
+              </div>
+              <div>
                 <button class="edit-btn" data-index="${index}">แก้ไข</button>
                 <button class="delete-btn" data-index="${index}">ลบ</button>
-            </div>
-        `;
+              </div>
+            `;
             dataList.appendChild(div);
           });
         }
 
-        // --- Event listeners for controls ---
+        function searchIC() {
+          const icShortName = searchInput.value.trim().toLowerCase();
+          if (!icShortName) {
+            if (dataSheets.length > 0) {
+              displayDataSheet(currentImageIndex);
+            } else {
+              planName.textContent = 'ไม่มีข้อมูล';
+              dataSheetImage.src = '';
+            }
+            return;
+          }
+          const foundIndex = dataSheets.findIndex((item) =>
+            item.name.toLowerCase().includes(icShortName)
+          );
+          if (foundIndex !== -1) {
+            currentImageIndex = foundIndex;
+            displayDataSheet(currentImageIndex);
+          } else {
+            planName.textContent = `ไม่พบข้อมูลสำหรับ ${icShortName}`;
+            dataSheetImage.src = '';
+          }
+        }
+
+        function searchGate() {
+          const gateName = gateNameSearchInput.value.trim().toLowerCase();
+          if (!gateName) {
+            if (dataSheets.length > 0) {
+              displayDataSheet(currentImageIndex);
+            } else {
+              planName.textContent = 'ไม่มีข้อมูล';
+              dataSheetImage.src = '';
+            }
+            return;
+          }
+          const foundIndex = dataSheets.findIndex((item) =>
+            item.gate.toLowerCase().includes(gateName)
+          );
+          if (foundIndex !== -1) {
+            currentImageIndex = foundIndex;
+            displayDataSheet(currentImageIndex);
+          } else {
+            planName.textContent = `ไม่พบข้อมูลสำหรับ Gate: ${gateName}`;
+            dataSheetImage.src = '';
+          }
+        }
+
+        searchInput.addEventListener('input', searchIC);
+        gateNameSearchInput.addEventListener('input', searchGate);
+
         prevBtn.addEventListener('click', () => {
           if (dataSheets.length > 0) {
             currentImageIndex =
@@ -405,7 +546,6 @@
           }
         });
 
-        // --- Event listener for settings toggle button ---
         toggleSettingsBtn.addEventListener('click', () => {
           settingsPanel.classList.toggle('hidden');
           if (!settingsPanel.classList.contains('hidden')) {
@@ -413,7 +553,6 @@
           }
         });
 
-        // --- Event listener for adding new data ---
         addDataBtn.addEventListener('click', () => {
           const imageUrl = newImageUrlInput.value.trim();
           const planNameValue = newPlanNameInput.value.trim();
@@ -439,16 +578,13 @@
           }
         });
 
-        // --- Event listener for handling list actions (delete, edit, save) ---
         dataList.addEventListener('click', (event) => {
           const target = event.target;
-          // ใช้ closest() เพื่อหา element ที่เป็น .data-item และดึง index จากปุ่ม
           const itemDiv = target.closest('.data-item');
           if (!itemDiv) return;
 
           const index = parseInt(target.getAttribute('data-index'), 10);
 
-          // ตรวจสอบว่าปุ่มที่คลิกคือปุ่มอะไร
           if (target.classList.contains('delete-btn')) {
             dataSheets.splice(index, 1);
             saveData();
@@ -461,11 +597,10 @@
             const dataText = itemDiv.querySelector('.data-text');
             const editForm = itemDiv.querySelector('.edit-form');
 
-            // ซ่อนข้อความและแสดงฟอร์มแก้ไข
             dataText.classList.add('hidden');
             editForm.classList.remove('hidden');
-            target.classList.add('hidden'); // ซ่อนปุ่มแก้ไข
-            itemDiv.querySelector('.delete-btn').classList.add('hidden'); // ซ่อนปุ่มลบ
+            target.classList.add('hidden');
+            itemDiv.querySelector('.delete-btn').classList.add('hidden');
           } else if (target.classList.contains('save-edit-btn')) {
             const newName = itemDiv
               .querySelector('.edit-plan-name')
@@ -488,12 +623,39 @@
               alert('กรุณาใส่ชื่อและ URL รูปภาพให้ครบถ้วน');
             }
           } else if (target.classList.contains('cancel-edit-btn')) {
-            renderDataList(); // ยกเลิกการแก้ไขและแสดงรายการเดิม
+            renderDataList();
           }
         });
 
-        // --- Initial load of data when the page loads ---
+        circuitNotes.addEventListener('input', saveNotes);
+
+        boldBtn.addEventListener('click', () => {
+          document.execCommand('bold', false, null);
+          saveNotes();
+        });
+
+        italicBtn.addEventListener('click', () => {
+          document.execCommand('italic', false, null);
+          saveNotes();
+        });
+
+        underlineBtn.addEventListener('click', () => {
+          document.execCommand('underline', false, null);
+          saveNotes();
+        });
+
+        colorPicker.addEventListener('input', (event) => {
+          document.execCommand('foreColor', false, event.target.value);
+          saveNotes();
+        });
+
+        fontSizeSelect.addEventListener('change', (event) => {
+          document.execCommand('fontSize', false, event.target.value);
+          saveNotes();
+        });
+
         loadData();
+        loadNotes();
       });
     </script>
   </body>
