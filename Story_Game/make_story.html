@@ -5,160 +5,194 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>เครื่องมือแก้ไขเนื้อเรื่อง</title>
     <style>
-        body {
-          font-family: 'Segoe UI', sans-serif;
-          background-color: #121212;
-          color: #e0e0e0;
-          margin: 0;
-          padding: 20px;
-        }
-        .container {
-          max-width: 900px;
-          margin: auto;
-          background-color: #1e1e1e;
-          padding: 20px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-        }
-        h1 {
-          text-align: center;
-          color: #00bcd4;
-        }
-        .scene {
-          border: 1px solid #333;
-          padding: 15px;
-          margin-bottom: 20px;
-          border-radius: 5px;
-          background-color: #2a2a2a;
-        }
-        .scene-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          cursor: pointer;
-          padding: 10px;
-          background-color: #333;
-          border-radius: 5px;
-          margin: -15px -15px 15px -15px;
-        }
-        .scene-header h3 {
-          margin: 0;
-          color: #fff;
-        }
-        .scene-content {
-          display: none;
-          padding-top: 10px;
-        }
-        .scene.active .scene-content {
-          display: block;
-        }
-        .form-group {
-          margin-bottom: 15px;
-        }
-        .form-group label {
-          display: block;
-          margin-bottom: 5px;
-          font-weight: bold;
-        }
-        .form-group input,
-        .form-group textarea {
-          width: 100%;
-          padding: 8px;
-          box-sizing: border-box;
-          border: 1px solid #555;
-          background-color: #444;
-          color: #e0e0e0;
-          border-radius: 4px;
-        }
-        .choice-list {
-          margin-top: 10px;
-          padding-left: 0;
-        }
-        .choice-item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-bottom: 5px;
-        }
-        .choice-item input {
-          flex-grow: 1;
-        }
-        .add-choice-btn,
-        .remove-choice-btn,
-        .add-scene-btn,
-        .remove-scene-btn,
-        #export-btn {
-          padding: 8px 12px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: bold;
-        }
-        .add-choice-btn {
-          background-color: #4caf50;
-          color: white;
-        }
-        .remove-choice-btn {
-          background-color: #f44336;
-          color: white;
-        }
-        .add-scene-btn {
-          background-color: #2196f3;
-          color: white;
-          margin-top: 10px;
-        }
-        .remove-scene-btn {
-          background-color: #f44336;
-          color: white;
-        }
-        #export-btn {
-          background-color: #00bcd4;
-          color: white;
-          width: 100%;
-          margin-top: 20px;
-        }
-        .controls {
-          text-align: center;
-          margin-top: 20px;
-        }
-  
-        /* Styles for the flowchart */
-        .flowchart-container {
-          max-width: 900px;
-          margin: 20px auto;
-          background-color: #1e1e1e;
-          padding: 20px;
-          border-radius: 8px;
-          border: 1px solid #333;
-        }
-  
-        .flowchart-container h2 {
-          text-align: center;
-          color: #4caf50;
-          margin-top: 0;
-        }
-  
-        /* IMPORTANT: Remove overflow-x: auto to enable Mermaid's native pan/zoom */
-        .mermaid {
-          background-color: #2a2a2a;
-          padding: 10px;
-          border-radius: 5px;
-          /* overflow-x: auto; */ /* REMOVED THIS LINE */
-          width: 100%; /* Ensure it takes full width */
-          height: 600px; /* Set a fixed height or min-height for the flowchart */
-          display: block; /* Ensures it behaves as a block element */
-        }
-      </style>
+      body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #121212;
+        color: #e0e0e0;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 900px;
+        margin: auto;
+        background-color: #1e1e1e;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        text-align: center;
+        color: #00bcd4;
+      }
+      .scene {
+        border: 1px solid #333;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        background-color: #2a2a2a;
+        cursor: grab; /* Indicate draggable */
+      }
+      .scene.dragging {
+        opacity: 0.5;
+        border: 2px dashed #00bcd4;
+      }
+      .scene.highlight {
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+        border-color: #00ffff;
+      }
+      .scene-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding: 10px;
+        background-color: #333;
+        border-radius: 5px;
+        margin: -15px -15px 15px -15px;
+      }
+      .scene-header h3 {
+        margin: 0;
+        color: #fff;
+      }
+      .scene-content {
+        display: none;
+        padding-top: 10px;
+      }
+      .scene.active .scene-content {
+        display: block;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #555;
+        background-color: #444;
+        color: #e0e0e0;
+        border-radius: 4px;
+      }
+      .choice-list {
+        margin-top: 10px;
+        padding-left: 0;
+      }
+      .choice-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+      }
+      .choice-item input {
+        flex-grow: 1;
+      }
+      .add-choice-btn,
+      .remove-choice-btn,
+      .add-scene-btn,
+      .remove-scene-btn,
+      #export-btn,
+      #search-btn,
+      #import-btn { /* Added #import-btn */
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .add-choice-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+      .remove-choice-btn {
+        background-color: #f44336;
+        color: white;
+      }
+      .add-scene-btn {
+        background-color: #2196f3;
+        color: white;
+        margin-top: 10px;
+      }
+      .remove-scene-btn {
+        background-color: #f44336;
+        color: white;
+      }
+      #export-btn {
+        background-color: #00bcd4;
+        color: white;
+        width: 100%;
+        margin-top: 20px;
+      }
+      #import-btn { /* Style for import button */
+        background-color: #673ab7; /* Purple color */
+        color: white;
+        width: 100%;
+        margin-top: 10px;
+      }
+      .controls {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .search-controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        align-items: center;
+      }
+      .search-controls input {
+        flex-grow: 1;
+      }
+      #search-btn {
+        background-color: #ff9800;
+        color: white;
+      }
+
+      /* Styles for the flowchart */
+      .flowchart-container {
+        max-width: 900px;
+        margin: 20px auto;
+        background-color: #1e1e1e;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #333;
+      }
+
+      .flowchart-container h2 {
+        text-align: center;
+        color: #4caf50;
+        margin-top: 0;
+      }
+
+      .mermaid {
+        background-color: #2a2a2a;
+        padding: 10px;
+        border-radius: 5px;
+        width: 100%;
+        height: 600px; /* Set a fixed height for the flowchart */
+        display: block;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <h1>เครื่องมือแก้ไขเนื้อเรื่อง</h1>
+
+      <div class="search-controls">
+        <input type="text" id="scene-search-input" placeholder="ค้นหาด้วย Scene ID หรือ Title" />
+        <button id="search-btn">🔍 ค้นหาฉาก</button>
+      </div>
+
       <div id="editor"></div>
       <div class="controls">
-        <button id="add-scene-btn" class="add-scene-btn">
-          ➕ เพิ่มฉากใหม่
-        </button>
+        <button id="add-scene-btn" class="add-scene-btn">➕ เพิ่มฉากใหม่</button>
         <button id="export-btn">⬇️ ดาวน์โหลดไฟล์ JSON</button>
+        <input type="file" id="import-file-input" accept=".json" style="display: none;" />
+        <button id="import-btn">⬆️ นำเข้าไฟล์ JSON</button>
       </div>
     </div>
 
@@ -167,9 +201,9 @@
       <div class="mermaid" id="flowchart"></div>
     </div>
 
+    <!-- Add Mermaid library -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
     <script>
-      
       // Initialize Mermaid globally once
       mermaid.initialize({
         startOnLoad: false, // We will manually render
@@ -181,7 +215,8 @@
         securityLevel: 'loose', // Sometimes needed for rendering complex diagrams or HTML labels
       });
 
-      const dialogueData = [
+      // Default dialogue data (used if no data is found in localStorage)
+      const defaultDialogueData = [
         {
           id: 'start',
           text: 'ยินดีต้อนรับสู่โลกแห่งการเจรจา, {name} ที่นี่คุณจะได้เรียนรู้ถึงความสำคัญของคำพูด และการตัดสินใจในภารกิจที่อาจเปลี่ยนชะตาของประเทศชาติ',
@@ -301,6 +336,7 @@
               text: '',
               next: '',
             },
+          
           ],
         },
         {
@@ -593,6 +629,7 @@
               text: 'ถัดไป',
               next: 'event1-2-1.1-2-1',
             },
+           
           ],
         },
         {
@@ -605,6 +642,7 @@
               text: 'ถัดไป',
               next: 'event1-2-1.1-2-1-1',
             },
+           
           ],
         },
         {
@@ -616,6 +654,7 @@
               text: 'ถัดไป',
               next: 'event1-2-1.1-2-1-1*1',
             },
+           
           ],
         },
         {
@@ -627,6 +666,7 @@
               text: 'ถัดไป',
               next: 'event1-2-1.1-2-1-1*1-1',
             },
+           
           ],
         },
         {
@@ -731,6 +771,7 @@
               text: 'ตอบอันนาไปว่าไม่ค่อยว่าง (เล่นตัวนิดนึงๆ)',
               next: 'event1-1-1.1*1-1/2-2-1',
             },
+          
           ],
         },
         {
@@ -746,7 +787,7 @@
         },
         {
           id: 'event1-1-1.1*1-1/2-2-1*1',
-          title: 'ระหว่างคุยกันคุณรู้สึกเบื่อมาก',
+          title:'ระหว่างคุยกันคุณรู้สึกเบื่อมาก',
           text: 'คุณจึงขอให้อันนาช่วยสักลายให้ที่เเขนซ้ายระหว่างสนทนากันไปด้วย โดยให้สักเป็นรูปหน้าอันนาเลย',
           background: 'Pic/drawe.jpeg',
           choices: [
@@ -850,27 +891,145 @@
           background: '',
           choices: [],
         },
-        {},
       ];
       //
       //
       const editor = document.getElementById('editor');
       const addSceneBtn = document.getElementById('add-scene-btn');
       const exportBtn = document.getElementById('export-btn');
+      const sceneSearchInput = document.getElementById('scene-search-input');
+      const searchBtn = document.getElementById('search-btn');
+
+      // New elements for import functionality
+      const importFileInput = document.getElementById('import-file-input');
+      const importBtn = document.getElementById('import-btn');
+
+      let draggedSceneIndex = null; // To keep track of the scene being dragged
+
+      // Helper function to sanitize IDs for Mermaid
+      // Replaces problematic characters (any character not alphanumeric, hyphen, or underscore) with hyphens (-) to create valid Mermaid IDs.
+      function sanitizeMermaidId(id) {
+          if (typeof id !== 'string') {
+              return String(id).replace(/[^a-zA-Z0-9_-]/g, '-');
+          }
+          return id.replace(/[^a-zA-Z0-9_-]/g, '-');
+      }
+
+      // Function to save dialogueData to localStorage
+      function saveDataToLocalStorage() {
+          localStorage.setItem('dialogueData', JSON.stringify(dialogueData));
+      }
+
+      // Function to load dialogueData from localStorage
+      function loadDataFromLocalStorage() {
+          const savedData = localStorage.getItem('dialogueData');
+          if (savedData) {
+              try {
+                  return JSON.parse(savedData);
+              } catch (e) {
+                  console.error('Error parsing data from localStorage:', e);
+                  return defaultDialogueData; // Fallback to default if parsing fails
+              }
+          }
+          return defaultDialogueData; // Return default if no data in localStorage
+      }
+
+      // Load data when the script starts
+      dialogueData = loadDataFromLocalStorage();
 
       function renderEditor() {
         editor.innerHTML = '';
         dialogueData.forEach((scene, index) => {
           if (Object.keys(scene).length === 0) return; // Skip empty object
+
           const sceneDiv = document.createElement('div');
           sceneDiv.className = 'scene';
+          sceneDiv.setAttribute('draggable', 'true'); // Make it draggable
+          sceneDiv.dataset.index = index; // Store the original index
+
+          // Drag and Drop Handlers
+          sceneDiv.addEventListener('dragstart', (e) => {
+            draggedSceneIndex = index;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', index); // Set data for drag
+          });
+
+          sceneDiv.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Allow drop
+            if (e.target.closest('.scene') && e.target.closest('.scene') !== e.target.closest('.scene.dragging')) {
+              const targetScene = e.target.closest('.scene');
+              const targetIndex = parseInt(targetScene.dataset.index);
+              // Determine if dragging over above or below
+              const bounding = targetScene.getBoundingClientRect();
+              const offset = bounding.y + (bounding.height / 2);
+              if (e.clientY < offset) {
+                targetScene.style.borderTop = '2px solid #00ffff';
+                targetScene.style.borderBottom = 'none';
+              } else {
+                targetScene.style.borderBottom = '2px solid #00ffff';
+                targetScene.style.borderTop = 'none';
+              }
+            }
+          });
+
+          sceneDiv.addEventListener('dragleave', (e) => {
+            if (e.target.closest('.scene')) {
+              e.target.closest('.scene').style.borderTop = 'none';
+              e.target.closest('.scene').style.borderBottom = 'none';
+            }
+          });
+
+          sceneDiv.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const targetScene = e.target.closest('.scene');
+            if (targetScene && draggedSceneIndex !== null) {
+              const targetIndex = parseInt(targetScene.dataset.index);
+              const draggedItem = dialogueData[draggedSceneIndex];
+              dialogueData.splice(draggedSceneIndex, 1); // Remove from old position
+
+              // Determine insert position based on where the drag happened relative to the center
+              const bounding = targetScene.getBoundingClientRect();
+              const offset = bounding.y + (bounding.height / 2);
+              let newIndex = targetIndex;
+              if (e.clientY >= offset && draggedSceneIndex < targetIndex) {
+                 newIndex = targetIndex;
+              } else if (e.clientY < offset && draggedSceneIndex > targetIndex) {
+                 newIndex = targetIndex;
+              } else if (e.clientY < offset && draggedSceneIndex < targetIndex) {
+                 newIndex = targetIndex - 1; // Insert before
+              } else if (e.clientY >= offset && draggedSceneIndex > targetIndex) {
+                 newIndex = targetIndex + 1; // Insert after
+              }
+
+
+              dialogueData.splice(newIndex, 0, draggedItem); // Insert at new position
+
+              saveDataToLocalStorage(); // Save changes to localStorage
+              renderEditor(); // Re-render the editor to update order
+              renderFlowchart(); // Update flowchart
+            }
+            if (targetScene) {
+                targetScene.style.borderTop = 'none';
+                targetScene.style.borderBottom = 'none';
+            }
+          });
+
+          sceneDiv.addEventListener('dragend', (e) => {
+            e.target.classList.remove('dragging');
+            draggedSceneIndex = null;
+            // Clear any lingering borders from dragover
+            document.querySelectorAll('.scene').forEach(s => {
+                s.style.borderTop = 'none';
+                s.style.borderBottom = 'none';
+            });
+          });
+
 
           const header = document.createElement('div');
           header.className = 'scene-header';
-          header.innerHTML = `<h3>ฉากที่ ${index + 1}: ${
-            scene.id || 'ไม่มี ID'
-          }</h3>
-                             <button class="remove-scene-btn" onclick="removeScene(${index})">🗑️ ลบฉาก</button>`;
+          header.innerHTML = `<h3>ฉากที่ ${index + 1}: ${scene.id || 'ไม่มี ID'}</h3>
+                              <button class="remove-scene-btn" onclick="removeScene(${index})">🗑️ ลบฉาก</button>`;
           header.onclick = () => {
             sceneDiv.classList.toggle('active');
           };
@@ -882,27 +1041,19 @@
           content.innerHTML = `
                 <div class="form-group">
                     <label>Scene ID:</label>
-                    <input type="text" value="${
-                      scene.id || ''
-                    }" onchange="updateScene(${index}, 'id', this.value); renderFlowchart()">
+                    <input type="text" value="${scene.id || ''}" onchange="updateScene(${index}, 'id', this.value); renderFlowchart()">
                 </div>
                 <div class="form-group">
                     <label>Title (ถ้ามี):</label>
-                    <input type="text" value="${
-                      scene.title || ''
-                    }" onchange="updateScene(${index}, 'title', this.value); renderFlowchart()">
+                    <input type="text" value="${scene.title || ''}" onchange="updateScene(${index}, 'title', this.value); renderFlowchart()">
                 </div>
                 <div class="form-group">
                     <label>Text:</label>
-                    <textarea onchange="updateScene(${index}, 'text', this.value)">${
-            scene.text || ''
-          }</textarea>
+                    <textarea onchange="updateScene(${index}, 'text', this.value)">${scene.text || ''}</textarea>
                 </div>
                 <div class="form-group">
                     <label>Background Image Path:</label>
-                    <input type="text" value="${
-                      scene.background || ''
-                    }" onchange="updateScene(${index}, 'background', this.value)">
+                    <input type="text" value="${scene.background || ''}" onchange="updateScene(${index}, 'background', this.value)">
                 </div>
                 <h4>ตัวเลือก (Choices):</h4>
                 <div class="choice-list" id="choices-${index}"></div>
@@ -913,9 +1064,7 @@
 
           const choicesList = document.getElementById(`choices-${index}`);
           (scene.choices || []).forEach((choice, choiceIndex) => {
-            choicesList.appendChild(
-              createChoiceElement(index, choiceIndex, choice)
-            );
+            choicesList.appendChild(createChoiceElement(index, choiceIndex, choice));
           });
         });
       }
@@ -924,12 +1073,8 @@
         const choiceItem = document.createElement('div');
         choiceItem.className = 'choice-item';
         choiceItem.innerHTML = `
-            <input type="text" placeholder="ข้อความตัวเลือก" value="${
-              choice.text || ''
-            }" onchange="updateChoice(${sceneIndex}, ${choiceIndex}, 'text', this.value)">
-            <input type="text" placeholder="Scene ID ถัดไป" value="${
-              choice.next || ''
-            }" onchange="updateChoice(${sceneIndex}, ${choiceIndex}, 'next', this.value); renderFlowchart()">
+            <input type="text" placeholder="ข้อความตัวเลือก" value="${choice.text || ''}" onchange="updateChoice(${sceneIndex}, ${choiceIndex}, 'text', this.value)">
+            <input type="text" placeholder="Scene ID ถัดไป" value="${choice.next || ''}" onchange="updateChoice(${sceneIndex}, ${choiceIndex}, 'next', this.value); renderFlowchart()">
             <button class="remove-choice-btn" onclick="removeChoice(${sceneIndex}, ${choiceIndex})">🗑️</button>
         `;
         return choiceItem;
@@ -941,13 +1086,18 @@
         } else {
           dialogueData[index][key] = value;
         }
+        saveDataToLocalStorage(); // Save changes to localStorage
       }
 
       function updateChoice(sceneIndex, choiceIndex, key, value) {
+        if (!dialogueData[sceneIndex].choices) {
+          dialogueData[sceneIndex].choices = [];
+        }
         if (!dialogueData[sceneIndex].choices[choiceIndex]) {
           dialogueData[sceneIndex].choices[choiceIndex] = {};
         }
         dialogueData[sceneIndex].choices[choiceIndex][key] = value;
+        saveDataToLocalStorage(); // Save changes to localStorage
         renderFlowchart();
       }
 
@@ -956,46 +1106,50 @@
           dialogueData[sceneIndex].choices = [];
         }
         dialogueData[sceneIndex].choices.push({ text: '', next: '' });
+        saveDataToLocalStorage(); // Save changes to localStorage
         renderEditor();
         renderFlowchart();
       }
 
       function removeChoice(sceneIndex, choiceIndex) {
         dialogueData[sceneIndex].choices.splice(choiceIndex, 1);
+        saveDataToLocalStorage(); // Save changes to localStorage
         renderEditor();
         renderFlowchart();
       }
 
       function addScene() {
         dialogueData.push({
-          id: 'new-scene-' + Date.now(),
+          id: 'new-scene-' + Date.now(), // Ensure unique ID
           title: '',
           text: '',
           background: '',
           choices: [],
         });
+        saveDataToLocalStorage(); // Save changes to localStorage
         renderEditor();
         renderFlowchart();
-        // Expand the new scene
+        // Expand and scroll to the new scene
         const newSceneElement = editor.lastElementChild;
         if (newSceneElement) {
           newSceneElement.classList.add('active');
-          newSceneElement.scrollIntoView({ behavior: 'smooth' });
+          newSceneElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }
 
       function removeScene(index) {
-        if (confirm('คุณต้องการลบฉากนี้ใช่หรือไม่?')) {
+        // Use a custom modal instead of alert/confirm
+        const confirmDelete = confirm('คุณต้องการลบฉากนี้ใช่หรือไม่?');
+        if (confirmDelete) {
           dialogueData.splice(index, 1);
+          saveDataToLocalStorage(); // Save changes to localStorage
           renderEditor();
           renderFlowchart();
         }
       }
 
       function exportData() {
-        const filteredData = dialogueData.filter(
-          (scene) => Object.keys(scene).length > 0
-        );
+        const filteredData = dialogueData.filter((scene) => Object.keys(scene).length > 0);
         const dataStr = JSON.stringify(filteredData, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -1008,73 +1162,81 @@
         URL.revokeObjectURL(url);
       }
 
-      function renderFlowchart() {
-        let flowchartCode = 'graph TD\n';
+      // New function to handle importing JSON file
+      function importData() {
+        importFileInput.click(); // Trigger the hidden file input click
+      }
 
-        // Helper function to sanitize IDs for Mermaid
-        // Replaces problematic characters (., *, /, #) with hyphens (-) to create valid Mermaid IDs.
-        function sanitizeMermaidId(id) {
-          if (typeof id !== 'string') {
-            return String(id).replace(/[.*#/]/g, '-');
-          }
-          return id.replace(/[.*#/]/g, '-');
+      // Event listener for when a file is selected
+      importFileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) {
+          return; // No file selected
         }
 
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const importedData = JSON.parse(e.target.result);
+
+            // Basic validation: Check if it's an array and contains objects
+            if (Array.isArray(importedData) && importedData.every(item => typeof item === 'object' && item !== null)) {
+                const confirmImport = confirm('ข้อมูลทั้งหมดใน Editor จะถูกแทนที่ด้วยข้อมูลจากไฟล์ JSON นี้ คุณต้องการดำเนินการต่อหรือไม่?');
+                if (confirmImport) {
+                    dialogueData = importedData; // Replace current data
+                    saveDataToLocalStorage(); // Save imported data to localStorage
+                    renderEditor();
+                    renderFlowchart();
+                    alert('นำเข้าไฟล์ JSON สำเร็จ!');
+                }
+            } else {
+                alert('รูปแบบไฟล์ JSON ไม่ถูกต้อง: ต้องเป็น Array ของ Object.');
+            }
+          } catch (error) {
+            console.error('Error parsing JSON file:', error);
+            alert('เกิดข้อผิดพลาดในการอ่านไฟล์ JSON: โปรดตรวจสอบว่าไฟล์มีรูปแบบที่ถูกต้อง');
+          }
+          // Clear the file input value so that selecting the same file again triggers change event
+          event.target.value = '';
+        };
+        reader.readAsText(file); // Read the file as text
+      });
+
+
+      async function renderFlowchart() {
+        let flowchartCode = 'graph TD\n';
+
         dialogueData.forEach((scene) => {
-          // Skip empty objects in the dialogueData array
-          if (Object.keys(scene).length === 0) return;
+          if (Object.keys(scene).length === 0) return; // Skip empty object
 
           if (scene.id) {
-            // Sanitize the current scene's ID for use in Mermaid
             const mermaidNodeId = sanitizeMermaidId(scene.id);
-
             let label = scene.id;
             if (scene.title) {
-              // Combine title and original ID for the node label, using <br/> for line break
-              // and wrapping the whole label in quotes for Mermaid to handle spaces and special chars.
               label = `${scene.title} <br/> (${scene.id})`;
             }
-
-            // Create the node definition with the sanitized ID and a proper label.
-            // The label is wrapped in double quotes to handle spaces and special characters.
             flowchartCode += `${mermaidNodeId}["${label}"]\n`;
 
             if (scene.choices && scene.choices.length > 0) {
               scene.choices.forEach((choice, index) => {
                 if (choice.next) {
-                  // Sanitize the target scene's ID for use in Mermaid
                   const mermaidNextNodeId = sanitizeMermaidId(choice.next);
-
                   let choiceText = choice.text || `Choice ${index + 1}`;
-                  // Escape special characters in choice text for Mermaid:
-                  // 1. Replace < and > with HTML entities.
-                  // 2. Replace internal double quotes with SINGLE quotes to avoid parsing conflicts.
-                  // 3. Replace ` (backtick) with HTML entity &#96; if it appears in text.
                   choiceText = choiceText
                     .replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;')
                     .replace(/"/g, "'") // Important: Replaced " with ' here to fix nested quote issue
                     .replace(/`/g, '&#96;');
 
-                  // Add an arrow with the choice text as the label.
-                  // The choiceText is wrapped in double quotes within the pipe |""| for robustness.
-                  // Use the sanitized IDs for the connection.
                   flowchartCode += `${mermaidNodeId} --> |"${choiceText}"| ${mermaidNextNodeId}\n`;
                 }
               });
             } else {
-              // If there are no explicit choices, link to the next scene in the array (linear progression).
-              const currentIndex = dialogueData.findIndex(
-                (s) => s.id === scene.id
-              );
-              if (
-                currentIndex !== -1 &&
-                currentIndex < dialogueData.length - 1
-              ) {
+              // Linear progression if no explicit choices
+              const currentIndex = dialogueData.findIndex((s) => s.id === scene.id);
+              if (currentIndex !== -1 && currentIndex < dialogueData.length - 1) {
                 const nextScene = dialogueData[currentIndex + 1];
-                // Ensure the next scene actually has an ID before creating a link.
                 if (nextScene && nextScene.id) {
-                  // Sanitize the next scene's ID for use in Mermaid
                   const mermaidNextNodeId = sanitizeMermaidId(nextScene.id);
                   flowchartCode += `${mermaidNodeId} --> ${mermaidNextNodeId}\n`;
                 }
@@ -1083,27 +1245,63 @@
           }
         });
 
-        // Log the generated Mermaid code to the console for debugging purposes.
         console.log('Generated Mermaid Code:\n', flowchartCode);
 
-        // Get the element where the flowchart will be rendered.
         const flowchartDiv = document.getElementById('flowchart');
-        // Set the Mermaid code as the inner HTML of the div.
-        flowchartDiv.innerHTML = flowchartCode;
-
-        // Initialize Mermaid to render the flowchart.
-        // Use .catch() to gracefully handle any rendering errors from Mermaid.
-        mermaid.init('.mermaid').catch((error) => {
+        try {
+          // mermaid.render returns an object with svg and bindFunctions
+          const { svg } = await mermaid.render('flowchart-diagram', flowchartCode);
+          flowchartDiv.innerHTML = svg;
+          // Optionally, bind functions if there are interactive elements in the future
+          // bindFunctions(flowchartDiv);
+        } catch (error) {
           console.error('Mermaid render error:', error);
-          // Display a user-friendly error message on the page.
-          flowchartDiv.innerHTML =
-            '<p style="color: red;">เกิดข้อผิดพลาดในการสร้างแผนผัง: โปรดตรวจสอบ Scene ID และการเชื่อมโยง</p>';
-        });
+          flowchartDiv.innerHTML = '<p style="color: red;">เกิดข้อผิดพลาดในการสร้างแผนผัง: โปรดตรวจสอบ Scene ID และการเชื่อมโยง</p>';
+        }
       }
 
+      function searchScene() {
+        const searchTerm = sceneSearchInput.value.toLowerCase().trim();
+        if (!searchTerm) {
+          alert('โปรดป้อนคำค้นหา');
+          return;
+        }
+
+        // Remove highlight from all scenes first
+        document.querySelectorAll('.scene.highlight').forEach(s => {
+          s.classList.remove('highlight');
+        });
+
+        const foundSceneIndex = dialogueData.findIndex(scene => {
+          const idMatch = scene.id && scene.id.toLowerCase().includes(searchTerm);
+          const titleMatch = scene.title && scene.title.toLowerCase().includes(searchTerm);
+          return idMatch || titleMatch;
+        });
+
+        if (foundSceneIndex !== -1) {
+          const sceneElement = editor.children[foundSceneIndex];
+          if (sceneElement) {
+            sceneElement.classList.add('active'); // Expand if collapsed
+            sceneElement.classList.add('highlight'); // Add highlight
+            sceneElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Remove highlight after a short delay
+            setTimeout(() => {
+              sceneElement.classList.remove('highlight');
+            }, 3000);
+          }
+        } else {
+          alert('ไม่พบฉากที่ตรงกับคำค้นหา');
+        }
+      }
+
+      // Add event listeners for the new buttons
       addSceneBtn.addEventListener('click', addScene);
       exportBtn.addEventListener('click', exportData);
+      importBtn.addEventListener('click', importData); // Trigger the hidden file input
+      searchBtn.addEventListener('click', searchScene); // Attach search function to button
 
+      // Initial render
       renderEditor();
       renderFlowchart();
     </script>
