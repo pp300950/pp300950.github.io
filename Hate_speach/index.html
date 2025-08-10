@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบตรวจสอบความหยาบคาย</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sriracha&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #ffb6c1; /* Light Pink */
+            --secondary-color: #b19cd9; /* Light Purple */
+            --accent-color: #ffd700; /* Gold */
+            --text-color: #4b0082; /* Indigo */
+            --background-blur-1: #ff69b4; /* Hot Pink */
+            --background-blur-2: #87ceeb; /* Sky Blue */
+            --background-blur-3: #98fb98; /* Pale Green */
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff; /* Alice Blue */
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .blurry-gradients {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .blurry-gradients::before,
+        .blurry-gradients::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: moveGlow 20s ease-in-out infinite alternate;
+            filter: blur(50px);
+        }
+
+        .blurry-gradients::before {
+            width: 300px;
+            height: 300px;
+            background: var(--background-blur-1);
+            top: 10%;
+            left: 20%;
+        }
+
+        .blurry-gradients::after {
+            width: 400px;
+            height: 400px;
+            background: var(--background-blur-2);
+            bottom: 5%;
+            right: 15%;
+            animation-delay: 5s;
+        }
+
+        @keyframes moveGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.2); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-family: 'Sriracha', cursive;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            text-shadow: 2px 2px 4px var(--shadow-color);
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px 20px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 30px;
+            font-size: 1em;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px var(--shadow-color);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px var(--primary-color);
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            min-height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .initial-state {
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .emoji-bounce {
+            font-size: 2.5em;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .score-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--text-color);
+            font-family: 'Sriracha', cursive;
+            text-shadow: 1px 1px 2px var(--shadow-color);
+        }
+
+        .result-details h2 {
+            font-family: 'Prompt', sans-serif;
+            font-weight: bold;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .result-details p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .label-polite {
+            color: #4CAF50; /* Green */
+        }
+
+        .label-rude {
+            color: #F44336; /* Red */
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg">
+        <svg class="blurry-gradients">
+            <defs>
+                <filter id="goo">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
+                    <feBlend in="SourceGraphic" in2="goo" />
+                </filter>
+            </defs>
+        </svg>
+    </div>
+    
+    <div class="container">
+        <h1>💖✨ มาเช็กกันเถอะว่าคำพูดน่ารักหรือเปล่า! ✨💖</h1>
+        <p>ลองพิมพ์ข้อความที่ต้องการตรวจสอบดูสิ</p>
+        
+        <input type="text" id="sentenceInput" placeholder="พิมพ์ประโยคที่นี่..." onkeypress="handleKeyPress(event)">
+        <button onclick="checkSentence()">ตรวจสอบ</button>
+
+        <div id="resultBox" class="result-box">
+            <div id="initialState" class="initial-state">
+                <p>รอการตรวจสอบอยู่นะจ๊ะ</p>
+                <div class="emoji-bounce">🌸</div>
+            </div>
+            
+            <div id="resultContent" class="hidden">
+                <div class="score-container">
+                    <div class="chart-container">
+                        <canvas id="confidenceChart"></canvas>
+                        <span id="scoreText" class="score-text">0%</span>
+                    </div>
+                </div>
+                <div class="result-details">
+                    <h2 id="resultLabel"></h2>
+                    <p id="badWordsFound"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // ==== เตรียม dataset แบบมี label ในตัว ====
+        const dataset = [
+            { words: ["ไง", "ไอ", "อ้วน"], label: 1 },
+            { words: ["อย่า", "โง่"], label: 1 },
+            { words: ["เงียบ", "เพื่อ"], label: 1 },
+            { words: ["ไอ", "ควาย"], label: 1 },
+            { words: ["หุบปาก", "ไอ", "เตี้ย"], label: 1 },
+            { words: ["เเล้ว", "ไง"], label: 1 },
+            { words: ["อย่าง", "โง่", "เลย"], label: 1 },
+            { words: ["เคย", "โดน", "ตีน", "ไหม"], label: 1 },
+            { words: ["ไป", "ไหน", "ก็", "ไป"], label: 1 },
+            { words: ["ไอ", "เด็ก", "น้อย"], label: 1 },
+            { words: ["พ่อ", "มึง", "อะ"], label: 1 },
+            { words: ["เเม่ง", "เป็น", "อะไร", "วะ"], label: 1 },
+            { words: ["ทำ", "ตัว", "น่า", "เกียจ"], label: 1 },
+            { words: ["คุณ", "มัน", "ขยะ", "ของ", "ทีม"], label: 1 },
+            { words: ["เล่น", "กาก", "มาก", "ครับ"], label: 1 },
+            { words: ["โครต", "ทุเลส"], label: 1 },
+            { words: ["โครต", "เหม็น", "อะ"], label: 1 },
+            { words: ["หนัง", "โครต", "ดี"], label: 1 },
+            { words: ["ตอเเหล", "จัง", "นะ"], label: 1 },
+            { words: ["อย่า", "เสือก", "เรื่อง", "ของ", "คน", "อื่น"], label: 1 },
+            { words: ["เสร่อ", "จัง", "นะ", "คุณ"], label: 1 },
+            { words: ["ปาก", "หมา", "นะ", "เรา"], label: 1 },
+            { words: ["มึง", "คิด", "ว่า", "มึง", "เก่ง", "มาก", "หรอ"], label: 1 },
+            { words: ["ลาว", "มาก", "นะ", "คุณ"], label: 1 },
+            { words: ["ไอ", "หน้า", "ส้นตีน"], label: 1 },
+            { words: ["กู", "ทำ", "อะไร", "ให้", "มึง", "ยัง"], label: 1 },
+            { words: ["เดี๋ยว", "มึง", "เจอ", "กู"], label: 1 },
+            { words: ["อย่า", "ทำ", "ตัว", "เหี้ย", "เเบบ", "นี้"], label: 1 },
+            { words: ["นาย", "เลว", "มาก"], label: 1 },
+            { words: ["กู", "สวย", "ไหม"], label: 1 },
+            { words: ["โถ่", "ไอ", "อ้วน", "มึง", "อย่า", "โง่", "ดิ", "วะ"], label: 1 },
+            { words: ["จะ", "ทำ", "อะไร", "มึง", "ก็", "ทำ"], label: 1 },
+            { words: ["กู", "ไม่", "เกี่ยว"], label: 1 },
+            { words: ["ทำ", "อะไร", "วะ"], label: 1 },
+            { words: ["ใช้", "บ้าง", "ดิ", "สมอง"], label: 1 },
+            { words: ["มี", "ไหม", "สมอง"], label: 1 },
+            { words: ["มัน", "ชั่ว", "นะ"], label: 1 },
+            { words: ["สุนัข", "เวร"], label: 1 },
+            { words: ["เเม่ง", "โครต", "หมา", "เลย"], label: 1 },
+            { words: ["เป็น", "ควย", "อะไร", "วะ"], label: 1 },
+            { words: ["ไอ", "สัส"], label: 1 },
+            { words: ["ไอ", "ห่า", "มัน", "เหี้ย", "จัง", "วะ"], label: 1 },
+            { words: ["โง่", "ดักดาน", "นะ", "เเก"], label: 1 },
+            { words: ["ช่วย", "ด้วย", "ค่ะ", "ไอ", "โจร", "ชั่ว", "มัน", "ขโมย", "ของ", "ดิชั้น", "ไป"], label: 1 },
+            { words: ["ทำ", "ตัว", "โครต", "สถุน", "หมา", "เลย"], label: 1 },
+            { words: ["รัก", "นะ", "อี", "ควาย"], label: 1 },
+            { words: ["อย่า", "ร่าน", "ค่ะ", "อี", "ดอก", "ทอง"], label: 1 },
+            { words: ["ละ", "มึง", "เป็น", "ควย", "ไร", "อะ"], label: 1 },
+            { words: ["กลับ", "บ้าน", "เพื่อ", "อะ", "ไร", "วะ"], label: 1 },
+            { words: ["คุณ", "มึง", "ไม่", "มา", "ช่วย", "กัน", "ล่ะ", "ครับ"], label: 1 },
+            { words: ["โถ่", "อี", "โง่", "มึง", "นี่", "มัน", "ไม่", "ได้", "เรื่อง", "สัก", "อย่าง"], label: 1 },
+            { words: ["เดี๋ยว", "เอา", "ตีน", "ถีบ", "ยอด", "หน้า", "ให้"], label: 1 },
+            { words: ["เกม", "โครต", "กาก"], label: 1 },
+            { words: ["เนต", "อย่าง", "เหี้ย"], label: 1 },
+            { words: ["เออ", "ไอ", "อัปปรี"], label: 1 },
+            { words: ["เรื่อง", "ของ", "มึง"], label: 1 },
+            { words: ["มึง", "ต่อย", "กู", "ตบ", "อะ", "เอา", "ดิ"], label: 1 },
+            { words: ["ปาก", "หมา", "จัง", "นะ", "คะ"], label: 1 },
+            { words: ["ไอ", "เเว่น", "นั่น", "มึง", "ห้าว", "หรอ"], label: 1 },
+            { words: ["เก็บ", "ปาก", "ไว้", "เเดก", "ข้าว", "นะ", "หนู"], label: 1 },
+            { words: ["สวัสดี", "ครับ"], label: 0 },
+            { words: ["ขอบคุณ", "มาก", "ครับ", "สำหรับ", "คำ", "ชม"], label: 0 },
+            { words: ["สวัสดี", "ครับ", "คน", "สวย"], label: 0 },
+            { words: ["ไง", "เพื่อน"], label: 0 },
+            { words: ["ดี", "นะ", "ไม่", "เท", "จน", "หมด"], label: 0 },
+            { words: ["เคย", "เหมือน", "กัน", "ค่ะ"], label: 0 },
+            { words: ["เคย", "ทำ", "ละ", "เเบบนี้"], label: 0 },
+            { words: ["เก็บ", "ออก", "เเทบ", "ไม่", "ทัน"], label: 0 },
+            { words: ["ดี", "เเล้ว", "ที่", "เเชร์", "ให้", "เห็น", "ก่อน"], label: 0 },
+            { words: ["เห็น", "เเล้ว", "ขำ", "มาก", "เลย", "ค่ะ"], label: 0 },
+            { words: ["เคย", "เหมือน", "กัน", "ครับ"], label: 0 },
+            { words: ["ผม", "โดน", "ผี", "หลอก"], label: 0 },
+            { words: ["หนัง", "ดี", "มาก"], label: 0 },
+            { words: ["วัน", "นี้", "เธอ", "ทาน", "ข้าว", "หรือ", "ยัง"], label: 0 },
+            { words: ["เรา", "หิว", "อะ", "เธอ"], label: 0 },
+            { words: ["ทำไม", "เค้า", "คน", "นั้น", "ถึง", "ทำ", "เเบบ", "นั้น", "หรอ"], label: 0 },
+            { words: ["วัน", "นี้", "ผม", "ว่าง", "นะ"], label: 0 },
+            { words: ["ไป", "เดิน", "เล่น", "ข้าง", "นอก", "ไหม"], label: 0 },
+            { words: ["คุณ", "คือ", "ผู้ชาย", "เมื่อ", "วัน", "ก่อน", "ใช่ไหม", "คะ"], label: 0 },
+            { words: ["สุนัข", "ตัว", "นี้", "น่า", "รัก", "จะ", "ตาย"], label: 0 },
+            { words: ["ฉัน", "ชอบ", "เเมว"], label: 0 },
+            { words: ["วัน", "นี้", "เรา", "ขอ", "ไป", "ด้วย", "นะ"], label: 0 },
+            { words: ["ผม", "เหงา", "ครับ"], label: 0 },
+            { words: ["ฉัน", "ไม่", "รัก", "นาย", "เเล้ว"], label: 0 },
+            { words: ["ถ้า", "มัน", "เป็น", "ผม", "ก็", "คง", "ดี"], label: 0 },
+            { words: ["ขอ", "ยืม", "มือถือ", "หน่อย", "สิ"], label: 0 },
+            { words: ["จะ", "เอา", "อะไร", "อีก", "ไหม"], label: 0 },
+            { words: ["เหนื่อย", "ก็", "พัก", "บ้าง", "นะ"], label: 0 },
+            { words: ["เรา", "เป็น", "ห่วง"], label: 0 },
+            { words: ["รู้", "ไหม"], label: 0 },
+            { words: ["ฉัน", "เป็น", "คน", "ไทย", "ที่", "พูด", "จีน", "ได้", "นิด", "หน่อย"], label: 0 },
+            { words: ["เขา", "น่ารัก", "เเต่", "เขา", "มี", "เเฟน", "เเล้ว", "นะ"], label: 0 },
+            { words: ["การ", "ทำงาน", "ของ", "ระบบ", "ย่อย", "อาหาร", "เป็น", "ยังไง", "หรอ"], label: 0 },
+            { words: ["ความ", "รู้สึก", "ของ", "เขา", "ที่", "มี", "ให้", "ฉัน", "มัน", "ลึก", "ซึ้ง", "เหลือ", "เกิน"], label: 0 },
+            { words: ["การ", "กระโดด", "ทำ", "ให้", "เตี้ย", "ลง", "จริง", "หรอ"], label: 0 },
+            { words: ["วัน", "นี้", "จะ", "วิ่ง", "หรือ", "เดิน"], label: 0 },
+            { words: ["ผม", "ของ", "เขา", "ยาว", "มาก"], label: 0 },
+            { words: ["เพื่อน", "คน", "นี้", "ไม่", "ยอม", "ตัด", "เล็บ"], label: 0 },
+            { words: ["เเมว", "ตัว", "นั้น", "หาง", "ขาด"], label: 0 },
+            { words: ["ต้น", "ไม้", "สูง", "จัง"], label: 0 },
+            { words: ["รัง", "นก", "อินทรีย์", "อยู่", "บน", "หน้า", "ผา"], label: 0 },
+            { words: ["คณิตศาสตร์", "เกี่ยว", "กับ", "เลข", "ใช่", "ไหม"], label: 0 },
+            { words: ["ปลา", "ชอบ", "กิน", "อะไร", "หรอ"], label: 0 },
+            { words: ["ที่", "นอน", "ของ", "เขา", "ยับ", "มาก"], label: 0 },
+            { words: ["เสื้อ", "ตัว", "นี้", "เป็น", "ตัว", "โปรด", "ของ", "ฉัน"], label: 0 },
+            { words: ["พัดลม", "ส่าย", "หน้า", "ไป", "มา"], label: 0 },
+            { words: ["ฝุ่น", "เม็ด", "จิ๋ว", "ลอย", "ใน", "อากาศ"], label: 0 },
+            { words: ["เขา", "รัก", "ฉัน", "เเต่", "ฉัน", "ไม่", "รัก", "เขา"], label: 0 },
+            { words: ["เท้า", "ของ", "ผู้ชาย", "คน", "นั้น", "กำลัง", "บวม"], label: 0 },
+            { words: ["ผี", "มัก", "จะ", "โผล่", "มา", "ใน", "วัน", "ฮาโลวีน"], label: 0 },
+            { words: ["ใน", "วัน", "ลอย", "กระทง", "เรา", "ต้อง", "ไป", "ที่", "สระ", "น้ำ"], label: 0 },
+            { words: ["วัด", "เเห่ง", "นี้", "สวย", "งาม", "มาก"], label: 0 },
+            { words: ["พระ", "รูป", "นั้น", "เทศ", "น่า", "ฟัง", "มาก"], label: 0 },
+            { words: ["หนู", "ชอบ", "กิน", "ชีส", "เเละ", "มัน", "วิ่ง", "เร็ว", "มาก"], label: 0 },
+            { words: ["พระอาทิตย์", "ส่อง", "เเสง", "ร้อน", "เเรง", "มาก"], label: 0 },
+            { words: ["หนู", "รัก", "คุณ", "พ่อ", "เเละ", "คุณ", "เเม่"], label: 0 },
+            { words: ["รูป", "ภาพ", "ใบ", "นี้", "ฉัน", "ขอ", "เก็บ", "ไว้", "นะ"], label: 0 },
+            { words: ["ให้", "เขา", "นั่ง", "ตรง", "นี้", "ได้", "ไหม"], label: 0 },
+            { words: ["ฮิปโป", "ตัว", "นั้น", "กิน", "เเค่", "พืช", "เเต่", "ก็", "ยัง", "อ้วน", "อยู่"], label: 0 },
+            { words: ["ฉลาม", "เคย", "เเปรง", "ฟัน", "บ้าง", "ไหม", "นะ"], label: 0 },
+        ];
+
+        // ==== สร้าง word vector ====
+        const wordVector = {};
+        let index = 0;
+        dataset.forEach(item => {
+            item.words.forEach(word => {
+                if (!(word in wordVector)) {
+                    wordVector[word] = index++;
+                }
+            });
+        });
+
+        const badWordsList = ["อ้วน", "โง่", "ควาย", "หุบปาก", "ตีน", "มึง", "เเม่ง", "ขยะ", "กาก", "ทุเลส", "เสือก", "เสร่อ", "หมา", "กู", "ส้นตีน", "เหี้ย", "เลว", "ชั่ว", "สัส", "ห่า", "ดักดาน", "สถุน", "ร่าน", "ดอกทอง", "อัปปรี"];
+
+        // ==== ฟังก์ชันเวกเตอร์ + bias term ====
+        function vectorizeSentence(words, wordVector) {
+            const vector = new Array(Object.keys(wordVector).length + 1).fill(0);
+            words.forEach(word => {
+                if (word in wordVector) {
+                    vector[wordVector[word]] += 1;
+                }
+            });
+            vector[vector.length - 1] = 1; // bias term
+            return vector;
+        }
+
+        // ==== เตรียม X, y ====
+        const X = dataset.map(d => vectorizeSentence(d.words, wordVector));
+        const y = dataset.map(d => d.label);
+
+        // ==== Logistic Regression ====
+        function sigmoid(z) {
+            if (z < -709) return 0;
+            if (z > 709) return 1;
+            return 1 / (1 + Math.exp(-z));
+        }
+
+        function trainLogisticRegression(X, y, lr = 0.1, epochs = 1000) {
+            let weights = new Array(X[0].length).fill(0);
+
+            for (let epoch = 0; epoch < epochs; epoch++) {
+                let gradient = new Array(weights.length).fill(0);
+
+                for (let i = 0; i < X.length; i++) {
+                    const z = X[i].reduce((sum, val, idx) => sum + val * weights[idx], 0);
+                    const pred = sigmoid(z);
+                    for (let j = 0; j < weights.length; j++) {
+                        gradient[j] += (pred - y[i]) * X[i][j];
+                    }
+                }
+
+                for (let j = 0; j < weights.length; j++) {
+                    weights[j] -= lr * gradient[j] / X.length;
+                }
+            }
+            return weights;
+        }
+
+        // ==== Train & Test ====
+        const weights = trainLogisticRegression(X, y, 0.1, 500);
+        
+        let myChart;
+
+        function checkSentence() {
+            const inputElement = document.getElementById('sentenceInput');
+            const inputSentence = inputElement.value.trim();
+            
+            if (inputSentence === "") {
+                alert("กรุณาพิมพ์ข้อความก่อนนะคะ!");
+                return;
+            }
+
+            const words = inputSentence.split(/\s+/).filter(word => word !== '');
+            const vec = vectorizeSentence(words, wordVector);
+            const z = vec.reduce((sum, val, idx) => sum + val * weights[idx], 0);
+            const prob = sigmoid(z);
+            const confidenceScore = prob * 100;
+            
+            const badWordsFound = words.filter(word => badWordsList.includes(word));
+            
+            const resultLabel = confidenceScore >= 50 ? 'คำหยาบ' : 'คำสุภาพ';
+            const labelClass = confidenceScore >= 50 ? 'label-rude' : 'label-polite';
+            
+            displayResult(confidenceScore, resultLabel, labelClass, badWordsFound, words);
+        }
+
+        function displayResult(score, label, labelClass, badWords, originalWords) {
+            document.getElementById('initialState').classList.add('hidden');
+            document.getElementById('resultContent').classList.remove('hidden');
+            
+            const resultLabelEl = document.getElementById('resultLabel');
+            resultLabelEl.textContent = `คำทำนาย: ${label}`;
+            resultLabelEl.className = labelClass;
+            
+            const badWordsFoundEl = document.getElementById('badWordsFound');
+            if (badWords.length > 0) {
+                let highlightedSentence = originalWords.map(word => {
+                    if (badWords.includes(word)) {
+                        return `<strong class="${labelClass}">${word}</strong>`;
+                    }
+                    return word;
+                }).join(' ');
+                
+                badWordsFoundEl.innerHTML = `ตรวจพบคำหยาบ: ${highlightedSentence}`;
+            } else {
+                badWordsFoundEl.innerHTML = `ไม่พบคำหยาบในประโยคนี้`;
+            }
+            
+            updateChart(score);
+        }
+
+        function updateChart(score) {
+            const ctx = document.getElementById('confidenceChart').getContext('2d');
+            const scoreTextEl = document.getElementById('scoreText');
+
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            const color = score >= 50 ? '#ff6384' : '#4bc0c0';
+
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [0, 100],
+                        backgroundColor: [color, '#e9e9e9'],
+                        borderColor: ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0)'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    rotation: -90,
+                    circumference: 360,
+                    tooltips: { enabled: false },
+                    hover: { mode: null },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    animation: {
+                        onProgress: function(animation) {
+                            const currentScore = animation.currentStep / animation.numSteps * score;
+                            scoreTextEl.textContent = `${Math.round(currentScore)}%`;
+                        },
+                        onComplete: function() {
+                            scoreTextEl.textContent = `${Math.round(score)}%`;
+                        }
+                    }
+                }
+            });
+
+            myChart.data.datasets[0].data = [score, 100 - score];
+            myChart.update();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkSentence();
+            }
+        }
+    </script>
+</body>
+</html>
