@@ -11,3 +11,5 @@ https://pp300950.github.io/Story_Game/main4.html
 https://pp300950.github.io/Story_Game/make_story.html
 
 https://pp300950.github.io/Hate_speach/index.html
+
+https://pp300950.github.io/mydocs/main.html
