@@ -11,6 +11,7 @@
         color: #e0e0e0;
         margin: 0;
         padding: 20px;
+        overflow-x: hidden; /* Prevent horizontal scroll */
       }
       .container {
         max-width: 900px;
@@ -98,7 +99,7 @@
       .remove-scene-btn,
       #export-btn,
       #search-btn,
-      #import-btn { /* Added #import-btn */
+      #import-btn {
         padding: 8px 12px;
         border: none;
         border-radius: 4px;
@@ -128,8 +129,8 @@
         width: 100%;
         margin-top: 20px;
       }
-      #import-btn { /* Style for import button */
-        background-color: #673ab7; /* Purple color */
+      #import-btn {
+        background-color: #673ab7;
         color: white;
         width: 100%;
         margin-top: 10px;
@@ -173,25 +174,186 @@
         padding: 10px;
         border-radius: 5px;
         width: 100%;
-        height: 600px; /* Set a fixed height for the flowchart */
+        height: 600px;
         display: block;
+      }
+
+      /* === Image Picker Sidebar Styles === */
+      #image-picker-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1001;
+        background-color: #00bcd4;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        font-size: 1.5em;
+        transition: transform 0.3s ease;
+        z-index: 1002; /* แก้ไข: ทำให้ปุ่ม toggle อยู่บนสุด */
+      }
+      /* เพิ่ม CSS ใหม่: เพื่อซ่อนเนื้อหาหลักเมื่อ sidebar เปิด */
+      body.sidebar-open .container,
+      body.sidebar-open .flowchart-container,
+      body.sidebar-open #image-picker-toggle {
+        display: none;
+      }
+      #image-picker-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 100vh;
+        background-color: #2a2a2a;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        width: 100vw; /* แก้ไข: ทำให้แถบ sidebar กว้างเต็มจอ */
+        height: 100vh;
+        padding: 50px 20px 20px; /* เพิ่ม padding ด้านบน เพื่อหลีกเลี่ยงการทับปุ่ม close */
+        box-sizing: border-box;
+      }
+
+      #image-picker-sidebar.active {
+        transform: translateX(0);
+      }
+
+      #image-picker-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        color: white;
+        border: none;
+        font-size: 1.5em;
+        cursor: pointer;
+      }
+
+      #image-picker-sidebar h3 {
+        color: #00bcd4;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+
+      .image-carousel-container {
+        position: relative;
+        overflow: hidden;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .image-carousel {
+        display: flex;
+        transition: transform 0.3s ease;
+        width: 100%; /* Important for carousel logic */
+      }
+
+      .carousel-item {
+        min-width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+      }
+
+      .carousel-item img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        border: 1px solid #555;
+        max-height: 40vh;
+        object-fit: contain;
+      }
+
+      .carousel-caption {
+        margin-top: 10px;
+        word-wrap: break-word;
+        font-size: 0.9em;
+      }
+
+      .copy-path-btn {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        margin-top: 5px;
+        cursor: pointer;
+      }
+
+      .carousel-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .carousel-btn {
+        background-color: #555;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2em;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .carousel-btn:hover {
+        background-color: #00bcd4;
       }
     </style>
   </head>
   <body>
+    <button id="image-picker-toggle">🖼️</button>
+    <div id="image-picker-sidebar">
+      <button id="image-picker-close">✕</button>
+      <h3>เลือกรูปภาพพื้นหลัง</h3>
+      <div class="image-carousel-container">
+        <div class="image-carousel" id="image-carousel"></div>
+      </div>
+      <div class="carousel-controls">
+        <button id="prev-btn" class="carousel-btn">←</button>
+        <button id="next-btn" class="carousel-btn">→</button>
+      </div>
+    </div>
     <div class="container">
       <h1>เครื่องมือแก้ไขเนื้อเรื่อง</h1>
 
       <div class="search-controls">
-        <input type="text" id="scene-search-input" placeholder="ค้นหาด้วย Scene ID หรือ Title" />
+        <input
+          type="text"
+          id="scene-search-input"
+          placeholder="ค้นหาด้วย Scene ID หรือ Title"
+        />
         <button id="search-btn">🔍 ค้นหาฉาก</button>
       </div>
 
       <div id="editor"></div>
       <div class="controls">
-        <button id="add-scene-btn" class="add-scene-btn">➕ เพิ่มฉากใหม่</button>
+        <button id="add-scene-btn" class="add-scene-btn">
+          ➕ เพิ่มฉากใหม่
+        </button>
         <button id="export-btn">⬇️ ดาวน์โหลดไฟล์ JSON</button>
-        <input type="file" id="import-file-input" accept=".json" style="display: none;" />
+        <input
+          type="file"
+          id="import-file-input"
+          accept=".json"
+          style="display: none"
+        />
         <button id="import-btn">⬆️ นำเข้าไฟล์ JSON</button>
       </div>
     </div>
@@ -201,22 +363,20 @@
       <div class="mermaid" id="flowchart"></div>
     </div>
 
-    <!-- Add Mermaid library -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
     <script>
       // Initialize Mermaid globally once
       mermaid.initialize({
-        startOnLoad: false, // We will manually render
-        theme: 'dark', // Example theme
+        startOnLoad: false,
+        theme: 'dark',
         flowchart: {
-          curve: 'basis', // Smooth curves for flowchart arrows ('linear', 'basis', 'monotoneX', etc.)
-          htmlLabels: true, // Important for allowing HTML in labels (like <br/>)
+          curve: 'basis',
+          htmlLabels: true,
         },
-        securityLevel: 'loose', // Sometimes needed for rendering complex diagrams or HTML labels
+        securityLevel: 'loose',
       });
 
-      // Default dialogue data (used if no data is found in localStorage)
-      const defaultDialogueData = [
+      const defaultDialogueData =  [
         {
           id: 'start',
           text: 'ยินดีต้อนรับสู่โลกแห่งการเจรจา, {name} ที่นี่คุณจะได้เรียนรู้ถึงความสำคัญของคำพูด และการตัดสินใจในภารกิจที่อาจเปลี่ยนชะตาของประเทศชาติ',
@@ -892,77 +1052,69 @@
           choices: [],
         },
       ];
-      //
-      //
+
       const editor = document.getElementById('editor');
       const addSceneBtn = document.getElementById('add-scene-btn');
       const exportBtn = document.getElementById('export-btn');
       const sceneSearchInput = document.getElementById('scene-search-input');
       const searchBtn = document.getElementById('search-btn');
-
-      // New elements for import functionality
       const importFileInput = document.getElementById('import-file-input');
       const importBtn = document.getElementById('import-btn');
 
-      let draggedSceneIndex = null; // To keep track of the scene being dragged
+      let draggedSceneIndex = null;
 
-      // Helper function to sanitize IDs for Mermaid
-      // Replaces problematic characters (any character not alphanumeric, hyphen, or underscore) with hyphens (-) to create valid Mermaid IDs.
       function sanitizeMermaidId(id) {
-          if (typeof id !== 'string') {
-              return String(id).replace(/[^a-zA-Z0-9_-]/g, '-');
-          }
-          return id.replace(/[^a-zA-Z0-9_-]/g, '-');
+        if (typeof id !== 'string') {
+          return String(id).replace(/[^a-zA-Z0-9_-]/g, '-');
+        }
+        return id.replace(/[^a-zA-Z0-9_-]/g, '-');
       }
 
-      // Function to save dialogueData to localStorage
       function saveDataToLocalStorage() {
-          localStorage.setItem('dialogueData', JSON.stringify(dialogueData));
+        localStorage.setItem('dialogueData', JSON.stringify(dialogueData));
       }
 
-      // Function to load dialogueData from localStorage
       function loadDataFromLocalStorage() {
-          const savedData = localStorage.getItem('dialogueData');
-          if (savedData) {
-              try {
-                  return JSON.parse(savedData);
-              } catch (e) {
-                  console.error('Error parsing data from localStorage:', e);
-                  return defaultDialogueData; // Fallback to default if parsing fails
-              }
+        const savedData = localStorage.getItem('dialogueData');
+        if (savedData) {
+          try {
+            return JSON.parse(savedData);
+          } catch (e) {
+            console.error('Error parsing data from localStorage:', e);
+            return defaultDialogueData;
           }
-          return defaultDialogueData; // Return default if no data in localStorage
+        }
+        return defaultDialogueData;
       }
 
-      // Load data when the script starts
       dialogueData = loadDataFromLocalStorage();
 
       function renderEditor() {
         editor.innerHTML = '';
         dialogueData.forEach((scene, index) => {
-          if (Object.keys(scene).length === 0) return; // Skip empty object
+          if (Object.keys(scene).length === 0) return;
 
           const sceneDiv = document.createElement('div');
           sceneDiv.className = 'scene';
-          sceneDiv.setAttribute('draggable', 'true'); // Make it draggable
-          sceneDiv.dataset.index = index; // Store the original index
+          sceneDiv.setAttribute('draggable', 'true');
+          sceneDiv.dataset.index = index;
 
-          // Drag and Drop Handlers
           sceneDiv.addEventListener('dragstart', (e) => {
             draggedSceneIndex = index;
             e.target.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', index); // Set data for drag
+            e.dataTransfer.setData('text/plain', index);
           });
 
           sceneDiv.addEventListener('dragover', (e) => {
-            e.preventDefault(); // Allow drop
-            if (e.target.closest('.scene') && e.target.closest('.scene') !== e.target.closest('.scene.dragging')) {
+            e.preventDefault();
+            if (
+              e.target.closest('.scene') &&
+              e.target.closest('.scene') !== e.target.closest('.scene.dragging')
+            ) {
               const targetScene = e.target.closest('.scene');
-              const targetIndex = parseInt(targetScene.dataset.index);
-              // Determine if dragging over above or below
               const bounding = targetScene.getBoundingClientRect();
-              const offset = bounding.y + (bounding.height / 2);
+              const offset = bounding.y + bounding.height / 2;
               if (e.clientY < offset) {
                 targetScene.style.borderTop = '2px solid #00ffff';
                 targetScene.style.borderBottom = 'none';
@@ -986,49 +1138,53 @@
             if (targetScene && draggedSceneIndex !== null) {
               const targetIndex = parseInt(targetScene.dataset.index);
               const draggedItem = dialogueData[draggedSceneIndex];
-              dialogueData.splice(draggedSceneIndex, 1); // Remove from old position
-
-              // Determine insert position based on where the drag happened relative to the center
+              dialogueData.splice(draggedSceneIndex, 1);
               const bounding = targetScene.getBoundingClientRect();
-              const offset = bounding.y + (bounding.height / 2);
+              const offset = bounding.y + bounding.height / 2;
               let newIndex = targetIndex;
               if (e.clientY >= offset && draggedSceneIndex < targetIndex) {
-                 newIndex = targetIndex;
-              } else if (e.clientY < offset && draggedSceneIndex > targetIndex) {
-                 newIndex = targetIndex;
-              } else if (e.clientY < offset && draggedSceneIndex < targetIndex) {
-                 newIndex = targetIndex - 1; // Insert before
-              } else if (e.clientY >= offset && draggedSceneIndex > targetIndex) {
-                 newIndex = targetIndex + 1; // Insert after
+                newIndex = targetIndex;
+              } else if (
+                e.clientY < offset &&
+                draggedSceneIndex > targetIndex
+              ) {
+                newIndex = targetIndex;
+              } else if (
+                e.clientY < offset &&
+                draggedSceneIndex < targetIndex
+              ) {
+                newIndex = targetIndex - 1;
+              } else if (
+                e.clientY >= offset &&
+                draggedSceneIndex > targetIndex
+              ) {
+                newIndex = targetIndex + 1;
               }
-
-
-              dialogueData.splice(newIndex, 0, draggedItem); // Insert at new position
-
-              saveDataToLocalStorage(); // Save changes to localStorage
-              renderEditor(); // Re-render the editor to update order
-              renderFlowchart(); // Update flowchart
+              dialogueData.splice(newIndex, 0, draggedItem);
+              saveDataToLocalStorage();
+              renderEditor();
+              renderFlowchart();
             }
             if (targetScene) {
-                targetScene.style.borderTop = 'none';
-                targetScene.style.borderBottom = 'none';
+              targetScene.style.borderTop = 'none';
+              targetScene.style.borderBottom = 'none';
             }
           });
 
           sceneDiv.addEventListener('dragend', (e) => {
             e.target.classList.remove('dragging');
             draggedSceneIndex = null;
-            // Clear any lingering borders from dragover
-            document.querySelectorAll('.scene').forEach(s => {
-                s.style.borderTop = 'none';
-                s.style.borderBottom = 'none';
+            document.querySelectorAll('.scene').forEach((s) => {
+              s.style.borderTop = 'none';
+              s.style.borderBottom = 'none';
             });
           });
 
-
           const header = document.createElement('div');
           header.className = 'scene-header';
-          header.innerHTML = `<h3>ฉากที่ ${index + 1}: ${scene.id || 'ไม่มี ID'}</h3>
+          header.innerHTML = `<h3>ฉากที่ ${index + 1}: ${
+            scene.id || 'ไม่มี ID'
+          }</h3>
                               <button class="remove-scene-btn" onclick="removeScene(${index})">🗑️ ลบฉาก</button>`;
           header.onclick = () => {
             sceneDiv.classList.toggle('active');
@@ -1041,19 +1197,27 @@
           content.innerHTML = `
                 <div class="form-group">
                     <label>Scene ID:</label>
-                    <input type="text" value="${scene.id || ''}" onchange="updateScene(${index}, 'id', this.value); renderFlowchart()">
+                    <input type="text" value="${
+                      scene.id || ''
+                    }" onchange="updateScene(${index}, 'id', this.value); renderFlowchart()">
                 </div>
                 <div class="form-group">
                     <label>Title (ถ้ามี):</label>
-                    <input type="text" value="${scene.title || ''}" onchange="updateScene(${index}, 'title', this.value); renderFlowchart()">
+                    <input type="text" value="${
+                      scene.title || ''
+                    }" onchange="updateScene(${index}, 'title', this.value); renderFlowchart()">
                 </div>
                 <div class="form-group">
                     <label>Text:</label>
-                    <textarea onchange="updateScene(${index}, 'text', this.value)">${scene.text || ''}</textarea>
+                    <textarea onchange="updateScene(${index}, 'text', this.value)">${
+            scene.text || ''
+          }</textarea>
                 </div>
                 <div class="form-group">
                     <label>Background Image Path:</label>
-                    <input type="text" value="${scene.background || ''}" onchange="updateScene(${index}, 'background', this.value)">
+                    <input type="text" value="${
+                      scene.background || ''
+                    }" onchange="updateScene(${index}, 'background', this.value)">
                 </div>
                 <h4>ตัวเลือก (Choices):</h4>
                 <div class="choice-list" id="choices-${index}"></div>
@@ -1064,7 +1228,9 @@
 
           const choicesList = document.getElementById(`choices-${index}`);
           (scene.choices || []).forEach((choice, choiceIndex) => {
-            choicesList.appendChild(createChoiceElement(index, choiceIndex, choice));
+            choicesList.appendChild(
+              createChoiceElement(index, choiceIndex, choice)
+            );
           });
         });
       }
@@ -1073,8 +1239,12 @@
         const choiceItem = document.createElement('div');
         choiceItem.className = 'choice-item';
         choiceItem.innerHTML = `
-            <input type="text" placeholder="ข้อความตัวเลือก" value="${choice.text || ''}" onchange="updateChoice(${sceneIndex}, ${choiceIndex}, 'text', this.value)">
-            <input type="text" placeholder="Scene ID ถัดไป" value="${choice.next || ''}" onchange="updateChoice(${sceneIndex}, ${choiceIndex}, 'next', this.value); renderFlowchart()">
+            <input type="text" placeholder="ข้อความตัวเลือก" value="${
+              choice.text || ''
+            }" onchange="updateChoice(${sceneIndex}, ${choiceIndex}, 'text', this.value)">
+            <input type="text" placeholder="Scene ID ถัดไป" value="${
+              choice.next || ''
+            }" onchange="updateChoice(${sceneIndex}, ${choiceIndex}, 'next', this.value); renderFlowchart()">
             <button class="remove-choice-btn" onclick="removeChoice(${sceneIndex}, ${choiceIndex})">🗑️</button>
         `;
         return choiceItem;
@@ -1086,7 +1256,7 @@
         } else {
           dialogueData[index][key] = value;
         }
-        saveDataToLocalStorage(); // Save changes to localStorage
+        saveDataToLocalStorage();
       }
 
       function updateChoice(sceneIndex, choiceIndex, key, value) {
@@ -1097,7 +1267,7 @@
           dialogueData[sceneIndex].choices[choiceIndex] = {};
         }
         dialogueData[sceneIndex].choices[choiceIndex][key] = value;
-        saveDataToLocalStorage(); // Save changes to localStorage
+        saveDataToLocalStorage();
         renderFlowchart();
       }
 
@@ -1106,50 +1276,53 @@
           dialogueData[sceneIndex].choices = [];
         }
         dialogueData[sceneIndex].choices.push({ text: '', next: '' });
-        saveDataToLocalStorage(); // Save changes to localStorage
+        saveDataToLocalStorage();
         renderEditor();
         renderFlowchart();
       }
 
       function removeChoice(sceneIndex, choiceIndex) {
         dialogueData[sceneIndex].choices.splice(choiceIndex, 1);
-        saveDataToLocalStorage(); // Save changes to localStorage
+        saveDataToLocalStorage();
         renderEditor();
         renderFlowchart();
       }
 
       function addScene() {
         dialogueData.push({
-          id: 'new-scene-' + Date.now(), // Ensure unique ID
+          id: 'new-scene-' + Date.now(),
           title: '',
           text: '',
           background: '',
           choices: [],
         });
-        saveDataToLocalStorage(); // Save changes to localStorage
+        saveDataToLocalStorage();
         renderEditor();
         renderFlowchart();
-        // Expand and scroll to the new scene
         const newSceneElement = editor.lastElementChild;
         if (newSceneElement) {
           newSceneElement.classList.add('active');
-          newSceneElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          newSceneElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
         }
       }
 
       function removeScene(index) {
-        // Use a custom modal instead of alert/confirm
         const confirmDelete = confirm('คุณต้องการลบฉากนี้ใช่หรือไม่?');
         if (confirmDelete) {
           dialogueData.splice(index, 1);
-          saveDataToLocalStorage(); // Save changes to localStorage
+          saveDataToLocalStorage();
           renderEditor();
           renderFlowchart();
         }
       }
 
       function exportData() {
-        const filteredData = dialogueData.filter((scene) => Object.keys(scene).length > 0);
+        const filteredData = dialogueData.filter(
+          (scene) => Object.keys(scene).length > 0
+        );
         const dataStr = JSON.stringify(filteredData, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -1162,52 +1335,55 @@
         URL.revokeObjectURL(url);
       }
 
-      // New function to handle importing JSON file
       function importData() {
-        importFileInput.click(); // Trigger the hidden file input click
+        importFileInput.click();
       }
 
-      // Event listener for when a file is selected
       importFileInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (!file) {
-          return; // No file selected
+          return;
         }
 
         const reader = new FileReader();
         reader.onload = (e) => {
           try {
             const importedData = JSON.parse(e.target.result);
-
-            // Basic validation: Check if it's an array and contains objects
-            if (Array.isArray(importedData) && importedData.every(item => typeof item === 'object' && item !== null)) {
-                const confirmImport = confirm('ข้อมูลทั้งหมดใน Editor จะถูกแทนที่ด้วยข้อมูลจากไฟล์ JSON นี้ คุณต้องการดำเนินการต่อหรือไม่?');
-                if (confirmImport) {
-                    dialogueData = importedData; // Replace current data
-                    saveDataToLocalStorage(); // Save imported data to localStorage
-                    renderEditor();
-                    renderFlowchart();
-                    alert('นำเข้าไฟล์ JSON สำเร็จ!');
-                }
+            if (
+              Array.isArray(importedData) &&
+              importedData.every(
+                (item) => typeof item === 'object' && item !== null
+              )
+            ) {
+              const confirmImport = confirm(
+                'ข้อมูลทั้งหมดใน Editor จะถูกแทนที่ด้วยข้อมูลจากไฟล์ JSON นี้ คุณต้องการดำเนินการต่อหรือไม่?'
+              );
+              if (confirmImport) {
+                dialogueData = importedData;
+                saveDataToLocalStorage();
+                renderEditor();
+                renderFlowchart();
+                alert('นำเข้าไฟล์ JSON สำเร็จ!');
+              }
             } else {
-                alert('รูปแบบไฟล์ JSON ไม่ถูกต้อง: ต้องเป็น Array ของ Object.');
+              alert('รูปแบบไฟล์ JSON ไม่ถูกต้อง: ต้องเป็น Array ของ Object.');
             }
           } catch (error) {
             console.error('Error parsing JSON file:', error);
-            alert('เกิดข้อผิดพลาดในการอ่านไฟล์ JSON: โปรดตรวจสอบว่าไฟล์มีรูปแบบที่ถูกต้อง');
+            alert(
+              'เกิดข้อผิดพลาดในการอ่านไฟล์ JSON: โปรดตรวจสอบว่าไฟล์มีรูปแบบที่ถูกต้อง'
+            );
           }
-          // Clear the file input value so that selecting the same file again triggers change event
           event.target.value = '';
         };
-        reader.readAsText(file); // Read the file as text
+        reader.readAsText(file);
       });
-
 
       async function renderFlowchart() {
         let flowchartCode = 'graph TD\n';
 
         dialogueData.forEach((scene) => {
-          if (Object.keys(scene).length === 0) return; // Skip empty object
+          if (Object.keys(scene).length === 0) return;
 
           if (scene.id) {
             const mermaidNodeId = sanitizeMermaidId(scene.id);
@@ -1225,16 +1401,20 @@
                   choiceText = choiceText
                     .replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;')
-                    .replace(/"/g, "'") // Important: Replaced " with ' here to fix nested quote issue
+                    .replace(/"/g, "'")
                     .replace(/`/g, '&#96;');
 
                   flowchartCode += `${mermaidNodeId} --> |"${choiceText}"| ${mermaidNextNodeId}\n`;
                 }
               });
             } else {
-              // Linear progression if no explicit choices
-              const currentIndex = dialogueData.findIndex((s) => s.id === scene.id);
-              if (currentIndex !== -1 && currentIndex < dialogueData.length - 1) {
+              const currentIndex = dialogueData.findIndex(
+                (s) => s.id === scene.id
+              );
+              if (
+                currentIndex !== -1 &&
+                currentIndex < dialogueData.length - 1
+              ) {
                 const nextScene = dialogueData[currentIndex + 1];
                 if (nextScene && nextScene.id) {
                   const mermaidNextNodeId = sanitizeMermaidId(nextScene.id);
@@ -1249,14 +1429,15 @@
 
         const flowchartDiv = document.getElementById('flowchart');
         try {
-          // mermaid.render returns an object with svg and bindFunctions
-          const { svg } = await mermaid.render('flowchart-diagram', flowchartCode);
+          const { svg } = await mermaid.render(
+            'flowchart-diagram',
+            flowchartCode
+          );
           flowchartDiv.innerHTML = svg;
-          // Optionally, bind functions if there are interactive elements in the future
-          // bindFunctions(flowchartDiv);
         } catch (error) {
           console.error('Mermaid render error:', error);
-          flowchartDiv.innerHTML = '<p style="color: red;">เกิดข้อผิดพลาดในการสร้างแผนผัง: โปรดตรวจสอบ Scene ID และการเชื่อมโยง</p>';
+          flowchartDiv.innerHTML =
+            '<p style="color: red;">เกิดข้อผิดพลาดในการสร้างแผนผัง: โปรดตรวจสอบ Scene ID และการเชื่อมโยง</p>';
         }
       }
 
@@ -1267,25 +1448,27 @@
           return;
         }
 
-        // Remove highlight from all scenes first
-        document.querySelectorAll('.scene.highlight').forEach(s => {
+        document.querySelectorAll('.scene.highlight').forEach((s) => {
           s.classList.remove('highlight');
         });
 
-        const foundSceneIndex = dialogueData.findIndex(scene => {
-          const idMatch = scene.id && scene.id.toLowerCase().includes(searchTerm);
-          const titleMatch = scene.title && scene.title.toLowerCase().includes(searchTerm);
+        const foundSceneIndex = dialogueData.findIndex((scene) => {
+          const idMatch =
+            scene.id && scene.id.toLowerCase().includes(searchTerm);
+          const titleMatch =
+            scene.title && scene.title.toLowerCase().includes(searchTerm);
           return idMatch || titleMatch;
         });
 
         if (foundSceneIndex !== -1) {
           const sceneElement = editor.children[foundSceneIndex];
           if (sceneElement) {
-            sceneElement.classList.add('active'); // Expand if collapsed
-            sceneElement.classList.add('highlight'); // Add highlight
-            sceneElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            // Remove highlight after a short delay
+            sceneElement.classList.add('active');
+            sceneElement.classList.add('highlight');
+            sceneElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+            });
             setTimeout(() => {
               sceneElement.classList.remove('highlight');
             }, 3000);
@@ -1295,15 +1478,163 @@
         }
       }
 
-      // Add event listeners for the new buttons
       addSceneBtn.addEventListener('click', addScene);
       exportBtn.addEventListener('click', exportData);
-      importBtn.addEventListener('click', importData); // Trigger the hidden file input
-      searchBtn.addEventListener('click', searchScene); // Attach search function to button
+      importBtn.addEventListener('click', importData);
+      searchBtn.addEventListener('click', searchScene);
 
-      // Initial render
+      // === New JavaScript for Image Picker ===
+      const imagePickerToggle = document.getElementById('image-picker-toggle');
+      const imagePickerSidebar = document.getElementById(
+        'image-picker-sidebar'
+      );
+      const imagePickerClose = document.getElementById('image-picker-close');
+      const imageCarousel = document.getElementById('image-carousel');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+
+      let currentImageIndex = 0;
+      let images = [];
+
+      const body = document.body;
+
+      function toggleImagePicker() {
+        imagePickerSidebar.classList.toggle('active');
+        body.classList.toggle('sidebar-open'); // เพิ่มบรรทัดนี้
+      }
+
+      // Event listeners for the toggle and close buttons
+      imagePickerToggle.addEventListener('click', toggleImagePicker);
+      imagePickerClose.addEventListener('click', toggleImagePicker);
+
+      // Function to fetch images from the 'Pic' folder (simulated)
+      // NOTE: In a real-world scenario, you would use a server-side script
+      // or a build process to generate this list. For this static HTML example,
+      // we'll use a predefined list.
+      function getImagesFromFolder() {
+        // This is a simulated list. In a real application, you'd get this from a backend.
+        // Make sure to add all your image names to this array.
+        return [
+          'Pic/20thb.jpeg',
+          'Pic/argue.jpeg',
+          'Pic/ask.jpeg',
+          'Pic/bar.jpeg',
+          'Pic/box.jpeg',
+          'Pic/boyfriend.jpeg',
+          'Pic/built.jpeg',
+          'Pic/cafe3.jpeg',
+          'Pic/cafestuck.jpeg',
+          'Pic/checkhand.jpeg',
+          'Pic/checkhand2.jpeg',
+          'Pic/checkhand3.jpeg',
+          'Pic/coffe.jpeg',
+          'Pic/cute_person.jpeg',
+          'Pic/deat.jpeg',
+          'Pic/dismiss.jpeg',
+          'Pic/drawe.jpeg',
+          'Pic/exit.jpeg',
+          'Pic/findDetailJermi.jpeg',
+          'Pic/ghoat.jpeg',
+          'Pic/grillPork.jpeg',
+          'Pic/hand.jpeg',
+          'Pic/leg.jpeg',
+          'Pic/mask.jpeg',
+          'Pic/me.jpg',
+          'Pic/openthedoor.jpeg',
+          'Pic/openthedor2.jpeg',
+          'Pic/person.jpeg',
+          'Pic/phone.jpeg',
+          'Pic/placWork.jpeg',
+          'Pic/plan.jpeg',
+          'Pic/playgame.jpeg',
+          'Pic/polic.jpeg',
+          'Pic/present.jpeg',
+          'Pic/present2.jpeg',
+          'Pic/rigis.jpeg',
+          'Pic/sleep.jpeg',
+          'Pic/talk.jpeg',
+          'Pic/teddi.jpeg',
+          'Pic/test.jpeg',
+          'Pic/think.jpeg',
+          'Pic/think2.jpeg',
+          'Pic/war.jpeg',
+        ];
+      }
+
+      function renderImages() {
+        images = getImagesFromFolder();
+        imageCarousel.innerHTML = '';
+        images.forEach((imagePath) => {
+          const item = document.createElement('div');
+          item.className = 'carousel-item';
+          const imageName = imagePath.split('/').pop();
+          item.innerHTML = `
+            <img src="${imagePath}" alt="${imageName}">
+            <div class="carousel-caption">
+              <span>${imagePath}</span>
+              <button class="copy-path-btn" onclick="copyToClipboard('${imagePath}')">คัดลอก</button>
+            </div>
+          `;
+          imageCarousel.appendChild(item);
+        });
+        updateCarousel();
+      }
+
+      function updateCarousel() {
+        const itemWidth =
+          imageCarousel.querySelector('.carousel-item').offsetWidth;
+        imageCarousel.style.transform = `translateX(${
+          -currentImageIndex * itemWidth
+        }px)`;
+      }
+
+      function nextImage() {
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        updateCarousel();
+      }
+
+      function prevImage() {
+        currentImageIndex =
+          (currentImageIndex - 1 + images.length) % images.length;
+        updateCarousel();
+      }
+
+      function copyToClipboard(text) {
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            alert('คัดลอกพาธรูปภาพเรียบร้อยแล้ว: ' + text);
+          })
+          .catch((err) => {
+            console.error('Failed to copy: ', err);
+            alert('คัดลอกไม่ได้: ' + text);
+          });
+      }
+
+      prevBtn.addEventListener('click', prevImage);
+      nextBtn.addEventListener('click', nextImage);
+
+      // Add swipe functionality for mobile and desktop
+      let touchStartX = 0;
+      imageCarousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+      });
+
+      imageCarousel.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        if (touchStartX - touchEndX > 50) {
+          // Swipe left
+          nextImage();
+        } else if (touchEndX - touchStartX > 50) {
+          // Swipe right
+          prevImage();
+        }
+      });
+
+      // Initial render calls
       renderEditor();
       renderFlowchart();
+      renderImages();
     </script>
   </body>
 </html>
