@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือเรียนกฎหมายฉบับเเมงปออ้วน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>  
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .progress-line { position: relative; }
+        .progress-line::after { content: ''; position: absolute; left: 50%; top: 100%; width: 2px; height: 40px; background: linear-gradient(to bottom, #667eea, #764ba2); transform: translateX(-50%); }
+        .progress-line:last-child::after { display: none; }
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeInUp 0.6s ease forwards; }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        .law-icon { width: 60px; height: 60px; margin: 0 auto 1rem; }
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .progress-line {
+            position: relative;
+        }
+        
+        .progress-line::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            width: 2px;
+            height: 40px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            transform: translateX(-50%);
+        }
+        
+        .progress-line:last-child::after {
+            display: none;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .law-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-6 text-center">
+            <div class="law-icon mx-auto mb-6">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full">
+                    <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" opacity="0.3"/>
+                    <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
+                    <path d="M3 17H21V19H3V17Z"/>
+                    <path d="M5 21H19V22H5V21Z"/>
+                </svg>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 fade-in">คู่มือเรียนกฎหมาย</h1>
+            <p class="text-xl md:text-2xl font-light fade-in" style="animation-delay: 0.2s">สำหรับมือใหม่ โนมือเก่า</p>
+            <div class="mt-8 fade-in" style="animation-delay: 0.4s">
+                <div class="inline-block bg-white/20 backdrop-blur-sm rounded-full px-6 py-3">
+                    <p class="text-lg">🎯 เริ่มจากภาพใหญ่ → เจาะลึกเนื้อหา → เรียนรู้กระบวนการ</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section class="mb-16 fade-in" style="animation-delay: 0.6s">
+            <div class="bg-white rounded-2xl shadow-lg p-8 border-l-4 border-blue-500">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <span class="text-3xl mr-3">💡</span>
+                    หัวใจสำคัญของการเรียนรู้
+                </h2>
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    การเริ่มจาก <strong class="text-blue-600">"ภาพใหญ่"</strong> ที่เป็นโครงสร้างหลักของกฎหมาย 
+                    แล้วค่อยเจาะลึกไปในส่วนที่เป็นเนื้อหา (สารบัญญัติ) จากนั้นจึงไปสู่กระบวนการ (วิธีสบัญญัติ) 
+                    และกฎหมายเฉพาะทางอื่นๆ นะอ้วน
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-16 fade-in" style="animation-delay: 0.8s">
+            <div class="text-center mb-12 progress-line">
+                <div class="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full px-8 py-4 shadow-lg">
+                    <h2 class="text-2xl font-bold">กลุ่มที่ 1: ภาพใหญ่และกฎหมายพื้นฐาน</h2>
+                </div>
+                <p class="mt-4 text-gray-600 text-lg">เริ่มต้นจาก 3 วิชานี้ก่อน จะทำให้เธอเข้าใจโครงสร้างของรัฐ</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 card-hover border-t-4 border-blue-500 flex flex-col">
+                    <div class="flex-grow">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">🏛️</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">กฎหมายมหาชน</h3>
+                            <p class="text-sm text-gray-500">(Public Law)</p>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-blue-600 mb-2">ทำไมต้องเริ่มวิชานี้:</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                วิชานี้เปรียบเสมือน <strong>"แผนที่"</strong> ของระบบกฎหมายทั้งหมด 
+                                จะสอนให้เรารู้จักว่า "รัฐ" คืออะไร, อำนาจอธิปไตยมาจากไหนและทำงานอย่างไร
+                            </p>
+                        </div>
+                        <div class="bg-blue-50 rounded-lg p-3">
+                            <h4 class="font-semibold text-blue-800 mb-2 text-sm">สิ่งที่ต้องโฟกัส:</h4>
+                            <ul class="text-xs text-blue-700 space-y-2">
+                                <li><strong>• รัฐธรรมนูญ:</strong> กฎหมายสูงสุดของประเทศ กำหนดโครงสร้างรัฐ สิทธิเสรีภาพของประชาชน และการตรวจสอบการใช้อำนาจรัฐ</li>
+                                <li><strong>• กฎหมายปกครอง:</strong> ว่าด้วยการจัดระเบียบและการดำเนินงานของ "ฝ่ายปกครอง" (เช่น คณะรัฐมนตรี, กระทรวง, กรม) และความสัมพันธ์กับประชาชน</li>
+                                <li><strong>• หลักการพื้นฐาน:</strong> เช่น หลักการแบ่งแยกอำนาจ (นิติบัญญัติ, บริหาร, ตุลาการ) หลักความชอบด้วยกฎหมายของการกระทำทางปกครอง</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <a href="public-law.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-blue-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-blue-600 transition-colors duration-300 shadow-md">
+                            เรียนรู้เพิ่มเติม →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-6 card-hover border-t-4 border-green-500 flex flex-col">
+                     <div class="flex-grow">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">📋</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">กฎหมายแพ่งและพาณิชย์</h3>
+                            <p class="text-sm text-gray-500">(Civil and Commercial Law)</p>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-green-600 mb-2">ทำไมต้องเรียนลำดับนี้:</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                เป็นกฎหมายที่ใกล้ตัวเราที่สุด ว่าด้วยสิทธิ หน้าที่ และความสัมพันธ์ระหว่าง 
+                                <strong>"เอกชนกับเอกชน"</strong> ตั้งแต่เกิดจนตาย
+                            </p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-3">
+                            <h4 class="font-semibold text-green-800 mb-2 text-sm">สิ่งที่ต้องโฟกัส:</h4>
+                            <ul class="text-xs text-green-700 space-y-2">
+                                <li><strong>• บุคคล:</strong> สภาพบุคคลเริ่มเมื่อไหร่ สิ้นสุดเมื่อไหร่ และนิติบุคคลคืออะไร</li>
+                                <li><strong>• นิติกรรมและสัญญา:</strong> หัวใจสำคัญของการแสดงเจตนาเพื่อสร้างความสัมพันธ์ทางกฎหมาย (เช่น สัญญาซื้อขาย, กู้ยืม, เช่า)</li>
+                                 <li><strong>• หนี้ และ ละเมิด:</strong> หนี้เกิดจากอะไรได้บ้าง (ส่วนใหญ่เกิดจากสัญญาและละเมิด) และการกระทำละเมิดที่ต้องชดใช้ค่าเสียหาย</li>
+                                <li><strong>• ทรัพย์สิน:</strong> ประเภทของทรัพย์ และสิทธิในทรัพย์สิน (เช่น กรรมสิทธิ์)</li>
+                                <li><strong>• ครอบครัว และ มรดก:</strong> เงื่อนไขการหมั้น, การสมรส และการจัดการทรัพย์สินเมื่อเสียชีวิต</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <a href="civil-law.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-green-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-green-600 transition-colors duration-300 shadow-md">
+                            เรียนรู้เพิ่มเติม →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-6 card-hover border-t-4 border-red-500 flex flex-col">
+                     <div class="flex-grow">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">⚖️</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">กฎหมายอาญา</h3>
+                            <p class="text-sm text-gray-500">(Criminal Law)</p>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-red-600 mb-2">ทำไมต้องเรียนลำดับนี้:</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                เป็นกฎหมายที่รัฐกำหนดว่าการกระทำแบบไหนเป็นความผิดร้ายแรงและมีโทษทางอาญา 
+                                เป็นอีกเสาหลักหนึ่งของกฎหมาย
+                            </p>
+                        </div>
+                        <div class="bg-red-50 rounded-lg p-3">
+                            <h4 class="font-semibold text-red-800 mb-2 text-sm">สิ่งที่ต้องโฟกัส:</h4>
+                            <ul class="text-xs text-red-700 space-y-2">
+                                <li><strong>• โครงสร้างความรับผิด:</strong> บุคคลจะผิดอาญาต้องครบ 3 ส่วน คือ (1) มีการกระทำ (2) การกระทำครบองค์ประกอบที่กฎหมายบัญญัติ (3) ไม่มีกฎหมายยกเว้นความผิด/โทษ</li>
+                                <li><strong>• เจตนาและประมาท:</strong> การกระทำโดย "เจตนา" (รู้สำนึกและมุ่งหมายต่อผล) กับ "ประมาท" (ปราศจากความระมัดระวัง) มีผลต่อความผิดและโทษต่างกัน</li>
+                                <li><strong>• ประเภทความผิดสำคัญ:</strong> เช่น ความผิดต่อชีวิตและร่างกาย (ฆ่า, ทำร้ายร่างกาย), ความผิดเกี่ยวกับทรัพย์ (ลักทรัพย์, วิ่งราวทรัพย์, ชิงทรัพย์, ปล้นทรัพย์)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <a href="criminal-law.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-red-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-red-600 transition-colors duration-300 shadow-md">
+                            เรียนรู้เพิ่มเติม →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16 fade-in" style="animation-delay: 1s">
+            <div class="text-center mb-12 progress-line">
+                <div class="inline-block bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-full px-8 py-4 shadow-lg">
+                    <h2 class="text-2xl font-bold">กลุ่มที่ 2: กฎหมายว่าด้วยกระบวนการในศาล</h2>
+                </div>
+                <p class="mt-4 text-gray-600 text-lg">หลังจากเข้าใจ "เนื้อหา" แล้ว ให้มาต่อที่ "กระบวนการ"</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 card-hover border-t-4 border-purple-500 flex flex-col">
+                    <div class="flex-grow">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">📝</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">กฎหมายวิธีพิจารณาความแพ่ง</h3>
+                            <p class="text-sm text-gray-500">(Civil Procedure Law)</p>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-purple-600 mb-2">ทำไมต้องเรียนลำดับนี้:</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                เมื่อเกิดข้อพิพาททางแพ่ง (เช่น ผิดสัญญา, ละเมิด) จะฟ้องร้องบังคับคดีกันอย่างไร 
+                                วิชานี้ก็คือคำตอบ
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-3">
+                            <h4 class="font-semibold text-purple-800 mb-2 text-sm">สิ่งที่ต้องโฟกัส:</h4>
+                            <ul class="text-xs text-purple-700 space-y-2">
+                                 <li><strong>• เขตอำนาจศาล:</strong> จะต้องฟ้องคดีที่ศาลไหน (เช่น ศาลที่จำเลยมีภูมิลำเนา)</li>
+                                <li><strong>• กระบวนการพิจารณา:</strong> ขั้นตอนตั้งแต่ "การยื่นคำฟ้อง" ของโจทก์, "การยื่นคำให้การ" ของจำเลย, "การสืบพยาน" ไปจนถึง "การพิพากษา" ของศาล</li>
+                                <li><strong>• การอุทธรณ์/ฎีกา:</strong> กระบวนการโต้แย้งคำพิพากษาของศาลชั้นต้นไปยังศาลสูง</li>
+                                 <li><strong>• การบังคับคดี:</strong> เมื่อศาลพิพากษาแล้ว หากลูกหนี้ไม่ปฏิบัติตาม จะมีกระบวนการบังคับ (เช่น ยึดทรัพย์, อายัดเงินเดือน) อย่างไร</li>
+                            </ul>
+                        </div>
+                    </div>
+                     <div class="mt-6 text-center">
+                        <a href="civil-procedure-law.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-purple-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-purple-600 transition-colors duration-300 shadow-md">
+                            เรียนรู้เพิ่มเติม →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-6 card-hover border-t-4 border-pink-500 flex flex-col">
+                    <div class="flex-grow">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">🔍</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">กฎหมายวิธีพิจารณาความอาญา</h3>
+                            <p class="text-sm text-gray-500">(Criminal Procedure Law)</p>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-pink-600 mb-2">ทำไมต้องเรียนลำดับนี้:</h4>
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                เมื่อมีคนกระทำความผิดอาญา จะมีกระบวนการจับกุม, สอบสวน, ฟ้องร้อง 
+                                และพิจารณาคดีในศาลอย่างไร
+                            </p>
+                        </div>
+                        <div class="bg-pink-50 rounded-lg p-3">
+                            <h4 class="font-semibold text-pink-800 mb-2 text-sm">สิ่งที่ต้องโฟกัส:</h4>
+                            <ul class="text-xs text-pink-700 space-y-2">
+                                <li><strong>• ขั้นตอนดำเนินคดี:</strong> เริ่มจากชั้น "สอบสวน" (ตำรวจ) → ชั้น "สั่งฟ้อง" (อัยการ) → ชั้น "พิจารณาพิพากษา" (ศาล)</li>
+                                <li><strong>• สิทธิของผู้ต้องหา/จำเลย:</strong> สิทธิพื้นฐานที่สำคัญมาก เช่น สิทธิที่จะไม่ให้การ, สิทธิที่จะมีทนายความ, และหลัก "สันนิษฐานไว้ก่อนว่าเป็นผู้บริสุทธิ์" (innocent until proven guilty)</li>
+                                <li><strong>• อำนาจหน้าที่:</strong> ใครมีอำนาจทำอะไรได้บ้าง เช่น ตำรวจมีอำนาจจับกุมและสอบสวน, อัยการมีอำนาจฟ้องคดี, ศาลมีอำนาจพิจารณาและพิพากษา</li>
+                            </ul>
+                        </div>
+                    </div>
+                     <div class="mt-6 text-center">
+                        <a href="criminal-procedure-law.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-pink-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-pink-600 transition-colors duration-300 shadow-md">
+                            เรียนรู้เพิ่มเติม →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16 fade-in" style="animation-delay: 1.2s">
+            <div class="text-center mb-12">
+                <div class="inline-block bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full px-8 py-4 shadow-lg">
+                    <h2 class="text-2xl font-bold">กลุ่มที่ 3: กฎหมายเฉพาะทาง</h2>
+                </div>
+                <p class="mt-4 text-gray-600 text-lg">เมื่อมีพื้นฐานแน่นจาก 2 กลุ่มแรกแล้ว ค่อยมาเก็บรายละเอียด</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 card-hover border-t-4 border-orange-500 flex flex-col">
+                    <div class="flex-grow">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">🌍</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">กฎหมายระหว่างประเทศ</h3>
+                            <p class="text-sm text-gray-500">(International Law)</p>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                            ว่าด้วยความสัมพันธ์ระหว่างรัฐกับรัฐ หรือรัฐกับองค์การระหว่างประเทศ รวมถึงกฎเกณฑ์ที่ใช้บังคับเมื่อมีเอกชนจากต่างรัฐมาเกี่ยวข้อง
+                        </p>
+                        <div class="bg-orange-50 rounded-lg p-3">
+                            <h4 class="font-semibold text-orange-800 mb-2 text-sm">สิ่งที่ควรรู้:</h4>
+                            <ul class="text-xs text-orange-700 space-y-2">
+                                <li><strong>• แผนกคดีเมือง:</strong> กฎเกณฑ์ระหว่าง "รัฐต่อรัฐ" เช่น กฎหมายทะเล, กฎหมายสงคราม ที่มาสำคัญคือ "สนธิสัญญา" และ "จารีตประเพณีระหว่างประเทศ"</li>
+                                <li><strong>• แผนกคดีบุคคล:</strong> หรือ "กฎหมายขัดกัน" คือกฎหมายที่ชี้ว่าจะใช้กฎหมายของประเทศใดบังคับกับข้อพิพาททางแพ่งที่มี "จุดเกาะเกี่ยว" กับต่างประเทศ</li>
+                            </ul>
+                        </div>
+                    </div>
+                     <div class="mt-6 text-center">
+                        <a href="international-law.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-orange-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-orange-600 transition-colors duration-300 shadow-md">
+                            เรียนรู้เพิ่มเติม →
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-lg p-6 card-hover border-t-4 border-yellow-500 flex flex-col">
+                     <div class="flex-grow">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">💰</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">กฎหมายภาษี</h3>
+                            <p class="text-sm text-gray-500">(Tax Law)</p>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                            กฎหมายที่ให้อำนาจรัฐในการจัดเก็บเงินจากราษฎรเพื่อนำไปใช้จ่ายในการบริหารประเทศและจัดทำบริการสาธารณะ
+                        </p>
+                        <div class="bg-yellow-50 rounded-lg p-3">
+                            <h4 class="font-semibold text-yellow-800 mb-2 text-sm">สิ่งที่ควรรู้:</h4>
+                            <ul class="text-xs text-yellow-700 space-y-2">
+                                 <li><strong>• ประมวลรัษฎากร:</strong> เป็นกฎหมายหลักในการจัดเก็บภาษีอากรของไทย</li>
+                                 <li><strong>• ภาษีสำคัญ:</strong> ภาษีเงินได้บุคคลธรรมดา (จากเงินเดือน, ค้าขาย), ภาษีเงินได้นิติบุคคล (จากกำไรบริษัท), ภาษีมูลค่าเพิ่ม (VAT 7% ที่บวกในสินค้า/บริการ)</li>
+                                 <li><strong>• หลักการสำคัญ:</strong> หลักความสามารถในการเสียภาษี, หลักความเป็นธรรม</li>
+                            </ul>
+                        </div>
+                    </div>
+                     <div class="mt-6 text-center">
+                        <a href="tax-law.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-yellow-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-yellow-600 transition-colors duration-300 shadow-md">
+                            เรียนรู้เพิ่มเติม →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-6 card-hover border-t-4 border-teal-500 flex flex-col">
+                    <div class="flex-grow">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">🌱</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">กฎหมายสิ่งแวดล้อม</h3>
+                            <p class="text-sm text-gray-500">(Environmental Law)</p>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                            กฎหมายที่กำหนดมาตรการในการป้องกัน, รักษา, และฟื้นฟูคุณภาพสิ่งแวดล้อม เพื่อให้เกิดการพัฒนาที่ยั่งยืน
+                        </p>
+                        <div class="bg-teal-50 rounded-lg p-3">
+                            <h4 class="font-semibold text-teal-800 mb-2 text-sm">สิ่งที่ควรรู้:</h4>
+                            <ul class="text-xs text-teal-700 space-y-2">
+                                 <li><strong>• พ.ร.บ.ส่งเสริมและรักษาคุณภาพสิ่งแวดล้อม:</strong> เป็นกฎหมายแม่บทด้านสิ่งแวดล้อม</li>
+                                 <li><strong>• หลักผู้ก่อมลพิษเป็นผู้จ่าย (PPP):</strong> ใครเป็นคนสร้างปัญหาสิ่งแวดล้อม คนนั้นต้องเป็นผู้รับผิดชอบค่าใช้จ่ายในการแก้ไข</li>
+                                 <li><strong>• เครื่องมือสำคัญ:</strong> เช่น การทำรายงานผลกระทบสิ่งแวดล้อม (EIA) ก่อนเริ่มโครงการขนาดใหญ่, การกำหนดมาตรฐานควบคุมมลพิษ (น้ำเสีย, อากาศ)</li>
+                            </ul>
+                        </div>
+                    </div>
+                     <div class="mt-6 text-center">
+                        <a href="environmental-law.html" target="_blank" rel="noopener noreferrer" class="inline-block bg-teal-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-teal-600 transition-colors duration-300 shadow-md">
+                            เรียนรู้เพิ่มเติม →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center fade-in" style="animation-delay: 1.4s">
+            <div class="bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-2xl p-8 shadow-xl">
+                <h2 class="text-3xl font-bold mb-4">🎉 จบจร้าาา</h2>
+                <p class="text-xl">เข้าใจป่ะ</p>
+                <div class="mt-6">
+                    <button onclick="scrollToTop()" class="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-300 shadow-lg">
+                        กลับไปด้านบน ↑
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-400">สร้างด้วยความตั้งใจเพื่อการเรียนรู้กฎหมายนะจ้ะ</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll to top function
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+        // Add click effects to cards - This script is not necessary for the button functionality but kept from original code
+        document.querySelectorAll('.card-hover').forEach(card => {
+            card.addEventListener('click', function(event) {
+                // Prevent card animation if a link inside it was clicked
+                if (event.target.tagName.toLowerCase() === 'a') {
+                    return;
+                }
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
