@@ -19,3 +19,5 @@ https://pp300950.github.io/train_travel/main.html
 https://pp300950.github.io/raws_web/index.html
 
 https://pp300950.github.io/My_Qrcode/index.html
+
+https://pp300950.github.io/laws_quiz/index.html
