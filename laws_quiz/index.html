@@ -65,7 +65,7 @@
             50% { transform: translate(100px, 150px) scale(1.2); }
             100% { transform: translate(-50px, -100px) scale(1); }
         }
-        
+       
         .container {
             background-color: var(--card-bg);
             backdrop-filter: blur(15px);
@@ -80,7 +80,7 @@
             position: relative; 
             margin: 20px 0; /* Add margin for spacing when scrolling */
         }
-        
+       
         #taunt-popup {
             position: absolute;
             top: 0;
@@ -113,13 +113,13 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        
+       
         #start-screen h1 {
             font-size: 3rem;
             color: var(--primary-color);
             margin-bottom: 20px;
         }
-        
+       
         #nickname-input {
             font-family: 'Kanit', sans-serif;
             font-size: 1.2rem;
@@ -165,7 +165,7 @@
             border-radius: 20px;
             font-weight: bold;
         }
-        
+       
         #question-counter span {
             display: inline-block;
             background-color: rgba(255, 255, 255, 0.2);
@@ -174,15 +174,28 @@
             min-width: 30px;
             text-align: center;
         }
-        
+
+        /* --- ADDED: Style for the timer display --- */
+        .right-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #timer-countdown {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+        }
+       
         #score-container {
             position: relative;
         }
-        
+       
         #score-display {
             font-weight: bold;
         }
-        
+       
         .score-popup {
             position: absolute;
             top: -10px;
@@ -194,7 +207,7 @@
             animation: plus-score-anim 1.5s ease-out forwards;
             pointer-events: none; 
         }
-        
+       
         @keyframes plus-score-anim {
             0% { transform: translate(-50%, 0); opacity: 1; }
             100% { transform: translate(-50%, -50px); opacity: 0; }
@@ -330,8 +343,10 @@
         <div id="game-screen" class="screen">
             <div class="game-header">
                 <div id="question-counter"></div>
-                <div id="score-container">
-                    <div id="score-display">คะแนน: 0</div>
+                <div class="right-header">
+                    เวลา 🕒: <div id="timer-countdown"></div><div id="score-container">
+                        <div id="score-display">คะแนน: 0</div>
+                    </div>
                 </div>
             </div>
             <div id="timer-bar-container"><div id="timer-bar"></div></div>
@@ -374,10 +389,10 @@
             </div>
             <div id="fail-message" class="hide">
                 <h2>เสียใจด้วย คะแนนของคุณยังไม่ถึงเกณฑ์ 80% ขึ้นไป</h2>
-                <p>คุณต้องพยามเรียนเพิ่มหน่อยนะไม่ใช่พยามทำให้เขารักแต่เขาไม่รัก</p>
+                <p>คุณต้องพยามเรียนเพิ่มหน่อยนะไม่ใช่พยายามทำให้เขารักแต่เขาไม่รัก</p>
             </div>
             <div class="controls">
-                 <button id="back-to-start-btn" class="restart-btn">กลับหน้าแรก</button>
+               <button id="back-to-start-btn" class="restart-btn">กลับหน้าแรก</button>
             </div>
         </div>
     </div>
@@ -418,7 +433,7 @@
             results: document.getElementById('results-screen'),
             certificate: document.getElementById('certificate-screen')
         };
-        
+       
         const questionTextElement = document.getElementById('question-text');
         const answerButtonsElement = document.getElementById('answer-buttons');
         const questionCounterElement = document.getElementById('question-counter');
@@ -430,6 +445,7 @@
         const scoreContainer = document.getElementById('score-container');
         const correctCountDisplayElement = document.getElementById('correct-count-display');
         const tauntPopupElement = document.getElementById('taunt-popup');
+        const timerCountdownElement = document.getElementById('timer-countdown'); // ADDED
 
         const certContent = document.getElementById('certificate-content');
         const failMessage = document.getElementById('fail-message');
@@ -445,8 +461,8 @@
         let correctAnswersCount = 0;
         let incorrectAnswers = [];
         let timer;
-        let timeLeft = 20;
-        const TIME_LIMIT = 20;
+        let timeLeft; // MODIFIED: No longer needs initial value here
+        const TIME_LIMIT = 40; // MODIFIED: Changed from 20 to 40
 
         function switchScreen(screenName) {
             Object.values(screens).forEach(screen => screen.classList.remove('active'));
@@ -462,7 +478,7 @@
             }
             startCountdown();
         }
-        
+       
         function startCountdown() {
             switchScreen('countdown');
             let count = 3;
@@ -489,7 +505,7 @@
             nextButton.classList.add('hide');
             setNextQuestion();
         }
-        
+       
         function setNextQuestion() {
             resetState();
             if (currentQuestionIndex < shuffledQuestions.length) {
@@ -499,21 +515,28 @@
                 showResults();
             }
         }
-        
+       
         function startTimer() {
             timeLeft = TIME_LIMIT;
+            timerCountdownElement.innerText = timeLeft; // ADDED: Set initial time display
             timerBarElement.style.transition = 'none';
             timerBarElement.style.width = '100%';
+            
             setTimeout(() => {
                 timerBarElement.style.transition = `width ${TIME_LIMIT}s linear`;
                 timerBarElement.style.width = '0%';
             }, 100);
+
             timer = setInterval(() => {
                 timeLeft--;
-                if (timeLeft <= 0) { clearInterval(timer); timeUp(); }
+                timerCountdownElement.innerText = timeLeft; // ADDED: Update time display every second
+                if (timeLeft <= 0) { 
+                    clearInterval(timer);
+                    timeUp();
+                }
             }, 1000);
         }
-        
+       
         function showTaunt(isTimeUp = false) {
             const message = isTimeUp ? "เวลาหมดจ้า!" : tauntMessages[Math.floor(Math.random() * tauntMessages.length)];
             tauntPopupElement.innerText = message;
@@ -541,7 +564,7 @@
                 answerButtonsElement.appendChild(button);
             });
         }
-        
+       
         function resetState() {
             nextButton.classList.add('hide');
             while (answerButtonsElement.firstChild) {
@@ -549,11 +572,12 @@
             }
             clearInterval(timer);
             timerBarElement.style.transition = 'none';
+            timerCountdownElement.innerText = ''; // ADDED: Clear old time
         }
 
         function selectAnswer(e) {
             clearInterval(timer);
-            timerBarElement.style.transition = 'none';
+            timerBarElement.style.transition = 'none'; // Stop the bar animation
             const selectedButton = e.target;
             const correct = selectedButton.dataset.correct === 'true';
             const currentQuestion = shuffledQuestions[currentQuestionIndex];
@@ -586,7 +610,7 @@
             });
             if (currentQuestionIndex < shuffledQuestions.length) { nextButton.classList.remove('hide'); }
         }
-        
+       
         function showResults() {
             switchScreen('results');
             finalScoreElement.innerText = score;
@@ -602,7 +626,7 @@
                 });
             }
         }
-        
+       
         function showCertificate() {
             switchScreen('certificate');
             const totalQuestions = shuffledQuestions.length;
@@ -618,7 +642,7 @@
 
                 let compliment = "ยอดเยี่ยมมาก ความรู้แน่นปึ้ก!";
                 if (correctAnswersCount === totalQuestions) {
-                    compliment = "สุดยอด! คุณคือผู้เชี่ยวชาญตัวจริง!";
+                    compliment = "โหหห ได้เต็มเลยหรอเพ่!!";
                 }
                 certCompliment.innerText = compliment;
 
