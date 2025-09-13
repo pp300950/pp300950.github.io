@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ปลอมจัด ปรับจริง จะปรับให้หมดตูดเลย</title>
+    <title>ปลอมจัด ปรับจริงจะปรับให้หมดตูดเลย</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&family=Sarabun:wght@400;700&display=swap');
 
@@ -313,6 +313,18 @@
                 font-size: 1.2rem;
             }
         }
+        /* --- โค้ดที่เพิ่มเข้ามาสำหรับแก้ไขการแสดงผลบนมือถือ --- */
+        .game-header {
+            flex-direction: column; /* เปลี่ยนการจัดเรียงเป็นแนวตั้ง */
+            gap: 15px; /* เพิ่มช่องว่างระหว่างบรรทัด */
+            align-items: stretch; /* ทำให้แต่ละส่วนขยายเต็มความกว้าง */
+        }
+
+        .right-header {
+            width: 100%; /* ทำให้ส่วนของเวลาและคะแนนกว้างเต็มที่ */
+            justify-content: space-between; /* จัดให้เวลาอยู่ซ้ายสุด และคะแนนอยู่ขวาสุด */
+        }
+        /* --- จบส่วนที่เพิ่มเข้ามา --- */
     </style>
 </head>
 <body>
@@ -417,7 +429,7 @@
             { question: 'อาจารย์มงคล ทานอาหารร้านไหนบ่อยที่สุด?', answers: [{ text: 'ขนมจีนยายเป้า', correct: false }, { text: 'แม่จิตรโภชนา', correct: true }, { text: 'กวยจั๊บญวนอุบล', correct: false }, { text: 'ขนมจีนแม่สมนึก', correct: false }], noPoints: true }
         ];
 
-        const tauntMessages = ["ผิดซะงั้น!", "ผิดเป็นครู", "ตอบให้ถูกดิน้อง", "ตอบให้ถูก เค้าก็ไม่กลับมา", "พลาดไปนิดเดียว","ตาเบี้ยวเผลอเลือกข้อผิด ชัวร์"];
+        const tauntMessages = ["ผิดซะงั้น!", "โอ๊ย! ไม่น่าเลย", "ตอบให้ถูกดิน้อง", "ตอบให้ถูก เค้าก็ไม่กลับมา", "พลาดไปนิดเดียว","ตาเบี้ยวเผลอเลือกข้อผิด ชัวร์"];
 
         const startButton = document.getElementById('start-btn');
         const nextButton = document.getElementById('next-btn');
