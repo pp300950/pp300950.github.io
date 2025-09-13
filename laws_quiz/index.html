@@ -324,6 +324,10 @@
             width: 100%; /* ทำให้ส่วนของเวลาและคะแนนกว้างเต็มที่ */
             justify-content: space-between; /* จัดให้เวลาอยู่ซ้ายสุด และคะแนนอยู่ขวาสุด */
         }
+
+        .screen {
+            top: 30px;
+        }
         /* --- จบส่วนที่เพิ่มเข้ามา --- */
     </style>
 </head>
@@ -342,7 +346,7 @@
         <div id="start-screen" class="screen active">
             <h1>ปลอมจัด ปรับจริง</h1>
             <p>ทดสอบความรู้ของคุณเกี่ยวกับข่าวปลอมและการปลอมแปลง</p>
-            <input type="text" id="nickname-input" placeholder="ใส่ชื่อเล่นของคุณที่นี่">
+            <input type="text" id="nickname-input" placeholder="ใส่ชื่อของคุณที่นี่">
             <div class="controls">
                 <button id="start-btn" class="start-btn">เตรียมพร้อม</button>
             </div>
