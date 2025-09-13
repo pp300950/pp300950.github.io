@@ -14,8 +14,10 @@
             --incorrect-color: #f44336; /* Red */
             --bg-color: #f3e5f5; /* Light Purple */
             --text-color: #333;
-            --card-bg: #ffffff;
-            --cert-border-color: #c8a464;
+            --card-bg: rgba(255, 255, 255, 0.7); /* White with transparency for glass effect */
+            --cert-border-color: #c8a464; /* Gold color for cert */
+            --cert-frame-color-light: #d4af7a;
+            --cert-frame-color-dark: #a47d3a;
         }
 
         * {
@@ -26,24 +28,57 @@
 
         body {
             font-family: 'Kanit', sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg-color); /* Fallback color */
             color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            /* --- MODIFIED: Allow vertical scrolling when needed --- */
+            overflow-y: auto; 
+            position: relative;
         }
 
+        /* --- Animated Background --- */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.6;
+        }
+        .orb:nth-child(1) { width: 300px; height: 300px; background-color: var(--primary-color); top: 5%; left: 10%; animation: move 25s infinite alternate; }
+        .orb:nth-child(2) { width: 250px; height: 250px; background-color: var(--secondary-color); bottom: 10%; right: 15%; animation: move 20s infinite alternate-reverse; }
+        .orb:nth-child(3) { width: 200px; height: 200px; background-color: #e91e63; top: 30%; right: 25%; animation: move 30s infinite alternate; }
+        .orb:nth-child(4) { width: 150px; height: 150px; background-color: #03a9f4; bottom: 20%; left: 20%; animation: move 18s infinite alternate-reverse; }
+
+        @keyframes move {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(100px, 150px) scale(1.2); }
+            100% { transform: translate(-50px, -100px) scale(1); }
+        }
+        
         .container {
             background-color: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             width: 100%;
             max-width: 800px;
             overflow: hidden;
             text-align: center;
             position: relative; 
+            margin: 20px 0; /* Add margin for spacing when scrolling */
         }
         
         #taunt-popup {
@@ -63,7 +98,6 @@
         #taunt-popup.show {
             transform: translateY(0);
         }
-
 
         .screen {
             padding: 40px;
@@ -86,7 +120,6 @@
             margin-bottom: 20px;
         }
         
-        /* --- NEW: Nickname Input Styling --- */
         #nickname-input {
             font-family: 'Kanit', sans-serif;
             font-size: 1.2rem;
@@ -130,6 +163,16 @@
             color: white;
             padding: 5px 15px;
             border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        #question-counter span {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 2px 10px;
+            border-radius: 12px;
+            min-width: 30px;
+            text-align: center;
         }
         
         #score-container {
@@ -178,15 +221,27 @@
         #correct-count-display { font-size: 1.2rem; margin-bottom: 20px; }
         #incorrect-summary { text-align: left; margin-top: 20px; }
         #incorrect-summary ul { list-style: none; padding-left: 0; }
+        /* --- NEW: Add scrolling to the incorrect list if it gets too long --- */
+        #incorrect-summary ul {
+            max-height: 250px; /* Adjust as needed */
+            overflow-y: auto;
+            padding-right: 10px; /* Space for scrollbar */
+        }
         #incorrect-summary li { background-color: #ffeeee; border-left: 5px solid var(--incorrect-color); padding: 10px; margin-bottom: 10px; border-radius: 5px; }
 
-        /* --- NEW: Certificate Styling --- */
+        /* --- Certificate Styling --- */
         #certificate-content {
-            border: 10px solid var(--cert-border-color);
+            background: radial-gradient(circle, #fffdf5 0%, #fffaf0 100%);
             padding: 30px;
-            background-color: #fffaf0;
             font-family: 'Sarabun', sans-serif;
             border-radius: 10px;
+            border: 2px solid var(--cert-frame-color-dark);
+            position: relative;
+            box-shadow: 
+                inset 0 0 0 1px var(--cert-frame-color-light),
+                inset 0 0 0 8px #fdf5e6,
+                inset 0 0 0 10px var(--cert-frame-color-dark),
+                0 5px 15px rgba(0,0,0,0.1);
         }
         #certificate-content h2 {
             font-family: 'Kanit', sans-serif;
@@ -198,6 +253,8 @@
             color: var(--secondary-color);
             text-decoration: underline;
             margin: 15px 0;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         #cert-compliment {
             font-size: 1.5rem;
@@ -213,9 +270,46 @@
             font-size: 2rem;
             color: var(--incorrect-color);
         }
+
+        /* --- Responsive fixes for mobile --- */
+        @media (max-width: 600px) {
+            .screen {
+                padding: 20px;
+            }
+            #start-screen h1 {
+                font-size: 2.5rem;
+            }
+            #question-text {
+                font-size: 1.3rem;
+            }
+            #certificate-content {
+                padding: 15px;
+                box-shadow: 
+                    inset 0 0 0 1px var(--cert-frame-color-light),
+                    inset 0 0 0 4px #fdf5e6,
+                    inset 0 0 0 5px var(--cert-frame-color-dark),
+                    0 5px 10px rgba(0,0,0,0.1);
+            }
+            #certificate-content h2 {
+                font-size: 1.8rem;
+            }
+            #cert-nickname {
+                font-size: 1.5rem;
+            }
+            #cert-compliment {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <div class="background-animation">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
 
     <div class="container">
         <div id="taunt-popup">ผิดซะงั้น!</div>
@@ -269,46 +363,60 @@
                 <p>ขอมอบเกียรติบัตรฉบับนี้เพื่อแสดงว่า</p>
                 <h1 id="cert-nickname"></h1>
                 <p>ได้ผ่านการทดสอบความรู้ ในหัวข้อ"ปลอมจัด ปรับจริง"</p>
+                <p id="cert-pass-criteria"></p>
                 <p id="cert-score"></p>
                 <p id="cert-correct-count"></p>
                 <p id="cert-compliment"></p>
                 <div class="signature">
-                    นายพงศกร ผาบจันทร์สิงห์<br>
-                    (ผู้สร้างเว็บไซต์)
+                    รับรองโดย<br>
+                    คนที่นั่งข้างๆคุณ
                 </div>
             </div>
             <div id="fail-message" class="hide">
-                <h2>เสียใจด้วยคุณทำได้ไม่เกินครึ่ง</h2>
-                <p>พยายามอีกหน่อยน้าาาา</p>
+                <h2>เสียใจด้วย คะแนนของคุณยังไม่ถึงเกณฑ์ 80% ขึ้นไป</h2>
+                <p>คุณต้องพยามเรียนเพิ่มหน่อยนะไม่ใช่พยามทำให้เขารักแต่เขาไม่รัก</p>
             </div>
             <div class="controls">
                  <button id="back-to-start-btn" class="restart-btn">กลับหน้าแรก</button>
             </div>
         </div>
-
     </div>
 
     <script>
         const questions = [
-            { question: 'การปลอมมีกี่ประเภท', answers: [{ text: '1', correct: false }, { text: '2', correct: false }, { text: '3', correct: true }, { text: '4', correct: false }] }, { question: 'การปลอมเอกสารเป็นคดีใด', answers: [{ text: 'อาญา', correct: true }, { text: 'ถูกทั้งหมด', correct: false }, { text: 'อาญา และ แพ่ง', correct: false }, { text: 'แพ่ง', correct: false }] }, { question: 'การปลอมเอกสารอยู่มาตราใด', answers: [{ text: '264', correct: true }, { text: '356', correct: false }, { text: '236', correct: false }, { text: '164', correct: false }] }, { question: 'การนำธนบัตรปลอมที่ตัวเองไม่ได้เป็นคนทำ ไปใช้จ่ายถือว่ามีความผิดหรือไม่?', answers: [{ text: 'ผิดถ้ารู้ว่าเป็นของปลอมแล้วยังเอาไปใช้', correct: true }, { text: 'ไม่ผิดเพราะไม่ได้ทำเอง', correct: false }, { text: 'ผิดเฉพาะถ้าใช้เงินเกิน 1 ครั้ง', correct: false }, { text: 'ไม่ผิดถ้าใช้ซื้อของกินเล็กๆน้อยๆ', correct: false }] }, { question: 'ถ้าผู้ใดปลอม สัญญาเงินกู้แล้วเอาไปฟ้องในศาล ข้อหาอะไรจะตามมา?', answers: [{ text: 'ผิดวินัยทนายความเท่านั้น', correct: false }, { text: 'ทำเอกสารปลอม+ใช้เอกสารปลอม', correct: true }, { text: 'ผิดเฉพาะแพ่งไม่ใช่อาญา', correct: false }, { text: 'แค่ศาลไม่รับฟ้อง', correct: false }] }, { question: 'การปลอม บัตรนักศึกษา แล้วใช้จริงเพื่อขอลดราคาค่าเข้าโรงหนังเข้าข่ายความผิดใด?', answers: [{ text: 'ใช้เอกสารสิทธิ์ปลอม', correct: true }, { text: 'ผิดวินัยนักศึกษาแต่ไม่ผิดกฎหมาย', correct: false }, { text: 'ปลอมบัตรโดยสาร', correct: false }, { text: 'แค่ผิดกฎโรงหนัง', correct: false }] }, { question: 'ถ้าเพื่อนทำธนบัตรปลอม 20 บาทไปใช้เเละโดนจับโทษสูงสุดจะเหมือนกับทำแบงค์ 1,000ปลอมไหม?', answers: [{ text: 'ถูกทุกข้อ', correct: false }, { text: 'ไม่มีโทษ', correct: false }, { text: 'ไม่เหมือนกันเพราะมูลค่าต่างกัน', correct: false }, { text: 'เหมือนกันเพราะกฎหมายมองที่การปลอมไม่ใช่จำนวนเงิน', correct: true }] }, { question: 'ข่าวลือ บอกว่าถ้าสอบตกวิชากฎหมาย จะออกประกาศยกเลิกวิชา คำถามคือ?', answers: [{ text: 'ทำไมไม่เป็นเรื่องจริงสักที', correct: false }, { text: 'ความฝันของเด็กไทย', correct: false }, { text: 'ข่าวปลอมแน่นอน', correct: true }, { text: 'ถูกทุกข้อ', correct: false }] }, { question: 'ใครขายข่าวยารักษาโรค-รักษาทุกโรคได้ โดยไม่มีหลักฐานสิ่งเหล่านี้เข้าข่ายอะไร?', answers: [{ text: 'แค่โฆษณาเกินจริง', correct: false }, { text: 'ปลอดภัยถ้ามีคนซื้อจริง', correct: false }, { text: 'เผยแพร่ข้อมูลเท็จ/หลอกลวงอาจเข้าข่ายฉ้อโกงหรือผิดกฎหมายสาธารณสุข', correct: true }, { text: 'แค่การตลาดอิสระ', correct: false }] }, { question: 'ข้อใดเป็นเครื่องมือที่ช่วยป้องกันการตกเป็นผู้เผยแพร่ข่าวปลอม', answers: [{ text: 'เชื่อเฉพาะเพจที่มีคนกดไลค์เยอะ', correct: false }, { text: 'แชร์ทุกโพสต์เพราะกลัวตกเทรนด์', correct: false }, { text: 'ตรวจสอบหลายแหล่งดูแหล่งข่าว', correct: true }, { text: 'ปิดคอมพิวเตอร์แล้วนอน', correct: false }] }, { question: 'อาจารย์มงคล ทานอาหารร้านใดบ่อยที่สุด?', answers: [{ text: 'ขนมจีนยายเป้า', correct: false }, { text: 'แม่จิตรโภชนา', correct: true }, { text: 'กวยจั๊บญวนอุบล', correct: false }, { text: 'ขนมจีนแม่สมนึก', correct: false }], noPoints: true }
+            { question: 'การปลอมมีกี่ประเภท?', answers: [{ text: '1', correct: false }, { text: '2', correct: false }, { text: '3', correct: true }, { text: '4', correct: false }] },
+            { question: 'การปลอมเอกสารเป็นคดีใด?', answers: [{ text: 'อาญา', correct: true }, { text: 'ถูกทั้งหมด', correct: false }, { text: 'อาญา และ แพ่ง', correct: false }, { text: 'แพ่ง', correct: false }] },
+            { question: 'การปลอมเอกสารอยู่มาตราใด?', answers: [{ text: '264', correct: true }, { text: '356', correct: false }, { text: '236', correct: false }, { text: '164', correct: false }] },
+            { question: 'การนำธนบัตรปลอมที่ตัวเองไม่ได้เป็นคนทำ ไปใช้จ่ายถือว่ามีความผิดหรือไม่?', answers: [{ text: 'ผิดถ้ารู้ว่าเป็นของปลอมแล้วยังเอาไปใช้', correct: true }, { text: 'ไม่ผิดเพราะไม่ได้ทำเอง', correct: false }, { text: 'ผิดเฉพาะถ้าใช้เงินเกิน 1 ครั้ง', correct: false }, { text: 'ไม่ผิดถ้าใช้ซื้อของกินเล็กๆน้อยๆ', correct: false }] },
+            { question: 'ถ้าผู้ใดปลอม สัญญาเงินกู้แล้วเอาไปฟ้องในศาล ข้อหาอะไรจะตามมา?', answers: [{ text: 'ผิดวินัยทนายความเท่านั้น', correct: false }, { text: 'ทำเอกสารปลอม+ใช้เอกสารปลอม', correct: true }, { text: 'ผิดเฉพาะแพ่งไม่ใช่อาญา', correct: false }, { text: 'แค่ศาลไม่รับฟ้อง', correct: false }] },
+            { question: 'การปลอม บัตรนักศึกษา แล้วใช้จริงเพื่อขอลดราคาค่าเข้าโรงหนังเข้าข่ายความผิดใด?', answers: [{ text: 'ใช้เอกสารสิทธิ์ปลอม', correct: true }, { text: 'ผิดวินัยนักศึกษาแต่ไม่ผิดกฎหมาย', correct: false }, { text: 'ปลอมบัตรโดยสาร', correct: false }, { text: 'แค่ผิดกฎโรงหนัง', correct: false }] },
+            { question: 'ถ้าเพื่อนทำธนบัตรปลอม 20 บาทไปใช้เเละโดนจับโทษสูงสุดจะเหมือนกับทำแบงค์ 1,000ปลอมไหม?', answers: [{ text: 'ถูกทุกข้อ', correct: false }, { text: 'ไม่มีโทษ', correct: false }, { text: 'ไม่เหมือนกันเพราะมูลค่าต่างกัน', correct: false }, { text: 'เหมือนกันเพราะกฎหมายมองที่การปลอมไม่ใช่จำนวนเงิน', correct: true }] },
+            { question: 'ข่าวลือ บอกว่าถ้าสอบตกวิชากฎหมาย จะออกประกาศยกเลิกวิชา คำถามคือ?', answers: [{ text: 'ทำไมไม่เป็นเรื่องจริงสักที', correct: false }, { text: 'ความฝันของเด็กไทย', correct: false }, { text: 'ข่าวปลอมแน่นอน', correct: true }, { text: 'ถูกทุกข้อ', correct: false }] },
+            { question: 'ใครขายข่าวยารักษาโรค-รักษาทุกโรคได้ โดยไม่มีหลักฐานสิ่งเหล่านี้เข้าข่ายอะไร?', answers: [{ text: 'แค่โฆษณาเกินจริง', correct: false }, { text: 'ปลอดภัยถ้ามีคนซื้อจริง', correct: false }, { text: 'เผยแพร่ข้อมูลเท็จ/หลอกลวงอาจเข้าข่ายฉ้อโกงหรือผิดกฎหมายสาธารณสุข', correct: true }, { text: 'แค่การตลาดอิสระ', correct: false }] },
+            { question: 'ข้อใดเป็นเครื่องมือที่ช่วยป้องกันการตกเป็นผู้เผยแพร่ข่าวปลอม', answers: [{ text: 'เชื่อเฉพาะเพจที่มีคนกดไลค์เยอะ', correct: false }, { text: 'แชร์ทุกโพสต์เพราะกลัวตกเทรนด์', correct: false }, { text: 'ตรวจสอบหลายแหล่งดูแหล่งข่าว', correct: true }, { text: 'ปิดคอมพิวเตอร์แล้วนอน', correct: false }] },
+            { question: 'คุณแชร์โพสต์การรักษาโรคที่ไม่ได้พิสูจน์ทางวิทยาศาสตร์ลงเฟซบุ๊ก อาจเข้าข่ายความผิดตามกฎหมายใด?', answers: [ { text: 'พ.ร.บ.คอมพิวเตอร์ มาตรา 14', correct: true }, { text: 'กฎหมายสัญจรทางบก', correct: false }, { text: 'กฎหมายห้ามเลี้ยงเป็ดในห้องน้ำ', correct: false }, { text: 'ไม่ผิดหรอก เพราะแชร์ก่อนคิด', correct: false }] },
+            { question: 'การปลอมเงินตราส่วนใหญ่พบในรูปแบบใด?', answers: [ { text: 'ธนบัตร', correct: true }, { text: 'เหรียญ', correct: false }, { text: 'เหรียญทองช็อกโกแลต', correct: false }, { text: 'สลิป', correct: false }] },
+            { question: 'ข่าวปลอมที่แพร่ในปัจจุบันแตกต่างจากอดีตอย่างไร?', answers: [ { text: 'ปัจจุบันแพร่ผ่านโซเชียลมีเดียอย่างรวดเร็ว', correct: true }, { text: 'อดีตและปัจจุบันไม่ต่างกันเลย', correct: false }, { text: 'ตอนนี้ส่งข่าวปลอมด้วยนกพิราบแทน', correct: false }, { text: 'ไม่มีข้อใดถูก', correct: false }] },
+            { question: 'หากประชาชนพบเงินปลอม ควรตรวจสอบข้อมูลเพิ่มเติมได้จากที่ใด?', answers: [ { text: 'เว็บไซต์ธนาคารแห่งประเทศไทย', correct: true }, { text: 'โรงรับจำนำ', correct: false }, { text: 'กูเกิ้ล', correct: false }, { text: 'เพจพ่อค้าออนไลน์ที่ขายทุกอย่างตั้งแต่หม้อทอดยันยันต์กันผี', correct: false }] },
+            { question: 'หน่วยงานของรัฐที่ทำหน้าที่ตรวจสอบและเผยแพร่ข้อเท็จจริงเกี่ยวกับข่าวปลอมคือใคร?', answers: [ { text: 'ศูนย์ต่อต้านข่าวปลอมประเทศไทย', correct: true }, { text: 'กระทรวงเกษตรและสหกรณ์', correct: false }, { text: 'สมาคมผู้รู้ความจริง', correct: false }, { text: 'กลุ่มไลน์รัฐซึ่งเข้าได้ตามเฟส', correct: false }] },
+            { question: 'อาจารย์มงคล ทานอาหารร้านไหนบ่อยที่สุด?', answers: [{ text: 'ขนมจีนยายเป้า', correct: false }, { text: 'แม่จิตรโภชนา', correct: true }, { text: 'กวยจั๊บญวนอุบล', correct: false }, { text: 'ขนมจีนแม่สมนึก', correct: false }], noPoints: true }
         ];
 
         const tauntMessages = ["ผิดซะงั้น!", "โอ๊ย! ไม่น่าเลย", "ตอบให้ถูกดิน้อง", "ตอบให้ถูก เค้าก็ไม่กลับมา", "พลาดไปนิดเดียว","ตาเบี้ยวเผลอเลือกข้อผิด ชัวร์"];
 
-        // --- Get ALL elements ---
         const startButton = document.getElementById('start-btn');
         const nextButton = document.getElementById('next-btn');
         const restartButton = document.getElementById('restart-btn');
-        const nicknameInput = document.getElementById('nickname-input'); // NEW
-        const viewCertButton = document.getElementById('view-cert-btn'); // NEW
-        const backToStartButton = document.getElementById('back-to-start-btn'); // NEW
+        const nicknameInput = document.getElementById('nickname-input');
+        const viewCertButton = document.getElementById('view-cert-btn');
+        const backToStartButton = document.getElementById('back-to-start-btn');
 
         const screens = {
             start: document.getElementById('start-screen'),
             countdown: document.getElementById('countdown-screen'),
             game: document.getElementById('game-screen'),
             results: document.getElementById('results-screen'),
-            certificate: document.getElementById('certificate-screen') // NEW
+            certificate: document.getElementById('certificate-screen')
         };
         
         const questionTextElement = document.getElementById('question-text');
@@ -323,15 +431,14 @@
         const correctCountDisplayElement = document.getElementById('correct-count-display');
         const tauntPopupElement = document.getElementById('taunt-popup');
 
-        // --- Certificate Elements ---
         const certContent = document.getElementById('certificate-content');
         const failMessage = document.getElementById('fail-message');
         const certNickname = document.getElementById('cert-nickname');
         const certScore = document.getElementById('cert-score');
         const certCorrectCount = document.getElementById('cert-correct-count');
         const certCompliment = document.getElementById('cert-compliment');
+        const certPassCriteria = document.getElementById('cert-pass-criteria');
 
-        // --- Game State Variables ---
         let playerName = '';
         let shuffledQuestions, currentQuestionIndex;
         let score = 0;
@@ -422,7 +529,7 @@
         }
 
         function showQuestion(question) {
-            questionCounterElement.innerText = `ข้อที่ ${currentQuestionIndex + 1} / ${shuffledQuestions.length}`;
+            questionCounterElement.innerHTML = `ข้อที่ <span>${currentQuestionIndex + 1}</span> / <span>${shuffledQuestions.length}</span>`;
             questionTextElement.innerText = question.question;
             if (question.noPoints) { questionTextElement.innerText += " (ข้อนี้ไม่คิดคะแนน)"; }
             question.answers.forEach(answer => {
@@ -496,25 +603,22 @@
             }
         }
         
-        // --- NEW: Function to show certificate ---
         function showCertificate() {
             switchScreen('certificate');
             const totalQuestions = shuffledQuestions.length;
-            const passed = correctAnswersCount > totalQuestions / 2;
+            const passed = (correctAnswersCount / totalQuestions) >= 0.8;
 
             if (passed) {
                 certContent.classList.remove('hide');
                 failMessage.classList.add('hide');
-
                 certNickname.innerText = playerName;
+                certPassCriteria.innerText = `และผ่านเกณฑ์การประเมินที่ 80% ของแบบทดสอบ`;
                 certScore.innerText = `ทำคะแนนได้: ${score} คะแนน`;
                 certCorrectCount.innerText = `ตอบถูก ${correctAnswersCount} จาก ${totalQuestions} ข้อ`;
 
-                let compliment = "ทำได้ดีมาก!";
+                let compliment = "ยอดเยี่ยมมาก ความรู้แน่นปึ้ก!";
                 if (correctAnswersCount === totalQuestions) {
                     compliment = "สุดยอด! คุณคือผู้เชี่ยวชาญตัวจริง!";
-                } else if (correctAnswersCount / totalQuestions >= 0.8) {
-                    compliment = "ยอดเยี่ยมมาก ความรู้แน่นปึ้ก!";
                 }
                 certCompliment.innerText = compliment;
 
@@ -524,7 +628,6 @@
             }
         }
 
-        // --- All Event Listeners ---
         startButton.addEventListener('click', handleStartClick);
         nextButton.addEventListener('click', () => { currentQuestionIndex++; setNextQuestion(); });
         restartButton.addEventListener('click', () => { switchScreen('start'); });
