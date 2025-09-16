@@ -26,7 +26,7 @@ https://pp300950.github.io/currencyconverter.html
 
 https://pp300950.github.io/pieno/index.html
 
-https://pp300950.github.io/anna.html // bot anna ที่จะทายว่าคุณคือเพื่อนในเฟสคนไหนจากข้อมูลที่มี
+https://pp300950.github.io/annabot/anna.html // bot anna ที่จะทายว่าคุณคือเพื่อนในเฟสคนไหนจากข้อมูลที่มี
 
 https://pp300950.github.io/imgCompression/imgCompression.html
 
