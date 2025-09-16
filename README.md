@@ -24,7 +24,7 @@ https://pp300950.github.io/file_tess.html // โค้ดบล็อกเเ�
 
 https://pp300950.github.io/currencyconverter.html
 
-https://pp300950.github.io/pieno/index.html
+https://pp300950.github.io/piano/index.html
 
 https://pp300950.github.io/annabot/anna.html // bot anna ที่จะทายว่าคุณคือเพื่อนในเฟสคนไหนจากข้อมูลที่มี
 
