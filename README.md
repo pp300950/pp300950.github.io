@@ -22,7 +22,7 @@ https://pp300950.github.io/laws_quiz/index.html
 
 https://pp300950.github.io/file_tess.html // โค้ดบล็อกเเบบ visue p เเปลงเป็นไพธ่อน
 
-https://pp300950.github.io/currencyconverter.html
+https://pp300950.github.io/calculator/currencyconverter.html
 
 https://pp300950.github.io/piano/index.html
 
