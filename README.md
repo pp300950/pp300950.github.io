@@ -19,3 +19,19 @@ https://pp300950.github.io/train_travel/main.html
 https://pp300950.github.io/raws_web/index.html
 
 https://pp300950.github.io/laws_quiz/index.html
+
+https://pp300950.github.io/file_tess.html // โค้ดบล็อกเเบบ visue p เเปลงเป็นไพธ่อน
+
+https://pp300950.github.io/currencyconverter.html
+
+https://pp300950.github.io/pieno/index.html
+
+https://pp300950.github.io/anna.html // bot anna ที่จะทายว่าคุณคือเพื่อนในเฟสคนไหนจากข้อมูลที่มี
+
+https://pp300950.github.io/imgCompression.html
+
+https://pp300950.github.io/chatbot-1/index.html
+
+https://pp300950.github.io/bottictactoe/index.html
+
+https://pp300950.github.io/laws_quiz/index.html
