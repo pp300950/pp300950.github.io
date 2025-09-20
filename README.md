@@ -26,6 +26,8 @@ https://pp300950.github.io/piano/index.html
 
 https://pp300950.github.io/annabot/anna.html // bot anna ที่จะทายว่าคุณคือเพื่อนในเฟสคนไหนจากข้อมูลที่มี
 
+https://pp300950.github.io/find_me/notebook.html
+
 https://pp300950.github.io/imgCompression/imgCompression.html
 
 https://pp300950.github.io/chatbot-1/index.html
