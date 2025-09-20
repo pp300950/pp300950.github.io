@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>เข้าสู่ระบบ</title>
+    <style>
+        body { 
+            background: #f0f6f6; 
+            font-family: 'Courier New', monospace; 
+            color: #222; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-box { 
+            width: 350px;
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            text-align: center;
+        }
+        h1 { 
+            margin-top: 0; 
+            color: #333; 
+        }
+        .puzzle-container {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            height: 100px;
+        }
+        .puzzle-number {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: #005a9c;
+        }
+        #num1 { top: 10px; left: 10px; }
+        #num2 { top: 10px; right: 10px; }
+        #num3 { bottom: 10px; left: 10px; }
+        #num4 { bottom: 10px; right: 10px; }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            font-family: 'Courier New', monospace;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        button.login-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px 16px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h1>กรอกรหัสผ่าน</h1>
+    <p>รหัสคือผลรวมของเลขมุมบนซ้ายและมุมล่างขวา</p>
+
+    <div class="puzzle-container">
+        <span id="num1" class="puzzle-number"></span>
+        <span id="num2" class="puzzle-number"></span>
+        <span id="num3" class="puzzle-number"></span>
+        <span id="num4" class="puzzle-number"></span>
+    </div>
+
+    <input type="password" id="passwordInput" placeholder="กรอกรหัสที่นี่">
+    <button class="login-btn" onclick="checkPassword()">เข้าสู่ระบบ</button>
+</div>
+
+<script>
+    let correctAnswer;
+
+    // ฟังก์ชันนี้จะทำงานเมื่อหน้าเว็บโหลดเสร็จ
+    window.onload = function() {
+        // สุ่มตัวเลข 2-99
+        function getRandomNumber() {
+            return Math.floor(Math.random() * 98) + 2;
+        }
+
+        const num1 = getRandomNumber();
+        const num2 = getRandomNumber();
+        const num3 = getRandomNumber();
+        const num4 = getRandomNumber();
+
+        // แสดงตัวเลขบนหน้าจอ
+        document.getElementById('num1').innerText = num1;
+        document.getElementById('num2').innerText = num2;
+        document.getElementById('num3').innerText = num3;
+        document.getElementById('num4').innerText = num4;
+
+        // คำนวณคำตอบที่ถูกต้องเก็บไว้
+        correctAnswer = num1 + num4;
+        
+        // สำหรับ Debug: แสดงคำตอบใน Console
+        console.log(`คำใบ้: รหัสที่ถูกต้องคือ ${correctAnswer}`);
+    };
+
+    // ฟังก์ชันสำหรับตรวจสอบรหัสผ่าน
+    function checkPassword() {
+        // ดึงค่าที่ผู้ใช้กรอก
+        const userInput = document.getElementById('passwordInput').value;
+
+        // ตรวจสอบว่าผู้ใช้กรอกอะไรมาหรือไม่
+        if (userInput === "") {
+            alert("กรุณากรอกรหัสผ่าน!");
+            return;
+        }
+
+        // แปลงค่าที่ผู้ใช้กรอกเป็นตัวเลข
+        const userPassword = parseInt(userInput);
+
+        // เปรียบเทียบกับคำตอบที่ถูกต้อง
+        if (userPassword === correctAnswer) {
+            // --- กรณีรหัสถูก ---
+            // เปลี่ยนหน้าไปยัง final_page.html (คุณสามารถเปลี่ยนชื่อไฟล์ได้)
+            window.location.href = 'final_page.html';
+        } else {
+            // --- กรณีรหัสผิด ---
+            // แสดง pop-up แจ้งเตือน
+            alert("รหัสผ่านไม่ถูกต้อง!");
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Chimera - The Notebook</title>
+    <style>
+        /* General Styles */
+        body {
+            background-color: #f0e6d6;
+            font-family: 'Courier New', Courier, monospace;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+
+        /* Container for the notebook */
+        .notebook-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        /* Styling for the notebook page */
+        .notebook-page {
+            position: relative;
+        }
+
+        /* Red lines are removed as requested */
+        /*
+        .notebook-page::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50px;
+            width: 1px;
+            height: 100%;
+            background-color: #f00;
+        }
+        */
+
+        /* Line effects */
+        .notebook-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(
+                #ddd 0px,
+                #ddd 1px,
+                transparent 1px,
+                transparent 25px
+            );
+            background-size: 100% 25px;
+            opacity: 0.8;
+            pointer-events: none; /* Allows text selection through the lines */
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            text-align: right;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        /* Font styles for different types of text */
+        .handwriting {
+            font-family: 'Arial Narrow', 'Segoe Print', cursive;
+            font-size: 18px;
+            line-height: 25px;
+        }
+
+        .typed-text {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            line-height: 24px;
+            white-space: pre-wrap;
+        }
+
+        /* Styling for the strikethrough effect without overlapping */
+        .strikethrough-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .strikethrough-text {
+            text-decoration: line-through;
+            font-family: 'Arial Narrow', 'Segoe Print', cursive;
+            font-size: 18px;
+        }
+
+        .replacement-text {
+            position: absolute;
+            left: 0;
+            top: 100%; /* Position below the strikethrough text */
+            margin-top: -10px; /* Adjust spacing */
+            font-family: 'Arial Narrow', 'Segoe Print', cursive;
+            font-size: 18px;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .next-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .notebook-container {
+                padding: 20px;
+                border-radius: 5px;
+            }
+        }
+        .next-button {
+        text-decoration: none;
+    }
+    </style>
+</head>
+<body>
+
+    <div class="notebook-container">
+        <div class="notebook-page">
+            <div class="content">
+                <div class="page-header">หน้า 1</div>
+                
+                <div class="handwriting">
+                    <p>สวัสดีคุณนักสืบ ถ้าคุณได้อ่านโน้ตนี้ ตัวผมนั้นก็คงได้ตายไปเเล้ว</p>
+                    <p>คุณคงสงสัยว่ามันเกิดอะไรขึ้นกันเเน่  ตัวผมถึงได้...</p>
+                    <br>
+                    <p>
+                      ตัวผมนั้นเป็นแฮกเกอร์ฝ่ายดีที่คอยตรวจสอบความปลอดภัยทางด้านการเชื่อมต่อข้อมูลให้กับบริษัทข้อมูล
+                      แห่งหนึ่ง จนวันนึ่งผมตรวจพบการเข้าสู่ระบบที่ผิดปกติจาก IP Address แห่งหนึ่ง ผมพยายามบล็อก 
+                      IP เขา แต่เขาก็หาทางอื่นแฮกเข้ามาได้เรื่อยๆ จนวันหนึ่งเขาก็แฮกเข้ามา
+                      ได้สำเร็จ เขานำข้อมูลของลูกค้าเราไปขายในดาร์กเว็บ และแน่นอนว่าผมถูกไล่ออก 
+                      ผมค่อยๆ ตามล่าแฮกเกอร์คนนั้นอย่างเงียบๆ โดยติดตามจากร่องรอยการเข้าสู่ระบบที่เขาทิ้งไว้ 
+                      แต่เขารู้ตัว เขาส่งลิงก์ฟิชชิ่งผ่านอีเมลที่มีเนื้อหาหลอกลวงให้ผมกด ซึ่งผมพลาดท่าไปกดเข้า
+                      จนเขาได้ข้อมูลส่วนตัวของผมไปทั้งหมด เค้าคงจะไม่ปล่อยให้คนที่พยายามสืบค้นเรื่องราวของเค้า
+                      รอดไปได้ ทำให้ผมรู้ตัวว่าคงจะอยู่รอดได้อีกไม่นาน ผมมีเบาะเเสเพียงเท่านี้
+                      </p>
+                   
+                </div>
+
+                <div class="button-container">
+                  <a href="evidence.html" class="next-button">อ่านต่อ...</a>
+              </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
