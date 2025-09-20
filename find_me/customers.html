@@ -26,6 +26,7 @@
             font-family: 'Courier New', Courier, monospace;
             text-decoration: none;
             display: inline-block;
+            margin-top: 15px; /* Added margin for spacing */
         }
         .container {
             max-width: 900px;
@@ -80,8 +81,8 @@
 
         <div class="guess-area">
             <div>
-                <label for="guess"><strong>กรอกหมายเลขผู้ใช้ที่คิดว่าเป็นไอพีรูปแบบมีเเพทเทิ่น หรือจะอ่านข้อมูลเอาก็ได้ </strong></label><br/>
-                <input id="guess" type="text" placeholder="ตัวอย่าง: 2,7 (เรียงอะไรก็ได้)"/>
+                <label for="guess"><strong>กรอกหมายเลขผู้ใช้สองรายที่ชื่อ "สมควร โดนแล้ว"</strong></label><br/>
+                <input id="guess" type="text" placeholder="ตัวอย่าง: 2,7 (สลับลำดับได้)"/>
                 <button class="go" id="submitBtn">ค้นหาคีย์การเข้ารหัส</button>
             </div>
             <div class="small">หมายเหตุ: หมายเลขที่ต้องกรอกคือลำดับของรายการ (1 - จำนวนรายการ)</div>
@@ -90,51 +91,40 @@
     </div>
 
     <script>
-        // สร้างรายการ IP แบบสุ่ม + บังคับให้มี 2 รายการที่เป็น xxx.x.113.xxx
+        // ฟังก์ชันสุ่มเวลา (เอาไว้ใช้แค่สร้างเวลา)
         function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
-        function randIP() {
-            return [randInt(1,223), randInt(0,255), randInt(0,255), randInt(1,254)].join('.');
-        }
-
-        // ข้อมูลสมมติสำหรับบางไอพี (จะไม่ใช่คนจริง)
+    
+        // ข้อมูลสมมติ พร้อมกำหนด IP ตายตัวเลย
         const sampleProfiles = [
-            {name: "สมชาย ใจดี", nick: "ชอ", gender: "ชาย", age: 34, address: "123/4 หมู่ 5 ถ.ราษฎร์บริรักษ์, อ.เมือง", country: "ไทย"},
-            {name: "สุกัญญา พวงเงิน", nick: "กาญ", gender: "หญิง", age: 28, address: "56 ซ.สุขใจ ถ.สุขุมวิท, ต.บางนา", country: "ไทย"},
-            {name: "Alex Mercer", nick: "Merc", gender: "ชาย", age: 41, address: "12 Baker St, Central", country: "UK"},
-            {name: "สมควร โดนเเล้ว", nick: "arm", gender: "หญิง", age: 30, address: "No.8 Lane 33, Jing'an", country: "China"},
-            {name: "สมควร โดนเเล้ว", nick: "เเขน", gender: "ชาย", age: 30, address: "No.9 Lane 49, Jing'an", country: "China"},
-            {name: "Иван Петров", nick: "Ivan", gender: "ชาย", age: 37, address: "ул. Ленина, д.12", country: "Russia"},
-            {name: "Kaito Nakamura", nick: "Kai", gender: "ชาย", age: 22, address: "5-3-2 Ginza", country: "Japan"},
-            {name: "นัทธมน สายสว่าง", nick: "นัท", gender: "หญิง", age: 19, address: "77 ถ.ช้างคลาน, จ.เชียงใหม่", country: "ไทย"},
-            {name: "Carlos Ruiz", nick: "Carl", gender: "ชาย", age: 45, address: "C/ Mayor 10", country: "Spain"},
-            {name: "Aisha Khalid", nick: "Aisha", gender: "หญิง", age: 32, address: "Al Noor St.", country: "UAE"}
+            {ip: "123.45.120.67", name: "สมชาย ใจดี", nick: "ชอ", gender: "ชาย", age: 34, address: "123/4 หมู่ 5 ถ.ราษฎร์บริรักษ์, อ.เมือง", country: "ไทย"},
+            {ip: "45.67.32.89", name: "สุกัญญา พวงเงิน", nick: "กาญ", gender: "หญิง", age: 28, address: "56 ซ.สุขใจ ถ.สุขุมวิท, ต.บางนา", country: "ไทย"},
+            {ip: "56.78.23.45", name: "Alex Mercer", nick: "Merc", gender: "ชาย", age: 41, address: "12 Baker St, Central", country: "UK"},
+            {ip: "98.76.113.32", name: "สมควร โดนเเล้ว", nick: "arm", gender: "หญิง", age: 30, address: "No.8 Lane 33, Jing'an", country: "China"},
+            {ip: "11.22.113.44", name: "สมควร โดนเเล้ว", nick: "เเขน", gender: "ชาย", age: 30, address: "No.9 Lane 49, Jing'an", country: "China"},
+            {ip: "77.88.99.100", name: "Иван Петров", nick: "Ivan", gender: "ชาย", age: 37, address: "ул. Ленина, д.12", country: "Russia"},
+            {ip: "101.102.103.104", name: "Kaito Nakamura", nick: "Kai", gender: "ชาย", age: 22, address: "5-3-2 Ginza", country: "Japan"},
+            {ip: "202.120.30.113", name: "นัทธมน สายสว่าง", nick: "นัท", gender: "หญิง", age: 19, address: "77 ถ.ช้างคลาน, จ.เชียงใหม่", country: "ไทย"},
+            {ip: "150.151.152.153", name: "Carlos Ruiz", nick: "Carl", gender: "ชาย", age: 45, address: "C/ Mayor 10", country: "Spain"},
+            {ip: "200.201.202.113", name: "Aisha Khalid", nick: "Aisha", gender: "หญิง", age: 32, address: "Al Noor St.", country: "UAE"}
         ];
-
-        // สร้างรายการทั้งหมด (รวม 10 รายการ) — สุ่มตำแหน่งของ 2 ip แบบ .113.
-        const total = 10;
-        const forcedIndices = [];
-        while (forcedIndices.length < 2) {
-            const idx = randInt(0, total-1);
-            if (!forcedIndices.includes(idx)) forcedIndices.push(idx);
+    
+        const total = sampleProfiles.length;
+    
+        // เก็บรายการ พร้อมเวลา
+        let ipEntries = sampleProfiles.map(p => ({
+            ip: p.ip,
+            profile: p,
+            time: `2025-09-${randInt(10,19)} ${String(randInt(8,23)).padStart(2,'0')}:${String(randInt(0,59)).padStart(2,'0')}:00`
+        }));
+        
+        // --- การเปลี่ยนแปลงที่ 1: สลับลำดับข้อมูลทั้งหมด ---
+        // ใช้ Fisher-Yates shuffle algorithm เพื่อสลับลำดับ array ของ ipEntries
+        for (let i = ipEntries.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [ipEntries[i], ipEntries[j]] = [ipEntries[j], ipEntries[i]];
         }
 
-        const ipEntries = [];
-        for (let i=0;i<total;i++){
-            let ip;
-            if (forcedIndices.includes(i)) {
-                // สร้าง ip ที่มี .113 ในตำแหน่งที่ 3 (เช่น xxx.x.113.xxx)
-                ip = `${randInt(1,223)}.${randInt(0,255)}.113.${randInt(1,254)}`;
-            } else {
-                ip = randIP();
-            }
-            const profile = sampleProfiles[i % sampleProfiles.length];
-            // เก็บข้อมูล (สมมติ)
-            ipEntries.push({
-                ip, profile, time: `2025-09-${randInt(10,19)} ${String(randInt(8,23)).padStart(2,'0')}:${String(randInt(0,59)).padStart(2,'0')}:00`
-            });
-        }
-
-        // แสดงรายการในหน้า
+        // สร้างรายการแสดงผล
         const ipList = document.getElementById('ipList');
         ipEntries.forEach((e, idx) => {
             const li = document.createElement('li');
@@ -148,7 +138,7 @@
                     <div class="meta">คลิกเพื่อดูรายละเอียด</div>
                 </div>
             `;
-            // details panel
+    
             const details = document.createElement('div');
             details.className = 'details';
             details.id = `details-${idx+1}`;
@@ -162,11 +152,9 @@
                 <p class="meta"><em>IP: ${e.ip}</em></p>
             `;
             li.appendChild(details);
-
-            li.addEventListener('click', function(ev){
-                // toggle
+    
+            li.addEventListener('click', () => {
                 const already = details.classList.contains('show');
-                // ปิด panel ทั้งหมดก่อน
                 document.querySelectorAll('.details').forEach(d=>d.classList.remove('show'));
                 document.querySelectorAll('.ip-item').forEach(it=>it.classList.remove('active'));
                 if (!already) {
@@ -174,52 +162,33 @@
                     li.classList.add('active');
                 }
             });
-
+    
             ipList.appendChild(li);
         });
-
-        // เตรียมค่าตอบถูก (index เรียงจาก 1)
-        const correctIndices = forcedIndices.map(i => i+1).sort((a,b)=>a-b);
-
-        // รับคำตอบผู้เล่น
-        document.getElementById('submitBtn').addEventListener('click', function(){
+    
+        // --- การเปลี่ยนแปลงที่ 2: เปลี่ยนเงื่อนไขการหาคำตอบ ---
+        // หาจากชื่อ "สมควร โดนเเล้ว" ใน array ที่ถูกสลับลำดับแล้ว
+        const correctIndices = ipEntries
+            .map((e, i) => e.profile.name === 'สมควร โดนเเล้ว' ? i + 1 : null)
+            .filter(v => v !== null)
+            .sort((a,b) => a - b); // ต้อง sort เพื่อให้ตรงกับการเปรียบเทียบ
+    
+        // ตรวจคำตอบผู้ใช้
+        document.getElementById('submitBtn').addEventListener('click', () => {
             const raw = document.getElementById('guess').value.trim();
             if (!raw) { alert('กรุณากรอกหมายเลขที่คิดว่าเป็น (เช่น 2,7)'); return; }
-            // แยกค่า, แปลงเป็นตัวเลข, ลบช่องว่าง, ลำดับ
-            const parts = raw.split(',').map(s=>s.trim()).filter(s=>s!=='');
-            const nums = [];
-            for (let p of parts) {
-                const v = Number(p);
-                if (!Number.isInteger(v) || v < 1 || v > total) {
-                    alert('รูปแบบคำตอบไม่ถูกต้อง หรือมีหมายเลขอยู่นอกช่วง 1-'+total);
-                    return;
-                }
-                if (!nums.includes(v)) nums.push(v);
-            }
-            nums.sort((a,b)=>a-b);
-            // เปรียบเทียบกับ correctIndices (ทั้งสองต้องตรงเป๊ะ)
+    
+            const nums = [...new Set(raw.split(',').map(s=>Number(s.trim())).filter(v=>v>=1 && v<=total))].sort((a,b)=>a-b);
+    
             const ok = nums.length === correctIndices.length && nums.every((v,i)=>v === correctIndices[i]);
-
-            // =======================================================
-            // ✨ ส่วนที่เพิ่มเข้ามา: การสร้าง Cookie ✨
-            // =======================================================
-            if (ok) {
-                // ถ้าคำตอบถูกต้อง
-                //alert('คำตอบถูกต้อง! กำลังนำคุณไปยังหน้าถอดรหัส...');
-                document.cookie = "userAnswer=correct; path=/";
-            } else {
-                // ถ้าคำตอบไม่ถูกต้อง
-               // alert('คำตอบไม่ถูกต้อง แต่ระบบจะยังคงสร้างรหัสให้คุณเพื่อไปต่อ...');
-                document.cookie = "userAnswer=incorrect; path=/";
-            }
-            // =======================================================
-
-            // นำทางไปยังหน้า result
+    
+            document.cookie = `userAnswer=${ok ? 'correct':'incorrect'}; path=/`;
+    
             window.location.href = 'userAnswer.html';
         });
-
-        // for debugging: console.log correct indices
-        console.log('Correct suspicious user numbers:', correctIndices);
+    
+        console.log('หมายเลขผู้ใช้ที่ถูกต้อง (หลังสลับลำดับ):', correctIndices);
     </script>
+    
 </body>
 </html>
