@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Log - Terminal</title>
+    <style>
+      /* CSS styles for the terminal-style chat page */
+      body {
+        font-family: 'Courier New', monospace;
+        background-color: #0d0d0d;
+        color: #00ff00;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .chat-container {
+        width: 100%;
+        max-width: 800px;
+        height: 90vh;
+        background-color: #1a1a1a;
+        border: 2px solid #00ff00;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        padding: 10px;
+      }
+
+      .header {
+        background-color: #1a1a1a;
+        color: #00ff00;
+        padding: 10px 0;
+        text-align: center;
+        font-size: 2em;
+        font-weight: bold;
+        border-bottom: 2px solid #00ff00;
+        margin-bottom: 10px;
+      }
+
+      .messages-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        font-size: 1.5em;
+        line-height: 1.4;
+        padding-right: 10px;
+      }
+
+      /* Hide scrollbar for a cleaner look */
+      .messages-list::-webkit-scrollbar {
+        width: 8px;
+      }
+      .messages-list::-webkit-scrollbar-thumb {
+        background-color: #00ff00;
+        border-radius: 4px;
+      }
+
+      .message-line {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+      }
+
+      .sender-prefix {
+        color: #ff00ff;
+        margin-right: 5px;
+        font-weight: bold;
+      }
+
+      .timestamp {
+        color: #ffff00;
+        margin-right: 15px;
+        font-size: 0.8em;
+        font-style: italic;
+      }
+
+      .message-text {
+        color: #ffffff;
+        margin-right: 10px;
+      }
+
+      .message-translation {
+        color: #888;
+        font-style: italic;
+        font-size: 0.7em;
+        width: 100%;
+        padding-left: 20px;
+        box-sizing: border-box;
+      }
+
+      .message-line.sent .sender-prefix {
+        color: #00ffff;
+      }
+
+      .footer {
+        padding: 10px;
+        text-align: center;
+      }
+
+      .next-page-btn {
+        background-color: #00ff00;
+        color: #1a1a1a;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.2em;
+        font-family: 'Courier New', monospace;
+        cursor: pointer;
+        border: 2px solid #00ff00;
+        text-transform: uppercase;
+        visibility: hidden; /* Hidden by default */
+      }
+
+      .next-page-btn:hover {
+        background-color: #00e000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="header">
+        [ SECURED LOG:
+        <span class="user-name">เเชทลับ</span>
+        ]
+      </div>
+      <div id="messages-list" class="messages-list"></div>
+      <div class="footer">
+        <button id="next-page-btn" class="next-page-btn">ไปหน้าต่อไป</button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const messagesList = document.getElementById('messages-list');
+        const nextPageBtn = document.getElementById('next-page-btn');
+
+        const chatData = [
+          {
+            sender: 'x86',
+            timestamp: '12:05 PM',
+            original_text: '我信任你，我相信你一定能做到。',
+            translated_text: 'ผมไว้ใจคุณนะ เชื่อว่าคุณจะต้องทำได้',
+          },
+          {
+            sender: 'arm',
+            timestamp: '12:07 PM',
+            original_text: '没问题，我发现漏洞了，会尽快完成工作。',
+            translated_text: 'ไม่มีปัญหา ผมเจอช่องโหว่เเล้ว จะรีบจบงานโดยไว',
+          },
+          {
+            sender: 'arm',
+            timestamp: '12:08 PM',
+            original_text: '你把钱准备好。',
+            translated_text: 'คุณเตรียมเงินไว้ได้เลย',
+          },
+          {
+            sender: 'x86',
+            timestamp: '12:10 PM',
+            original_text: '很好，就像我们之前讨论的那样，我给你无限的预算。',
+            translated_text: 'ดีๆ อย่างที่เราคุยกันไว้ ผมให้งบไม่จำกัด',
+          },
+          {
+            sender: 'arm',
+            timestamp: '15:23 PM',
+            original_text: '我遇到了一点小麻烦。',
+            translated_text: 'ผมเจอปัญหานิดหน่อย',
+          },
+          {
+            sender: 'x86',
+            timestamp: '15:26 PM',
+            original_text: '你不是说没有问题吗？',
+            translated_text: 'ไหนบอกไม่มีปัญหา?',
+          },
+          {
+            sender: 'arm',
+            timestamp: '15:26 PM',
+            original_text:
+              '有人试图追踪我，虽然我抹掉了痕迹，但这可能对你的任务不利。',
+            translated_text:
+              'มีคนพยายามสะกดรอยตามผม ถึงผมลบล่องรอยผมได้ เเต่คิดว่ามันคงไม่ดีต่องานคุณ',
+          },
+          {
+            sender: 'x86',
+            timestamp: '15:28 PM',
+            original_text: '那我该怎么办？',
+            translated_text: 'เเล้วผมควรทำยังไง',
+          },
+          {
+            sender: 'arm',
+            timestamp: '15:29 PM',
+            original_text: '我建议你除掉他，让他永远闭嘴。',
+            translated_text: 'ผมเเนะนำให้คุณเก็บมันซะ ปิดปากมัน',
+          },
+          {
+            sender: 'x86',
+            timestamp: '15:32 PM',
+            original_text: '那你知道他是谁吗？',
+            translated_text: 'เเล้วคุณรู้หรอเค้าเป็นใคร',
+          },
+          {
+            sender: 'arm',
+            timestamp: '15:32 PM',
+            original_text: '当然，他是我自己的同事😎。',
+            translated_text: 'รู้สิ เพื่อนร่วมงานผมเอง 😎',
+          },
+          {
+            sender: 'arm',
+            timestamp: '15:34 PM',
+            original_text:
+              '我将通过Tor向您发送文件访问代码。您可能需要做一些计算，但这在我们的对话被拦截的情况下是安全的。',
+            translated_text:
+              'ผมจะส่งรหัสเข้าถึงไฟล์ไปให้คุณผ่าน Tor นะ คุณอาจจะต้องคิดเลขนิดหน่อย แต่มันปลอดภัยในกรณีที่บทสนทนาของเราถูกดักฟัง',
+          },
+          {
+            sender: 'x86',
+            timestamp: '15:34 PM',
+            original_text: '随你',
+            translated_text: 'ยังไงก็ได้',
+          },
+        ];
+
+        // Create and display messages
+        chatData.forEach((chat) => {
+          const messageLine = document.createElement('div');
+          messageLine.classList.add('message-line');
+
+          // Add sender prefix
+          const senderPrefix = document.createElement('span');
+          senderPrefix.classList.add('sender-prefix');
+          senderPrefix.textContent = `[${chat.sender}@system] : `;
+          messageLine.appendChild(senderPrefix);
+
+          // Add timestamp
+          const timestamp = document.createElement('span');
+          timestamp.classList.add('timestamp');
+          timestamp.textContent = `(${chat.timestamp})`;
+          messageLine.appendChild(timestamp);
+
+          // Add original message (Chinese)
+          const originalText = document.createElement('span');
+          originalText.classList.add('message-text');
+          originalText.textContent = chat.original_text;
+          messageLine.appendChild(originalText);
+
+          // Add translated text (Thai)
+          const translatedText = document.createElement('div');
+          translatedText.classList.add('message-translation');
+          translatedText.textContent = `(แปล): ${chat.translated_text}`;
+
+          // Add classes for sent/received styling
+          if (chat.sender === 'x86') {
+            messageLine.classList.add('sent');
+          } else {
+            messageLine.classList.add('received');
+          }
+
+          messagesList.appendChild(messageLine);
+          messagesList.appendChild(translatedText);
+        });
+
+        // Function to check if the user has scrolled to the bottom
+        const checkScroll = () => {
+          // messagesList.scrollTop returns the vertical scroll position
+          // messagesList.scrollHeight returns the total height of the content
+          // messagesList.clientHeight returns the visible height of the element
+          if (
+            messagesList.scrollTop + messagesList.clientHeight >=
+            messagesList.scrollHeight
+          ) {
+            nextPageBtn.style.visibility = 'visible'; // Show the button
+          } else {
+            nextPageBtn.style.visibility = 'hidden'; // Hide the button
+          }
+        };
+
+        // Initial check and event listener for scrolling
+        checkScroll(); // Check on page load
+        messagesList.addEventListener('scroll', checkScroll);
+
+        // Add event listener to the button to navigate to the next page
+        nextPageBtn.addEventListener('click', () => {
+          // Replace "next_page.html" with the actual path to your next page
+          window.location.href = 'tor.html';
+        });
+      });
+    </script>
+  </body>
+</html>

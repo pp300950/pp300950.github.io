@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>เข้าสู่ระบบ</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap');
+        
         body { 
             background: #f0f6f6; 
-            font-family: 'Courier New', monospace; 
+            font-family: 'Noto Sans Thai', sans-serif;
             color: #222; 
             display: flex;
             justify-content: center;
@@ -69,13 +71,46 @@
             font-size: 16px;
             font-weight: bold;
         }
+
+        /* --- CSS สำหรับเครื่องคิดเลข (ส่วนที่เพิ่มเข้ามา) --- */
+        .calculator {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .calculator h4 {
+            margin: 0 0 10px 0;
+            color: #666;
+            font-weight: normal;
+        }
+        .calculator input {
+            width: 80px;
+            padding: 8px;
+            font-size: 16px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .calculator button {
+            padding: 8px 12px;
+            font-size: 16px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .calculator .result {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        /* --- จบส่วน CSS เครื่องคิดเลข --- */
+
     </style>
 </head>
 <body>
 
 <div class="login-box">
     <h1>กรอกรหัสผ่าน</h1>
-    <p>รหัสคือผลรวมของเลขมุมบนซ้ายและมุมล่างขวา</p>
+    <p id="hintText">กำลังโหลดคำใบ้...</p>
 
     <div class="puzzle-container">
         <span id="num1" class="puzzle-number"></span>
@@ -86,14 +121,32 @@
 
     <input type="password" id="passwordInput" placeholder="กรอกรหัสที่นี่">
     <button class="login-btn" onclick="checkPassword()">เข้าสู่ระบบ</button>
-</div>
+
+    <div class="calculator">
+        <h4>เครื่องคิดเลข (บวก)</h4>
+        <input type="number" id="calcInput1" placeholder="เลขตัวแรก">
+        <span>+</span>
+        <input type="number" id="calcInput2" placeholder="เลขตัวที่สอง">
+        <button onclick="calculateSum()">=</button>
+        <span class="result" id="calcResult">?</span>
+    </div>
+    </div>
 
 <script>
     let correctAnswer;
 
-    // ฟังก์ชันนี้จะทำงานเมื่อหน้าเว็บโหลดเสร็จ
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for(let i=0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
     window.onload = function() {
-        // สุ่มตัวเลข 2-99
         function getRandomNumber() {
             return Math.floor(Math.random() * 98) + 2;
         }
@@ -103,44 +156,70 @@
         const num3 = getRandomNumber();
         const num4 = getRandomNumber();
 
-        // แสดงตัวเลขบนหน้าจอ
         document.getElementById('num1').innerText = num1;
         document.getElementById('num2').innerText = num2;
         document.getElementById('num3').innerText = num3;
         document.getElementById('num4').innerText = num4;
 
-        // คำนวณคำตอบที่ถูกต้องเก็บไว้
-        correctAnswer = num1 + num4;
+        const hintKey = getCookie('puzzleHint');
+        const hintElement = document.getElementById('hintText');
         
-        // สำหรับ Debug: แสดงคำตอบใน Console
-        console.log(`คำใบ้: รหัสที่ถูกต้องคือ ${correctAnswer}`);
+        switch(hintKey) {
+            case 'tr_bl':
+                hintElement.innerText = 'รหัสคือผลรวมของเลขมุมบนขวาและมุมล่างซ้าย';
+                correctAnswer = num2 + num3;
+                break;
+            case 't_b':
+                hintElement.innerText = 'รหัสคือผลรวมของเลขมุมบนทั้งสองและมุมล่างทั้งสอง';
+                correctAnswer = (num1 + num2) + (num3 + num4);
+                break;
+            case 'l_r':
+                 hintElement.innerText = 'รหัสคือผลรวมของเลขด้านซ้ายทั้งหมดและด้านขวาทั้งหมด';
+                 correctAnswer = (num1 + num3) + (num2 + num4);
+                 break;
+            case 'tl_br':
+            default:
+                hintElement.innerText = 'รหัสคือผลรวมของเลขมุมบนซ้ายและมุมล่างขวา';
+                correctAnswer = num1 + num4;
+                break;
+        }
+        
+        console.log(`คำใบ้: ${hintElement.innerText}`);
+        console.log(`รหัสที่ถูกต้องคือ ${correctAnswer}`);
     };
 
-    // ฟังก์ชันสำหรับตรวจสอบรหัสผ่าน
     function checkPassword() {
-        // ดึงค่าที่ผู้ใช้กรอก
         const userInput = document.getElementById('passwordInput').value;
-
-        // ตรวจสอบว่าผู้ใช้กรอกอะไรมาหรือไม่
         if (userInput === "") {
             alert("กรุณากรอกรหัสผ่าน!");
             return;
         }
-
-        // แปลงค่าที่ผู้ใช้กรอกเป็นตัวเลข
         const userPassword = parseInt(userInput);
-
-        // เปรียบเทียบกับคำตอบที่ถูกต้อง
         if (userPassword === correctAnswer) {
-            // --- กรณีรหัสถูก ---
-            // เปลี่ยนหน้าไปยัง final_page.html (คุณสามารถเปลี่ยนชื่อไฟล์ได้)
             window.location.href = 'final_page.html';
         } else {
-            // --- กรณีรหัสผิด ---
-            // แสดง pop-up แจ้งเตือน
             alert("รหัสผ่านไม่ถูกต้อง!");
         }
     }
+
+    // --- JavaScript สำหรับเครื่องคิดเลข (ส่วนที่เพิ่มเข้ามา) ---
+    function calculateSum() {
+        // ดึงค่าจากช่องกรอกตัวเลข
+        const input1 = document.getElementById('calcInput1').value;
+        const input2 = document.getElementById('calcInput2').value;
+
+        // แปลงค่าเป็นตัวเลข (ถ้าว่างให้เป็น 0)
+        const num1 = parseFloat(input1) || 0;
+        const num2 = parseFloat(input2) || 0;
+
+        // คำนวณผลรวม
+        const sum = num1 + num2;
+
+        // แสดงผลลัพธ์
+        document.getElementById('calcResult').innerText = sum;
+    }
+    // --- จบส่วน JavaScript เครื่องคิดเลข ---
+
 </script>
 
 </body>

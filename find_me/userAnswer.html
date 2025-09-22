@@ -1,81 +1,101 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>รหัสข้อมูลลูกค้า</title>
     <style>
-        body { background: #fdf0f0; font-family: 'Courier New', monospace; color: #222; padding: 30px; }
-        .box { max-width: 700px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 10px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); }
-        h1 { margin-top: 0; color: #333; }
-        pre { 
-            background: #eee; 
-            padding: 12px; 
-            word-break: break-all; 
-            font-family: 'Courier New', monospace; 
-            border-left: 4px solid #ccc; /* สีกลางๆ */
-            white-space: pre-wrap;
-        }
-        .controls {
-            margin-top: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px; /* ระยะห่างระหว่างปุ่ม */
-        }
-        .db-link, .copy-btn {
-            display: inline-block;
-            padding: 10px 16px;
-            color: #fff;
-            text-decoration: none;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-        }
-        .db-link {
-            background: #007bff;
-        }
-        .copy-btn {
-            background: #6c757d; /* สีเทา */
-        }
-        .copy-btn:hover {
-            background: #5a6268;
-        }
-    </style>
-</head>
-<body>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap');
+      body {
+        background: #fdf0f0;
 
-<div class="box" id="contentBox">
-    <h1 id="title">รหัสข้อมูลลูกค้า</h1>
-    <p id="description">รหัสสำหรับเข้าถึงฐานข้อมูลถูกสร้างขึ้นเรียบร้อยแล้ว:</p>
-    <pre id="encKey"></pre>
-    
-    <div class="controls">
+        font-family: 'Noto Sans Thai', sans-serif;
+        color: #222;
+        padding: 30px;
+      }
+      .box {
+        max-width: 700px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 24px;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      }
+      h1 {
+        margin-top: 0;
+        color: #333;
+      }
+      pre {
+        background: #eee;
+        padding: 12px;
+        word-break: break-all;
+        font-family: 'Courier New', monospace;
+        border-left: 4px solid #ccc; /* สีกลางๆ */
+        white-space: pre-wrap;
+      }
+      .controls {
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px; /* ระยะห่างระหว่างปุ่ม */
+      }
+      .db-link,
+      .copy-btn {
+        display: inline-block;
+        padding: 10px 16px;
+        color: #fff;
+        text-decoration: none;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+      }
+      .db-link {
+        background: #007bff;
+      }
+      .copy-btn {
+        background: #6c757d; /* สีเทา */
+      }
+      .copy-btn:hover {
+        background: #5a6268;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box" id="contentBox">
+      <h1 id="title">รหัสข้อมูลลูกค้า</h1>
+      <p id="description">
+        รหัสสำหรับเข้าถึงฐานข้อมูลถูกสร้างขึ้นเรียบร้อยแล้ว:
+      </p>
+      <pre id="encKey"></pre>
+
+      <div class="controls">
         <button id="copyBtn" class="copy-btn">คัดลอกรหัส</button>
         <a href="#" id="dbLink" class="db-link">ไปหน้าฐานข้อมูล</a>
+      </div>
     </div>
-</div>
 
-<script>
-    // --- ฟังก์ชันจัดการคุกกี้ ---
-    function getCookie(name) {
+    <script>
+      // --- ฟังก์ชันจัดการคุกกี้ ---
+      function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(';').shift();
-    }
+      }
 
-    function deleteCookie(name) {
-        document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    }
+      function deleteCookie(name) {
+        document.cookie =
+          name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      }
 
-    // --- ฟังก์ชันสร้างรหัส ---
-    function randomHexChar() {
+      // --- ฟังก์ชันสร้างรหัส ---
+      function randomHexChar() {
         const chars = '0123456789ABCDEF';
         return chars[Math.floor(Math.random() * chars.length)];
-    }
+      }
 
-    function generateCorrectKey() {
+      function generateCorrectKey() {
         let key = '';
         key += randomHexChar() + randomHexChar(); // xx
         key += '5';
@@ -86,18 +106,18 @@
         key += randomHexChar() + randomHexChar(); // xx
         key += '4B';
         return key;
-    }
+      }
 
-    function generateIncorrectKey() {
+      function generateIncorrectKey() {
         let key = '';
         for (let i = 0; i < 12; i++) {
-            key += randomHexChar();
+          key += randomHexChar();
         }
         return key;
-    }
+      }
 
-    // --- ส่วนประมวลผลหลัก ---
-    window.onload = function() {
+      // --- ส่วนประมวลผลหลัก ---
+      window.onload = function () {
         // ดึง Element ที่ต้องการ
         const keyElement = document.getElementById('encKey');
         const dbLink = document.getElementById('dbLink');
@@ -108,11 +128,11 @@
         let generatedKey = '';
 
         if (userAnswer === 'correct') {
-            // กรณีตอบถูก, สร้างรหัสตาม pattern
-            generatedKey = generateCorrectKey();
+          // กรณีตอบถูก, สร้างรหัสตาม pattern
+          generatedKey = generateCorrectKey();
         } else {
-            // กรณีตอบผิด (หรือไม่มีคุกกี้), สร้างรหัสแบบสุ่ม
-            generatedKey = generateIncorrectKey();
+          // กรณีตอบผิด (หรือไม่มีคุกกี้), สร้างรหัสแบบสุ่ม
+          generatedKey = generateIncorrectKey();
         }
 
         // แสดงผลรหัสที่สร้างขึ้นและกำหนดลิงก์ (ไม่ต้องเปลี่ยนข้อความอื่นแล้ว)
@@ -121,24 +141,26 @@
 
         // *** เพิ่ม Event Listener ให้ปุ่มคัดลอก ***
         copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(generatedKey).then(() => {
-                // เมื่อคัดลอกสำเร็จ
-                copyBtn.innerText = 'คัดลอกแล้ว!';
-                // เปลี่ยนกลับเป็นข้อความเดิมใน 2 วินาที
-                setTimeout(() => {
-                    copyBtn.innerText = 'คัดลอกรหัส';
-                }, 2000);
-            }).catch(err => {
-                console.error('ไม่สามารถคัดลอกได้: ', err);
-                alert('การคัดลอกอัตโนมัติล้มเหลว');
+          navigator.clipboard
+            .writeText(generatedKey)
+            .then(() => {
+              // เมื่อคัดลอกสำเร็จ
+              copyBtn.innerText = 'คัดลอกแล้ว!';
+              // เปลี่ยนกลับเป็นข้อความเดิมใน 2 วินาที
+              setTimeout(() => {
+                copyBtn.innerText = 'คัดลอกรหัส';
+              }, 2000);
+            })
+            .catch((err) => {
+              console.error('ไม่สามารถคัดลอกได้: ', err);
+              alert('การคัดลอกอัตโนมัติล้มเหลว');
             });
         });
 
         // *** ลบคุกกี้ทิ้งทันทีหลังจากแสดงผลแล้ว ***
         deleteCookie('userAnswer');
         console.log("Cookie 'userAnswer' has been deleted.");
-    };
-</script>
-
-</body>
+      };
+    </script>
+  </body>
 </html>

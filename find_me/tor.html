@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมจำลองการดักจับข้อมูล (Responsive)</title>
+    <style>
+        /* --- CSS --- */
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            background-color: #0d0d0d;
+            color: #c0c0c0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #e0e0e0;
+            text-shadow: 0 0 5px #ffcc00;
+            font-size: 1.8em;
+            margin: 5px 0;
+        }
+        p {
+            font-size: 1em;
+            margin: 5px 0 10px 0;
+        }
+        canvas {
+            border: 2px solid #5a5a5a;
+            background-color: #1a1a1a;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            width: 100%;
+            height: auto;
+            max-width: 800px;
+            display: block;
+            margin: 0 auto;
+        }
+        .controls {
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #ffcc00;
+            border: none;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #e0b800;
+        }
+        #status-message {
+            margin-top: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            min-height: 40px;
+        }
+        
+        /* --- Styles for Filtering Section --- */
+        #filtering-section {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #5a5a5a;
+            background-color: #1a1a1a;
+            width: 100%;
+            max-width: 800px;
+            box-sizing: border-box;
+        }
+        #captured-data-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #captured-data-list li {
+            background-color: #2a2a2a;
+            margin: 5px 0;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            word-wrap: break-word;
+        }
+        #captured-data-list li:not(.eliminated):hover {
+            background-color: #ff4444;
+            color: #fff;
+        }
+        #captured-data-list li.eliminated {
+            text-decoration: line-through;
+            background-color: #444;
+            color: #888;
+            opacity: 0.6;
+        }
+        /* Style for the final result box */
+        .result-box {
+            background-color: #000;
+            padding: 15px;
+            border: 1px solid #555;
+            text-align: left;
+            margin-top: 10px;
+            word-wrap: break-word;
+        }
+
+        .correct { color: #00ff00; }
+        .incorrect { color: #ff4444; }
+        .info { color: #33bbff; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.2em; }
+            p { font-size: 0.8em; }
+            button { font-size: 0.9em; padding: 8px 16px; }
+            #status-message { font-size: 0.9em; min-height: 30px; }
+            #filtering-section { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Tor Network</h1>
+        <p id="instruction-text">มีจุดสีแดง 🔴 5 จุด แต่มีเพียง 1 จุดที่เป็นเป้าหมายจริง!<br>ดักจับจุดสีแดงให้ครบทุกจุดเพื่อรวบรวมข้อมูล โดยกดที่จุดสีเหลืองดักหน้าจุดเเดงที่กำลังจะมุ่งหน้าไป</p>
+        <canvas id="torNetwork"></canvas>
+        <div class="controls">
+            <button id="startButton">เริ่มการดักจับ</button>
+        </div>
+        <div id="status-message"></div>
+
+        <div id="filtering-section">
+            <h2>ข้อมูลที่ดักจับได้</h2>
+            <p>หนึ่งในนี้คือข้อมูลของผู้ที่เราต้องการ คัดกรองรายชื่อที่ไม่ใช่ออกไปโดยการคลิกที่รายชื่อนั้น (คลิกซ้ำเพื่อยกเลิก)</p>
+            <ul id="captured-data-list"></ul>
+        </div>
+    </div>
+
+<script>
+    const canvas = document.getElementById('torNetwork');
+    const ctx = canvas.getContext('2d');
+    const startButton = document.getElementById('startButton');
+    const statusMessage = document.getElementById('status-message');
+    const filteringSection = document.getElementById('filtering-section');
+    const capturedDataList = document.getElementById('captured-data-list');
+    const instructionText = document.getElementById('instruction-text');
+
+    const BASE_WIDTH = 800;
+    const BASE_HEIGHT = 600;
+    let scale = 1;
+
+    const NUM_RED_PACKETS = 5;
+    const NUM_WARM_DECOYS = 5;
+    const NUM_PACKETS = NUM_RED_PACKETS + NUM_WARM_DECOYS;
+    const MAX_HOPS = 8;
+    const WARM_COLORS = ['#ffcc00', '#ffa500', '#ff7f50', '#ff6347'];
+
+    let nodes = [];
+    let packets = [];
+    let capturedData = [];
+    let isGameRunning = false;
+    let animationFrameId;
+    let redPacketsToCapture = NUM_RED_PACKETS;
+
+    const baseNodeLocations = [
+        { id: 'A', x: 100, y: 100 }, { id: 'B', x: 300, y: 50 }, { id: 'C', x: 500, y: 50 }, { id: 'D', x: 700, y: 100 },
+        { id: 'E', x: 150, y: 300 }, { id: 'F', x: 400, y: 300 }, { id: 'G', x: 650, y: 300 },
+        { id: 'H', x: 100, y: 500 }, { id: 'I', x: 300, y: 550 }, { id: 'J', x: 500, y: 550 }, { id: 'K', x: 700, y: 500 }
+    ];
+    const connections = {
+        'A': ['B', 'E', 'H'], 'B': ['A', 'C', 'F'], 'C': ['B', 'D', 'F'], 'D': ['C', 'G', 'K'],
+        'E': ['A', 'F', 'H', 'I'], 'F': ['B', 'C', 'E', 'G', 'I', 'J'], 'G': ['D', 'F', 'K', 'J'],
+        'H': ['A', 'E', 'I'], 'I': ['E', 'F', 'H', 'J'], 'J': ['F', 'G', 'I', 'K'], 'K': ['D', 'G', 'J']
+    };
+    
+    const REAL_SUSPECT_ID = 'arm56';
+    const REAL_DATA = '192113';
+    const PRIME_KEY_1 = 9973;
+    const PRIME_KEY_2 = 113;
+
+    function encryptData(text, key) {
+        let encrypted = '';
+        for (let i = 0; i < text.length; i++) {
+            encrypted += String.fromCharCode(text.charCodeAt(i) + (key % 95));
+        }
+        return btoa(encrypted);
+    }
+
+    function generateRandomUsername() {
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < 6; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
+
+    function resizeCanvas() {
+        const container = document.querySelector('.container');
+        const maxWidth = 800;
+        let width = container.clientWidth - 20;
+        if (width > maxWidth) width = maxWidth;
+
+        scale = width / BASE_WIDTH;
+        
+        canvas.width = width;
+        canvas.height = BASE_HEIGHT * scale;
+
+        initNodes();
+        if (isGameRunning) {
+            packets.forEach(packet => {
+                const currentNode = nodes.find(n => n.id === packet.currentPath[packet.currentPath.length - 1]);
+                if (currentNode) {
+                    packet.x = currentNode.x;
+                    packet.y = currentNode.y;
+                }
+            });
+        }
+        draw();
+    }
+
+    function initNodes() {
+        nodes = baseNodeLocations.map(loc => ({
+            ...loc,
+            x: loc.x * scale,
+            y: loc.y * scale,
+            isClicked: false
+        }));
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const NODE_RADIUS = 15 * scale;
+        const PACKET_RADIUS = 8 * scale;
+        const FONT_SIZE = 16 * scale;
+
+        ctx.strokeStyle = '#404040';
+        ctx.lineWidth = 1 * scale;
+        Object.entries(connections).forEach(([startId, neighbors]) => {
+            const startNode = nodes.find(n => n.id === startId);
+            neighbors.forEach(neighborId => {
+                const endNode = nodes.find(n => n.id === neighborId);
+                ctx.beginPath();
+                ctx.moveTo(startNode.x, startNode.y);
+                ctx.lineTo(endNode.x, endNode.y);
+                ctx.stroke();
+            });
+        });
+
+        nodes.forEach(node => {
+            ctx.fillStyle = node.isClicked ? '#00ff00' : '#ffcc00';
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, NODE_RADIUS, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.fillStyle = '#1a1a1a';
+            ctx.font = `${FONT_SIZE}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(node.id, node.x, node.y);
+        });
+
+        packets.forEach(packet => {
+            ctx.fillStyle = packet.color;
+            ctx.beginPath();
+            ctx.arc(packet.x, packet.y, PACKET_RADIUS, 0, 2 * Math.PI);
+            ctx.fill();
+        });
+    }
+
+    function startGame() {
+        if (isGameRunning) return;
+        isGameRunning = true;
+        redPacketsToCapture = NUM_RED_PACKETS;
+        capturedData = [];
+
+        startButton.disabled = true;
+        canvas.style.display = 'block';
+        filteringSection.style.display = 'none';
+        statusMessage.textContent = `ดักจับเป้าหมายสีแดงให้ครบ ${redPacketsToCapture} จุด`;
+        statusMessage.className = 'info';
+
+        initNodes();
+        packets = [];
+
+        for (let i = 0; i < NUM_PACKETS; i++) {
+            const startNode = nodes[Math.floor(Math.random() * nodes.length)];
+            const isRed = i < NUM_RED_PACKETS;
+            const isRealSuspect = (i === 0);
+            
+            packets.push({
+                x: startNode.x,
+                y: startNode.y,
+                speed: (2 * scale) + (Math.random() * 0.5 - 0.25),
+                target: null,
+                currentPath: [startNode.id],
+                isRealSuspect: isRed && isRealSuspect,
+                isRedDecoy: isRed && !isRealSuspect,
+                color: isRed ? '#ff0000' : WARM_COLORS[Math.floor(Math.random() * WARM_COLORS.length)]
+            });
+        }
+        
+        packets.sort(() => Math.random() - 0.5);
+
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        animate();
+    }
+
+    function animate() {
+        if (!isGameRunning) return;
+
+        for (let i = packets.length - 1; i >= 0; i--) {
+            const packet = packets[i];
+
+            if (!packet.target) {
+                if (packet.currentPath.length >= MAX_HOPS && !packet.isRedDecoy && !packet.isRealSuspect) {
+                    packets.splice(i, 1);
+                    continue;
+                }
+                
+                const currentNodeId = packet.currentPath[packet.currentPath.length - 1];
+                const nextNodeId = connections[currentNodeId][Math.floor(Math.random() * connections[currentNodeId].length)];
+                packet.target = nodes.find(n => n.id === nextNodeId);
+                packet.currentPath.push(packet.target.id);
+            }
+
+            const dx = packet.target.x - packet.x;
+            const dy = packet.target.y - packet.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < packet.speed) {
+                const reachedNode = packet.target;
+                packet.x = reachedNode.x;
+                packet.y = reachedNode.y;
+
+                if (reachedNode.isClicked) {
+                    handlePacketCapture(packet, i, reachedNode);
+                    reachedNode.isClicked = false;
+                }
+                packet.target = null;
+            } else {
+                packet.x += (dx / distance) * packet.speed;
+                packet.y += (dy / distance) * packet.speed;
+            }
+        }
+        
+        draw();
+        animationFrameId = requestAnimationFrame(animate);
+    }
+    
+    function handlePacketCapture(packet, index, node) {
+        if (packet.isRealSuspect || packet.isRedDecoy) {
+            redPacketsToCapture--;
+            
+            let capturedInfo;
+            if (packet.isRealSuspect) {
+                capturedInfo = {
+                    id: REAL_SUSPECT_ID,
+                    data: encryptData(REAL_DATA, PRIME_KEY_1 * PRIME_KEY_2),
+                    isSuspect: true
+                };
+            } else {
+                const randomUser = generateRandomUsername();
+                capturedInfo = {
+                    id: randomUser,
+                    data: encryptData(`decoy_data_${Math.random()}`, Math.floor(Math.random() * 10000)),
+                    isSuspect: false
+                };
+            }
+            capturedData.push(capturedInfo);
+            packets.splice(index, 1);
+
+            statusMessage.textContent = `ดักจับข้อมูลสีแดงสำเร็จ! เหลืออีก ${redPacketsToCapture} จุด`;
+            statusMessage.className = 'info';
+
+            if (redPacketsToCapture === 0) {
+                startFilteringPhase();
+            }
+
+        } else {
+            statusMessage.textContent = `ทำลายข้อมูลลวงสีโทนร้อนที่โหนด ${node.id}!`;
+            statusMessage.className = 'info';
+            packets.splice(index, 1);
+        }
+    }
+    
+    function startFilteringPhase() {
+        isGameRunning = false;
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+        canvas.style.display = 'none';
+        filteringSection.style.display = 'block';
+        statusMessage.textContent = 'รวบรวมข้อมูลสำเร็จ! เริ่มการคัดกรอง';
+        statusMessage.className = 'correct';
+
+        capturedData.sort(() => Math.random() - 0.5);
+        capturedDataList.innerHTML = '';
+        capturedData.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `User: ${item.id} | Encrypted Data: ${item.data}`;
+            li.dataset.id = item.id;
+            
+            li.addEventListener('click', () => {
+                li.classList.toggle('eliminated');
+                checkFilteringResult();
+            });
+            capturedDataList.appendChild(li);
+        });
+    }
+
+    function checkFilteringResult() {
+        const remainingItems = [];
+        document.querySelectorAll('#captured-data-list li').forEach(li => {
+            if (!li.classList.contains('eliminated')) {
+                remainingItems.push(li.dataset.id);
+            }
+        });
+
+        if (remainingItems.length === 1) {
+            const finalSuspectId = remainingItems[0];
+            if (finalSuspectId === REAL_SUSPECT_ID) {
+                // *** MODIFIED SECTION: Show encrypted data and keys ***
+                const suspectData = capturedData.find(item => item.id === REAL_SUSPECT_ID);
+                const encryptedString = suspectData.data;
+                
+                filteringSection.innerHTML = `
+                    <h2 class="correct">ระบุตัวตนเป้าหมายสำเร็จ!</h2>
+                    <p>คัดลอกข้อมูลด้านล่างนี้เพื่อใช้ในการถอดรหัสในหน้าถัดไป:</p>
+                    <div class="result-box">
+                        <p><strong>เลขบวกเพิ่ม:</strong><br>+116,303</p>
+                        <p><strong>จำนวนเฉพาะ 1:</strong> ${PRIME_KEY_1}</p>
+                        <p><strong>จำนวนเฉพาะ 2:</strong> ${PRIME_KEY_2}</p>
+                    </div>
+                    <br>
+                    <button onclick="window.location.href='decryption.html'">ไปยังหน้าถอดรหัส</button> 
+                `;
+                // Change 'https://google.com' to your next page URL
+            } else {
+                // Incorrect choice
+                statusMessage.textContent = `คัดคนผิด! ผู้ต้องสงสัยตัวจริงไม่ใช่ ${finalSuspectId} เริ่มภารกิจใหม่`;
+                statusMessage.className = 'incorrect';
+                setTimeout(resetGame, 2000);
+            }
+        }
+    }
+
+    function resetGame() {
+        isGameRunning = false;
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        
+        startButton.disabled = false;
+        startButton.textContent = "เริ่มใหม่";
+        packets = [];
+        capturedData = [];
+        
+        canvas.style.display = 'block';
+        filteringSection.style.display = 'none';
+        
+        initNodes();
+        draw();
+    }
+
+    function handleInteraction(event) {
+        if (!isGameRunning) return;
+        event.preventDefault();
+
+        const rect = canvas.getBoundingClientRect();
+        const touch = event.touches ? event.touches[0] : event;
+        const mouseX = touch.clientX - rect.left;
+        const mouseY = touch.clientY - rect.top;
+
+        for (const node of nodes) {
+            const distance = Math.sqrt(Math.pow(node.x - mouseX, 2) + Math.pow(node.y - mouseY, 2));
+            if (distance < (15 * scale)) {
+                nodes.forEach(n => n.isClicked = false);
+                node.isClicked = true;
+                statusMessage.textContent = `วางกับดักที่โหนด: ${node.id}`;
+                statusMessage.className = 'info';
+                draw();
+                break;
+            }
+        }
+    }
+
+    canvas.addEventListener('click', handleInteraction);
+    canvas.addEventListener('touchstart', handleInteraction);
+    
+    startButton.addEventListener('click', startGame);
+    window.addEventListener('resize', resizeCanvas);
+
+    resizeCanvas();
+</script>
+
+</body>
+</html>

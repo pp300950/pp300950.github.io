@@ -1,148 +1,309 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Project Chimera - รายการลูกค้าล่าสุด</title>
     <style>
-        body {
-            background: #f0e6d6;
-            font-family: 'Courier New', Courier, monospace;
-            color: #222;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            line-height: 1.6;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap');
+      body {
+        background: #f0e6d6;
+        font-family: 'Noto Sans Thai', sans-serif;
+        color: #222;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        line-height: 1.6;
+      }
 
-        .next-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #000;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            font-family: 'Courier New', Courier, monospace;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 15px; /* Added margin for spacing */
-        }
+      .next-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        font-family: 'Courier New', Courier, monospace;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 15px; /* Added margin for spacing */
+      }
+      .container {
+        max-width: 900px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 24px;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+      h1 {
+        text-align: center;
+        font-size: 22px;
+        margin-bottom: 8px;
+      }
+      p.lead {
+        text-align: center;
+        margin-top: 0;
+        color: #444;
+      }
+      ol.ip-list {
+        padding-left: 18px;
+        margin-top: 20px;
+      }
+      li.ip-item {
+        background: #fbfbfb;
+        border: 1px solid #e0e0e0;
+        padding: 12px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background 0.15s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      li.ip-item:hover {
+        background: #f0f8ff;
+      }
+      .meta {
+        font-size: 13px;
+        color: #666;
+      }
+      .details {
+        display: none;
+        margin-top: 10px;
+        padding: 12px;
+        background: #f6f6f6;
+        border-left: 4px solid #666;
+        font-family: 'Arial Narrow', 'Segoe Print', cursive;
+      }
+      .details.show {
+        display: block;
+      }
+      .notice {
+        margin-top: 14px;
+        padding: 12px;
+        background: #e6f7ff;
+        border-left: 5px solid #007bff;
+      }
+      .guess-area {
+        margin-top: 20px;
+        text-align: center;
+      }
+      input[type='text'] {
+        padding: 10px 12px;
+        font-size: 16px;
+        width: 260px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+      button.go {
+        padding: 10px 16px;
+        margin-left: 10px;
+        font-size: 16px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        background: #000;
+        color: #fff;
+        font-family: 'Courier New', Courier, monospace;
+      }
+      .small {
+        font-size: 13px;
+        color: #555;
+        margin-top: 8px;
+      }
+      @media (max-width: 600px) {
         .container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 24px;
-            border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+          padding: 16px;
         }
-        h1 { text-align:center; font-size:22px; margin-bottom:8px; }
-        p.lead { text-align:center; margin-top:0; color:#444; }
-        ol.ip-list { padding-left: 18px; margin-top:20px; }
-        li.ip-item {
-            background:#fbfbfb; border:1px solid #e0e0e0; padding:12px; margin-bottom:8px;
-            cursor:pointer; transition:background .15s;
-            display:flex; justify-content:space-between; align-items:center;
+        input[type='text'] {
+          width: 100%;
         }
-        li.ip-item:hover { background:#f0f8ff; }
-        .meta { font-size:13px; color:#666; }
-        .details {
-            display:none;
-            margin-top:10px;
-            padding:12px;
-            background:#f6f6f6;
-            border-left:4px solid #666;
-            font-family: 'Arial Narrow', 'Segoe Print', cursive;
-        }
-        .details.show { display:block; }
-        .notice { margin-top:14px; padding:12px; background:#e6f7ff; border-left:5px solid #007bff; }
-        .guess-area { margin-top:20px; text-align:center; }
-        input[type="text"]{
-            padding:10px 12px; font-size:16px; width:260px; border-radius:6px; border:1px solid #ccc;
-        }
-        button.go {
-            padding:10px 16px; margin-left:10px; font-size:16px; border-radius:6px; border:none; cursor:pointer;
-            background:#000; color:#fff; font-family: 'Courier New', Courier, monospace;
-        }
-        .small { font-size:13px; color:#555; margin-top:8px; }
-        @media (max-width:600px){ .container{ padding:16px } input[type="text"]{ width:100% } }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>ลูกค้าล่าสุดที่เข้าใช้งานเว็บไซต์ที่รวบรวมได้</h1>
-        <p class="lead">กดที่รายการเพื่อดูข้อมูล — หาสองไอพีที่มีรูปแบบ เข้าข่ายคล้ายไอพีของผู้ร้ายหรือข้อมูลคล้ายก็ได้ แล้วกรอกหมายเลขผู้ใช้ที่คิดว่าน่าจะเป็นทั้งสอง</p>
+      <h1>ลูกค้าล่าสุดที่เข้าใช้งานเว็บไซต์ที่รวบรวมได้</h1>
+      <p class="lead">
+        กดที่รายการเพื่อดูข้อมูล — หาสองไอพีที่มีรูปแบบ
+        เข้าข่ายคล้ายไอพีของผู้ร้ายหรือข้อมูลคล้ายก็ได้
+        แล้วกรอกหมายเลขผู้ใช้ที่คิดว่าน่าจะเป็นทั้งสอง
+      </p>
 
-        <div class="notice">
-            <strong>คำเตือน:</strong> ข้อมูลที่แสดงเป็นข้อมูลสมมติสำหรับภารกิจนี้เท่านั้น — ไม่ใช่ข้อมูลจริง
+      <div class="notice">
+        <strong>ข้อสังเกตุ:</strong>
+        ในรายการมี IP ซึ่งมีรูปเเบบซ้ำกับของคนร้ายอยู่สองรายการ
+      </div>
+
+      <ol id="ipList" class="ip-list"></ol>
+
+      <div class="guess-area">
+        <div>
+          <input
+            id="guess"
+            type="text"
+            placeholder="ตัวอย่าง: 2,7 (สลับลำดับได้)"
+          />
+          <button class="go" id="submitBtn">ค้นหาคีย์การเข้ารหัส</button>
         </div>
-
-        <ol id="ipList" class="ip-list"></ol>
-
-        <div class="guess-area">
-            <div>
-                <label for="guess"><strong>กรอกหมายเลขผู้ใช้สองรายที่ชื่อ "สมควร โดนแล้ว"</strong></label><br/>
-                <input id="guess" type="text" placeholder="ตัวอย่าง: 2,7 (สลับลำดับได้)"/>
-                <button class="go" id="submitBtn">ค้นหาคีย์การเข้ารหัส</button>
-            </div>
-            <div class="small">หมายเหตุ: หมายเลขที่ต้องกรอกคือลำดับของรายการ (1 - จำนวนรายการ)</div>
-            <a href="evidence.html" class="next-button">กลับไปหน้าก่อนหน้านี้</a>
+        <div class="small">
+          หมายเหตุ: หมายเลขที่ต้องกรอกคือลำดับของรายการ (1 - จำนวนรายการ)
         </div>
+        <a href="evidence.html" class="next-button">กลับไปหน้าก่อนหน้านี้</a>
+      </div>
     </div>
 
     <script>
-        // ฟังก์ชันสุ่มเวลา (เอาไว้ใช้แค่สร้างเวลา)
-        function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
-    
-        // ข้อมูลสมมติ พร้อมกำหนด IP ตายตัวเลย
-        const sampleProfiles = [
-            {ip: "123.45.120.67", name: "สมชาย ใจดี", nick: "ชอ", gender: "ชาย", age: 34, address: "123/4 หมู่ 5 ถ.ราษฎร์บริรักษ์, อ.เมือง", country: "ไทย"},
-            {ip: "45.67.32.89", name: "สุกัญญา พวงเงิน", nick: "กาญ", gender: "หญิง", age: 28, address: "56 ซ.สุขใจ ถ.สุขุมวิท, ต.บางนา", country: "ไทย"},
-            {ip: "56.78.23.45", name: "Alex Mercer", nick: "Merc", gender: "ชาย", age: 41, address: "12 Baker St, Central", country: "UK"},
-            {ip: "98.76.113.32", name: "สมควร โดนเเล้ว", nick: "arm", gender: "หญิง", age: 30, address: "No.8 Lane 33, Jing'an", country: "China"},
-            {ip: "11.22.113.44", name: "สมควร โดนเเล้ว", nick: "เเขน", gender: "ชาย", age: 30, address: "No.9 Lane 49, Jing'an", country: "China"},
-            {ip: "77.88.99.100", name: "Иван Петров", nick: "Ivan", gender: "ชาย", age: 37, address: "ул. Ленина, д.12", country: "Russia"},
-            {ip: "101.102.103.104", name: "Kaito Nakamura", nick: "Kai", gender: "ชาย", age: 22, address: "5-3-2 Ginza", country: "Japan"},
-            {ip: "202.120.30.113", name: "นัทธมน สายสว่าง", nick: "นัท", gender: "หญิง", age: 19, address: "77 ถ.ช้างคลาน, จ.เชียงใหม่", country: "ไทย"},
-            {ip: "150.151.152.153", name: "Carlos Ruiz", nick: "Carl", gender: "ชาย", age: 45, address: "C/ Mayor 10", country: "Spain"},
-            {ip: "200.201.202.113", name: "Aisha Khalid", nick: "Aisha", gender: "หญิง", age: 32, address: "Al Noor St.", country: "UAE"}
-        ];
-    
-        const total = sampleProfiles.length;
-    
-        // เก็บรายการ พร้อมเวลา
-        let ipEntries = sampleProfiles.map(p => ({
-            ip: p.ip,
-            profile: p,
-            time: `2025-09-${randInt(10,19)} ${String(randInt(8,23)).padStart(2,'0')}:${String(randInt(0,59)).padStart(2,'0')}:00`
-        }));
-        
-        // --- การเปลี่ยนแปลงที่ 1: สลับลำดับข้อมูลทั้งหมด ---
-        // ใช้ Fisher-Yates shuffle algorithm เพื่อสลับลำดับ array ของ ipEntries
-        for (let i = ipEntries.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [ipEntries[i], ipEntries[j]] = [ipEntries[j], ipEntries[i]];
-        }
+      // ฟังก์ชันสุ่มเวลา (เอาไว้ใช้แค่สร้างเวลา)
+      function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
 
-        // สร้างรายการแสดงผล
-        const ipList = document.getElementById('ipList');
-        ipEntries.forEach((e, idx) => {
-            const li = document.createElement('li');
-            li.className = 'ip-item';
-            li.innerHTML = `
+      // ข้อมูลสมมติ พร้อมกำหนด IP ตายตัวเลย
+      const sampleProfiles = [
+        {
+          ip: '123.45.120.67',
+          name: 'สมชาย ใจดี',
+          nick: 'ชอ',
+          gender: 'ชาย',
+          age: 34,
+          address: '123/4 หมู่ 5 ถ.ราษฎร์บริรักษ์, อ.เมือง',
+          country: 'ไทย',
+        },
+        {
+          ip: '45.67.32.89',
+          name: 'สุกัญญา พวงเงิน',
+          nick: 'กาญ',
+          gender: 'หญิง',
+          age: 28,
+          address: '56 ซ.สุขใจ ถ.สุขุมวิท, ต.บางนา',
+          country: 'ไทย',
+        },
+        {
+          ip: '56.78.23.45',
+          name: 'Alex Mercer',
+          nick: 'Merc',
+          gender: 'ชาย',
+          age: 41,
+          address: '12 Baker St, Central',
+          country: 'UK',
+        },
+        {
+          ip: '98.76.113.32',
+          name: 'สมควร โดนเเล้ว',
+          nick: 'arm',
+          gender: 'หญิง',
+          age: 30,
+          address: "No.8 Lane 33, Jing'an",
+          country: 'China',
+        },
+        {
+          ip: '11.22.113.44',
+          name: 'สมควร โดนเเล้ว',
+          nick: 'เเขน',
+          gender: 'ชาย',
+          age: 30,
+          address: "No.9 Lane 49, Jing'an",
+          country: 'China',
+        },
+        {
+          ip: '77.88.99.100',
+          name: 'Иван Петров',
+          nick: 'Ivan',
+          gender: 'ชาย',
+          age: 37,
+          address: 'ул. Ленина, д.12',
+          country: 'Russia',
+        },
+        {
+          ip: '101.102.103.104',
+          name: 'Kaito Nakamura',
+          nick: 'Kai',
+          gender: 'ชาย',
+          age: 22,
+          address: '5-3-2 Ginza',
+          country: 'Japan',
+        },
+        {
+          ip: '202.120.30.113',
+          name: 'นัทธมน สายสว่าง',
+          nick: 'นัท',
+          gender: 'หญิง',
+          age: 19,
+          address: '77 ถ.ช้างคลาน, จ.เชียงใหม่',
+          country: 'ไทย',
+        },
+        {
+          ip: '150.151.152.153',
+          name: 'Carlos Ruiz',
+          nick: 'Carl',
+          gender: 'ชาย',
+          age: 45,
+          address: 'C/ Mayor 10',
+          country: 'Spain',
+        },
+        {
+          ip: '200.201.202.113',
+          name: 'Aisha Khalid',
+          nick: 'Aisha',
+          gender: 'หญิง',
+          age: 32,
+          address: 'Al Noor St.',
+          country: 'UAE',
+        },
+        {
+          ip: '200.201.I13.290',
+          name: 'Aisha Khalid',
+          nick: 'Arm',
+          gender: 'ชาย',
+          age: 32,
+          address: 'บ้านหนองจึ๊กกะดึ๊ย ถ.สุขสวัสดิ์, ต.บางปะกง',
+          country: 'ไทย',
+        },
+      ];
+
+      const total = sampleProfiles.length;
+
+      // เก็บรายการ พร้อมเวลา
+      let ipEntries = sampleProfiles.map((p) => ({
+        ip: p.ip,
+        profile: p,
+        time: `2025-09-${randInt(10, 19)} ${String(randInt(8, 23)).padStart(
+          2,
+          '0'
+        )}:${String(randInt(0, 59)).padStart(2, '0')}:00`,
+      }));
+
+      // --- การเปลี่ยนแปลงที่ 1: สลับลำดับข้อมูลทั้งหมด ---
+      // ใช้ Fisher-Yates shuffle algorithm เพื่อสลับลำดับ array ของ ipEntries
+      for (let i = ipEntries.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ipEntries[i], ipEntries[j]] = [ipEntries[j], ipEntries[i]];
+      }
+
+      // สร้างรายการแสดงผล
+      const ipList = document.getElementById('ipList');
+      ipEntries.forEach((e, idx) => {
+        const li = document.createElement('li');
+        li.className = 'ip-item';
+        li.innerHTML = `
                 <div>
-                    <strong>ผู้ใช้ #${idx+1}</strong><div class="meta">เวลา: ${e.time}</div>
+                    <strong>ผู้ใช้ #${
+                      idx + 1
+                    }</strong><div class="meta">เวลา: ${e.time}</div>
                 </div>
                 <div style="text-align:right;">
                     <div style="font-weight:bold">${e.ip}</div>
                     <div class="meta">คลิกเพื่อดูรายละเอียด</div>
                 </div>
             `;
-    
-            const details = document.createElement('div');
-            details.className = 'details';
-            details.id = `details-${idx+1}`;
-            details.innerHTML = `
+
+        const details = document.createElement('div');
+        details.className = 'details';
+        details.id = `details-${idx + 1}`;
+        details.innerHTML = `
                 <p><strong>ชื่อ-นามสกุล:</strong> ${e.profile.name}</p>
                 <p><strong>ชื่อเล่น:</strong> ${e.profile.nick}</p>
                 <p><strong>เพศ:</strong> ${e.profile.gender}</p>
@@ -151,44 +312,59 @@
                 <p><strong>ประเทศ:</strong> ${e.profile.country}</p>
                 <p class="meta"><em>IP: ${e.ip}</em></p>
             `;
-            li.appendChild(details);
-    
-            li.addEventListener('click', () => {
-                const already = details.classList.contains('show');
-                document.querySelectorAll('.details').forEach(d=>d.classList.remove('show'));
-                document.querySelectorAll('.ip-item').forEach(it=>it.classList.remove('active'));
-                if (!already) {
-                    details.classList.add('show');
-                    li.classList.add('active');
-                }
-            });
-    
-            ipList.appendChild(li);
+        li.appendChild(details);
+
+        li.addEventListener('click', () => {
+          const already = details.classList.contains('show');
+          document
+            .querySelectorAll('.details')
+            .forEach((d) => d.classList.remove('show'));
+          document
+            .querySelectorAll('.ip-item')
+            .forEach((it) => it.classList.remove('active'));
+          if (!already) {
+            details.classList.add('show');
+            li.classList.add('active');
+          }
         });
-    
-        // --- การเปลี่ยนแปลงที่ 2: เปลี่ยนเงื่อนไขการหาคำตอบ ---
-        // หาจากชื่อ "สมควร โดนเเล้ว" ใน array ที่ถูกสลับลำดับแล้ว
-        const correctIndices = ipEntries
-            .map((e, i) => e.profile.name === 'สมควร โดนเเล้ว' ? i + 1 : null)
-            .filter(v => v !== null)
-            .sort((a,b) => a - b); // ต้อง sort เพื่อให้ตรงกับการเปรียบเทียบ
-    
-        // ตรวจคำตอบผู้ใช้
-        document.getElementById('submitBtn').addEventListener('click', () => {
-            const raw = document.getElementById('guess').value.trim();
-            if (!raw) { alert('กรุณากรอกหมายเลขที่คิดว่าเป็น (เช่น 2,7)'); return; }
-    
-            const nums = [...new Set(raw.split(',').map(s=>Number(s.trim())).filter(v=>v>=1 && v<=total))].sort((a,b)=>a-b);
-    
-            const ok = nums.length === correctIndices.length && nums.every((v,i)=>v === correctIndices[i]);
-    
-            document.cookie = `userAnswer=${ok ? 'correct':'incorrect'}; path=/`;
-    
-            window.location.href = 'userAnswer.html';
-        });
-    
-        console.log('หมายเลขผู้ใช้ที่ถูกต้อง (หลังสลับลำดับ):', correctIndices);
+
+        ipList.appendChild(li);
+      });
+
+      // --- การเปลี่ยนแปลงที่ 2: เปลี่ยนเงื่อนไขการหาคำตอบ ---
+      // หาจากชื่อ "สมควร โดนเเล้ว" ใน array ที่ถูกสลับลำดับแล้ว
+      const correctIndices = ipEntries
+        .map((e, i) => (e.profile.name === 'สมควร โดนเเล้ว' ? i + 1 : null))
+        .filter((v) => v !== null)
+        .sort((a, b) => a - b); // ต้อง sort เพื่อให้ตรงกับการเปรียบเทียบ
+
+      // ตรวจคำตอบผู้ใช้
+      document.getElementById('submitBtn').addEventListener('click', () => {
+        const raw = document.getElementById('guess').value.trim();
+        if (!raw) {
+          alert('กรุณากรอกหมายเลขที่คิดว่าเป็น (เช่น 2,7)');
+          return;
+        }
+
+        const nums = [
+          ...new Set(
+            raw
+              .split(',')
+              .map((s) => Number(s.trim()))
+              .filter((v) => v >= 1 && v <= total)
+          ),
+        ].sort((a, b) => a - b);
+
+        const ok =
+          nums.length === correctIndices.length &&
+          nums.every((v, i) => v === correctIndices[i]);
+
+        document.cookie = `userAnswer=${ok ? 'correct' : 'incorrect'}; path=/`;
+
+        window.location.href = 'userAnswer.html';
+      });
+
+      console.log('หมายเลขผู้ใช้ที่ถูกต้อง (หลังสลับลำดับ):', correctIndices);
     </script>
-    
-</body>
+  </body>
 </html>

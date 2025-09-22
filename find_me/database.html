@@ -1,100 +1,161 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ฐานข้อมูล - ถอดรหัสข้อความ</title>
-<style>
-    body { background:#f0e6d6; font-family:'Courier New', monospace; color:#222; padding:30px; }
-    .box { max-width:800px; margin:40px auto; background:#fff; padding:24px; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,0.12); }
-    h1 { margin-top:0; color:#005a9c; } /* Changed color for neutrality */
-    input#encKeyInput { width:100%; padding:10px; font-size:16px; font-family:'Courier New',monospace; margin-top:8px; border-radius:6px; border:1px solid #ccc; box-sizing: border-box; }
-    p.chinese { margin-top:20px; background:#eee; padding:12px; border-left:4px solid #666; word-break:break-all; font-family:'Segoe UI','Microsoft YaHei',sans-serif; }
-    button.decode { margin-top:12px; padding:10px 16px; background:#000; color:#fff; border:none; border-radius:6px; cursor:pointer; font-family:'Courier New',monospace; }
-    
-    /* Styles for result text */
-    p.result { margin-top:16px; font-size:16px; font-weight: bold; }
-    .success { color: #007b00; } /* Green for success */
-    .error { color: #b30000; }   /* Red for error */
+    <meta charset="utf-g" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ฐานข้อมูล - ถอดรหัสข้อความ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap');
 
-    a.db-link { display:inline-block; margin-top:16px; padding:10px 16px; color:#fff; text-decoration:none; border-radius:6px; text-align: center; }
-    .login-btn { background:#007bff; }
-    .back-btn { background:#6c757d; }
-</style>
+        body {
+            background: #f0e6d6;
+            font-family: 'Noto Sans Thai', sans-serif;
+            color: #222;
+            padding: 30px;
+        }
+        .box {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        h1 {
+            margin-top: 0;
+            color: #005a9c;
+        }
+        input#encKeyInput {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        p.chinese {
+            margin-top: 20px;
+            background: #eee;
+            padding: 12px;
+            border-left: 4px solid #666;
+            word-break: break-all;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        button.decode {
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        p.result {
+            margin-top: 16px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .success { color: #007b00; }
+        .error { color: #b30000; }
+        a.db-link {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 10px 16px;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .back-btn { background: #6c757d; }
+    </style>
 </head>
 <body>
-<div class="box">
-    <h1>ฐานข้อมูล - ถอดรหัสข้อความ</h1>
+    <div class="box">
+        <h1>ฐานข้อมูล - ถอดรหัสข้อความ</h1>
+        <p>วางรหัสเข้ารหัสที่คุณคัดลอกมา:</p>
+        <input type="text" id="encKeyInput" placeholder="วางรหัสที่นี่" />
+        <p class="chinese" id="chineseText">
+            เข้ารหัสอยู่จร้า : ต้องป้อนคีย์ที่ถูกต้องเพื่อถอดรหัสน้าาาา
+        </p>
+        <button class="decode" onclick="decodeKey()">ตรวจสอบและถอดรหัส</button>
+        <p class="result" id="decodedText" style="display: none"></p>
+        <a href="customers.html" id="backLink" class="db-link back-btn" style="display: none">
+            กลับไปหน้าก่อนหน้านี้
+        </a>
+    </div>
 
-    <p>วางรหัสเข้ารหัสที่คุณคัดลอกมา:</p>
-    <input type="text" id="encKeyInput" placeholder="วางรหัสที่นี่">
+    <script>
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const key = urlParams.get('key');
+            if (key) {
+                document.getElementById('encKeyInput').value = key;
+            } else {
+                pasteClipboard();
+            }
+        };
 
-    <p class="chinese" id="chineseText">เข้ารหัสอยู่จร้า ==> JKI451*#_$OI&*#%Lf1w2P*E</p>
-
-    <button class="decode" onclick="decodeKey()">ตรวจสอบและถอดรหัส</button>
-
-    <p class="result" id="decodedText" style="display:none;"></p>
-
-    <a href="login.html" id="loginLink" class="db-link login-btn" style="display:none;">ไปหน้าล็อกอิน</a>
-    <a href="customers.html" id="backLink" class="db-link back-btn" style="display:none;">กลับไป IP</a>
-</div>
-
-<script>
-    // พยายามดึงคีย์จาก URL parameter ก่อน ถ้าไม่มีค่อยใช้ clipboard
-    function getKeyFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const key = urlParams.get('key');
-        if (key) {
-            document.getElementById('encKeyInput').value = key;
-        } else {
-            // ถ้าไม่มี key ใน URL ให้ลองวางจาก clipboard
-            pasteClipboard();
+        async function pasteClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) document.getElementById('encKeyInput').value = text;
+            } catch (e) {
+                console.warn('ไม่สามารถเข้าถึง clipboard ได้:', e);
+            }
         }
-    }
 
-    async function pasteClipboard(){
-        try {
-            const text = await navigator.clipboard.readText();
-            if(text) document.getElementById('encKeyInput').value = text;
-        } catch(e) {
-            console.warn("ไม่สามารถเข้าถึง clipboard ได้:", e);
+        // ฟังก์ชันสำหรับสร้าง Cookie
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
         }
-    }
 
-    // เรียกใช้ฟังก์ชันเมื่อหน้าเว็บโหลด
-    window.onload = getKeyFromURL;
+        function decodeKey() {
+            const inputKey = document.getElementById('encKeyInput').value.trim();
+            const decodedEl = document.getElementById('decodedText');
+            const backLink = document.getElementById('backLink');
 
-    // ตรวจสอบคีย์
-    function decodeKey(){
-        const inputKey = document.getElementById('encKeyInput').value.trim();
-        const decodedEl = document.getElementById('decodedText');
-        const loginLink = document.getElementById('loginLink');
-        const backLink = document.getElementById('backLink');
+            decodedEl.style.display = 'block';
+            backLink.style.display = 'none';
 
-        // แสดงพื้นที่ผลลัพธ์
-        decodedEl.style.display = 'block';
-        
-        // ซ่อนปุ่มทั้งสองก่อนเริ่มตรวจสอบใหม่ทุกครั้ง
-        loginLink.style.display = 'none';
-        backLink.style.display = 'none';
+            const pattern = /^.{2}5.{2}9.{2}0.{2}4B$/i;
 
-        // กำหนด pattern ของคีย์ที่ถูกต้อง: xx5xx9xx0xx4B
-        // i ที่ท้ายสุดคือทำให้ไม่สนตัวพิมพ์เล็ก/ใหญ่ (case-insensitive)
-        const pattern = /^.{2}5.{2}9.{2}0.{2}4B$/i;
+            if (pattern.test(inputKey)) {
+                // --- กรณีคีย์ถูกต้อง ---
+                decodedEl.innerText = 'รหัสคุณถูกต้องแล้ว กำลังเปลี่ยนหน้า...';
+                decodedEl.className = 'result success';
 
-        if(pattern.test(inputKey)){
-            // --- กรณีคีย์ถูกต้อง ---
-            decodedEl.innerText = "ถอดรหัสสำเร็จ: รหัสคือเลขมุมบนซ้ายบวกรวมกับเลขมุมล่างขวาเพื่อเข้าสู่ระบบ";
-            decodedEl.className = 'result success'; // ใช้ class สีเขียว
-            loginLink.style.display = 'inline-block'; // แสดงปุ่มไปหน้าล็อกอิน
-            
-        } else {
-            // --- กรณีคีย์ผิด ---
-            decodedEl.innerText = "ข้อผิดพลาด: รูปแบบรหัสไม่ถูกต้อง โปรดกลับไปคัดลอกรหัสใหม่อีกครั้ง";
-            decodedEl.className = 'result error'; // ใช้ class สีแดง
-            backLink.style.display = 'inline-block'; // แสดงลิงก์ให้กลับไป
+                // --- ส่วนของการสุ่มคำใบ้ ---
+                const hints = [
+                    { key: 'tl_br', text: 'รหัสคือผลรวมของเลขมุมบนซ้ายและมุมล่างขวา' },
+                    { key: 'tr_bl', text: 'รหัสคือผลรวมของเลขมุมบนขวาและมุมล่างซ้าย' },
+                    { key: 't_b', text: 'รหัสคือผลรวมของเลขมุมบนทั้งสองและมุมล่างทั้งสอง' },
+                    { key: 'l_r', text: 'รหัสคือผลรวมของเลขด้านซ้ายทั้งหมดและด้านขวาทั้งหมด' }
+                ];
+                const randomHint = hints[Math.floor(Math.random() * hints.length)];
+
+                // เก็บ key ของคำใบ้ลงใน Cookie เพื่อให้หน้า login.html นำไปใช้
+                setCookie('puzzleHint', randomHint.key, 1); // Cookie มีอายุ 1 วัน
+
+                setTimeout(function() {
+                    window.location.href = 'login.html';
+                }, 3000);
+
+            } else {
+                // --- กรณีคีย์ผิด ---
+                decodedEl.innerText = 'ข้อผิดพลาด: รูปแบบรหัสไม่ถูกต้อง โปรดกลับไปคัดลอกรหัสใหม่อีกครั้ง';
+                decodedEl.className = 'result error';
+                backLink.style.display = 'inline-block';
+            }
         }
-    }
-</script>
+    </script>
 </body>
 </html>
