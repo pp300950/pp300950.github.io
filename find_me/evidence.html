@@ -1,268 +1,327 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Project Chimera - ไฟล์หลักฐาน</title>
     <style>
-           @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap');
 
-        /* General Styles */
+      /* General Styles */
+      body {
+        background-color: #f0e6d6;
+        font-family: 'Noto Sans Thai', sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        line-height: 1.6;
+      }
+
+      /* Container for the notebook */
+      .notebook-container {
+        max-width: 800px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+
+      /* Styling for the notebook page */
+      .notebook-page {
+        position: relative;
+      }
+
+      /* Line effects */
+      .notebook-page::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: repeating-linear-gradient(
+          #ddd 0px,
+          #ddd 1px,
+          transparent 1px,
+          transparent 25px
+        );
+        background-size: 100% 25px;
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .content {
+        position: relative;
+        z-index: 1;
+      }
+
+      h1 {
+        text-align: center;
+
+        font-size: 24px;
+        color: #222;
+      }
+
+      /* Evidence Log Styles */
+      .evidence-log {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+      }
+
+      .log-entry {
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .log-entry:hover {
+        background-color: #e9e9e9;
+      }
+
+      .log-header {
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .log-header::after {
+        content: '▼';
+        font-size: 12px;
+        margin-left: 10px;
+        transition: transform 0.3s;
+      }
+
+      .log-entry.active .log-header::after {
+        transform: rotate(180deg);
+      }
+
+      .log-ip {
+        color: #007bff;
+      }
+
+      .log-details {
+        margin-top: 10px;
+        display: none; /* Hide details by default */
+      }
+
+      .log-details.show {
+        display: block; /* Show details when the 'show' class is added */
+      }
+
+      .fake-code {
+        background-color: #eee;
+        border-left: 3px solid #666;
+        padding: 10px;
+        margin-top: 15px;
+
+        font-size: 14px;
+      }
+
+      .clue-note {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #e6f7ff;
+        border-left: 5px solid #007bff;
+
+        font-size: 16px;
+      }
+
+      .summary-note {
+        margin-top: 40px;
+        padding: 15px;
+        background-color: #ffe6e6;
+        border-left: 5px solid #ff4d4d;
+
+        font-size: 16px;
+      }
+
+      .button-container {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .next-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #000;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      /* Responsive design for smaller screens */
+      @media (max-width: 600px) {
         body {
-            background-color: #f0e6d6;
-            font-family: 'Noto Sans Thai', sans-serif;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            line-height: 1.6;
+          padding: 10px;
         }
-
-        /* Container for the notebook */
         .notebook-container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
+          padding: 20px;
         }
-
-        /* Styling for the notebook page */
-        .notebook-page {
-            position: relative;
-        }
-
-        /* Line effects */
-        .notebook-page::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: repeating-linear-gradient(
-                #ddd 0px,
-                #ddd 1px,
-                transparent 1px,
-                transparent 25px
-            );
-            background-size: 100% 25px;
-            opacity: 0.8;
-            pointer-events: none;
-        }
-
-        .content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        h1 {
-            text-align: center;
-           
-            font-size: 24px;
-            color: #222;
-        }
-
-        /* Evidence Log Styles */
-        .evidence-log {
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
-        }
-
-        .log-entry {
-            background-color: #f8f8f8;
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .log-entry:hover {
-            background-color: #e9e9e9;
-        }
-
-        .log-header {
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .log-header::after {
-            content: '▼';
-            font-size: 12px;
-            margin-left: 10px;
-            transition: transform 0.3s;
-        }
-        
-        .log-entry.active .log-header::after {
-            transform: rotate(180deg);
-        }
-
-        .log-ip {
-            color: #007bff;
-        }
-
-        .log-details {
-            margin-top: 10px;
-            display: none; /* Hide details by default */
-            font-family: 'Arial Narrow', 'Segoe Print', cursive;
-        }
-
-        .log-details.show {
-            display: block; /* Show details when the 'show' class is added */
-        }
-        
-        .fake-code {
-            background-color: #eee;
-            border-left: 3px solid #666;
-            padding: 10px;
-            margin-top: 15px;
-           
-            font-size: 14px;
-
-        }
-
-        .clue-note {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e6f7ff;
-            border-left: 5px solid #007bff;
-            font-family: 'Arial Narrow', 'Segoe Print', cursive;
-            font-size: 16px;
-        }
-
-        .summary-note {
-            margin-top: 40px;
-            padding: 15px;
-            background-color: #ffe6e6;
-            border-left: 5px solid #ff4d4d;
-            font-family: 'Arial Narrow', 'Segoe Print', cursive;
-            font-size: 16px;
-        }
-        
-        .button-container {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .next-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #000;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        /* Responsive design for smaller screens */
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            .notebook-container {
-                padding: 20px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="notebook-container">
-        <div class="notebook-page">
-            <div class="content">
-                <h1>ข้อมูลหลักฐาน: ล่องลอยที่ถูกทิ้งไว้</h1>
-                <p>บันทึกการเข้าใช้ที่ผิดปกติจากระบบของบริษัทฯ</p>
-                
-                <div class="clue-note" style="margin-bottom: 20px;">
-                    <strong>ข้อควรสังเกต:</strong>
-                    <p>IP Address ไม่ได้เป็นแค่ตัวเลขสุ่ม แต่มันเหมือนจะมีจุดที่ซ้ำกันนะ</p>
-                </div>
+      <div class="notebook-page">
+        <div class="content">
+          <h1>ข้อมูลหลักฐาน: ล่องลอยที่ถูกทิ้งไว้</h1>
+          <p>บันทึกการเข้าใช้ที่ผิดปกติจากระบบของบริษัทฯ</p>
 
-                <ul class="evidence-log">
-                    <li class="log-entry" onclick="toggleDetails('log1', this)">
-                        <div class="log-header">
-                            <span>วันที่: 2025-09-15 14:30:00</span>
-                            <span class="log-ip">IP: 192.0.113.095</span>
-                        </div>
-                        <div id="log1" class="log-details">
-                            <p>ผู้โจมตีพยายามเข้าสู่ระบบโดยใช้ชื่อบัญชีทั่วไปและรหัสผ่านที่เดาง่ายหลายครั้งในเวลาสั้นๆ หนึ่งในชื่อผู้ใช้ที่พยายามล็อกอินคือ **'arm56'** ซึ่งอาจเป็นชื่อเฉพาะที่เขาใช้</p>
-                            <p>ผู้เชี่ยวชาญด้านความปลอดภัยเรียกวิธีนี้ว่า **Brute-force Attack**</p>
-                            <div class="fake-code">
-                                <p><strong>LOG_ID:</strong> A4B-C23-D56</p>
-                                <p><strong>ACTION:</strong> LOGIN_ATTEMPT</p>
-                                <p><strong>USER_INPUTS:</strong> [ 'admin', 'test', 'arm56' ,'inwซ่า_007' ,'ลูกชิ้นเนื้อ']</p>
-                                <p><strong>STATUS:</strong> BLOCKED</p>
-                            </div>
-                        </div>
-                    </li>
+          <div class="clue-note" style="margin-bottom: 20px">
+            <strong>ข้อควรสังเกต:</strong>
+            <p>
+              IP Address ไม่ได้เป็นแค่ตัวเลขสุ่ม แต่มันเหมือนจะมีจุดที่ซ้ำกันนะ
+            </p>
+          </div>
 
-                    <li class="log-entry" onclick="toggleDetails('log2', this)">
-                        <div class="log-header">
-                            <span>วันที่: 2025-09-15 14:35:00</span>
-                            <span class="log-ip">IP: 203.12.113.201</span>
-                        </div>
-                        <div id="log2" class="log-details">
-                            <p>ผู้โจมตีพยายามใส่คำสั่งพิเศษลงในช่องค้นหาเว็บไซต์เพื่อบังคับให้ระบบเปิดเผยข้อมูลลับออกมา แต่ระบบป้องกันของเราบล็อกไว้ได้</p>
-                            <p>เขาใช้คำสั่งที่อ้างถึงตารางข้อมูลหนึ่งชื่อ **'users_legacy_1970'** ซึ่งเราไม่เคยมี</p>
-                            <p>การโจมตีนี้เรียกว่า **SQL Injection**</p>
-                            <div class="fake-code">
-                                <p><strong>REQUEST_PATH:</strong> /search?query=id=1%20OR%20'1'='1'</p>
-                                <p><strong>INJECTED_CMD:</strong> SELECT * FROM users_legacy_1970</p>
-                                <p><strong>STATUS:</strong> BLOCKED</p>
-                            </div>
-                        </div>
-                    </li>
-                    
-                    <li class="log-entry" onclick="toggleDetails('log3', this)">
-                        <div class="log-header">
-                            <span>วันที่: 2025-09-15 14:40:00</span>
-                            <span class="log-ip">IP: 183.3.113.603</span>
-                        </div>
-                        <div id="log3" class="log-details">
-                            <p>ผู้โจมตีพยายามหลอกให้เซิร์ฟเวอร์ของเราดึงไฟล์จากเว็บไซต์อื่น **(git.old-project-open.com)** และเรียกใช้งาน</p>
-                            <p>ในไฟล์นั้นมีข้อความที่แปลกปลอมซ่อนอยู่: **“你好，这个项目太老了。”**</p>
-                            <p>การโจมตีนี้เรียกว่า **Remote File Inclusion**</p>
-                            <div class="fake-code">
-                                <p><strong>URL_REQUEST:</strong> http://git.old-project-open.com/api/v1/file_data</p>
-                                <p><strong>RESPONSE_BODY:</strong> {"status": "success", "message": "你好，这个项目太老了。", "key": "0xABCDEF0123"}</p>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                
-            
-                <div class="summary-note">
-                    <strong>ข้อสรุปจากหลักฐาน:</strong>
-                    <ul>
-                        <li><strong>arm56 ,inwซ่า_007 ,ลูกชิ้นเนื้อ49 :</strong> ดูเหมือนจะเป็นชื่อที่เข้าข่ายจะเป็นชื่อคนร้ายไหมนะ</li>
-                        <li><strong>users_legacy_1970:</strong> อาจบ่งบอกถึงปีที่เกี่ยวข้องกับผู้โจมตี หรือปีที่เขาเริ่มทำงาน</li>
-                        <li><strong>IP: XXX.XX.113.XXX :</strong> ผมคิดว่านี่คือรูปเเบบของ IP ของคนร้าย</li>
-                        <li><strong>你好，这个项目太老了。:</strong> ข้อความภาษาจีนนี้แปลว่า "สวัสดี, โปรเจกต์นี้เก่าเกินไปแล้ว" มันเป็นข้อความส่วนตัวจากผู้โจมตีถึงตัวผมซึ่งน่าจะใช้ระบุสัญชาติของผู้โจมตีได้</li>
-                    </ul>
+          <ul class="evidence-log">
+            <li class="log-entry" onclick="toggleDetails('log1', this)">
+              <div class="log-header">
+                <span>วันที่: 2025-09-15 14:30:00</span>
+                <span class="log-ip">IP: 192.0.113.095</span>
+              </div>
+              <div id="log1" class="log-details">
+                <p>
+                  ผู้โจมตีพยายามเข้าสู่ระบบโดยใช้ชื่อบัญชีทั่วไปและรหัสผ่านที่เดาง่ายหลายครั้งในเวลาสั้นๆ
+                  หนึ่งในชื่อผู้ใช้ที่พยายามล็อกอินคือ **'arm56'**
+                  ซึ่งอาจเป็นชื่อเฉพาะที่เขาใช้
+                </p>
+                <p>
+                  ผู้เชี่ยวชาญด้านความปลอดภัยเรียกวิธีนี้ว่า **Brute-force
+                  Attack**
+                </p>
+                <div class="fake-code">
+                  <p>
+                    <strong>LOG_ID:</strong>
+                    A4B-C23-D56
+                  </p>
+                  <p>
+                    <strong>ACTION:</strong>
+                    LOGIN_ATTEMPT
+                  </p>
+                  <p>
+                    <strong>USER_INPUTS:</strong>
+                    [ 'admin', 'test', 'arm56' ,'inwซ่า_007' ,'ลูกชิ้นเนื้อ']
+                  </p>
+                  <p>
+                    <strong>STATUS:</strong>
+                    BLOCKED
+                  </p>
                 </div>
+              </div>
+            </li>
 
-                <div class="button-container">
-                    <a href="customers.html" class="next-button">เข้าตรวจสอบ IP จากเว็ปไซต์ทั้งหมด</a>
+            <li class="log-entry" onclick="toggleDetails('log2', this)">
+              <div class="log-header">
+                <span>วันที่: 2025-09-15 14:35:00</span>
+                <span class="log-ip">IP: 203.12.113.201</span>
+              </div>
+              <div id="log2" class="log-details">
+                <p>
+                  ผู้โจมตีพยายามใส่คำสั่งพิเศษลงในช่องค้นหาเว็บไซต์เพื่อบังคับให้ระบบเปิดเผยข้อมูลลับออกมา
+                  แต่ระบบป้องกันของเราบล็อกไว้ได้
+                </p>
+                <p>
+                  เขาใช้คำสั่งที่อ้างถึงตารางข้อมูลหนึ่งชื่อ
+                  **'users_legacy_1970'** ซึ่งเราไม่เคยมี
+                </p>
+                <p>การโจมตีนี้เรียกว่า **SQL Injection**</p>
+                <div class="fake-code">
+                  <p>
+                    <strong>REQUEST_PATH:</strong>
+                    /search?query=id=1%20OR%20'1'='1'
+                  </p>
+                  <p>
+                    <strong>INJECTED_CMD:</strong>
+                    SELECT * FROM users_legacy_1970
+                  </p>
+                  <p>
+                    <strong>STATUS:</strong>
+                    BLOCKED
+                  </p>
                 </div>
-            </div>
+              </div>
+            </li>
+
+            <li class="log-entry" onclick="toggleDetails('log3', this)">
+              <div class="log-header">
+                <span>วันที่: 2025-09-15 14:40:00</span>
+                <span class="log-ip">IP: 183.3.113.603</span>
+              </div>
+              <div id="log3" class="log-details">
+                <p>
+                  ผู้โจมตีพยายามหลอกให้เซิร์ฟเวอร์ของเราดึงไฟล์จากเว็บไซต์อื่น
+                  **(git.old-project-open.com)** และเรียกใช้งาน
+                </p>
+                <p>
+                  ในไฟล์นั้นมีข้อความที่แปลกปลอมซ่อนอยู่:
+                  **“你好，这个项目太老了。”**
+                </p>
+                <p>การโจมตีนี้เรียกว่า **Remote File Inclusion**</p>
+                <div class="fake-code">
+                  <p>
+                    <strong>URL_REQUEST:</strong>
+                    http://git.old-project-open.com/api/v1/file_data
+                  </p>
+                  <p>
+                    <strong>RESPONSE_BODY:</strong>
+                    {"status": "success", "message": "你好，这个项目太老了。",
+                    "key": "0xABCDEF0123"}
+                  </p>
+                </div>
+              </div>
+            </li>
+          </ul>
+
+          <div class="summary-note">
+            <strong>ข้อสรุปจากหลักฐาน:</strong>
+            <ul>
+              <li>
+                <strong>arm56 ,inwซ่า_007 ,ลูกชิ้นเนื้อ49 :</strong>
+                ดูเหมือนจะเป็นชื่อที่เข้าข่ายจะเป็นชื่อคนร้ายไหมนะ
+              </li>
+              <li>
+                <strong>users_legacy_1970:</strong>
+                อาจบ่งบอกถึงปีที่เกี่ยวข้องกับผู้โจมตี หรือปีที่เขาเริ่มทำงาน
+              </li>
+              <li>
+                <strong>IP: XXX.XX.113.XXX :</strong>
+                ผมคิดว่านี่คือรูปเเบบของ IP ของคนร้าย
+              </li>
+              <li>
+                <strong>你好，这个项目太老了。:</strong>
+                ข้อความภาษาจีนนี้แปลว่า "สวัสดี, โปรเจกต์นี้เก่าเกินไปแล้ว"
+                มันเป็นข้อความส่วนตัวจากผู้โจมตีถึงตัวผมซึ่งน่าจะใช้ระบุสัญชาติของผู้โจมตีได้
+              </li>
+            </ul>
+          </div>
+
+          <div class="button-container">
+            <a href="customers.html" class="next-button">
+              เข้าตรวจสอบ IP จากเว็ปไซต์ทั้งหมด
+            </a>
+          </div>
         </div>
+      </div>
     </div>
-    
-    <script>
-        function toggleDetails(id, element) {
-            const detailsElement = document.getElementById(id);
-            detailsElement.classList.toggle('show');
-            element.classList.toggle('active');
-        }
-    </script>
 
-</body>
+    <script>
+      function toggleDetails(id, element) {
+        const detailsElement = document.getElementById(id);
+        detailsElement.classList.toggle('show');
+        element.classList.toggle('active');
+      }
+    </script>
+  </body>
 </html>
