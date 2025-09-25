@@ -108,7 +108,16 @@
             margin-bottom: 20px; font-size: 1.2rem;
             animation: bounce 2s infinite;
             max-width: 90%;
+            /* --- ✨ [CSS ที่แก้ไข] 1. เพิ่ม transition --- */
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
+        /* --- ✨ [CSS ที่เพิ่มใหม่] 2. สร้าง class สำหรับซ่อน --- */
+        .speech-bubble.fade-out {
+            opacity: 0;
+            transform: translateY(-20px); /* ทำให้ดูเหมือนลอยขึ้นเล็กน้อยตอนหายไป */
+            pointer-events: none; /* ป้องกันไม่ให้คลิกโดนหลังจากที่มองไม่เห็นแล้ว */
+        }
+        
         .speech-bubble:after {
             content: ''; position: absolute; bottom: 0; left: 50%;
             width: 0; height: 0;
@@ -404,7 +413,7 @@
                 }
     
                 // Falling Words Logic
-                const words = ['ยินดีด้วยนะ', 'HBD', 'มีความสุขมากๆ', '🎉', '🎂', '🥳', '🎁', '💖'];
+                const words = ['🎂', '🥳', '🎁', '💖'];
                 const container = document.getElementById('falling-words-container');
                 setInterval(() => {
                     const wordElement = document.createElement('span');
@@ -435,6 +444,7 @@
                     // --- ✨ [ส่วนที่แก้ไข] เพิ่ม Event Listener ✨ ---
                     candle.addEventListener('click', function() {
                         if (!this.classList.contains('out')) {
+                            document.querySelector('.speech-bubble').classList.add('fade-out');
                             this.classList.add('out');
                             candlesBlown++;
                             
@@ -552,3 +562,4 @@
 </body>
 
 </html>
+
