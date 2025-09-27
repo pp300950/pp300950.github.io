@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ควบคุมรีเลย์ระยะไกล (Real-Time)</title>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .relay-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .relay-card.on {
+            border-left: 5px solid #4CAF50;
+            background-color: #e6ffe6;
+        }
+        .relay-card.off {
+            border-left: 5px solid #f44336;
+            background-color: #ffe6e6;
+        }
+        .status-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .status-text.on {
+            color: #4CAF50;
+        }
+        .status-text.off {
+            color: #f44336;
+        }
+        .control-button {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            margin: 5px;
+            transition: background-color 0.3s;
+            color: white;
+        }
+        .btn-on {
+            background-color: #4CAF50;
+        }
+        .btn-off {
+            background-color: #f44336;
+        }
+        .btn-on:hover, .btn-off:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ระบบควบคุมรีเลย์ระยะไกล</h1>
+    <p>ควบคุมอุปกรณ์ผ่านอินเทอร์เน็ต (Real-Time Control)</p>
+
+    <div id="relay1Card" class="relay-card off">
+        <h2>อุปกรณ์ 1 (Relay 1)</h2>
+        <p class="status-text off" id="status1">สถานะ: ปิด (OFF)</p>
+        <button class="control-button btn-on" onclick="setRelayState(1, 1)">เปิด (TURN ON)</button>
+        <button class="control-button btn-off" onclick="setRelayState(1, 0)">ปิด (TURN OFF)</button>
+    </div>
+
+    <div id="relay2Card" class="relay-card off">
+        <h2>อุปกรณ์ 2 (Relay 2)</h2>
+        <p class="status-text off" id="status2">สถานะ: ปิด (OFF)</p>
+        <button class="control-button btn-on" onclick="setRelayState(2, 1)">เปิด (TURN ON)</button>
+        <button class="control-button btn-off" onclick="setRelayState(2, 0)">ปิด (TURN OFF)</button>
+    </div>
+
+    <p style="margin-top: 30px; font-size: 0.8em; color: #777;">ข้อมูลจะอัปเดตแบบเรียลไทม์สำหรับทุกคนที่เปิดหน้าเว็บไซต์นี้</p>
+</div>
+
+<script>
+    // ** 1. Firebase Configs ที่แท้จริง (นำมาจากโปรเจกต์ของคุณ) **
+    // เราใช้ syntax ของ Firebase SDK v8.x เพื่อให้เข้ากันกับ <script> tags ด้านบน
+    var firebaseConfig = {
+        apiKey: "AIzaSyDWBYanYUah9F7-qk-GajoI39yx8dClXSQ",
+        authDomain: "d1contro.firebaseapp.com",
+        databaseURL: "https://d1contro-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "d1contro",
+        storageBucket: "d1contro.firebasestorage.app",
+        messagingSenderId: "980765975797",
+        appId: "1:980765975797:web:9cd0d3bef60b522e6611bc",
+        // measurementId: "G-16JZGVMVPK" // ไม่จำเป็นสำหรับ Realtime Database Control
+    };
+
+    // เริ่มต้น Firebase
+    firebase.initializeApp(firebaseConfig);
+    var database = firebase.database();
+    
+    // โครงสร้างฐานข้อมูลที่เราจะใช้: { "R1": 0, "R2": 0 }
+
+    /**
+     * ฟังก์ชันเขียนสถานะใหม่ไปยัง Firebase (เมื่อผู้ใช้กดปุ่ม)
+     * @param {number} relayNum - หมายเลขรีเลย์ (1 หรือ 2)
+     * @param {number} state - สถานะใหม่ (1 = ON, 0 = OFF)
+     */
+    function setRelayState(relayNum, state) {
+        var refPath = 'R' + relayNum;
+        database.ref(refPath).set(state)
+        .then(() => {
+            console.log("State written successfully for R" + relayNum + ": " + state);
+        })
+        .catch((error) => {
+            console.error("Write failed: " + error.message);
+            alert("ไม่สามารถส่งคำสั่งได้ โปรดตรวจสอบการเชื่อมต่อ");
+        });
+        // ไม่จำเป็นต้องอัปเดต UI ที่นี่ เพราะ Real-Time Listener จะจัดการเอง!
+    }
+
+    /**
+     * ฟังก์ชันสำหรับอัปเดต UI เมื่อมีข้อมูลเปลี่ยน (Real-Time จาก Firebase)
+     * @param {number} relayNum - หมายเลขรีเลย์ (1 หรือ 2)
+     * @param {number} state - สถานะปัจจุบันจาก Firebase (1 หรือ 0)
+     */
+    function updateUI(relayNum, state) {
+        var cardElement = document.getElementById('relay' + relayNum + 'Card');
+        var statusElement = document.getElementById('status' + relayNum);
+        
+        var statusText = (state === 1) ? "สถานะ: เปิด (ON)" : "สถานะ: ปิด (OFF)";
+        var statusClass = (state === 1) ? 'on' : 'off';
+
+        // อัปเดตข้อความ
+        statusElement.innerHTML = statusText;
+
+        // อัปเดตสี
+        cardElement.className = 'relay-card ' + statusClass;
+        statusElement.className = 'status-text ' + statusClass;
+    }
+
+    // 2. ฟังการเปลี่ยนแปลงข้อมูลแบบเรียลไทม์ (Real-Time Listeners)
+    // การทำงาน: เมื่อค่า R1 ใน Firebase เปลี่ยนแปลง (ไม่ว่าจะโดยปุ่มนี้หรือโดยบอร์ด ESP32)
+    // Listener จะทำงานทันทีและเรียก updateUI เพื่อเปลี่ยนสถานะบนหน้าจอ
+    
+    // R1 Listener
+    database.ref('R1').on('value', (snapshot) => {
+        const state = snapshot.val();
+        if (state !== null) {
+            updateUI(1, state);
+        }
+    });
+
+    // R2 Listener
+    database.ref('R2').on('value', (snapshot) => {
+        const state = snapshot.val();
+        if (state !== null) {
+            updateUI(2, state);
+        }
+    });
+
+</script>
+</body>
+</html>
