@@ -71,7 +71,7 @@
             // *** หมายเหตุ: state ที่รับเข้ามาในฟังก์ชันนี้ คือค่าที่ถูกกลับค่าแล้ว ***
             const action = state === 1 ? 'ON' : 'OFF'; 
             const url = `http://${ESP_BOARD_IP}/control/${relay}/${action}`;
-            const repeatCount = 50;
+            const repeatCount = 200;
             const delayBetweenRequests = 100;
 
             log(`[ACTION] Sending command ${relay}/${action} x${repeatCount} times...`, 'action');
