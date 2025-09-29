@@ -33,12 +33,13 @@
       display: flex;
       height: 100vh;
       width: 100vw;
-      overflow: hidden;
+      overflow: hidden; /* Prevent whole page from scrolling */
     }
 
     .main-container {
         display: flex;
         flex-grow: 1;
+        position: relative;
     }
     
     #game-table {
@@ -46,7 +47,15 @@
       display: flex;
       flex-direction: column;
       padding: 10px;
+      overflow-y: auto; /* Make the game board scrollable */
     }
+
+    /* Custom scrollbar for game table */
+    #game-table::-webkit-scrollbar { width: 8px; }
+    #game-table::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px;}
+    #game-table::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+    #game-table::-webkit-scrollbar-thumb:hover { background: #555; }
+
 
     /* --- Player & Opponent Areas --- */
     .player-area, .opponent-area {
@@ -54,7 +63,11 @@
       justify-content: space-between;
       align-items: center;
       padding: 0 20px;
-      height: 180px;
+      min-height: 180px;
+    }
+
+    .player-area {
+        height: auto; /* Allow player area to grow */
     }
 
     .hero-info {
@@ -93,13 +106,30 @@
     .hand-area {
       flex-grow: 1;
       display: flex;
-      justify-content: center;
       align-items: center;
-      gap: -30px; /* Overlap cards */
+      gap: 10px; 
       perspective: 1000px;
       min-width: 400px;
+      padding: 10px;
+      justify-content: center;
     }
     
+    #player-hand {
+        flex-wrap: wrap; /* Allow player cards to wrap */
+    }
+
+    /* Bot hand stacking style */
+    #bot-hand {
+        justify-content: flex-start;
+        padding-left: 50px;
+    }
+    #bot-hand .card-back {
+        margin-left: -85px; /* Overlap cards */
+    }
+    #bot-hand .card-back:first-child {
+        margin-left: 0;
+    }
+
     .deck-area .card-back{
         box-shadow: 0 0 10px 2px rgba(255, 255, 100, 0.5);
     }
@@ -121,6 +151,7 @@
       align-items: center;
       gap: 10px;
       padding: 10px;
+      flex-wrap: wrap; /* Allow wrapping on both boards */
     }
     #botBoard { border-bottom: 2px dashed rgba(255,255,255,0.2); }
 
@@ -140,10 +171,11 @@
       text-align: center;
       position: relative;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      flex-shrink: 0;
     }
     .card-name { font-weight: bold; font-size: 0.9em; line-height: 1.1; }
     .card-cost {
-      position: absolute; top: -5px; left: -5px;
+      position: absolute; top: -5px; right: -5px;
       background: var(--mana-color); color: white;
       width: 28px; height: 28px;
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -159,6 +191,42 @@
     #player-hand .card:hover { transform: translateY(-15px) scale(1.1); z-index: 100; }
     .card.unplayable { opacity: 0.7; cursor: not-allowed; filter: grayscale(80%); }
     .card.unplayable:hover { transform: none; }
+    
+    /* Player hand card stacking */
+    .card-stack {
+        position: relative;
+    }
+    .card-stack::after {
+        content: '';
+        position: absolute;
+        left: 4px;
+        top: 4px;
+        width: 100%;
+        height: 100%;
+        background-color: var(--card-bg);
+        border: 2px solid var(--card-border);
+        border-radius: 10px;
+        z-index: -1;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .card-stack-count {
+        position: absolute;
+        bottom: -5px;
+        right: -5px;
+        background: #e74c3c;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        font-size: 0.9em;
+        z-index: 5;
+    }
+
 
     .card-back {
       background: #5a453a;
@@ -173,10 +241,6 @@
         padding: 2px 6px; border-radius: 4px; font-size: 0.8em;
     }
     
-    #bot-hand .card-back {
-        margin: 0 -35px; /* Tighter stack for hand */
-    }
-
     /* --- Sidebar --- */
     .sidebar {
       width: 280px;
@@ -185,6 +249,7 @@
       display: flex;
       flex-direction: column;
       border-left: 2px solid #2c211c;
+      flex-shrink: 0; /* Prevent sidebar from shrinking */
     }
     .sidebar h3 { margin-top: 0; }
     #log {
@@ -211,70 +276,96 @@
     button:disabled { background-color: #7f8c8d; cursor: not-allowed; }
     
     /* Animations */
-    @keyframes card-enter {
-        from { opacity: 0; transform: scale(0.5); }
-        to { opacity: 1; transform: scale(1); }
-    }
+    @keyframes card-enter { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
     .card-enter { animation: card-enter 0.3s ease-out; }
-
-    @keyframes damage-flash {
-        0%, 100% { filter: none; transform: scale(1); }
-        50% { filter: brightness(1.5) drop-shadow(0 0 5px #ff0000); transform: scale(1.05); }
-    }
+    @keyframes damage-flash { 0%, 100% { filter: none; transform: scale(1); } 50% { filter: brightness(1.5) drop-shadow(0 0 5px #ff0000); transform: scale(1.05); } }
     .damage-flash { animation: damage-flash 0.4s ease; }
-    
-    .damage-indicator {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 2em;
-        font-weight: bold;
-        color: #ff4757;
-        text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
-        pointer-events: none;
-        z-index: 1000;
-        animation: float-up 0.8s ease-out forwards;
+    .damage-indicator { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2em; font-weight: bold; color: #ff4757; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; pointer-events: none; z-index: 1000; animation: float-up 0.8s ease-out forwards; }
+    @keyframes float-up { from { opacity: 1; transform: translate(-50%, -50%); } to { opacity: 0; transform: translate(-50%, -150%); } }
+
+    /* --- Modal --- */
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 2000; }
+    .modal-content { background: var(--table-bg); padding: 20px 30px; border-radius: 15px; border: 3px solid var(--card-border); display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    #modal-card-display { transform: scale(1.5); }
+    #modal-close-btn { background-color: var(--bot-color); width: 100px; }
+
+    /* --- Card Info Button --- */
+    .card-info-btn { position: absolute; top: -2px; left: -2px; width: 22px; height: 22px; background-color: var(--player-color); color: white; border-radius: 50%; border: 2px solid white; font-size: 14px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: help; z-index: 10; }
+
+    /* --- Help Button & Modal --- */
+    #btnHelp {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f39c12;
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    border: 2px solid white;
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    /* ส่วนที่เพิ่มเพื่อจัดให้อยู่กึ่งกลาง */
+    display: flex; /* เปิดใช้งาน Flexbox */
+    justify-content: center; /* จัดเรียงตามแนวนอน (Horizontal Center) */
+    align-items: center; /* จัดเรียงตามแนวตั้ง (Vertical Center) */
+}
+
+    #help-modal .modal-content {
+      align-items: flex-start;
+      text-align: left;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
-    @keyframes float-up {
-        from {
-            opacity: 1;
-            transform: translate(-50%, -50%);
-        }
-        to {
-            opacity: 0;
-            transform: translate(-50%, -150%);
-        }
+    #help-modal h2, #help-modal h3 {
+      color: #f1c40f;
+      width: 100%;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 5px;
     }
+
+    #help-modal ul, #help-modal ol {
+      padding-left: 20px;
+    }
+    #help-modal li {
+      margin-bottom: 10px;
+    }
+
+    #help-modal-close-btn {
+      background-color: var(--player-color);
+      align-self: center; /* Center the close button */
+      width: 150px;
+      margin-top: 10px;
+    }
+
 
   </style>
 </head>
 <body>
 
 <div class="main-container">
+    <button id="btnHelp">?</button>
     <div id="game-table">
-      <!-- Opponent Area -->
       <div class="opponent-area">
         <div id="bot-deck" class="deck-area"></div>
         <div id="bot-hand" class="hand-area"></div>
         <div id="bot-hero" class="hero-info"></div>
       </div>
-
-      <!-- Battlefield -->
       <div class="battlefield">
         <div id="botBoard" class="board-row"></div>
         <div id="playerBoard" class="board-row"></div>
       </div>
-
-      <!-- Player Area -->
       <div class="player-area">
         <div id="player-deck" class="deck-area"></div>
         <div id="player-hand" class="hand-area"></div>
         <div id="player-hero" class="hero-info"></div>
       </div>
     </div>
-
     <div class="sidebar">
       <h3>บันทึกเหตุการณ์</h3>
       <div id="log"></div>
@@ -287,6 +378,53 @@
     </div>
 </div>
 
+<!-- Card Detail Modal -->
+<div id="card-detail-modal" class="modal-backdrop">
+    <div class="modal-content">
+        <div id="modal-card-display"></div>
+        <button id="modal-close-btn">ปิด</button>
+    </div>
+</div>
+
+<!-- Help Modal -->
+<div id="help-modal" class="modal-backdrop">
+    <div class="modal-content">
+        <h2>วิธีเล่นเกมการ์ดประจัญบาน</h2>
+        <p><strong>เป้าหมาย:</strong> ลด HP ของฝ่ายตรงข้ามให้เหลือ 0 ก่อน!</p>
+        
+        <h3>องค์ประกอบบนหน้าจอ:</h3>
+        <ul>
+            <li><strong>รูปโปรไฟล์และค่าสถานะ:</strong> แสดง HP (❤️), เกราะ (🛡️), มานา (💧), และจำนวนรอบการผ่านเทิร์นที่เหลือ (⏳)</li>
+            <li><strong>กองการ์ด (Deck):</strong> การ์ดที่เหลืออยู่ในกองของคุณ หากการ์ดหมดจะได้รับความเสียหาย (Fatigue) ทุกครั้งที่ต้องจั่ว</li>
+            <li><strong>การ์ดบนมือ (Hand):</strong> การ์ดที่คุณสามารถเล่นได้ในเทิร์นนี้</li>
+            <li><strong>สนาม (Battlefield):</strong> ที่สำหรับลงยูนิต (Creature) เพื่อต่อสู้</li>
+            <li><strong>บันทึกเหตุการณ์ (Log):</strong> แสดงเหตุการณ์ทั้งหมดที่เกิดขึ้นในเกม</li>
+        </ul>
+
+        <h3>ขั้นตอนการเล่น:</h3>
+        <ol>
+            <li>เมื่อเริ่มเทิร์น คุณจะได้รับมานาเต็มตามจำนวนมานาสูงสุด และจั่วการ์ด 1 ใบ</li>
+            <li>คุณสามารถใช้มานา (💧) เพื่อเล่นการ์ดจากบนมือ การ์ดแต่ละใบมีค่าร่าย (Cost) ที่มุมขวาบน</li>
+            <li>คลิกที่การ์ดที่ต้องการเล่นเพื่อนำลงสนาม (ยูนิต) หรือใช้ผลของเวทมนตร์ (สเปลล์)</li>
+            <li>ยูนิตที่ลงในสนามจะยังไม่โจมตีทันที</li>
+        </ol>
+
+        <h3>ปุ่มควบคุม:</h3>
+        <ul>
+            <li><strong>จั่วการ์ด (3 มานา):</strong> ใช้ 3 มานาเพื่อจั่วการ์ดเพิ่ม 1 ใบ (ปุ่มนี้จะแสดงเมื่อมีมานาพอเท่านั้น)</li>
+            <li><strong>จบเทิร์น:</strong> สั่งให้ยูนิตทั้งหมดในสนามของคุณโจมตี และจบเทิร์นของคุณ</li>
+            <li><strong>ผ่านเทิร์น:</strong> ใช้ 1 รอบการผ่าน (⏳) เพื่อจบเทิร์นโดยไม่โจมตี แต่จะจั่วการ์ดเพิ่ม 1 ใบ และยูนิตของศัตรูจะทำความเสียหายเบาลงในเทิร์นถัดไป</li>
+            <li><strong>เริ่มเกมใหม่:</strong> เริ่มเกมใหม่ทั้งหมด</li>
+        </ul>
+
+        <h3>เฟสต่อสู้ (Combat Phase):</h3>
+        <p>หลังจากคุณกด "จบเทิร์น" หรือ "ผ่านเทิร์น" เฟสต่อสู้จะเริ่มขึ้น ยูนิตทั้งหมดในสนามของทั้งสองฝ่ายจะโจมตีพร้อมกัน พลังโจมตีรวม (⚔️) ของยูนิตฝ่ายคุณจะสร้างความเสียหายให้ยูนิตของศัตรูก่อน หากไม่มียูนิตศัตรูในสนาม ความเสียหายทั้งหมดจะโจมตีเข้าที่ HP ของศัตรูโดยตรง</p>
+        
+        <button id="help-modal-close-btn">เข้าใจแล้ว</button>
+    </div>
+</div>
+
+
 <script>
 const BASE_CARDS = [
   // ยูนิต
@@ -297,7 +435,7 @@ const BASE_CARDS = [
   {name:"มือสังหาร", type:"creature", cost:3, atk:4, hp:2},
   {name:"กำแพงหิน", type:"creature", cost:3, atk:0, hp:5, armor: 3, desc:"ยูนิตป้องกัน"},
   {name:"โกเล็ม", type:"creature", cost:4, atk:3, hp:6},
-  {name:"ยักษ์ใหญ่", cost:5, type:"creature", atk:5, hp:8},
+  {name:"ยักษ์ใหญ่", type:"creature", cost:5, atk:5, hp:8},
   {name:"มังกร", cost:8, type:"creature", atk:8, hp:10},
   // เวทมนตร์
   {name:"ผลึกมานา", type:"spell", effect:"temp_mana", power: 2, cost:0, desc:"รับมานา 2 หน่วยในเทิร์นนี้"},
@@ -307,15 +445,23 @@ const BASE_CARDS = [
   {name:"นักบวช", type:"spell", effect:"heal", power: 5, cost:2, desc:"ฟื้นฟู HP 5 หน่วย"},
   {name:"โล่ศักดิ์สิทธิ์", type:"spell", effect:"armor", power: 5, cost:3, desc:"ได้รับเกราะ 5 หน่วย"},
   {name:"คำสาปเวลา", type:"spell", effect:"skip_turn", cost:6, desc:"ข้ามเทิร์นถัดไปของศัตรู"},
+  {name:"คำอธิษฐานสุดท้าย", type:"spell", effect:"final_prayer", cost:7, desc:"ฟื้นฟู HP จนเต็ม แต่ทำลายยูนิตทั้งหมดของเรา"},
+  {name:"สลับฝ่าย", type:"spell", effect:"swap_sides", cost:8, desc:"สลับสถานะทั้งหมดกับคู่ต่อสู้ (HP, เกราะ, มานา, การ์ด)"},
 ];
 
 let game = null;
 
 function newDeck(){
-  let d=[];
-  for(let i=0;i<3;i++) d = d.concat(JSON.parse(JSON.stringify(BASE_CARDS)));
+  const rareCards = BASE_CARDS.filter(c => c.name === "สลับฝ่าย");
+  const commonCards = BASE_CARDS.filter(c => c.name !== "สลับฝ่าย");
+  let d = [];
+  // Add common cards 3 times
+  for(let i=0; i<3; i++) d = d.concat(JSON.parse(JSON.stringify(commonCards)));
+  // Add rare cards only once
+  d = d.concat(JSON.parse(JSON.stringify(rareCards)));
   return shuffle(d);
 }
+
 function shuffle(a){
   for(let i=a.length-1;i>0;i--){
     let j=Math.floor(Math.random()*(i+1));
@@ -323,6 +469,24 @@ function shuffle(a){
   }
   return a;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    log("กด 'เริ่มเกมใหม่' เพื่อเล่น");
+    ['btnEndTurn', 'btnPassTurn', 'btnDrawCard'].forEach(id => document.getElementById(id).style.display = 'none');
+    
+    // Card Detail Modal setup
+    const modal = document.getElementById('card-detail-modal');
+    document.getElementById('modal-close-btn').onclick = () => modal.style.display = 'none';
+    modal.onclick = (e) => { if(e.target === modal) modal.style.display = 'none'; };
+
+    // Help Modal setup
+    const helpModal = document.getElementById('help-modal');
+    document.getElementById('btnHelp').onclick = () => helpModal.style.display = 'flex';
+    document.getElementById('help-modal-close-btn').onclick = () => helpModal.style.display = 'none';
+    helpModal.onclick = (e) => { if(e.target === helpModal) helpModal.style.display = 'none'; };
+
+    renderLog();
+});
 
 document.getElementById("btnNew").onclick = ()=>{
   game={
@@ -334,7 +498,9 @@ document.getElementById("btnNew").onclick = ()=>{
   };
   
   document.getElementById('btnNew').style.display = 'none';
-  ['btnEndTurn', 'btnPassTurn', 'btnDrawCard'].forEach(id => document.getElementById(id).style.display = 'block');
+  ['btnEndTurn', 'btnPassTurn'].forEach(id => document.getElementById(id).style.display = 'block');
+  document.getElementById('btnDrawCard').style.display = 'none';
+
 
   log("เกมเริ่มต้นแล้ว!");
   for(let i=0;i<4;i++) draw("player"); 
@@ -346,7 +512,6 @@ document.getElementById("btnEndTurn").onclick=()=>{
   if (game.turn % 2 !== 0 || game.isCombatting) return;
   log("ผู้เล่นจบเทิร์น");
   game.player.passed = false;
-  game.player.turnCount--;
   startCombat();
 };
 
@@ -417,37 +582,41 @@ function handleSpell(caster, card) {
     switch(card.effect) {
         case 'heal':
             caster.hp = Math.min(30, caster.hp + card.power);
-            log(`${caster.name} ฟื้นฟูพลังชีวิต ${card.power} หน่วย`);
             break;
         case 'armor':
             caster.armor += card.power;
-            log(`${caster.name} ได้รับเกราะ ${card.power} หน่วย`);
             break;
         case 'temp_mana':
             caster.mana = Math.min(10, caster.mana + card.power);
-            log(`${caster.name} ได้รับมานาชั่วคราว ${card.power} หน่วย`);
             break;
         case 'perm_mana':
             caster.maxMana = Math.min(10, caster.maxMana + card.power);
-            log(`${caster.name} เพิ่มมานาสูงสุดถาวร ${card.power} หน่วย`);
             break;
         case 'direct_damage':
             if (enemySide.board.length > 0) {
                 const target = randomChoice(enemySide.board);
-                log(`${card.name} สร้างความเสียหาย ${card.power} หน่วยแก่ ${target.name}`);
                 dealUnitDamage(target, card.power);
-            } else log(`${card.name} ไม่มีเป้าหมาย!`);
+            }
             break;
         case 'thornmail':
             if (caster.board.length > 0) {
                 const target = randomChoice(caster.board);
                 target.thorns = (target.thorns || 0) + card.power;
-                log(`${target.name} ได้รับผลสะท้อนความเสียหาย ${card.power} หน่วย!`);
-            } else log(`${card.name} ไม่มียูนิตให้ร่ายใส่!`);
+            }
             break;
         case 'skip_turn':
             enemySide.isSkipped = true;
-            log(`${enemySide.name} จะถูกข้ามเทิร์นถัดไป!`);
+            break;
+        case 'final_prayer':
+            caster.hp = 30;
+            caster.board = [];
+            break;
+        case 'swap_sides':
+            const temp = { hp: caster.hp, armor: caster.armor, mana: caster.mana, maxMana: caster.maxMana, hand: caster.hand, deck: caster.deck, board: caster.board, turnCount: caster.turnCount };
+            caster.hp = enemySide.hp; caster.armor = enemySide.armor; caster.mana = enemySide.mana; caster.maxMana = enemySide.maxMana; caster.hand = enemySide.hand; caster.deck = enemySide.deck; caster.board = enemySide.board; caster.turnCount = enemySide.turnCount;
+            enemySide.hp = temp.hp; enemySide.armor = temp.armor; enemySide.mana = temp.mana; enemySide.maxMana = temp.maxMana; enemySide.hand = temp.hand; enemySide.deck = temp.deck; enemySide.board = temp.board; enemySide.turnCount = temp.turnCount;
+            caster.board.forEach(u => u.uid = u.uid.replace(enemySide.id, caster.id));
+            enemySide.board.forEach(u => u.uid = u.uid.replace(caster.id, enemySide.id));
             break;
     }
 }
@@ -477,7 +646,6 @@ function dealUnitDamage(unit, amount) {
         setTimeout(() => unitEl.classList.remove('damage-flash'), 400);
     }
 }
-
 
 function dealDamage(target, amount) { // For heroes
     const damageDealtToArmor = Math.min(target.armor, amount);
@@ -511,7 +679,6 @@ async function dealBoardDamage(board, totalDamage) {
     render();
 }
 
-
 async function startCombat() {
     game.isCombatting = true;
     render();
@@ -524,32 +691,24 @@ async function startCombat() {
     const playerAtk = player.board.reduce((sum, u) => sum + u.atk, 0);
     const botAtk = bot.board.reduce((sum, u) => sum + u.atk, 0);
 
-    // Player attacks bot's board
     if (playerAtk > 0 && bot.board.length > 0) {
-        log(`ยูนิตผู้เล่นโจมตีรวม ${playerAtk} หน่วย!`);
         await dealBoardDamage(bot.board, playerAtk);
     }
     await delay(300);
 
-    // Bot's thorns reflect
     const botThornsDamage = bot.board.filter(u => u.hp > 0 && u.thorns > 0).reduce((sum, u) => sum + u.thorns, 0);
     if (botThornsDamage > 0 && player.board.length > 0) {
-        log(`เกราะหนามของบอทสะท้อนความเสียหาย ${botThornsDamage} หน่วย!`);
         await dealBoardDamage(player.board, botThornsDamage);
     }
     await delay(300);
 
-    // Bot attacks player's board
     if (botAtk > 0 && player.board.length > 0) {
-        log(`ยูนิตบอทโจมตีรวม ${botAtk} หน่วย!`);
         await dealBoardDamage(player.board, botAtk);
     }
     await delay(300);
     
-    // Player's thorns reflect
     const playerThornsDamage = player.board.filter(u => u.hp > 0 && u.thorns > 0).reduce((sum, u) => sum + u.thorns, 0);
     if (playerThornsDamage > 0 && bot.board.length > 0) {
-        log(`เกราะหนามของผู้เล่นสะท้อนความเสียหาย ${playerThornsDamage} หน่วย!`);
         await dealBoardDamage(bot.board, playerThornsDamage);
     }
     
@@ -557,18 +716,11 @@ async function startCombat() {
     cleanupBoards();
     await delay(200);
 
-    // Hero damage calculation
     let damageToBotHero = playerAtk;
     let damageToPlayerHero = botAtk;
 
-    if (player.passed && damageToPlayerHero > 0) {
-        damageToPlayerHero = Math.ceil(damageToPlayerHero / 2);
-        log("ผู้เล่นรับความเสียหายเพียงครึ่งเดียว!");
-    }
-    if (bot.passed && damageToBotHero > 0) {
-        damageToBotHero = Math.ceil(damageToBotHero / 2);
-        log("บอทรับความเสียหายเพียงครึ่งเดียว!");
-    }
+    if (player.passed) damageToPlayerHero = Math.ceil(damageToPlayerHero / 2);
+    if (bot.passed) damageToBotHero = Math.ceil(damageToBotHero / 2);
 
     if (damageToBotHero > 0) dealDamage(bot, damageToBotHero);
     if (damageToPlayerHero > 0) dealDamage(player, damageToPlayerHero);
@@ -579,7 +731,6 @@ async function startCombat() {
     game.isCombatting = false;
     if(game.turn !== -1) nextTurn();
 }
-
 
 function cleanupBoards(){
   game.player.board = game.player.board.filter(u=>u.hp > 0);
@@ -605,59 +756,65 @@ function nextTurn(){
   draw(isPlayerTurn ? 'player' : 'bot');
   log(`--- เทิร์นของ ${currentSide.name} (มานา: ${currentSide.mana}/${currentSide.maxMana}) ---`);
   
-  if (!isPlayerTurn) {
-    setTimeout(botTurn, 1500);
-  }
+  if (!isPlayerTurn) setTimeout(botTurn, 1500);
   render();
 }
 
 function botTurn(){
-  const { bot, player } = game;
-
-  // Healing strategy
-  const healCardInfo = bot.hand.map((c, i) => ({card: c, index: i})).find(x => x.card.effect === 'heal' && x.card.cost <= bot.mana);
-  if (healCardInfo && bot.hp <= (30 - healCardInfo.card.power)) {
-      playCard('bot', healCardInfo.index);
-      setTimeout(botTurn, 1000);
-      return;
-  }
-
-  // Pass Turn strategy
-  const canPlayCreature = bot.hand.some(c => c.type === 'creature' && c.cost <= bot.mana);
-  if (!canPlayCreature && player.board.length > 0 && bot.turnCount > 0) {
-      log("บอทเลือกที่จะผ่านเทิร์น");
-      bot.passed = true;
-      bot.turnCount--;
-      draw('bot');
-      startCombat();
-      return;
-  }
-
-  // All-in strategy
-  if (bot.hp <= 10 && player.board.length > 0) {
-      const affordableCreatures = bot.hand.map((c, i) => ({card: c, index: i})).filter(x => x.card.type === 'creature' && x.card.cost <= bot.mana);
-      if (affordableCreatures.length > 0) {
-          log("บอทเข้าสู่โหมดโจมตีเต็มกำลัง!");
-          playCard('bot', affordableCreatures[0].index);
-          setTimeout(botTurn, 1000);
+    const { bot, player } = game;
+    const findCard = (effect) => bot.hand.map((c, i) => ({card: c, index: i})).find(x => x.card.effect === effect && x.card.cost <= bot.mana);
+  
+    // Emergency plays remain at the top
+    const swapCardInfo = findCard('swap_sides');
+    if (swapCardInfo && bot.hp <= 10 && player.hp > bot.hp) { playCard('bot', swapCardInfo.index); return; }
+  
+    const prayerCardInfo = findCard('final_prayer');
+    if (prayerCardInfo && bot.hp <= 15) { playCard('bot', prayerCardInfo.index); return; }
+  
+    const healCardInfo = findCard('heal');
+    if (healCardInfo && bot.hp <= (30 - healCardInfo.card.power)) { playCard('bot', healCardInfo.index); setTimeout(botTurn, 1000); return; }
+  
+    // NEW: Early Game Aggression (Turns 1 & 3 for the bot)
+    if (game.turn < 5) {
+      const earlyCreatures = bot.hand
+          .map((c, i) => ({ card: c, index: i }))
+          .filter(x => x.card.type === 'creature' && x.card.cost <= bot.mana)
+          .sort((a, b) => b.card.cost - a.card.cost); // Play the best one it can
+      
+      if (earlyCreatures.length > 0) {
+          playCard('bot', earlyCreatures[0].index);
+          setTimeout(botTurn, 1000); // Check if it can play another card
           return;
       }
-  }
-  
-  // Standard play strategy
-  let playable = bot.hand.map((c, i) => ({card: c, index: i})).filter(x => x.card.cost <= bot.mana).sort((a,b) => b.card.cost - a.card.cost);
-  
-  if (playable.length > 0) {
-      playCard("bot", playable[0].index);
-      setTimeout(botTurn, 1000);
-  } else {
-      log("บอทจบเทิร์น");
-      bot.passed = false;
-      if (bot.turnCount > 0) bot.turnCount--;
-      startCombat();
-  }
-}
+    }
 
+    // Existing logic for mid-late game
+    const canPlayCreature = bot.hand.some(c => c.type === 'creature' && c.cost <= bot.mana);
+    if (!canPlayCreature && player.board.length > 0 && bot.turnCount > 0) {
+        log("บอทเลือกที่จะผ่านเทิร์น");
+        bot.passed = true;
+        bot.turnCount--;
+        draw('bot');
+        startCombat();
+        return;
+    }
+  
+    if (bot.hp <= 10 && player.board.length > 0) {
+        const affordableCreatures = bot.hand.map((c, i) => ({card: c, index: i})).filter(x => x.card.type === 'creature' && x.card.cost <= bot.mana);
+        if (affordableCreatures.length > 0) { playCard('bot', affordableCreatures[0].index); setTimeout(botTurn, 1000); return; }
+    }
+    
+    let playable = bot.hand.map((c, i) => ({card: c, index: i})).filter(x => x.card.cost <= bot.mana).sort((a,b) => b.card.cost - a.card.cost);
+    
+    if (playable.length > 0) {
+        playCard("bot", playable[0].index);
+        setTimeout(botTurn, 1000);
+    } else {
+        log("บอทจบเทิร์น");
+        bot.passed = false;
+        startCombat();
+    }
+}
 
 function randomChoice(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
 
@@ -676,10 +833,7 @@ function checkWinner(){
   }
 
   if (winner) {
-      if (winner === "เสมอ") log("เกมจบลงด้วยผลเสมอ!");
-      else if (winner === game.player.name) log("ยินดีด้วย, คุณชนะ!");
-      else log("คุณแพ้แล้ว!");
-      
+      log(winner === "เสมอ" ? "เกมจบลงด้วยผลเสมอ!" : `${winner === game.player.name ? 'ยินดีด้วย, คุณชนะ' : 'คุณแพ้แล้ว'}!`);
       setTimeout(() => alert(winner === "เสมอ" ? "เสมอ!" : `${winner} เป็นฝ่ายชนะ!`), 100);
       game.turn = -1;
       gameOver = true;
@@ -691,13 +845,33 @@ function checkWinner(){
   }
 }
 
+function showCardDetails(card) {
+    const modal = document.getElementById('card-detail-modal');
+    const modalDisplay = document.getElementById('modal-card-display');
+    modalDisplay.innerHTML = ''; 
+    const cardEl = document.createElement('div');
+    cardEl.className = 'card';
+    cardEl.innerHTML = getCardHTML(card);
+    cardEl.querySelector('.card-info-btn').style.display = 'none'; // Hide info btn in modal
+    modalDisplay.appendChild(cardEl);
+    modal.style.display = 'flex';
+}
+
 // --- RENDER FUNCTIONS ---
 function render(){
   if (!game) return;
   const isPlayerTurn = game.turn % 2 === 0;
+  
   document.getElementById('btnEndTurn').disabled = !isPlayerTurn || game.isCombatting || game.player.turnCount <= 0;
   document.getElementById('btnPassTurn').disabled = !isPlayerTurn || game.isCombatting || game.player.turnCount <= 0;
-  document.getElementById('btnDrawCard').disabled = !isPlayerTurn || game.isCombatting || game.player.mana < 3;
+  
+  const btnDrawCard = document.getElementById('btnDrawCard');
+  if (isPlayerTurn && !game.isCombatting && game.player.mana >= 3) {
+      btnDrawCard.style.display = 'block';
+  } else {
+      btnDrawCard.style.display = 'none';
+  }
+
   renderHero('player', '🧑‍🚀');
   renderHero('bot', '🤖');
   renderHand('player');
@@ -727,19 +901,43 @@ function renderHand(side) {
     handEl.innerHTML = '';
     
     if (side === 'player') {
-        s.hand.forEach((c, idx) => {
+        // Group cards by name to stack them
+        const cardGroups = s.hand.reduce((acc, card) => {
+            acc[card.name] = acc[card.name] || [];
+            acc[card.name].push(card);
+            return acc;
+        }, {});
+
+        Object.values(cardGroups).forEach(group => {
+            const cardData = group[0];
+            const count = group.length;
+            // Find the original index of the first card in this group to play it
+            const originalIndex = s.hand.findIndex(c => c.name === cardData.name);
+
             const div = document.createElement("div");
             div.className = "card";
-            div.innerHTML = getCardHTML(c);
+            if (count > 1) {
+                div.classList.add("card-stack");
+            }
+            div.innerHTML = getCardHTML(cardData);
+
+            if (count > 1) {
+                const countBadge = document.createElement('div');
+                countBadge.className = 'card-stack-count';
+                countBadge.textContent = `x${count}`;
+                div.appendChild(countBadge);
+            }
             
-            if (s.mana >= c.cost && game.turn % 2 === 0 && !game.isCombatting) {
-                div.onclick = () => playCard("player", idx);
+            if (s.mana >= cardData.cost && game.turn % 2 === 0 && !game.isCombatting) {
+                div.onclick = () => playCard("player", originalIndex);
             } else {
                 div.classList.add("unplayable");
             }
+            div.querySelector('.card-info-btn').onclick = (e) => { e.stopPropagation(); showCardDetails(cardData); };
             handEl.appendChild(div);
         });
-    } else {
+
+    } else { // Bot's hand
         for (let i = 0; i < s.hand.length; i++) {
             const div = document.createElement("div");
             div.className = "card-back";
@@ -747,6 +945,7 @@ function renderHand(side) {
         }
     }
 }
+
 
 function renderDeck(side) {
     const s = game[side];
@@ -767,15 +966,17 @@ function renderBoard() {
             d.id = u.uid;
             d.className = "card";
             d.innerHTML = getCardHTML(u);
+            d.querySelector('.card-info-btn').onclick = (e) => { e.stopPropagation(); showCardDetails(u); };
             boardEl.appendChild(d);
         });
     });
 }
 
 function getCardHTML(c) {
-    let content = `<div class="card-cost">${c.cost}</div>
-                      <div class="card-name">${c.name}</div>`;
-                      
+    let content = `<div class="card-info-btn">?</div>
+                       <div class="card-cost">${c.cost}</div>
+                       <div class="card-name">${c.name}</div>`;
+                       
     if (c.type === 'creature') {
         const hpDisplay = c.maxHp ? `${c.hp}/${c.maxHp}` : c.hp;
         let statsHTML = ``;
@@ -812,12 +1013,6 @@ function log(msg){
         renderLog();
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    log("กด 'เริ่มเกมใหม่' เพื่อเล่น");
-    ['btnEndTurn', 'btnPassTurn', 'btnDrawCard'].forEach(id => document.getElementById(id).style.display = 'none');
-    renderLog();
-});
 
 </script>
 </body>
