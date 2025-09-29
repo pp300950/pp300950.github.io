@@ -22,6 +22,8 @@ https://pp300950.github.io/laws_quiz/index.html
 
 https://pp300950.github.io/calculator/currencyconverter.html
 
+https://pp300950.github.io/Card_battle/main1.html
+
 https://pp300950.github.io/piano/index.html
 
 https://pp300950.github.io/annabot/anna.html // bot anna ที่จะทายว่าคุณคือเพื่อนในเฟสคนไหนจากข้อมูลที่มี
