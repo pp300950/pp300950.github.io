@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ถาม-ตอบสุขภาพ | ชุมชนคนรักสุขภาพ</title>
+    <style>
+      /* สไตล์หลัก */
+      body {
+        font-family: 'Tahoma', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f7f6;
+      }
+      .header {
+        background-color: #2c3e50;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      .container {
+        width: 80%;
+        margin: 20px auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .question-list {
+        list-style: none;
+        padding: 0;
+      }
+      .question-item {
+        border-bottom: 1px solid #eee;
+        padding: 15px 0;
+        cursor: pointer;
+      }
+      .question-item:hover {
+        background-color: #f9f9f9;
+      }
+      .question-title {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.1em;
+        display: block;
+      }
+      .question-meta {
+        font-size: 0.9em;
+        color: #7f8c8d;
+        margin-top: 5px;
+      }
+      .ask-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #e74c3c;
+        color: white;
+        text-align: center;
+        border-radius: 5px;
+        text-decoration: none;
+        cursor: pointer;
+        margin-bottom: 20px;
+      }
+
+      /* สไตล์สำหรับฟอร์มหลักและปุ่ม */
+      #ask-form-section {
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        display: none;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .form-group input[type='text'],
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      .submit-btn {
+        background-color: #2ecc71;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .submit-btn:hover {
+        background-color: #27ae60;
+      }
+      .back-button {
+        background-color: #3498db;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      /* สไตล์สำหรับส่วนคำถามเดี่ยวและคำตอบ */
+      #single-question-view {
+        display: none;
+        padding: 20px;
+      }
+      #single-question-view h2 {
+        color: #e74c3c;
+      }
+      .answer-option {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #f8f8f8;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      /* สไตล์สำหรับส่วนคอมเมนต์ที่เพิ่มใหม่ */
+      #comments-section {
+        margin-top: 30px;
+        border-top: 1px solid #ccc;
+        padding-top: 20px;
+      }
+      .comment-form textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        resize: vertical;
+      }
+      .comment-item {
+        background-color: #ecf0f1;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+      }
+      .comment-item strong {
+        color: #2c3e50;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>💬 ถาม-ตอบสุขภาพ</h1>
+      <p>ชุมชนแลกเปลี่ยนความรู้ด้านการดูแลรักษาสุขภาพ</p>
+    </div>
+    <div class="container">
+      <div id="main-list-view">
+        <div id="ask-button" class="ask-button">ตั้งคำถามใหม่</div>
+        <h2>คำถามยอดนิยมล่าสุด</h2>
+        <ul class="question-list" id="questions-container"></ul>
+        <p style="text-align: center; margin-top: 30px">
+          <a href="#" style="color: #2c3e50">ดูคำถามทั้งหมด »</a>
+        </p>
+      </div>
+
+      <div id="ask-form-section">
+        <h3>ตั้งคำถามสุขภาพของคุณ</h3>
+        <form id="new-question-form">
+          <div class="form-group">
+            <label for="question-title-input">หัวข้อคำถาม:</label>
+            <input type="text" id="question-title-input" required />
+          </div>
+          <div class="form-group">
+            <label for="question-body-input">รายละเอียดคำถาม:</label>
+            <textarea id="question-body-input" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">ส่งคำถาม</button>
+          <button type="button" id="cancel-ask" class="back-button">
+            ยกเลิก
+          </button>
+        </form>
+      </div>
+
+      <div id="single-question-view">
+        <button class="back-button" id="back-to-list">
+          « กลับสู่รายการคำถาม
+        </button>
+        <h2 id="view-question-title"></h2>
+        <div class="question-meta" id="view-question-meta"></div>
+        <p
+          id="view-question-body"
+          style="border: 1px dashed #ccc; padding: 15px; margin-top: 15px"
+        ></p>
+
+        <h3 style="color: #3498db">คำตอบจากผู้เชี่ยวชาญ</h3>
+        <div id="answer-options-container"></div>
+
+        <div id="comments-section">
+          <h3 style="color: #2c3e50">ความคิดเห็นจากสมาชิก</h3>
+          <div id="comments-container"></div>
+
+          <form id="comment-form" class="comment-form">
+            <input type="hidden" id="current-question-id" />
+            <div class="form-group">
+              <label for="comment-name">ชื่อของคุณ:</label>
+              <input
+                type="text"
+                id="comment-name"
+                value="สมาชิกไม่ระบุ"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="comment-text">เพิ่มความคิดเห็น:</label>
+              <textarea id="comment-text" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">ส่งความคิดเห็น</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ข้อมูลคำถามและคำตอบ (เพิ่มส่วน comments: [] เข้าไปในแต่ละคำถาม)
+      let questionsData = [
+        {
+          id: 1,
+          title: 'ทำอย่างไรเมื่อมีอาการนอนไม่หลับเรื้อรัง?',
+          meta: 'โดย: สมาชิก A | 5 คำตอบ | หมวด: สุขภาพจิต',
+          body: 'พักหลังมานี้มีอาการนอนไม่หลับแทบทุกคืน แม้พยายามทำใจให้สบายแล้ว อยากทราบว่ามีวิธีการดูแลตัวเองเบื้องต้นอย่างไรบ้างที่สามารถทำได้ที่บ้าน?',
+          answers: [
+            {
+              option: 1,
+              text: 'จัดตารางการนอนให้สม่ำเสมอ และหลีกเลี่ยงการใช้อุปกรณ์อิเล็กทรอนิกส์ก่อนนอนอย่างน้อย 1 ชั่วโมง',
+              source: 'แพทย์ผู้เชี่ยวชาญด้านระบบประสาท',
+            },
+            {
+              option: 2,
+              text: 'ลองฝึกการทำสมาธิ (Meditation) หรือเทคนิคผ่อนคลายกล้ามเนื้อ (Progressive Muscle Relaxation) เป็นประจำ',
+              source: 'นักจิตวิทยา',
+            },
+            {
+              option: 3,
+              text: 'จำกัดปริมาณคาเฟอีนและแอลกอฮอล์ โดยเฉพาะช่วงบ่ายไปจนถึงเย็น',
+              source: 'นักโภชนาการ',
+            },
+            {
+              option: 4,
+              text: 'ปรับปรุงห้องนอนให้มืด เย็น และเงียบสงบที่สุดเท่าที่จะเป็นไปได้',
+              source: 'นักสุขศาสตร์การนอน',
+            },
+          ],
+          comments: [
+            {
+              name: 'สมชาย',
+              text: 'ตัวเลือกที่ 4 ช่วยได้จริงครับ ผมลองปิดไฟให้มืดสนิทแล้วนอนหลับง่ายขึ้นเยอะเลย',
+            },
+          ],
+        },
+        {
+          id: 2,
+          title: 'การวิ่งมาราธอนมีผลกระทบต่อข้อเข่าในระยะยาวหรือไม่?',
+          meta: 'โดย: สมาชิก B | 12 คำตอบ | หมวด: กีฬาและการออกกำลังกาย',
+          body: 'ผมเป็นนักวิ่งมาราธอนมือใหม่ กังวลว่าการวิ่งระยะทางไกลๆ เป็นประจำ จะทำให้ข้อเข่าเสื่อมเร็วกว่าคนปกติหรือไม่ ควรป้องกันอย่างไร?',
+          answers: [
+            {
+              option: 1,
+              text: 'การวิ่งไม่ได้ทำให้ข้อเข่าเสื่อมถ้าหากมีการฝึกซ้อมที่เหมาะสม ควรเสริมสร้างความแข็งแรงของกล้ามเนื้อรอบเข่าและสะโพกเป็นหลัก',
+              source: 'แพทย์เวชศาสตร์การกีฬา',
+            },
+            {
+              option: 2,
+              text: 'เลือกรองเท้าวิ่งที่มีการซัพพอร์ตแรงกระแทกที่เหมาะสมกับรูปเท้าและน้ำหนักตัวของคุณ',
+              source: 'ผู้เชี่ยวชาญด้านอุปกรณ์กีฬา',
+            },
+            {
+              option: 3,
+              text: 'จัดตารางการฝึกซ้อมให้มีการพักฟื้น (Rest Day) และมีการฝึกวิ่งระยะสั้นสลับกับระยะยาวเพื่อลดความเครียดสะสมที่ข้อต่อ',
+              source: 'โค้ชวิ่งมืออาชีพ',
+            },
+            {
+              option: 4,
+              text: 'ควรควบคุมน้ำหนักตัวให้อยู่ในเกณฑ์ปกติ เพราะน้ำหนักที่เพิ่มขึ้นคือภาระสำคัญของข้อเข่า',
+              source: 'นักกายภาพบำบัด',
+            },
+          ],
+          comments: [
+            {
+              name: 'กานดา',
+              text: 'แนะนำให้ลองฝึกท่า Squat และ Lunge เพื่อเสริมความแข็งแรงรอบเข่าค่ะ',
+            },
+            {
+              name: 'สมาชิกไม่ระบุ',
+              text: 'ผมว่ารองเท้าสำคัญสุดนะ ลงทุนไปเลยเพื่อสุขภาพเท้าและเข่าในระยะยาว',
+            },
+          ],
+        },
+        {
+          id: 3,
+          title: 'อาหารเสริมวิตามิน D ควรทานเวลาไหนถึงจะเหมาะสมที่สุด?',
+          meta: 'โดย: สมาชิก C | 8 คำตอบ | หมวด: โภชนาการ',
+          body: 'ทานวิตามิน D เสริมอยู่ค่ะ แต่ไม่แน่ใจว่าควรทานตอนเช้า พร้อมอาหาร หรือทานก่อนนอนถึงจะดีที่สุดคะ?',
+          answers: [
+            {
+              option: 1,
+              text: 'ควรทานพร้อมมื้ออาหารที่มีไขมัน (ไม่ว่าจะเป็นมื้อเช้าหรือเย็น) เนื่องจากวิตามิน D เป็นวิตามินที่ละลายในไขมัน (Fat-soluble)',
+              source: 'นักโภชนาการคลินิก',
+            },
+            {
+              option: 2,
+              text: 'การทานในมื้อเช้าหรือกลางวันอาจช่วยให้ร่างกายดูดซึมได้ดีกว่าในบางคน และไม่รบกวนการนอนหลับ',
+              source: 'เภสัชกร',
+            },
+            {
+              option: 3,
+              text: 'หลีกเลี่ยงการทานพร้อมกับยาลดไขมันบางชนิด เพราะอาจรบกวนการดูดซึมของวิตามิน D',
+              source: 'แพทย์ผู้ให้คำปรึกษาด้านยา',
+            },
+            {
+              option: 4,
+              text: 'สิ่งที่สำคัญกว่าเวลาคือการทานอย่างสม่ำเสมอทุกวัน ตามโดสที่แพทย์หรือเภสัชกรแนะนำ',
+              source: 'ผู้เชี่ยวชาญด้านผลิตภัณฑ์เสริมอาหาร',
+            },
+          ],
+          comments: [],
+        },
+      ];
+
+      let currentMaxId = 3;
+      let currentViewingQuestionId = null; // เก็บ ID ของคำถามที่กำลังดู
+
+      const mainListView = document.getElementById('main-list-view');
+      const askFormSection = document.getElementById('ask-form-section');
+      const singleQuestionView = document.getElementById(
+        'single-question-view'
+      );
+      const askButton = document.getElementById('ask-button');
+      const cancelButton = document.getElementById('cancel-ask');
+      const newQuestionForm = document.getElementById('new-question-form');
+      const questionsContainer = document.getElementById('questions-container');
+      const backToListButton = document.getElementById('back-to-list');
+      const commentForm = document.getElementById('comment-form');
+      const commentsContainer = document.getElementById('comments-container');
+
+      // ฟังก์ชันแสดงรายการคำถาม
+      function renderQuestionList() {
+        questionsContainer.innerHTML = '';
+        questionsData.forEach((q) => {
+          const li = document.createElement('li');
+          li.className = 'question-item';
+          li.dataset.id = q.id;
+          // อัปเดตเมต้าเพื่อให้แสดงจำนวนคอมเมนต์จริง
+          const commentCount = q.comments ? q.comments.length : 0;
+          li.innerHTML = `
+                    <span class="question-title">${q.title}</span>
+                    <div class="question-meta">โดย: ${q.meta
+                      .split('|')[0]
+                      .trim()} | ${commentCount} ความคิดเห็น | ${q.meta
+            .split('|')[2]
+            .trim()}</div>
+                `;
+          li.addEventListener('click', () => showQuestionDetail(q.id));
+          questionsContainer.appendChild(li);
+        });
+      }
+
+      // --- ส่วนการจัดการคอมเมนต์ ---
+
+      // ฟังก์ชันสร้างรายการคอมเมนต์
+      function renderComments(comments) {
+        commentsContainer.innerHTML = '';
+        if (comments.length === 0) {
+          commentsContainer.innerHTML =
+            '<p style="color: #7f8c8d;">ยังไม่มีความคิดเห็น</p>';
+          return;
+        }
+        comments.forEach((c) => {
+          const div = document.createElement('div');
+          div.className = 'comment-item';
+          div.innerHTML = `<strong>${c.name}:</strong> ${c.text}`;
+          commentsContainer.appendChild(div);
+        });
+      }
+
+      // จัดการการส่งคอมเมนต์
+      commentForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const questionId = parseInt(
+          document.getElementById('current-question-id').value
+        );
+        const name = document.getElementById('comment-name').value;
+        const text = document.getElementById('comment-text').value;
+
+        const question = questionsData.find((q) => q.id === questionId);
+        if (question) {
+          // เพิ่มคอมเมนต์ใหม่เข้าไปในข้อมูล
+          question.comments.push({ name: name, text: text });
+
+          // อัปเดต UI
+          renderComments(question.comments);
+          document.getElementById('comment-text').value = ''; // ล้างช่องคอมเมนต์
+          renderQuestionList(); // อัปเดตจำนวนคอมเมนต์บนหน้าหลัก
+        }
+      });
+
+      // --- ส่วนการแสดงผลหลัก ---
+
+      // ฟังก์ชันแสดงรายละเอียดคำถามและคำตอบ
+      function showQuestionDetail(id) {
+        const question = questionsData.find((q) => q.id === id);
+        if (!question) return;
+
+        currentViewingQuestionId = id; // กำหนด ID คำถามปัจจุบัน
+
+        // ซ่อน/แสดงส่วนต่างๆ
+        mainListView.style.display = 'none';
+        askFormSection.style.display = 'none';
+        singleQuestionView.style.display = 'block';
+
+        // ใส่ข้อมูลคำถาม
+        document.getElementById('view-question-title').textContent =
+          question.title;
+        const commentCount = question.comments ? question.comments.length : 0;
+        document.getElementById(
+          'view-question-meta'
+        ).innerHTML = `${question.meta
+          .split('|')[0]
+          .trim()} | <strong>${commentCount} ความคิดเห็น</strong> | ${question.meta
+          .split('|')[2]
+          .trim()}`;
+        document.getElementById('view-question-body').textContent =
+          question.body;
+        document.getElementById('current-question-id').value = id; // กำหนด ID ในฟอร์มคอมเมนต์
+
+        // สร้างคำตอบ 4 ตัวเลือก
+        const answersContainer = document.getElementById(
+          'answer-options-container'
+        );
+        answersContainer.innerHTML = '';
+        question.answers.forEach((a) => {
+          const div = document.createElement('div');
+          div.className = 'answer-option';
+          div.innerHTML = `
+                    <strong>ตัวเลือกที่ ${a.option}:</strong> ${a.text}
+                    <div class="question-meta">ที่มา: ${a.source}</div>
+                `;
+          answersContainer.appendChild(div);
+        });
+
+        // แสดงคอมเมนต์
+        renderComments(question.comments);
+      }
+
+      // จัดการการแสดงฟอร์ม
+      askButton.addEventListener('click', () => {
+        mainListView.style.display = 'none';
+        singleQuestionView.style.display = 'none';
+        askFormSection.style.display = 'block';
+      });
+
+      // จัดการการยกเลิกฟอร์ม
+      cancelButton.addEventListener('click', () => {
+        askFormSection.style.display = 'none';
+        mainListView.style.display = 'block';
+        newQuestionForm.reset();
+      });
+
+      // จัดการการกลับไปหน้าหลัก
+      backToListButton.addEventListener('click', () => {
+        singleQuestionView.style.display = 'none';
+        mainListView.style.display = 'block';
+      });
+
+      // จัดการการส่งคำถามใหม่
+      newQuestionForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const title = document.getElementById('question-title-input').value;
+        const body = document.getElementById('question-body-input').value;
+
+        currentMaxId++;
+        const newQuestion = {
+          id: currentMaxId,
+          title: title,
+          meta: `โดย: สมาชิกใหม่ | 0 คำตอบ | หมวด: ทั่วไป`,
+          body: body,
+          answers: [
+            {
+              option: 1,
+              text: 'คำตอบจำลองที่ 1: ควรปรึกษาแพทย์เฉพาะทางเพื่อวินิจฉัยอาการที่แน่ชัด.',
+              source: 'ระบบอัตโนมัติ',
+            },
+            {
+              option: 2,
+              text: 'คำตอบจำลองที่ 2: ลองค้นหาข้อมูลจากแหล่งข้อมูลที่เชื่อถือได้เพิ่มเติม.',
+              source: 'ระบบอัตโนมัติ',
+            },
+            {
+              option: 3,
+              text: 'คำตอบจำลองที่ 3: คำถามของคุณจะถูกส่งต่อไปยังผู้เชี่ยวชาญในระบบ.',
+              source: 'ระบบอัตโนมัติ',
+            },
+            {
+              option: 4,
+              text: 'คำตอบจำลองที่ 4: อย่าลืมดูแลสุขภาพและพักผ่อนให้เพียงพอ.',
+              source: 'ระบบอัตโนมัติ',
+            },
+          ],
+          comments: [], // กำหนดให้คำถามใหม่มีอาร์เรย์คอมเมนต์ว่าง
+        };
+
+        questionsData.unshift(newQuestion);
+        renderQuestionList();
+
+        alert('ส่งคำถามเรียบร้อยแล้ว! คำถามของคุณถูกเพิ่มในรายการ');
+
+        newQuestionForm.reset();
+        askFormSection.style.display = 'none';
+        mainListView.style.display = 'block';
+      });
+
+      // เริ่มต้นการแสดงผล
+      document.addEventListener('DOMContentLoaded', renderQuestionList);
+    </script>
+  </body>
+</html>
