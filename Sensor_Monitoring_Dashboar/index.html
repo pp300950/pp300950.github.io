@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Sensor Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Kanit', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-active {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <div id="main-dashboard-view">
+            <header class="mb-6 flex flex-wrap justify-between items-center gap-4">
+                <h1 class="text-3xl font-bold text-gray-800">Sensor Monitoring Dashboard</h1>
+            </header>
+
+            <section id="summary-section" class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                </section>
+
+            <div class="mb-6 flex flex-wrap gap-4 p-4 bg-white rounded-lg shadow-sm border-l-4 border-gray-500 items-center">
+                 <h3 class="text-lg font-semibold text-gray-700 mr-4">รายงานภาพรวมทั้งหมด:</h3>
+                <button id="summary-report-btn-all" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center gap-2">
+                    <i class="ph ph-file-text"></i>
+                    Report Summary
+                </button>
+                <button id="log-report-btn-all" class="bg-gray-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-800 transition duration-300 flex items-center gap-2">
+                    <i class="ph ph-clock-counter-clockwise"></i>
+                    Log Report
+                </button>
+                </div>
+
+            <div id="average-view" class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-700 mb-4">กราฟแสดงค่าเฉลี่ยรวมของทุกเซ็นเซอร์</h2>
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <canvas id="average-chart"></canvas>
+                </div>
+                 <div id="average-last-updated" class="text-center text-sm text-gray-500 mt-4"></div>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">สถานะภาพรวม (คลิกเพื่อดูรายละเอียด)</h2>
+            <main id="sensors-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-4 gap-6">
+                </main>
+        </div>
+
+        <div id="detail-view" class="hidden">
+            <button id="back-to-dashboard-btn" class="mb-6 bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300 flex items-center gap-2">
+                <i class="ph ph-arrow-left"></i>
+                กลับไปหน้าหลัก
+            </button>
+            
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4">
+                <h2 id="detail-title" class="text-3xl font-bold text-gray-800"></h2>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-3 bg-gray-100 rounded-lg border">
+                    <div class="flex-grow">
+                        <div id="detail-last-updated" class="text-xs text-gray-500 mb-1"></div>
+                        <div class="flex items-center gap-2">
+                            <label for="detail-interval-select" class="text-xs font-medium text-gray-600 whitespace-nowrap">รีเฟรชทุก:</label>
+                            <select id="detail-interval-select" class="interval-select text-xs rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring-opacity-50 w-full">
+                                <option value="5000">5 วินาที</option>
+                                <option value="10000">10 วินาที</option>
+                                <option value="15000">15 วินาที</option>
+                                <option value="30000">30 วินาที</option>
+                                <option value="60000">1 นาที</option>
+                            </select>
+                        </div>
+                    </div>
+                     <div class="flex gap-2">
+                         <button id="detail-summary-btn" class="w-full bg-blue-100 text-blue-800 text-sm font-bold py-2 px-3 rounded-lg hover:bg-blue-200 transition duration-300 flex items-center justify-center gap-1">
+                             <i class="ph ph-file-text"></i> Summary
+                         </button>
+                         <button id="detail-log-btn" class="w-full bg-gray-200 text-gray-800 text-sm font-bold py-2 px-3 rounded-lg hover:bg-gray-300 transition duration-300 flex items-center justify-center gap-1">
+                             <i class="ph ph-clock-counter-clockwise"></i> Log
+                         </button>
+                     </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <canvas id="sensor-chart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="log-modal" class="modal fixed inset-0 w-full h-full bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 id="log-modal-title" class="text-xl font-bold text-gray-800">Log Report</h2>
+                <button id="close-log-modal" class="text-gray-500 hover:text-gray-800">
+                    <i class="ph-bold ph-x text-2xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pole ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PM2.5</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Humidity</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temperature</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFIGURATION ---
+            const API_URL = 'https://fast-api-v81f.onrender.com/api/sensor-data';
+            const MAX_LOG_SIZE = 100;
+            const MASTER_FETCH_INTERVAL = 5000;
+            const AVG_CHART_UPDATE_INTERVAL = 10000;
+            
+            // --- DOM ELEMENTS ---
+            const mainDashboardView = document.getElementById('main-dashboard-view');
+            const sensorsContainer = document.getElementById('sensors-container');
+            const summaryContainer = document.getElementById('summary-section');
+            const logReportBtnAll = document.getElementById('log-report-btn-all');
+            const summaryReportBtnAll = document.getElementById('summary-report-btn-all');
+            
+            // Detail View Elements
+            const detailView = document.getElementById('detail-view');
+            const backToDashboardBtn = document.getElementById('back-to-dashboard-btn');
+            const detailTitle = document.getElementById('detail-title');
+            const detailLastUpdated = document.getElementById('detail-last-updated');
+            const chartCanvas = document.getElementById('sensor-chart').getContext('2d');
+            const detailIntervalSelect = document.getElementById('detail-interval-select');
+            const detailSummaryBtn = document.getElementById('detail-summary-btn');
+            const detailLogBtn = document.getElementById('detail-log-btn');
+
+            // Average View Elements (now part of main view)
+            const averageLastUpdated = document.getElementById('average-last-updated');
+            const averageChartCanvas = document.getElementById('average-chart').getContext('2d');
+
+            // Modal Elements
+            const logModal = document.getElementById('log-modal');
+            const logModalTitle = document.getElementById('log-modal-title');
+            const closeLogModalBtn = document.getElementById('close-log-modal');
+            const logTableBody = document.getElementById('log-table-body');
+
+            // --- STATE ---
+            let sensorDataLog = [];
+            let currentSensorData = [];
+            let sensorIntervals = {};
+            let sensorChart = null;
+            let averageChart = null;
+            let detailViewUpdateInterval = null;
+            let activeDetailSensorId = null;
+
+            // --- STATUS & STYLING MAPPING ---
+            const statusMap = {
+                online: { icon: '✅', bgColor: 'bg-green-100', borderColor: 'border-green-500', textColor: 'text-green-800', text: 'Online' },
+                offline: { icon: '❌', bgColor: 'bg-red-100', borderColor: 'border-red-500', textColor: 'text-red-800', text: 'Offline' },
+                error: { icon: '⚠️', bgColor: 'bg-yellow-100', borderColor: 'border-yellow-500', textColor: 'text-yellow-800', text: 'Error' }
+            };
+
+            // --- FUNCTIONS ---
+            const renderValue = (value, unit = '') => value !== null && value !== undefined ? `${value.toFixed(2)} ${unit}` : '<span class="text-gray-400">-</span>';
+
+            const createSensorCard = (sensor) => {
+                const { id, status, data, last_updated } = sensor;
+                const style = statusMap[status] || statusMap['offline'];
+                return `
+                    <div id="card-${id}" data-id="${id}" class="bg-white rounded-xl shadow-md transition-shadow hover:shadow-lg border-l-4 ${style.borderColor} cursor-pointer p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-gray-700">${id}</h2>
+                            <span class="text-sm font-semibold px-3 py-1 rounded-full ${style.bgColor} ${style.textColor}">${style.icon} ${style.text}</span>
+                        </div>
+                        <div class="space-y-2 text-gray-600">
+                            <p class="flex justify-between"><strong>PM2.5:</strong> <span class="font-mono">${renderValue(data?.['pm2.5'], 'µg/m³')}</span></p>
+                            <p class="flex justify-between"><strong>Humidity:</strong> <span class="font-mono">${renderValue(data?.humidity, '%')}</span></p>
+                            <p class="flex justify-between"><strong>Temperature:</strong> <span class="font-mono">${renderValue(data?.temperature, '°C')}</span></p>
+                        </div>
+                        <div class="border-t border-gray-100 mt-4 pt-2 text-center text-xs text-gray-500">
+                            Last updated: ${last_updated ? new Date(last_updated).toLocaleTimeString('th-TH') : '-'}
+                        </div>
+                        <div class="text-center mt-2 text-blue-600 font-semibold hover:underline">
+                            ดูรายละเอียดกราฟ <i class="ph ph-chart-line align-middle"></i>
+                        </div>
+                    </div>`;
+            };
+            
+            const createSummaryCard = (title, value, icon, unit = '', color = 'blue') => `
+                <div class="bg-white p-5 rounded-xl shadow-md flex items-center gap-4 border-l-4 border-${color}-500">
+                    <div class="bg-${color}-100 text-${color}-600 p-3 rounded-full"><i class="ph-bold ${icon} text-2xl"></i></div>
+                    <div><p class="text-sm text-gray-500">${title}</p><p class="text-2xl font-bold text-gray-800">${value} ${unit}</p></div>
+                </div>`;
+            
+            const updateDashboardUI = (data) => {
+                sensorsContainer.innerHTML = data.map(createSensorCard).join('');
+                updateSummary(data);
+            };
+
+            const updateSingleCardUI = (sensor) => {
+                const cardElement = document.getElementById(`card-${sensor.id}`);
+                if (!cardElement) return;
+                const style = statusMap[sensor.status] || statusMap['offline'];
+                cardElement.className = `bg-white rounded-xl shadow-md transition-shadow hover:shadow-lg border-l-4 ${style.borderColor} cursor-pointer p-5`;
+                cardElement.querySelector('.text-sm.font-semibold').className = `text-sm font-semibold px-3 py-1 rounded-full ${style.bgColor} ${style.textColor}`;
+                cardElement.querySelector('.text-sm.font-semibold').innerHTML = `${style.icon} ${style.text}`;
+                const spans = cardElement.querySelectorAll('.font-mono');
+                spans[0].innerHTML = renderValue(sensor.data?.['pm2.5'], 'µg/m³');
+                spans[1].innerHTML = renderValue(sensor.data?.humidity, '%');
+                spans[2].innerHTML = renderValue(sensor.data?.temperature, '°C');
+                cardElement.querySelector('.text-xs.text-gray-500').textContent = `Last updated: ${new Date(sensor.last_updated).toLocaleTimeString('th-TH')}`;
+            };
+
+            const updateSummary = (data) => {
+                const totalSensors = data.length;
+                const onlineCount = data.filter(s => s.status === 'online').length;
+                const validPm25Sensors = data.filter(s => s.data && s.data['pm2.5'] != null);
+                const validHumiditySensors = data.filter(s => s.data && s.data.humidity != null);
+                const validTempSensors = data.filter(s => s.data && s.data.temperature != null);
+                const avgPm25 = validPm25Sensors.length > 0 ? validPm25Sensors.reduce((sum, s) => sum + s.data['pm2.5'], 0) / validPm25Sensors.length : 0;
+                const avgHumidity = validHumiditySensors.length > 0 ? validHumiditySensors.reduce((sum, s) => sum + s.data.humidity, 0) / validHumiditySensors.length : 0;
+                const avgTemp = validTempSensors.length > 0 ? validTempSensors.reduce((sum, s) => sum + s.data.temperature, 0) / validTempSensors.length : 0;
+                summaryContainer.innerHTML = [
+                    createSummaryCard('สถานะ Online', `${onlineCount} / ${totalSensors}`, 'ph-plugs-connected', '', 'green'),
+                    createSummaryCard('PM2.5 เฉลี่ย', avgPm25 ? avgPm25.toFixed(2) : '-', 'ph-wind', 'µg/m³', 'yellow'),
+                    createSummaryCard('ความชื้นเฉลี่ย', avgHumidity ? avgHumidity.toFixed(2) : '-', 'ph-drop', '%', 'blue'),
+                    createSummaryCard('อุณหภูมิเฉลี่ย', avgTemp ? avgTemp.toFixed(2) : '-', 'ph-thermometer-cold', '°C', 'red')
+                ].join('');
+            };
+
+            const fetchData = async () => {
+                try {
+                    const response = await fetch(API_URL);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const result = await response.json();
+                    const newData = result.sensors.map(s => ({...s, timestamp: new Date().toISOString(), last_updated: new Date().toISOString() }));
+                    
+                    currentSensorData = newData;
+                    sensorDataLog.unshift(...newData);
+                    if (sensorDataLog.length > MAX_LOG_SIZE * (currentSensorData.length || 1)) {
+                        sensorDataLog.length = MAX_LOG_SIZE * (currentSensorData.length || 1);
+                    }
+                    
+                    if (sensorsContainer.children.length === 0 && currentSensorData.length > 0) {
+                        updateDashboardUI(currentSensorData);
+                        currentSensorData.forEach(sensor => {
+                            if (!sensorIntervals[sensor.id]) {
+                                sensorIntervals[sensor.id] = { duration: 10000 };
+                            }
+                        });
+                    } else {
+                        currentSensorData.forEach(updateSingleCardUI);
+                    }
+                    updateSummary(currentSensorData);
+                } catch (error) {
+                    console.error("Failed to fetch sensor data:", error);
+                    sensorsContainer.innerHTML = `<p class="text-red-500 col-span-full text-center">ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้</p>`;
+                }
+            };
+            
+            const showDetailView = (sensorId) => {
+                activeDetailSensorId = sensorId;
+                detailTitle.textContent = `ข้อมูลย้อนหลังสำหรับ ${sensorId}`;
+                mainDashboardView.classList.add('hidden');
+                detailView.classList.remove('hidden');
+
+                const currentInterval = sensorIntervals[sensorId]?.duration || 10000;
+                detailIntervalSelect.value = currentInterval;
+
+                if (sensorChart) sensorChart.destroy();
+                updateChart();
+                
+                if(detailViewUpdateInterval) clearInterval(detailViewUpdateInterval);
+                detailViewUpdateInterval = setInterval(updateChart, currentInterval);
+            };
+
+            const calculateAverageHistory = () => {
+                const logsByTimestamp = sensorDataLog.reduce((acc, log) => {
+                    if (!acc[log.timestamp]) acc[log.timestamp] = [];
+                    if (log.data) acc[log.timestamp].push(log.data);
+                    return acc;
+                }, {});
+
+                const averageHistory = Object.entries(logsByTimestamp).map(([timestamp, dataPoints]) => {
+                    const validPm25 = dataPoints.filter(d => d['pm2.5'] != null);
+                    const validHumid = dataPoints.filter(d => d.humidity != null);
+                    const validTemp = dataPoints.filter(d => d.temperature != null);
+                    const avgPm25 = validPm25.length ? validPm25.reduce((sum, d) => sum + d['pm2.5'], 0) / validPm25.length : null;
+                    const avgHumid = validHumid.length ? validHumid.reduce((sum, d) => sum + d.humidity, 0) / validHumid.length : null;
+                    const avgTemp = validTemp.length ? validTemp.reduce((sum, d) => sum + d.temperature, 0) / validTemp.length : null;
+                    return { timestamp, data: { 'pm2.5': avgPm25, humidity: avgHumid, temperature: avgTemp } };
+                });
+                return averageHistory.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)).slice(-MAX_LOG_SIZE);
+            };
+
+            const updateChart = () => {
+                if (!activeDetailSensorId) return;
+                const history = sensorDataLog.filter(log => log.id === activeDetailSensorId).slice(0, MAX_LOG_SIZE).reverse();
+                const labels = history.map(log => new Date(log.timestamp).toLocaleTimeString('th-TH'));
+                
+                detailLastUpdated.textContent = `Last updated: ${labels[labels.length - 1] || 'N/A'}`;
+
+                const chartData = {
+                    labels: labels,
+                    datasets: [
+                        { label: 'PM2.5 (µg/m³)', data: history.map(l => l.data?.['pm2.5']), borderColor: 'rgb(234, 179, 8)', backgroundColor: 'rgba(234, 179, 8, 0.1)', tension: 0.2, yAxisID: 'y' },
+                        { label: 'Humidity (%)', data: history.map(l => l.data?.humidity), borderColor: 'rgb(59, 130, 246)', backgroundColor: 'rgba(59, 130, 246, 0.1)', tension: 0.2, yAxisID: 'y1' },
+                        { label: 'Temperature (°C)', data: history.map(l => l.data?.temperature), borderColor: 'rgb(239, 68, 68)', backgroundColor: 'rgba(239, 68, 68, 0.1)', tension: 0.2, yAxisID: 'y1' }
+                    ]
+                };
+                if (!sensorChart) {
+                    sensorChart = new Chart(chartCanvas, { type: 'line', data: chartData, options: chartOptions() });
+                } else {
+                    sensorChart.data = chartData;
+                    sensorChart.update();
+                }
+            };
+
+            const updateAverageChart = () => {
+                const history = calculateAverageHistory();
+                const labels = history.map(log => new Date(log.timestamp).toLocaleTimeString('th-TH'));
+                averageLastUpdated.textContent = `ข้อมูลล่าสุดเมื่อ: ${labels[labels.length - 1] || 'N/A'}`;
+                 const chartData = {
+                    labels: labels,
+                    datasets: [
+                        { label: 'PM2.5 เฉลี่ย (µg/m³)', data: history.map(l => l.data?.['pm2.5']), borderColor: 'rgb(234, 179, 8)', backgroundColor: 'rgba(234, 179, 8, 0.1)', tension: 0.2, yAxisID: 'y' },
+                        { label: 'ความชื้นเฉลี่ย (%)', data: history.map(l => l.data?.humidity), borderColor: 'rgb(59, 130, 246)', backgroundColor: 'rgba(59, 130, 246, 0.1)', tension: 0.2, yAxisID: 'y1' },
+                        { label: 'อุณหภูมิเฉลี่ย (°C)', data: history.map(l => l.data?.temperature), borderColor: 'rgb(239, 68, 68)', backgroundColor: 'rgba(239, 68, 68, 0.1)', tension: 0.2, yAxisID: 'y1' }
+                    ]
+                };
+                if (!averageChart) {
+                    averageChart = new Chart(averageChartCanvas, { type: 'line', data: chartData, options: chartOptions() });
+                } else {
+                    averageChart.data = chartData;
+                    averageChart.update();
+                }
+            };
+            
+            const chartOptions = () => ({
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'PM2.5 (µg/m³)' } },
+                    y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Temp (°C) / Humidity (%)' }, grid: { drawOnChartArea: false } }
+                },
+                plugins: { legend: { position: 'top' }, tooltip: { mode: 'index', intersect: false } }
+            });
+
+            // UPDATED: Function is now simpler
+            const showMainDashboard = () => {
+                detailView.classList.add('hidden');
+                mainDashboardView.classList.remove('hidden');
+                if (sensorChart) { sensorChart.destroy(); sensorChart = null; }
+                if (detailViewUpdateInterval) clearInterval(detailViewUpdateInterval);
+                activeDetailSensorId = null;
+            };
+
+            const showLogModal = (sensorId = null) => {
+                const logs = sensorId ? sensorDataLog.filter(log => log.id === sensorId) : sensorDataLog;
+                logModalTitle.textContent = sensorId ? `Log Report for ${sensorId}` : 'Log Report (All Sensors)';
+                logTableBody.innerHTML = logs.map(log => `<tr><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(log.timestamp).toLocaleString('th-TH')}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${log.id}</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="font-bold ${statusMap[log.status].textColor}">${statusMap[log.status].text}</span></td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${renderValue(log.data?.['pm2.5'])}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${renderValue(log.data?.humidity)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${renderValue(log.data?.temperature)}</td></tr>`).join('');
+                logModal.classList.remove('hidden');
+                document.body.classList.add('modal-active');
+            };
+
+            const showSummaryReport = (sensorId = null) => {
+                const data = sensorId ? currentSensorData.filter(s => s.id === sensorId) : currentSensorData;
+                const title = sensorId ? `Summary for ${sensorId}` : 'Overall Summary Report';
+                const onlineCount = data.filter(s => s.status === 'online').length;
+                const totalCount = data.length;
+                const validPm25 = data.filter(s => s.data?.['pm2.5'] != null);
+                const avgPm25 = validPm25.length ? validPm25.reduce((sum, s) => sum + s.data['pm2.5'], 0) / validPm25.length : 0;
+                const validHumid = data.filter(s => s.data?.humidity != null);
+                const avgHumid = validHumid.length ? validHumid.reduce((sum, s) => sum + s.data.humidity, 0) / validHumid.length : 0;
+                const validTemp = data.filter(s => s.data?.temperature != null);
+                const avgTemp = validTemp.length ? validTemp.reduce((sum, s) => sum + s.data.temperature, 0) / validTemp.length : 0;
+                alert(`${title}\n--------------------------\nStatus: ${onlineCount} / ${totalCount} Online\nAverage PM2.5: ${avgPm25.toFixed(2)} µg/m³\nAverage Humidity: ${avgHumid.toFixed(2)} %\nAverage Temperature: ${avgTemp.toFixed(2)} °C`);
+            };
+
+            // --- EVENT LISTENERS ---
+            backToDashboardBtn.addEventListener('click', showMainDashboard);
+            
+            sensorsContainer.addEventListener('click', (e) => {
+                const sensorId = e.target.closest('[data-id]')?.dataset.id;
+                if (sensorId) {
+                    showDetailView(sensorId);
+                }
+            });
+
+            detailIntervalSelect.addEventListener('change', (e) => {
+                if (!activeDetailSensorId) return;
+                const newInterval = parseInt(e.target.value, 10);
+                if(sensorIntervals[activeDetailSensorId]) {
+                    sensorIntervals[activeDetailSensorId].duration = newInterval;
+                }
+                if (detailViewUpdateInterval) clearInterval(detailViewUpdateInterval);
+                detailViewUpdateInterval = setInterval(updateChart, newInterval);
+            });
+
+            detailSummaryBtn.addEventListener('click', () => {
+                if (activeDetailSensorId) showSummaryReport(activeDetailSensorId);
+            });
+
+            detailLogBtn.addEventListener('click', () => {
+                if (activeDetailSensorId) showLogModal(activeDetailSensorId);
+            });
+
+            logReportBtnAll.addEventListener('click', () => showLogModal());
+            summaryReportBtnAll.addEventListener('click', () => showSummaryReport());
+
+            closeLogModalBtn.addEventListener('click', () => { logModal.classList.add('hidden'); document.body.classList.remove('modal-active'); });
+            logModal.addEventListener('click', (e) => { if (e.target === logModal) { logModal.classList.add('hidden'); document.body.classList.remove('modal-active'); }});
+
+            // --- INITIALIZATION ---
+            fetchData();
+            setInterval(fetchData, MASTER_FETCH_INTERVAL);
+
+            // Initialize and set an interval for the average chart on the main dashboard
+            updateAverageChart();
+            setInterval(updateAverageChart, AVG_CHART_UPDATE_INTERVAL);
+        });
+    </script>
+</body>
+</html>
