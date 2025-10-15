@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจำลอง Smart Car Park</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+
+body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px; /* เพิ่มความกว้างรองรับสลิป */
+    text-align: center;
+    box-sizing: border-box; /* รวม padding ในความกว้าง */
+}
+
+h1, h2, h3, h4 {
+    color: #0056b3;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.3rem; }
+
+input[type="text"], input[type="number"] {
+    width: calc(100% - 22px); /* ลบ border ออก */
+    padding: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box; /* รวม padding และ border ในความกว้าง */
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-top: 0.5rem; /* เพิ่มระยะห่างระหว่างปุ่ม */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#parking-spots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 คอลัมน์ */
+    gap: 10px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.spot {
+    background-color: #28a745;
+    padding: 20px 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.spot:hover {
+    background-color: #218838;
+}
+
+.spot.occupied {
+    background-color: #dc3545; /* สีแดงสำหรับช่องจอดที่ไม่ว่าง */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.spot.occupied:hover {
+    background-color: #c82333;
+}
+
+.hidden {
+    display: none;
+}
+
+.parked-info {
+    text-align: left;
+    background-color: #e9ecef;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.parked-info p {
+    margin: 8px 0;
+}
+
+.small-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: -0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Receipt Styling --- */
+.receipt {
+    border: 1px dashed #999;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: #fefefe;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.receipt-header {
+    margin-bottom: 1.5rem;
+}
+
+.buu-logo {
+    width: 80px; /* ขนาดโลโก้ */
+    margin-bottom: 10px;
+}
+
+.receipt-header h3 {
+    margin-bottom: 5px;
+    color: #0056b3;
+}
+
+.receipt-header p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 0;
+}
+
+.receipt-header hr {
+    border: 0;
+    border-top: 1px dashed #ccc;
+    margin: 1rem 0;
+}
+
+.receipt-header h4 {
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+#qrcode {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0 1rem 0; /* ปรับ margin */
+}
+
+#qrcode canvas { /* QR Code ถูก render เป็น canvas */
+    border: 5px solid #eee;
+    border-radius: 8px;
+}
+
+.qr-label {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 1.5rem;
+}
+
+.receipt-details {
+    text-align: left;
+    margin-bottom: 1.5rem;
+    padding: 10px;
+    border-top: 1px dashed #eee;
+    border-bottom: 1px dashed #eee;
+}
+
+.receipt-details p {
+    margin: 0.6rem 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.receipt-details p strong {
+    flex-basis: 35%;
+}
+
+.receipt-details p span {
+    flex-basis: 60%;
+    text-align: right;
+}
+
+.total-cost {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #d9534f; /* สีแดงสำหรับยอดรวม */
+    margin-top: 1.5rem !important;
+    border-top: 2px solid #d9534f;
+    padding-top: 10px;
+}
+
+.receipt-footer {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 2rem;
+}
+
+.receipt-footer p {
+    margin: 5px 0;
+}
+
+.receipt-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap; /* ให้ปุ่มขึ้นบรรทัดใหม่ได้ */
+    justify-content: center;
+    gap: 10px;
+}
+
+.receipt-actions button {
+    flex-grow: 1;
+    min-width: 150px; /* จำกัดความกว้างขั้นต่ำของปุ่ม */
+}
+
+#payment-status {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+}
+
+.gate-open {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+.pay-btn {
+    background-color: #28a745;
+}
+.pay-btn:hover {
+    background-color: #218838;
+}
+
+.download-btn {
+    background-color: #6c757d;
+}
+.download-btn:hover {
+    background-color: #5a6268;
+}
+
+.reset-btn {
+    background-color: #007bff;
+    margin-top: 1rem;
+}
+.reset-btn:hover {
+    background-color: #0056b3;
+}
+
+label {
+    display: block;
+    text-align: left;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <div id="entry-screen">
+            <h1>🅿️ Smart Car Park</h1>
+            <p>กรุณากรอกป้ายทะเบียนและเลือกช่องจอด</p>
+            <input type="text" id="license-plate" placeholder="เช่น 1กข 4567" maxlength="10">
+            <div id="parking-spots">
+                <button class="spot" data-spot="A1">A1</button>
+                <button class="spot" data-spot="A2">A2</button>
+                <button class="spot" data-spot="A3">A3</button>
+                <button class="spot" data-spot="B1">B1</button>
+                <button class="spot" data-spot="B2">B2</button>
+                <button class="spot" data-spot="B3">B3</button>
+            </div>
+        </div>
+
+        <div id="time-screen" class="hidden">
+            <h2>เลือกเวลาที่ต้องการจอด</h2>
+            <p>ทะเบียน: <strong id="display-plate-time"></strong></p>
+            <p>ช่องจอด: <strong id="display-spot-time"></strong></p>
+            <label for="parking-hours">จำนวนชั่วโมง (1 ชม. = 15 บาท):</label>
+            <input type="number" id="parking-hours" placeholder="เช่น 1.5 (1 ชั่วโมงครึ่ง)" min="0.1" step="0.1">
+            <button id="confirm-time-btn">ยืนยันเวลา</button>
+        </div>
+
+        <div id="waiting-screen" class="hidden">
+            <h2>✅ จอดรถเรียบร้อย</h2>
+            <div class="parked-info">
+                <p><strong>ทะเบียน:</strong> <span id="info-plate"></span></p>
+                <p><strong>ช่องจอด:</strong> <span id="info-spot"></span></p>
+                <p><strong>เวลาที่จอด:</strong> <span id="info-time"></span> ชั่วโมง</p>
+                <p><strong>ค่าบริการประมาณ:</strong> <span id="info-cost"></span> บาท</p>
+            </div>
+            <p class="small-text">กรุณากด "ถึงเวลาออก" เมื่อต้องการออกจากลานจอด</p>
+            <button id="exit-btn">ถึงเวลาออก</button>
+        </div>
+
+        <div id="receipt-screen" class="hidden">
+            <div class="receipt" id="receipt-content">
+                <div class="receipt-header">
+                    <img src="https://www.minigoldroof.com/wp-content/uploads/2018/10/buu.jpg" alt="BUU Logo" class="buu-logo">
+                    <h3>ลานจอดรถ มหาวิทยาลัยบูรพา</h3>
+                    <p>เลขที่ 169 ถ.ลงหาดบางแสน ต.แสนสุข อ.เมือง จ.ชลบุรี 20131</p>
+                    <p>โทร. 038-102-xxx</p>
+                    <hr>
+                    <h4>ใบเสร็จรับเงิน / ใบแจ้งค่าบริการ</h4>
+                </div>
+                
+                <div id="qrcode"></div>
+                <p class="qr-label">สแกน QR เพื่อชำระเงิน หรือดูรายละเอียด</p>
+
+                <div class="receipt-details">
+                    <p><strong>ทะเบียน:</strong> <span id="receipt-plate"></span></p>
+                    <p><strong>ช่องจอด:</strong> <span id="receipt-spot-detail"></span></p>
+                    <p><strong>เวลาที่จอด:</strong> <span id="receipt-parking-duration"></span></p>
+                    <p><strong>วันที่เข้า:</strong> <span id="receipt-entry-date"></span></p>
+                    <p><strong>เวลาเข้า:</strong> <span id="receipt-entry-time"></span></p>
+                    <p><strong>รหัสตั๋ว:</strong> <span id="receipt-ticket-id"></span></p>
+                    <p class="total-cost"><strong>ยอดชำระ:</strong> <span id="receipt-total-cost"></span> บาท</p>
+                </div>
+                <div class="receipt-footer">
+                    <p>ขอบคุณที่ใช้บริการลานจอดรถของเรา</p>
+                    <p>โปรดชำระเงินภายในเวลาที่กำหนด</p>
+                </div>
+            </div>
+            <div class="receipt-actions">
+                <div id="payment-status" class="hidden">
+                    <h4>✅ การชำระเงินสำเร็จ!</h4>
+                    <p class="gate-open">ไม้กั้นเปิดแล้ว ⬆️</p>
+                    <button class="reset-btn" onclick="location.reload()">กลับสู่หน้าเริ่มต้น</button>
+                </div>
+                <button id="pay-now-btn" class="pay-btn">จำลองการชำระเงิน</button>
+                <button id="download-jpg-btn" class="download-btn">ดาวน์โหลด JPG</button>
+                <button id="download-pdf-btn" class="download-btn">ดาวน์โหลด PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    // --- ตัวแปรสำหรับเก็บข้อมูล ---
+    const carData = {
+        plate: '',
+        spot: '',
+        hours: 0,
+        cost: 0,
+        ticketId: '',
+        entryDateTime: null // เพิ่มเวลาที่รถเข้าจอด
+    };
+
+    // --- ส่วนแสดงผลต่างๆ ---
+    const entryScreen = document.getElementById('entry-screen');
+    const timeScreen = document.getElementById('time-screen');
+    const waitingScreen = document.getElementById('waiting-screen');
+    const receiptScreen = document.getElementById('receipt-screen');
+    const receiptContent = document.getElementById('receipt-content'); // สำหรับดาวน์โหลด
+
+    // --- Input และปุ่มต่างๆ ---
+    const licensePlateInput = document.getElementById('license-plate');
+    const parkingSpots = document.querySelectorAll('.spot');
+    const confirmTimeBtn = document.getElementById('confirm-time-btn');
+    const parkingHoursInput = document.getElementById('parking-hours');
+    const exitBtn = document.getElementById('exit-btn');
+    const qrcodeContainer = document.getElementById('qrcode');
+    const payNowBtn = document.getElementById('pay-now-btn');
+    const paymentStatus = document.getElementById('payment-status');
+    const downloadJpgBtn = document.getElementById('download-jpg-btn');
+    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+
+    // --- Event Listener เมื่อกดเลือกช่องจอด ---
+    parkingSpots.forEach(spot => {
+        spot.addEventListener('click', () => {
+            if (spot.classList.contains('occupied')) {
+                alert('ช่องจอดนี้ไม่ว่าง กรุณาเลือกช่องอื่นครับ');
+                return;
+            }
+
+            const plate = licensePlateInput.value.trim();
+            if (!plate) {
+                alert('กรุณากรอกป้ายทะเบียนรถก่อนครับ');
+                return;
+            }
+            carData.plate = plate;
+            carData.spot = spot.dataset.spot;
+            carData.entryDateTime = new Date(); // บันทึกเวลาที่เข้าจอด
+
+            // แสดงข้อมูลในหน้าเลือกเวลา
+            document.getElementById('display-plate-time').textContent = carData.plate;
+            document.getElementById('display-spot-time').textContent = carData.spot;
+            
+            // สลับหน้าจอ
+            entryScreen.classList.add('hidden');
+            timeScreen.classList.remove('hidden');
+            
+            // Mark spot as occupied (จำลอง)
+            spot.classList.add('occupied');
+        });
+    });
+
+    // --- Event Listener เมื่อกดยืนยันเวลา ---
+    confirmTimeBtn.addEventListener('click', () => {
+        const hours = parseFloat(parkingHoursInput.value);
+        if (isNaN(hours) || hours <= 0) {
+            alert('กรุณากรอกจำนวนชั่วโมงที่ถูกต้อง (ต้องมากกว่า 0)');
+            return;
+        }
+        
+        carData.hours = hours;
+        // คำนวณค่าบริการ: 15 บาท/ชม. เศษของชั่วโมงปัดขึ้น
+        carData.cost = Math.ceil(carData.hours * 15);
+        
+        // แสดงข้อมูลในหน้ารอ
+        document.getElementById('info-plate').textContent = carData.plate;
+        document.getElementById('info-spot').textContent = carData.spot;
+        document.getElementById('info-time').textContent = carData.hours;
+        document.getElementById('info-cost').textContent = carData.cost;
+
+        // สลับหน้าจอ
+        timeScreen.classList.add('hidden');
+        waitingScreen.classList.remove('hidden');
+    });
+    
+    // --- Event Listener เมื่อกดปุ่ม 'ถึงเวลาออก' ---
+    exitBtn.addEventListener('click', () => {
+        // สร้าง Ticket ID
+        carData.ticketId = `BUU-${Date.now().toString().slice(-6)}`; // ตัวอย่าง Ticket ID สั้นๆ
+        
+        // จัดรูปแบบ วันที่/เวลาสำหรับสลิป
+        const totalMinutes = Math.round(carData.hours * 60);
+        const entryDate = carData.entryDateTime.toLocaleDateString('th-TH');
+        const entryTime = carData.entryDateTime.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+        
+        // แสดงข้อมูลบนสลิป
+        document.getElementById('receipt-plate').textContent = carData.plate;
+        document.getElementById('receipt-spot-detail').textContent = carData.spot;
+        document.getElementById('receipt-parking-duration').textContent = `${totalMinutes} นาที (${carData.hours} ชั่วโมง)`;
+        document.getElementById('receipt-entry-date').textContent = entryDate;
+        document.getElementById('receipt-entry-time').textContent = entryTime;
+        document.getElementById('receipt-ticket-id').textContent = carData.ticketId;
+        document.getElementById('receipt-total-cost').textContent = carData.cost.toFixed(2);
+
+        // สร้าง QR Code ลิงก์ไปยัง URL ที่กำหนด
+        qrcodeContainer.innerHTML = ''; 
+        const qrPaymentURL = `http://www.BUU_Car_park/${carData.ticketId}?amount=${carData.cost}&plate=${carData.plate}`;
+
+        new QRCode(qrcodeContainer, {
+            text: qrPaymentURL,
+            width: 180,
+            height: 180,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
+        // สลับหน้าจอ
+        waitingScreen.classList.add('hidden');
+        receiptScreen.classList.remove('hidden');
+
+        // รีเซ็ตสถานะการจ่ายเงิน
+        paymentStatus.classList.add('hidden');
+        payNowBtn.classList.remove('hidden');
+    });
+
+    // --- จำลองการชำระเงิน ---
+    payNowBtn.addEventListener('click', () => {
+        alert(`จำลองการชำระเงิน ${carData.cost} บาท สำหรับทะเบียน ${carData.plate} สำเร็จแล้ว!`);
+        paymentStatus.classList.remove('hidden');
+        payNowBtn.classList.add('hidden'); // ซ่อนปุ่มจ่ายเงินเมื่อจ่ายแล้ว
+    });
+
+    // --- ดาวน์โหลดสลิปเป็น JPG ---
+    downloadJpgBtn.addEventListener('click', () => {
+        html2canvas(receiptContent, { 
+            scale: 2, // เพิ่ม scale เพื่อภาพที่คมชัดขึ้น
+            useCORS: true // สำคัญถ้ามีรูปภาพจากภายนอก เช่น โลโก้
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `receipt_${carData.ticketId}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', 0.9); // 0.9 คือคุณภาพของ JPG
+            link.click();
+        });
+    });
+
+    // --- ดาวน์โหลดสลิปเป็น PDF ---
+    downloadPdfBtn.addEventListener('click', () => {
+        const { jsPDF } = window.jspdf;
+        html2canvas(receiptContent, { 
+            scale: 2, 
+            useCORS: true 
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [receiptContent.offsetWidth, receiptContent.offsetHeight] // ใช้ขนาดของสลิปเป็นขนาด PDF
+            });
+            pdf.addImage(imgData, 'JPEG', 0, 0, receiptContent.offsetWidth, receiptContent.offsetHeight);
+            pdf.save(`receipt_${carData.ticketId}.pdf`);
+        });
+    });
+});
+    </script>
+</body>
+</html>
