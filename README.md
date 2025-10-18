@@ -34,6 +34,8 @@ https://pp300950.github.io/HBD_Hero/main.html
 
 https://pp300950.github.io/Sensor_Monitoring_Dashboar/index.html
 
+https://pp300950.github.io/poster_templat/index.html
+
 https://pp300950.github.io/imgCompression/imgCompression.html
 
 https://pp300950.github.io/chatbot-1/index.html
