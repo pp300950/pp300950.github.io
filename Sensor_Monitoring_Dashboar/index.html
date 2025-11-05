@@ -1135,12 +1135,23 @@
           const filename = activeDetailSensorId
             ? `log_pole_${activeDetailSensorId}.csv`
             : 'log_all.csv';
-          downloadFile(
+            
+         /* downloadFile(
             showToast(`โหลดข้อมูล Log สำเร็จ!`),
             filename,
             `${headers}\n${rows.join('\n')}`,
             'text/csv;charset=utf-8;'
+          );*/
+
+          // 1. สั่งดาวน์โหลดไฟล์ให้ถูกต้องก่อน
+          downloadFile(
+            filename,
+            `${headers}\n${rows.join('\n')}`,
+            'text/csv;charset=utf-8;'
           );
+
+          // 2. ค่อยแสดง Toast แจ้งเตือน
+          showToast(`โหลดข้อมูล Log สำเร็จ!`);
         });
 
         closeSummaryModalBtn.addEventListener('click', () => {
