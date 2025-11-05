@@ -3,239 +3,574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ผลการลงคะแนน</title>
-    <!-- Bootstrap CDN for responsive and modern UI -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>สร้างห้องลงคะแนน</title>
+
     <style>
+        /* Basic Setup */
         body {
-            background-color: #f0f2f5;
-            font-family: 'Kanit', sans-serif; /* Thai-friendly font */
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #ecf0f1;
+            margin: 20px 0;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Important for width */
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: #bdc3c7;
             color: #333;
         }
-        .header {
-            text-align: center;
-            padding: 1.5rem 0;
-            background: linear-gradient(135deg, #007bff, #00c6ff);
+        .btn-secondary:hover {
+            background-color: #95a5a6;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
             color: white;
-            border-radius: 0 0 15px 15px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: auto; /* Smaller button */
+            padding: 5px 10px;
+            font-size: 14px;
         }
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+
+        .btn-vote {
+            background-color: #2ecc71;
+            color: white;
         }
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+        .btn-vote:hover {
+            background-color: #27ae60;
         }
-        .card {
-            border: none;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: white;
-            height: 100%;
+
+        .btn-abstain {
+            background-color: #f39c12;
+            color: white;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        .btn-abstain:hover {
+            background-color: #e67e22;
         }
-        .card-body {
-            padding: 1.5rem;
+
+
+        /* Candidate Setup List */
+        .candidate-setup-item {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
         }
-        .candidate-icon {
+        .candidate-setup-item .form-group {
+            flex: 1;
+            min-width: 150px;
+            margin-bottom: 0;
+        }
+        .candidate-setup-item .image-preview {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            display: inline-block;
-            margin-bottom: 1rem;
-            border: 3px solid #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: #ccc;
+            background-size: cover;
+            background-position: center;
         }
-        .total-card {
-            background: linear-gradient(135deg, #e9ecef, #dee2e6);
-            border-radius: 15px;
+
+        /* Voting Area */
+        .vote-header {
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .abstain-card {
-            background: linear-gradient(135deg, #343a40, #495057);
-            color: white;
-            border-radius: 15px;
+        #timer-display {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e74c3c;
         }
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+        #vote-count-display {
+            font-size: 1.2em;
+            color: #7f8c8d;
         }
-        .card-text {
-            font-size: 1.2rem;
-            font-weight: 500;
+
+        #voting-area {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .candidate-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .candidate-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #eee;
+            margin-bottom: 10px;
+        }
+        .candidate-card h3 {
+            margin: 10px 0 5px;
+            color: #34495e;
+        }
+        .candidate-card p {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        /* Results Screen */
+        #results-summary .result-item {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 5px solid #3498db;
+        }
+        #results-summary .result-item.winner {
+            border-left-color: #2ecc71;
+            background: #e8f8f5;
+        }
+        #results-summary h3 {
+            margin-top: 0;
+        }
+        #results-summary .voter-list {
+            font-size: 0.9em;
             color: #555;
+            word-break: break-all;
         }
-        .card-text span {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #007bff;
-        }
-        .abstain-card .card-text span {
-            color: #ffeb3b;
-        }
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-            .header p {
-                font-size: 1rem;
-            }
-            .card {
-                margin-bottom: 1.5rem;
-            }
-            .candidate-icon {
-                width: 50px;
-                height: 50px;
-            }
-            .card-title {
-                font-size: 1.1rem;
-            }
-            .card-text {
-                font-size: 1rem;
-            }
-            .card-text span {
-                font-size: 1.3rem;
+
+        /* Responsive Design */
+        @media (min-width: 600px) {
+            #voting-area {
+                /* 2-column grid on larger screens */
+                grid-template-columns: repeat(2, 1fr);
             }
         }
-        @media (max-width: 576px) {
-            .row > div {
-                flex: 0 0 100%;
-                max-width: 100%;
+
+        @media (min-width: 800px) {
+            #voting-area {
+                /* 3-column grid on very large screens */
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
-    <!-- Google Fonts for Kanit -->
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="header">
-        <h1>ผลการลงคะแนนเสียง</h1>
-        <p>ระบบลงคะแนนแบบเรียลไทม์ผ่าน ESP8266</p>
-    </div>
 
     <div class="container">
-        <div class="row">
-            <!-- เบอร์ 1 (Green) -->
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <div class="candidate-icon" style="background-color: #28a745;"></div>
-                        <h5 class="card-title">เบอร์ 1</h5>
-                        <p class="card-text">คะแนน: <span id="vote1">0</span></p>
-                    </div>
-                </div>
+        <div id="setup-screen">
+            <h1>📊 สร้างห้องลงคะแนน</h1>
+            
+            <div class="form-group">
+                <label for="total-voters">จำนวนผู้มีสิทธิ์ลงคะแนน (คน):</label>
+                <input type="number" id="total-voters" min="1" value="10">
             </div>
-            <!-- เบอร์ 2 (Yellow) -->
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <div class="candidate-icon" style="background-color: #ffc107;"></div>
-                        <h5 class="card-title">เบอร์ 2</h5>
-                        <p class="card-text">คะแนน: <span id="vote2">0</span></p>
-                    </div>
-                </div>
+            
+            <div class="form-group">
+                <label for="time-limit">กำหนดเวลา (นาที):</label>
+                <input type="number" id="time-limit" min="1" value="5">
             </div>
-            <!-- เบอร์ 3 (White) -->
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <div class="candidate-icon" style="background-color: #ffffff; border: 3px solid #dee2e6;"></div>
-                        <h5 class="card-title">เบอร์ 3</h5>
-                        <p class="card-text">คะแนน: <span id="vote3">0</span></p>
-                    </div>
+
+            <hr>
+            
+            <h2>รายชื่อผู้สมัคร</h2>
+            <div id="candidates-list">
                 </div>
-            </div>
-            <!-- เบอร์ 4 (Red) -->
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <div class="candidate-icon" style="background-color: #dc3545;"></div>
-                        <h5 class="card-title">เบอร์ 4</h5>
-                        <p class="card-text">คะแนน: <span id="vote4">0</span></p>
-                    </div>
-                </div>
-            </div>
-            <!-- เบอร์ 5 (Blue) -->
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <div class="candidate-icon" style="background-color: #007bff;"></div>
-                        <h5 class="card-title">เบอร์ 5</h5>
-                        <p class="card-text">คะแนน: <span id="vote5">0</span></p>
-                    </div>
-                </div>
-            </div>
-            <!-- ไม่ประสงค์ลงคะแนน (Black) -->
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="card text-center abstain-card">
-                    <div class="card-body">
-                        <div class="candidate-icon" style="background-color: #000000;"></div>
-                        <h5 class="card-title">ไม่ประสงค์ลงคะแนน</h5>
-                        <p class="card-text" style="color: #fdfdfd;">จำนวน: <span id="abstain">0</span></p>
-                    </div>
-                </div>
-            </div>
+            <button id="add-candidate-btn" class="btn btn-secondary">+ เพิ่มผู้สมัคร</button>
+            
+            <hr>
+            
+            <button id="start-vote-btn" class="btn btn-primary">🚀 เริ่มการลงคะแนน</button>
         </div>
 
-        <div class="row justify-content-center">
-            <div class="col-md-6 mb-4">
-                <div class="card text-center total-card">
-                    <div class="card-body">
-                        <h5 class="card-title">คะแนนเสียงรวม (เบอร์ 1-5)</h5>
-                        <p class="card-text"><span id="totalVotes">0</span></p>
-                    </div>
+        <div id="vote-screen" class="hidden">
+            <div class="vote-header">
+                <h2>ลงคะแนนเสียง</h2>
+                <div id="timer-display">เวลาเหลือ: 05:00</div>
+                <div id="vote-count-display">
+                    <span id="votes-cast">0</span> / <span id="total-voters-display">10</span> คน
                 </div>
             </div>
-            <div class="col-md-6 mb-4">
-                <div class="card text-center total-card">
-                    <div class="card-body">
-                        <h5 class="card-title">จำนวนผู้ลงคะแนนทั้งหมด (รวมไม่ประสงค์)</h5>
-                        <p class="card-text"><span id="totalParticipants">0</span></p>
-                    </div>
-                </div>
+            
+            <div class="form-group">
+                <label for="voter-name">ชื่อผู้ลงคะแนน (สำหรับการทดสอบ):</label>
+                <input type="text" id="voter-name" placeholder="ใส่ชื่อของคุณ...">
             </div>
+
+            <div id="voting-area">
+                </div>
+            
+            <button id="abstain-btn" class="btn btn-abstain">ไม่ประสงค์ลงคะแนน</button>
+        </div>
+
+        <div id="results-screen" class="hidden">
+            <h2>🏆 สรุปผลการลงคะแนน</h2>
+            <div id="results-summary"></div>
+            <button id="restart-btn" class="btn btn-secondary">สร้างห้องใหม่</button>
         </div>
     </div>
 
-    <!-- Bootstrap JS for interactivity -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-    <!-- Example JavaScript to update values (replace with real backend integration) -->
     <script>
-        // Placeholder data - In real project, fetch from server via API/WebSocket
-        let votes = {
-            vote1: 10,
-            vote2: 15,
-            vote3: 8,
-            vote4: 20,
-            vote5: 12,
-            abstain: 5
-        };
+        document.addEventListener('DOMContentLoaded', () => {
+    
+            // State (ข้อมูลหลักของแอป)
+            let candidates = [];
+            let totalVoters = 0;
+            let votesCast = 0;
+            let abstainVotes = 0;
+            let timeLimit = 0; // in seconds
+            let timerInterval = null;
+            let candidateIdCounter = 0;
 
-        // Update UI
-        document.getElementById('vote1').textContent = votes.vote1;
-        document.getElementById('vote2').textContent = votes.vote2;
-        document.getElementById('vote3').textContent = votes.vote3;
-        document.getElementById('vote4').textContent = votes.vote4;
-        document.getElementById('vote5').textContent = votes.vote5;
-        document.getElementById('abstain').textContent = votes.abstain;
+            // DOM Elements (ส่วนที่เชื่อมต่อกับ HTML)
+            const setupScreen = document.getElementById('setup-screen');
+            const voteScreen = document.getElementById('vote-screen');
+            const resultsScreen = document.getElementById('results-screen');
 
-        let totalVotes = votes.vote1 + votes.vote2 + votes.vote3 + votes.vote4 + votes.vote5;
-        let totalParticipants = totalVotes + votes.abstain;
+            const totalVotersInput = document.getElementById('total-voters');
+            const timeLimitInput = document.getElementById('time-limit');
+            const addCandidateBtn = document.getElementById('add-candidate-btn');
+            const candidatesList = document.getElementById('candidates-list');
+            const startVoteBtn = document.getElementById('start-vote-btn');
 
-        document.getElementById('totalVotes').textContent = totalVotes;
-        document.getElementById('totalParticipants').textContent = totalParticipants;
+            const timerDisplay = document.getElementById('timer-display');
+            const votesCastDisplay = document.getElementById('votes-cast');
+            const totalVotersDisplay = document.getElementById('total-voters-display');
+            const voterNameInput = document.getElementById('voter-name');
+            const votingArea = document.getElementById('voting-area');
+            const abstainBtn = document.getElementById('abstain-btn');
 
-        // For real-time, you can add setInterval to fetch data from your ESP8266 server
-        // Example: setInterval(() => { fetch('/api/votes').then(res => res.json()).then(data => { /* update */ }); }, 5000);
+            const resultsSummary = document.getElementById('results-summary');
+            const restartBtn = document.getElementById('restart-btn');
+
+            // --- 1. Setup Phase (ช่วงตั้งค่า) ---
+
+            // เพิ่มช่องกรอกผู้สมัคร
+            addCandidateBtn.addEventListener('click', () => {
+                candidateIdCounter++;
+                const candidateId = `candidate-${candidateIdCounter}`;
+
+                const item = document.createElement('div');
+                item.className = 'candidate-setup-item';
+                item.setAttribute('data-id', candidateId);
+
+                item.innerHTML = `
+                    <div class="image-preview" id="preview-${candidateId}"></div>
+                    <div class="form-group">
+                        <label>เบอร์:</label>
+                        <input type="text" class="candidate-number" placeholder="เช่น 1">
+                    </div>
+                    <div class="form-group">
+                        <label>ชื่อผู้สมัคร:</label>
+                        <input type="text" class="candidate-name" placeholder="ชื่อ-นามสกุล">
+                    </div>
+                    <div class="form-group">
+                        <label>รูปภาพ:</label>
+                        <input type="file" class="candidate-image" accept="image/*" data-preview="preview-${candidateId}">
+                    </div>
+                    <button class="btn btn-danger remove-candidate-btn">ลบ</button>
+                `;
+
+                candidatesList.appendChild(item);
+
+                // Handle image preview
+                item.querySelector('.candidate-image').addEventListener('change', function(e) {
+                    const previewId = this.getAttribute('data-preview');
+                    const previewElement = document.getElementById(previewId);
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            previewElement.style.backgroundImage = `url(${event.target.result})`;
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        previewElement.style.backgroundImage = 'none';
+                    }
+                });
+
+                // Handle remove button
+                item.querySelector('.remove-candidate-btn').addEventListener('click', () => {
+                    item.remove();
+                });
+            });
+
+            // กดปุ่มเริ่มลงคะแนน
+            startVoteBtn.addEventListener('click', () => {
+                // 1. Collect candidate data
+                candidates = [];
+                const candidateItems = candidatesList.querySelectorAll('.candidate-setup-item');
+                
+                candidateItems.forEach(item => {
+                    const number = item.querySelector('.candidate-number').value;
+                    const name = item.querySelector('.candidate-name').value;
+                    const imagePreview = item.querySelector('.image-preview').style.backgroundImage;
+                    // ดึง URL จาก 'url("...")'
+                    const imageUrl = imagePreview.slice(5, -2); 
+
+                    if (number && name) {
+                        candidates.push({
+                            id: item.getAttribute('data-id'),
+                            number: number,
+                            name: name,
+                            imageUrl: imageUrl || 'placeholder.png', // ใช้ภาพ default ถ้าไม่มี
+                            votes: 0,
+                            voters: [] // เก็บชื่อคนที่โหวตให้
+                        });
+                    }
+                });
+
+                // 2. Get settings
+                totalVoters = parseInt(totalVotersInput.value);
+                timeLimit = parseInt(timeLimitInput.value) * 60; // แปลงนาทีเป็นวินาที
+
+                // 3. Validate
+                if (candidates.length === 0) {
+                    alert('กรุณาเพิ่มผู้สมัครอย่างน้อย 1 คน');
+                    return;
+                }
+                if (totalVoters <= 0) {
+                    alert('กรุณากำหนดจำนวนผู้มีสิทธิ์ลงคะแนน');
+                    return;
+                }
+
+                // 4. Start Voting
+                setupScreen.classList.add('hidden');
+                voteScreen.classList.remove('hidden');
+                
+                totalVotersDisplay.textContent = totalVoters;
+                updateVoteCount();
+                populateVotingArea();
+                startTimer();
+            });
+
+            // --- 2. Voting Phase (ช่วงลงคะแนน) ---
+
+            // สร้างการ์ดผู้สมัครสำหรับลงคะแนน
+            function populateVotingArea() {
+                votingArea.innerHTML = '';
+                candidates.forEach(c => {
+                    const card = document.createElement('div');
+                    card.className = 'candidate-card';
+                    card.innerHTML = `
+                        <img src="${c.imageUrl}" alt="${c.name}">
+                        <p>เบอร์ ${c.number}</p>
+                        <h3>${c.name}</h3>
+                        <button class="btn btn-vote" data-id="${c.id}">ลงคะแนนให้คนนี้</button>
+                    `;
+                    // เพิ่ม Event Listener ให้ปุ่ม
+                    card.querySelector('.btn-vote').addEventListener('click', () => {
+                        recordVote(c.id);
+                    });
+                    votingArea.appendChild(card);
+                });
+            }
+
+            // เริ่มนับเวลาถอยหลัง
+            function startTimer() {
+                updateTimerDisplay();
+                timerInterval = setInterval(() => {
+                    timeLimit--;
+                    updateTimerDisplay();
+                    if (timeLimit <= 0) {
+                        endVoting('หมดเวลา');
+                    }
+                }, 1000);
+            }
+
+            // อัปเดตหน้าปัดนาฬิกา
+            function updateTimerDisplay() {
+                const minutes = Math.floor(timeLimit / 60);
+                const seconds = timeLimit % 60;
+                timerDisplay.textContent = `เวลาเหลือ: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            // อัปเดตจำนวนคนโหวต
+            function updateVoteCount() {
+                votesCastDisplay.textContent = votesCast;
+            }
+
+            // ปุ่มไม่ประสงค์ลงคะแนน
+            abstainBtn.addEventListener('click', () => {
+                recordVote(null); // null หมายถึงไม่ประสงค์ลงคะแนน
+            });
+
+            // ฟังก์ชันหลัก: บันทึกการโหวต
+            function recordVote(candidateId) {
+                let voterName = voterNameInput.value.trim(); // แก้ไข: ประกาศตัวแปรใหม่
+                if (voterName === "") {
+                    // สำหรับการทดสอบ เราอนุญาตให้โหวตซ้ำได้ แต่ในการใช้งานจริงคุณอาจต้องเช็คชื่อซ้ำ
+                    // เราจะใช้ชื่อว่า "ผู้ไม่ประสงค์ออกนาม" หากไม่กรอก
+                    voterName = `ผู้ไม่ประสงค์ออกนาม #${votesCast + 1}`;
+                }
+                
+                votesCast++;
+                
+                if (candidateId) {
+                    // โหวตให้ผู้สมัคร
+                    const candidate = candidates.find(c => c.id === candidateId);
+                    if (candidate) {
+                        candidate.votes++;
+                        candidate.voters.push(voterName);
+                    }
+                } else {
+                    // ไม่ประสงค์ลงคะแนน
+                    abstainVotes++;
+                }
+
+                updateVoteCount();
+                voterNameInput.value = ''; // เคลียร์ช่องชื่อ
+                
+                // **เงื่อนไขสำคัญ: เช็คว่าครบจำนวนหรือยัง**
+                if (votesCast >= totalVoters) {
+                    endVoting('ลงคะแนนครบจำนวนแล้ว');
+                }
+            }
+
+            // --- 3. Results Phase (ช่วงสรุปผล) ---
+
+            function endVoting(reason) {
+                clearInterval(timerInterval); // หยุดนาฬิกา
+                
+                voteScreen.classList.add('hidden');
+                resultsScreen.classList.remove('hidden');
+                
+                displayResults(reason);
+            }
+
+            function displayResults(reason) {
+                resultsSummary.innerHTML = ''; // เคลียร์ผลลัพธ์เก่า
+
+                // เรียงคะแนนจากมากไปน้อย
+                const sortedCandidates = [...candidates].sort((a, b) => b.votes - a.votes);
+                const maxVotes = sortedCandidates.length > 0 ? sortedCandidates[0].votes : 0;
+
+                resultsSummary.innerHTML += `<h3>ปิดการลงคะแนน: ${reason}</h3>`;
+                resultsSummary.innerHTML += `<p><strong>สรุปผล (จาก ${votesCast} / ${totalVoters} คน)</strong></p>`;
+
+                sortedCandidates.forEach(c => {
+                    const isWinner = c.votes > 0 && c.votes === maxVotes;
+                    const winnerClass = isWinner ? 'winner' : '';
+                    
+                    resultsSummary.innerHTML += `
+                        <div class="result-item ${winnerClass}">
+                            <h3>${isWinner ? '🏆' : ''} เบอร์ ${c.number}: ${c.name}</h3>
+                            <p><strong>คะแนน: ${c.votes} เสียง</strong></p>
+                            <p class="voter-list">
+                                <strong>ผู้ลงคะแนน:</strong> 
+                                ${c.voters.length > 0 ? c.voters.join(', ') : 'ไม่มี'}
+                            </p>
+                        </div>
+                    `;
+                });
+
+                // แสดงผลคนที่ไม่ประสงค์ลงคะแนน
+                resultsSummary.innerHTML += `
+                    <div class="result-item">
+                        <h3>ไม่ประสงค์ลงคะแนน</h3>
+                        <p><strong>คะแนน: ${abstainVotes} เสียง</strong></p>
+                    </div>
+                `;
+            }
+            
+            // ปุ่มเริ่มใหม่
+            restartBtn.addEventListener('click', () => {
+                // Reset state
+                candidates = [];
+                totalVoters = 0;
+                votesCast = 0;
+                abstainVotes = 0;
+                timeLimit = 0;
+                candidateIdCounter = 0;
+
+                // Clear UI
+                candidatesList.innerHTML = '';
+                totalVotersInput.value = 10;
+                timeLimitInput.value = 5;
+                
+                // Switch screens
+                resultsScreen.classList.add('hidden');
+                setupScreen.classList.remove('hidden');
+            });
+
+        });
     </script>
+
 </body>
 </html>
+
