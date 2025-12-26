@@ -129,17 +129,17 @@
     <p>วิธีการถอดรหัสมี 3 ขั้นตอนง่ายๆ พร้อมตัวอย่าง:</p>
     <ol>
         <li>
-            <strong>1. คูณจำนวนเฉพาะ:</strong> นำจำนวนเฉพาะทั้ง 2 ตัวมาคูณกัน
+            <strong> คูณจำนวนเฉพาะ:</strong> นำจำนวนเฉพาะทั้ง 2 ตัวมาคูณกัน
             <br>
             <p><strong>ตัวอย่าง:</strong> <code>1201 × 179 = 214,979</code></p>
         </li>
         <li>
-            <strong>2. รวมเลขโดด:</strong> นำเลขโดด (แต่ละหลัก) ของผลคูณที่ได้มาบวกกันทั้งหมด
+            <strong> รวมเลขโดด:</strong> นำเลขโดด (แต่ละหลัก) ของผลคูณที่ได้มาบวกกันทั้งหมด
             <br>
             <p><strong>ตัวอย่าง:</strong> <code>2 + 1 + 4 + 9 + 7 + 9 = 32</code></p>
         </li>
         <li>
-            <strong>3. บวกข้อมูลเข้ารหัส:</strong> นำผลรวมจากขั้นตอนที่ 2 มาบวกกับเลขบวกเพิ่มเติมที่ให้มา เช่น เลข +2,024
+            <strong> บวกข้อมูลเข้ารหัส:</strong> นำผลรวมจากขั้นตอนที่ 2 มาบวกกับเลขบวกเพิ่มเติมที่ให้มา เช่น เลข +2,024
             <br>
             <p><strong>ตัวอย่าง:</strong> <code>32 + 2,024 = 2059</code> ซึ่งคือรหัสนั่นเอง (ไม่ต้องใส่ลูกน้ำ)</p>
         </li>
@@ -202,26 +202,25 @@
     }
 
     // --- Decryption Check Logic ---
-    const checkButton = document.getElementById('check-button');
-    const statusMessage = document.getElementById('status-message');
+const checkButton = document.getElementById('check-button');
+const statusMessage = document.getElementById('status-message');
 
-    checkButton.addEventListener('click', () => {
-        const userAnswer = parseInt(document.getElementById('final-answer').value.trim(), 10);
-        // ตรวจสอบคำตอบ
-        if (userAnswer == 116335) {
-            statusMessage.textContent = `ถูกต้อง! รหัสที่ถูกต้องคือ 116326 ยอดเยี่ยมมาก! กำลังเปลี่ยนเส้นทาง...`;
-            statusMessage.className = 'correct';
-            
-            // เปลี่ยนเส้นทางไปยังหน้าอื่นหลังจาก 2 วินาที
-            setTimeout(() => {
-                window.location.href = "last.html"; // เปลี่ยนชื่อไฟล์เป็นหน้าที่คุณต้องการ
-            }, 4000);
-            
-        } else {
-            statusMessage.textContent = 'รหัสไม่ถูกต้อง ลองตรวจสอบการคำนวณอีกครั้ง';
-            statusMessage.className = 'incorrect';
-        }
-    });
+checkButton.addEventListener('click', () => {
+    const userAnswer = parseInt(document.getElementById('final-answer').value.trim(), 10);
+    const encodedAnswer = "MTE2MzM1";
+    const correctAnswer = parseInt(atob(encodedAnswer), 10);
+
+    if (userAnswer === correctAnswer) {
+        statusMessage.textContent = `ถูกต้อง! รหัสที่ถูกต้องคือ ${correctAnswer - 9} ยอดเยี่ยมมาก! กำลังเปลี่ยนเส้นทาง...`; // ปรับ 116326 เป็น correctAnswer - 9 เพื่อซ่อนเพิ่ม
+        statusMessage.className = 'correct';
+        setTimeout(() => {
+            window.location.href = "last.html";
+        }, 4000);
+    } else {
+        statusMessage.textContent = 'รหัสไม่ถูกต้อง ลองตรวจสอบการคำนวณอีกครั้ง';
+        statusMessage.className = 'incorrect';
+    }
+});
 </script>
 
 </body>
