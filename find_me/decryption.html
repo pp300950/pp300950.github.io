@@ -116,6 +116,23 @@
             min-height: 150px;
             resize: vertical;
         }
+
+         .cta {
+            margin-top: 40px;
+        }
+        .cta a {
+            padding: 12px 24px;
+            background-color: #ffcc00;
+            color: #1a1a1a;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .cta a:hover {
+            background-color: #e0b800;
+        }
+
     </style>
 </head>
 <body>
@@ -139,9 +156,9 @@
             <p><strong>ตัวอย่าง:</strong> <code>2 + 1 + 4 + 9 + 7 + 9 = 32</code></p>
         </li>
         <li>
-            <strong> บวกข้อมูลเข้ารหัส:</strong> นำผลรวมจากขั้นตอนที่ 2 มาบวกกับเลขบวกเพิ่มเติมที่ให้มา เช่น เลข +2,024
+            <strong> บวกข้อมูลเข้ารหัส:</strong> นำผลรวมจากขั้นตอนที่ 2 มาบวกกับเลขบวกเพิ่มเติมที่ให้มา เช่น เลข +2,024 นี่เเค่ค่าตัวอย่างตอนบวกจริงต้องใช้ค่าที่หน้าก่อนหน้านี้ให้มา
             <br>
-            <p><strong>ตัวอย่าง:</strong> <code>32 + 2,024 = 2059</code> ซึ่งคือรหัสนั่นเอง (ไม่ต้องใส่ลูกน้ำ)</p>
+            <p><strong>ตัวอย่าง:</strong> <code>32 + 2,024(ค่าตัวอย่างเท่านั้น!) = 2056</code> ซึ่งคือรหัสนั่นเอง (ไม่ต้องใส่ลูกน้ำ)</p>
         </li>
     </ol>
 </div>
@@ -177,7 +194,13 @@
             <input type="text" id="final-answer" placeholder="คำตอบสุดท้าย...">
             <button id="check-button">ตรวจสอบรหัส</button>
             <div id="status-message"></div>
+
+            <div class="cta">
+                <a href="tor.html">กลับไปหน้าก่อนหน้านี้</a>
+            </div>
         </div>
+
+        
     </div>
 
 <script>
