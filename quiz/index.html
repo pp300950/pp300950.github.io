@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>รักจริง ไม่โม้</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&family=Sarabun:wght@400;700&display=swap');
+
+      :root {
+        --primary-color: #4a148c; /* Deep Purple */
+        --secondary-color: #ffab40; /* Amber */
+        --correct-color: #4caf50; /* Green */
+        --incorrect-color: #f44336; /* Red */
+        --bg-color: #f3e5f5; /* Light Purple */
+        --text-color: #333;
+        --card-bg: rgba(
+          255,
+          255,
+          255,
+          0.7
+        ); /* White with transparency for glass effect */
+        --cert-border-color: #c8a464; /* Gold color for cert */
+        --cert-frame-color-light: #d4af7a;
+        --cert-frame-color-dark: #a47d3a;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Kanit', sans-serif;
+        background-color: var(--bg-color); /* Fallback color */
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        /* --- MODIFIED: Allow vertical scrolling when needed --- */
+        overflow-y: auto;
+        position: relative;
+      }
+
+      /* --- Animated Background --- */
+      .background-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.6;
+      }
+      .orb:nth-child(1) {
+        width: 300px;
+        height: 300px;
+        background-color: var(--primary-color);
+        top: 5%;
+        left: 10%;
+        animation: move 25s infinite alternate;
+      }
+      .orb:nth-child(2) {
+        width: 250px;
+        height: 250px;
+        background-color: var(--secondary-color);
+        bottom: 10%;
+        right: 15%;
+        animation: move 20s infinite alternate-reverse;
+      }
+      .orb:nth-child(3) {
+        width: 200px;
+        height: 200px;
+        background-color: #e91e63;
+        top: 30%;
+        right: 25%;
+        animation: move 30s infinite alternate;
+      }
+      .orb:nth-child(4) {
+        width: 150px;
+        height: 150px;
+        background-color: #03a9f4;
+        bottom: 20%;
+        left: 20%;
+        animation: move 18s infinite alternate-reverse;
+      }
+
+      @keyframes move {
+        0% {
+          transform: translate(0, 0) scale(1);
+        }
+        50% {
+          transform: translate(100px, 150px) scale(1.2);
+        }
+        100% {
+          transform: translate(-50px, -100px) scale(1);
+        }
+      }
+
+      .container {
+        background-color: var(--card-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 800px;
+        overflow: hidden;
+        text-align: center;
+        position: relative;
+        margin: 20px 0; /* Add margin for spacing when scrolling */
+      }
+
+      #taunt-popup {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--incorrect-color);
+        color: white;
+        padding: 10px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        transform: translateY(-100%);
+        transition: transform 0.4s ease-in-out;
+        z-index: 10;
+      }
+      #taunt-popup.show {
+        transform: translateY(0);
+      }
+
+      .screen {
+        padding: 40px;
+        display: none;
+      }
+
+      .screen.active {
+        display: block;
+        animation: fadeIn 0.5s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      #start-screen h1 {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+      }
+
+      #nickname-input {
+        font-family: 'Kanit', sans-serif;
+        font-size: 1.2rem;
+        padding: 10px;
+        border-radius: 8px;
+        border: 2px solid #ccc;
+        text-align: center;
+        width: 80%;
+        max-width: 400px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        transition: border-color 0.3s;
+      }
+      #nickname-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      #countdown-screen h1 {
+        font-size: 6rem;
+        color: var(--primary-color);
+        animation: countdown-pulse 1s infinite;
+      }
+
+      @keyframes countdown-pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+      }
+
+      #question-counter {
+        background: var(--primary-color);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+
+      #question-counter span {
+        display: inline-block;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 2px 10px;
+        border-radius: 12px;
+        min-width: 30px;
+        text-align: center;
+      }
+
+      /* --- ADDED: Style for the timer display --- */
+      .right-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      #timer-countdown {
+        font-weight: bold;
+        font-size: 1.4rem;
+        color: var(--primary-color);
+      }
+
+      #score-container {
+        position: relative;
+      }
+
+      #score-display {
+        font-weight: bold;
+      }
+
+      .score-popup {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--correct-color);
+        font-weight: bold;
+        font-size: 1.5rem;
+        animation: plus-score-anim 1.5s ease-out forwards;
+        pointer-events: none;
+      }
+
+      @keyframes plus-score-anim {
+        0% {
+          transform: translate(-50%, 0);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50px);
+          opacity: 0;
+        }
+      }
+
+      #timer-bar-container {
+        width: 100%;
+        height: 10px;
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        overflow: hidden;
+      }
+      #timer-bar {
+        height: 100%;
+        width: 100%;
+        background-color: var(--secondary-color);
+        transition: width 0.1s linear;
+      }
+      #question-container {
+        min-height: 80px;
+      }
+      #question-text {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+      }
+      #answer-buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      @media (min-width: 600px) {
+        #answer-buttons {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .btn {
+        font-family: 'Kanit', sans-serif;
+        font-size: 1rem;
+        padding: 15px;
+        border: 2px solid var(--primary-color);
+        background-color: white;
+        color: var(--primary-color);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        text-align: left;
+      }
+      .btn:hover:not(:disabled) {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+      }
+      .btn.correct {
+        background-color: var(--correct-color);
+        border-color: var(--correct-color);
+        color: white;
+        animation: pulse 0.5s;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .btn.incorrect {
+        background-color: var(--incorrect-color);
+        border-color: var(--incorrect-color);
+        color: white;
+      }
+      .btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+      .controls {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+      .next-btn,
+      .start-btn,
+      .restart-btn {
+        font-family: 'Kanit', sans-serif;
+        font-size: 1.2rem;
+        padding: 10px 40px;
+        border-radius: 25px;
+        border: none;
+        background-color: var(--secondary-color);
+        color: var(--primary-color);
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      .next-btn:hover,
+      .start-btn:hover,
+      .restart-btn:hover {
+        transform: scale(1.05);
+      }
+      .hide {
+        display: none;
+      }
+      #results-screen h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+      }
+      #final-score {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--secondary-color);
+        margin-bottom: 10px;
+      }
+      #correct-count-display {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      #incorrect-summary {
+        text-align: left;
+        margin-top: 20px;
+      }
+      #incorrect-summary ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      /* --- NEW: Add scrolling to the incorrect list if it gets too long --- */
+      #incorrect-summary ul {
+        max-height: 250px; /* Adjust as needed */
+        overflow-y: auto;
+        padding-right: 10px; /* Space for scrollbar */
+      }
+      #incorrect-summary li {
+        background-color: #ffeeee;
+        border-left: 5px solid var(--incorrect-color);
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+      }
+
+      /* --- Certificate Styling --- */
+      #certificate-content {
+        background: radial-gradient(circle, #fffdf5 0%, #fffaf0 100%);
+        padding: 30px;
+        font-family: 'Sarabun', sans-serif;
+        border-radius: 10px;
+        border: 2px solid var(--cert-frame-color-dark);
+        position: relative;
+        box-shadow: inset 0 0 0 1px var(--cert-frame-color-light),
+          inset 0 0 0 8px #fdf5e6, inset 0 0 0 10px var(--cert-frame-color-dark),
+          0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      #certificate-content h2 {
+        font-family: 'Kanit', sans-serif;
+        font-size: 2.5rem;
+        color: var(--primary-color);
+      }
+      #cert-nickname {
+        font-size: 2.2rem;
+        color: var(--secondary-color);
+        text-decoration: underline;
+        margin: 15px 0;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      #cert-compliment {
+        font-size: 1.5rem;
+        margin: 20px 0;
+        font-style: italic;
+      }
+      .signature {
+        margin-top: 40px;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+      #fail-message {
+        font-size: 2rem;
+        color: var(--incorrect-color);
+      }
+
+      /* --- Responsive fixes for mobile --- */
+      @media (max-width: 600px) {
+        .screen {
+          padding: 20px;
+        }
+        #start-screen h1 {
+          font-size: 2.5rem;
+        }
+        #question-text {
+          font-size: 1.3rem;
+        }
+        #certificate-content {
+          padding: 15px;
+          box-shadow: inset 0 0 0 1px var(--cert-frame-color-light),
+            inset 0 0 0 4px #fdf5e6,
+            inset 0 0 0 5px var(--cert-frame-color-dark),
+            0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        #certificate-content h2 {
+          font-size: 1.8rem;
+        }
+        #cert-nickname {
+          font-size: 1.5rem;
+        }
+        #cert-compliment {
+          font-size: 1.2rem;
+        }
+      }
+      /* --- โค้ดที่เพิ่มเข้ามาสำหรับแก้ไขการแสดงผลบนมือถือ --- */
+      .game-header {
+        flex-direction: column; /* เปลี่ยนการจัดเรียงเป็นแนวตั้ง */
+        gap: 15px; /* เพิ่มช่องว่างระหว่างบรรทัด */
+        align-items: stretch; /* ทำให้แต่ละส่วนขยายเต็มความกว้าง */
+      }
+
+      .right-header {
+        width: 100%; /* ทำให้ส่วนของเวลาและคะแนนกว้างเต็มที่ */
+        justify-content: space-between; /* จัดให้เวลาอยู่ซ้ายสุด และคะแนนอยู่ขวาสุด */
+      }
+      /* --- จบส่วนที่เพิ่มเข้ามา --- */
+    </style>
+  </head>
+  <body>
+    <div class="background-animation">
+      <div class="orb"></div>
+      <div class="orb"></div>
+      <div class="orb"></div>
+      <div class="orb"></div>
+    </div>
+
+    <div class="container">
+      <div id="taunt-popup">ผิดซะงั้น!</div>
+
+      <div id="start-screen" class="screen active">
+        <h1>รักจริง ไม่โม้</h1>
+        <p>ทดสอบความรู้ของคุณเกี่ยวกับเรื่องรักๆใคร่ๆ</p>
+        <p>ร่วมคิดคำถามจากหลายบุคคลรวมกัน</p>
+        <input
+          type="text"
+          id="nickname-input"
+          placeholder="ใส่ชื่อเล่นของคุณที่นี่"
+        />
+        <div class="controls">
+          <button id="start-btn" class="start-btn">เตรียมพร้อม</button>
+        </div>
+      </div>
+
+      <div id="countdown-screen" class="screen">
+        <h1 id="countdown-timer">3</h1>
+      </div>
+
+      <div id="game-screen" class="screen">
+        <div class="game-header">
+          <div id="question-counter"></div>
+          <div class="right-header">
+            เวลา 🕒:
+            <div id="timer-countdown"></div>
+            <div id="score-container">
+              <div id="score-display">คะแนน: 0</div>
+            </div>
+          </div>
+        </div>
+        <div id="timer-bar-container"><div id="timer-bar"></div></div>
+        <div id="question-container"><p id="question-text"></p></div>
+        <div id="answer-buttons"></div>
+        <div class="controls">
+          <button id="next-btn" class="next-btn hide">ข้อต่อไป</button>
+        </div>
+      </div>
+
+      <div id="results-screen" class="screen">
+        <h2>สรุปผล</h2>
+        <p>คะแนนรวมของคุณคือ</p>
+        <p id="final-score">0</p>
+        <p id="correct-count-display"></p>
+        <div id="incorrect-summary">
+          <h3>ข้อที่ตอบผิด:</h3>
+          <ul id="incorrect-list"></ul>
+        </div>
+        <div class="controls">
+          <button id="restart-btn" class="restart-btn">เล่นอีกครั้ง</button>
+          <button id="view-cert-btn" class="next-btn">📜 ดูเกียรติบัตร</button>
+        </div>
+      </div>
+
+      <div id="certificate-screen" class="screen">
+        <div id="certificate-content">
+          <h2>เกียรติบัตร</h2>
+          <p>ขอมอบเกียรติบัตรฉบับนี้เพื่อแสดงว่า</p>
+          <h1 id="cert-nickname"></h1>
+          <p>ได้ผ่านการทดสอบความรู้ ในหัวข้อ"ผู้รอบรู้เรื่องความรัก"</p>
+          <p id="cert-pass-criteria"></p>
+          <p id="cert-score"></p>
+          <p id="cert-correct-count"></p>
+          <p id="cert-compliment"></p>
+          <div class="signature">
+            รับรองโดย
+            <br />
+            ผีในห้องคุณ
+          </div>
+        </div>
+        <div id="fail-message" class="hide">
+          <h2>เสียใจด้วย คะแนนของคุณยังไม่ถึงเกณฑ์ 80% ขึ้นไป</h2>
+          <p>คุณต้องพยามยามเพิ่มหน่อยนะ</p>
+        </div>
+        <div class="controls">
+          <button id="back-to-start-btn" class="restart-btn">
+            กลับหน้าแรก
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const questions = [
+  {
+    question: 'ทำไมหมอนข้างถึงดีกว่า "แฟน"?',
+    answers: [
+      { text: 'เพราะหมอนข้างไม่เคยถามว่า "อยู่ไหน"', correct: true },
+      { text: 'มันนุ่มกว่า', correct: false },
+      { text: 'ราคาถูกกว่า', correct: false },
+      { text: 'หาซื้อง่ายตามห้าง', correct: false },
+    ],
+  },
+  {
+    question: 'ถ้าแฟนบอกว่า "เดี๋ยวโทรกลับนะ" หมายความว่า?',
+    answers: [
+      { text: 'ขี้เกียจตอบกลับ', correct: false },
+      { text: 'กำลังขับรถ', correct: false },
+      { text: 'ลืมแน่นอน 100%', correct: true },
+      { text: 'แบตกำลังจะหมด', correct: false },
+    ],
+  },
+  {
+    question: 'สาเหตุหลักที่คนโสดชอบดูหนังรักโรแมนติก?',
+    answers: [
+      { text: 'ศึกษาดูงานเผื่อมีคู่', correct: false },
+      { text: 'อยากทรมานตัวเองเล่นๆ', correct: true },
+      { text: 'ไม่มีอะไรดู', correct: false },
+      { text: 'ชอบพระเอก/นางเอก', correct: false },
+    ],
+  },
+  {
+    question: 'ประโยคบอกเลิกที่ไม่จริงใจที่สุดคือ?',
+    answers: [
+      { text: 'เราเข้ากันไม่ได้', correct: false },
+      { text: 'เธอดีเกินไป', correct: true },
+      { text: 'พ่อแม่ไม่ปลื้ม', correct: false },
+      { text: 'เราอยากอยู่คนเดียว', correct: false },
+    ],
+  },
+  {
+    question: 'จุดประสงค์ที่แท้จริงของการโพสต์รูปคู่ลงโซเชียล?',
+    answers: [
+      { text: 'ประกาศศักดา/ฉี่จองที่', correct: true },
+      { text: 'บันทึกความทรงจำ', correct: false },
+      { text: 'รูปมันสวยดี', correct: false },
+      { text: 'แมวมือลั่นกดโพสต์', correct: false },
+    ],
+  },
+  {
+    question: 'กิจกรรมยอดฮิตของคนโสดในวันวาเลนไทน์?',
+    answers: [
+      { text: 'ซื้อดอกไม้ให้ตัวเอง', correct: false },
+      { text: 'เข้าวัดทำบุญ', correct: false },
+      { text: 'ไถฟีดดูคนอวดแฟน แล้วอิจฉาในใจ', correct: true },
+      { text: 'นอนจำศีล', correct: false },
+    ],
+  },
+  {
+    question: 'เมื่อแฟนถามว่า "กินอะไรดี" ห้ามตอบว่าอะไรเด็ดขาด?',
+    answers: [
+      { text: 'อะไรก็ได้', correct: true },
+      { text: 'กินบุฟเฟต์ไหม', correct: false },
+      { text: 'กินข้าวไข่เจียว', correct: false },
+      { text: 'ไม่หิว', correct: false },
+    ],
+  },
+  {
+    question: 'คู่รักเล่นเกมด้วยกัน ทะเลาะกันเพราะอะไรบ่อยสุด?',
+    answers: [
+      { text: 'เเฟนเล่นไม่ดีแล้วยังปากดีอีก', correct: true },
+      { text: 'เน็ตหลุด', correct: false },
+      { text: 'แย่งกันคิล', correct: false },
+      { text: 'เกมไม่สมดุล', correct: false },
+    ],
+  },
+  {
+    question: 'ทำไมเวลาอกหักต้องไปนั่งมองทะเล?',
+    answers: [
+      { text: 'ลมมันเย็น เลยอยากฟัง', correct: false },
+      { text: 'น้ำเค็มเหมือนน้ำตา', correct: false },
+      { text: 'จะได้ตะโกนด่ามันดังๆ', correct: false },
+      { text: 'ไม่รู้สิ เพราะ MV เพลงเศร้าพาทำมั้ง', correct: true },
+    ],
+  },
+  {
+    question: 'ถ้ารองเท้าแฟนกัด สิ่งที่ควรทำคือ?',
+    answers: [
+      { text: 'ให้เดินเท้าเปล่า', correct: false },
+      { text: 'กัดรองเท้าคืน', correct: false },
+      { text: 'แลกรองเท้ากันใส่กับเเฟน', correct: true },
+      { text: 'บอกให้ทนหน่อย', correct: false },
+    ],
+  },
+  {
+    question: 'ผู้หญิงพูดว่า "ไม่ได้งอน" แปลว่า?',
+    answers: [
+      { text: 'ไม่ได้งอนจริงๆ', correct: false },
+      { text: 'เชอะ!!', correct: true },
+      { text: 'หิวข้าวนิดหน่อย', correct: false },
+      { text: 'แค่อยากอยู่เงียบๆ', correct: false },
+    ],
+  },
+  {
+    question: 'ปัญหาโลกแตกเวลาคู่รักไปเที่ยวต่างจังหวัด คือ?',
+    answers: [
+      { text: 'ถ่ายรูปให้แฟนไม่สวย/ไม่ผอม', correct: true },
+      { text: 'หลงทาง', correct: false },
+      { text: 'ลืมของใช้', correct: false },
+      { text: 'ตื่นสาย', correct: false },
+    ],
+  },
+  {
+    question: 'ทำไมคนโสดบางคนถึงเลี้ยงแมว?',
+    answers: [
+      { text: 'เเมวเทสดี ตัดรากไทร', correct: false },
+      { text: 'เอาไว้เป็นเพื่อนคุยด้วยแก้เหงา', correct: true },
+      { text: 'แมวมันหยิ่งเหมือนแฟนเก่า', correct: false },
+      { text: 'ไล่หนู', correct: false },
+    ],
+  },
+  {
+    question: 'ถ้าแชทหนักขวา (เราทักไปรัวๆ เขาตอบคำเดียว) แปลว่า?',
+    answers: [
+      { text: 'เขาเป็นคนพูดน้อย', correct: false },
+      { text: 'เขาไม่ว่าง', correct: false },
+      { text: 'เขาไม่อยากคุยกับเรา', correct: true },
+      { text: 'แป้นพิมพ์เขาเสีย', correct: false },
+    ],
+  },
+  {
+    question: 'ซีรีส์เกาหลีทำให้ผู้หญิงโสดเพราะ?',
+    answers: [
+      { text: 'มัวแต่ดูจนไม่มีเวลา', correct: false },
+      { text: 'มาตรฐานสูงเกินมนุษย์เพศชายทั่วไป', correct: true },
+      { text: 'ชอบฟังภาษาเกาหลี', correct: false },
+      { text: 'พระเอกหล่อ', correct: false },
+    ],
+  },
+  {
+    question: 'แคปชั่น "โสดจีบได้" เชื่อถือได้แค่ไหน?',
+    answers: [
+      { text: '100% เชื่อเถอะ', correct: false },
+      { text: '50% เผื่อเลือก', correct: false },
+      { text: '0% เช็คดีๆ ผัว/เมีย ถือกล้องให้', correct: true },
+      { text: 'เชื่อครึ่งไม่เชื่อครึ่ง', correct: false },
+    ],
+  },
+];
+
+const tauntMessages = [
+  'ผิด! กลับไปนอนกอดหมอนข้างไป๊',
+  'ตอบผิดแบบนี้ สมควรแล้วที่โสด',
+  'อ่อนหัด! เรื่องรักไม่รุ่ง เรื่องเรียนก็ไม่น่ารอด',
+  'ผิดจ้า! แฟนเก่าหัวเราะฟันร่วงแล้ว',
+  'โถๆๆ ความรู้รอบตัวเรื่องรักเป็นศูนย์',
+  'มั่นใจผิดๆ ชีวิตเปลี่ยนนะน้อง',
+  'ไปพักก่อนไหม อาการหนักนะเราอะ',
+];
+
+      const startButton = document.getElementById('start-btn');
+      const nextButton = document.getElementById('next-btn');
+      const restartButton = document.getElementById('restart-btn');
+      const nicknameInput = document.getElementById('nickname-input');
+      const viewCertButton = document.getElementById('view-cert-btn');
+      const backToStartButton = document.getElementById('back-to-start-btn');
+
+      const screens = {
+        start: document.getElementById('start-screen'),
+        countdown: document.getElementById('countdown-screen'),
+        game: document.getElementById('game-screen'),
+        results: document.getElementById('results-screen'),
+        certificate: document.getElementById('certificate-screen'),
+      };
+
+      const questionTextElement = document.getElementById('question-text');
+      const answerButtonsElement = document.getElementById('answer-buttons');
+      const questionCounterElement =
+        document.getElementById('question-counter');
+      const scoreDisplayElement = document.getElementById('score-display');
+      const finalScoreElement = document.getElementById('final-score');
+      const incorrectListElement = document.getElementById('incorrect-list');
+      const countdownTimerElement = document.getElementById('countdown-timer');
+      const timerBarElement = document.getElementById('timer-bar');
+      const scoreContainer = document.getElementById('score-container');
+      const correctCountDisplayElement = document.getElementById(
+        'correct-count-display'
+      );
+      const tauntPopupElement = document.getElementById('taunt-popup');
+      const timerCountdownElement = document.getElementById('timer-countdown'); // ADDED
+
+      const certContent = document.getElementById('certificate-content');
+      const failMessage = document.getElementById('fail-message');
+      const certNickname = document.getElementById('cert-nickname');
+      const certScore = document.getElementById('cert-score');
+      const certCorrectCount = document.getElementById('cert-correct-count');
+      const certCompliment = document.getElementById('cert-compliment');
+      const certPassCriteria = document.getElementById('cert-pass-criteria');
+
+      let playerName = '';
+      let shuffledQuestions, currentQuestionIndex;
+      let score = 0;
+      let correctAnswersCount = 0;
+      let incorrectAnswers = [];
+      let timer;
+      let timeLeft; // MODIFIED: No longer needs initial value here
+      const TIME_LIMIT = 40; // MODIFIED: Changed from 20 to 40
+
+      function switchScreen(screenName) {
+        Object.values(screens).forEach((screen) =>
+          screen.classList.remove('active')
+        );
+        screens[screenName].classList.add('active');
+      }
+
+      function handleStartClick() {
+        playerName = nicknameInput.value.trim();
+        if (playerName === '') {
+          alert('กรุณาใส่ชื่อเล่นก่อนเริ่มเกม!');
+          nicknameInput.focus();
+          return;
+        }
+        startCountdown();
+      }
+
+      function startCountdown() {
+        switchScreen('countdown');
+        let count = 3;
+        countdownTimerElement.innerText = count;
+        const countdownInterval = setInterval(() => {
+          count--;
+          if (count > 0) {
+            countdownTimerElement.innerText = count;
+          } else {
+            clearInterval(countdownInterval);
+            startQuizProper();
+          }
+        }, 1000);
+      }
+
+      function startQuizProper() {
+        switchScreen('game');
+        shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+        currentQuestionIndex = 0;
+        score = 0;
+        correctAnswersCount = 0;
+        incorrectAnswers = [];
+        scoreDisplayElement.innerText = `คะแนน: 0`;
+        nextButton.classList.add('hide');
+        setNextQuestion();
+      }
+
+      function setNextQuestion() {
+        resetState();
+        if (currentQuestionIndex < shuffledQuestions.length) {
+          showQuestion(shuffledQuestions[currentQuestionIndex]);
+          startTimer();
+        } else {
+          showResults();
+        }
+      }
+
+      function startTimer() {
+        timeLeft = TIME_LIMIT;
+        timerCountdownElement.innerText = timeLeft; // ADDED: Set initial time display
+        timerBarElement.style.transition = 'none';
+        timerBarElement.style.width = '100%';
+
+        setTimeout(() => {
+          timerBarElement.style.transition = `width ${TIME_LIMIT}s linear`;
+          timerBarElement.style.width = '0%';
+        }, 100);
+
+        timer = setInterval(() => {
+          timeLeft--;
+          timerCountdownElement.innerText = timeLeft; // ADDED: Update time display every second
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            timeUp();
+          }
+        }, 1000);
+      }
+
+      function showTaunt(isTimeUp = false) {
+        const message = isTimeUp
+          ? 'เวลาหมดจ้า!'
+          : tauntMessages[Math.floor(Math.random() * tauntMessages.length)];
+        tauntPopupElement.innerText = message;
+        tauntPopupElement.classList.add('show');
+        setTimeout(() => {
+          tauntPopupElement.classList.remove('show');
+        }, 2000);
+      }
+
+      function timeUp() {
+        showTaunt(true);
+        const currentQuestion = shuffledQuestions[currentQuestionIndex];
+        incorrectAnswers.push({
+          question: currentQuestion.question,
+          correctAnswer: currentQuestion.answers.find((a) => a.correct).text,
+        });
+        showSolution();
+      }
+
+      function showQuestion(question) {
+        questionCounterElement.innerHTML = `ข้อที่ <span>${
+          currentQuestionIndex + 1
+        }</span> / <span>${shuffledQuestions.length}</span>`;
+        questionTextElement.innerText = question.question;
+        if (question.noPoints) {
+          questionTextElement.innerText += ' (ข้อนี้ไม่คิดคะแนน)';
+        }
+        question.answers.forEach((answer) => {
+          const button = document.createElement('button');
+          button.innerText = answer.text;
+          button.classList.add('btn');
+          if (answer.correct) {
+            button.dataset.correct = answer.correct;
+          }
+          button.addEventListener('click', selectAnswer);
+          answerButtonsElement.appendChild(button);
+        });
+      }
+
+      function resetState() {
+        nextButton.classList.add('hide');
+        while (answerButtonsElement.firstChild) {
+          answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+        }
+        clearInterval(timer);
+        timerBarElement.style.transition = 'none';
+        timerCountdownElement.innerText = ''; // ADDED: Clear old time
+      }
+
+      function selectAnswer(e) {
+        clearInterval(timer);
+        timerBarElement.style.transition = 'none'; // Stop the bar animation
+        const selectedButton = e.target;
+        const correct = selectedButton.dataset.correct === 'true';
+        const currentQuestion = shuffledQuestions[currentQuestionIndex];
+        if (correct) {
+          correctAnswersCount++;
+          let pointsEarned = 0;
+          if (!currentQuestion.noPoints) {
+            pointsEarned = Math.floor((timeLeft / TIME_LIMIT) * 1000);
+            score += pointsEarned;
+            scoreDisplayElement.innerText = `คะแนน: ${score}`;
+            const pointsPopup = document.createElement('div');
+            pointsPopup.innerText = `+${pointsEarned}`;
+            pointsPopup.classList.add('score-popup');
+            scoreContainer.appendChild(pointsPopup);
+            setTimeout(() => pointsPopup.remove(), 1500);
+          }
+          selectedButton.classList.add('correct');
+        } else {
+          showTaunt();
+          selectedButton.classList.add('incorrect');
+          incorrectAnswers.push({
+            question: currentQuestion.question,
+            correctAnswer: currentQuestion.answers.find((a) => a.correct).text,
+          });
+        }
+        showSolution();
+      }
+
+      function showSolution() {
+        Array.from(answerButtonsElement.children).forEach((button) => {
+          if (button.dataset.correct === 'true') {
+            button.classList.add('correct');
+          }
+          button.disabled = true;
+        });
+        if (currentQuestionIndex < shuffledQuestions.length) {
+          nextButton.classList.remove('hide');
+        }
+      }
+
+      function showResults() {
+        switchScreen('results');
+        finalScoreElement.innerText = score;
+        correctCountDisplayElement.innerText = `ตอบถูก: ${correctAnswersCount} / ${shuffledQuestions.length} ข้อ`;
+        incorrectListElement.innerHTML = '';
+        if (incorrectAnswers.length === 0) {
+          incorrectListElement.innerHTML = '<li>สุดยอด! คุณตอบถูกทุกข้อ</li>';
+        } else {
+          incorrectAnswers.forEach((item) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<b>คำถาม:</b> ${item.question}<br><b>คำตอบที่ถูก:</b> ${item.correctAnswer}`;
+            incorrectListElement.appendChild(li);
+          });
+        }
+      }
+
+      function showCertificate() {
+        switchScreen('certificate');
+        const totalQuestions = shuffledQuestions.length;
+        const passed = correctAnswersCount / totalQuestions >= 0.8;
+
+        if (passed) {
+          certContent.classList.remove('hide');
+          failMessage.classList.add('hide');
+          certNickname.innerText = playerName;
+          certPassCriteria.innerText = `และผ่านเกณฑ์การประเมินที่ 80% ของแบบทดสอบ`;
+          certScore.innerText = `ทำคะแนนได้: ${score} คะแนน`;
+          certCorrectCount.innerText = `ตอบถูก ${correctAnswersCount} จาก ${totalQuestions} ข้อ`;
+
+          let compliment = 'ยอดเยี่ยมมาก ความรู้แน่นปึ้ก!';
+          if (correctAnswersCount === totalQuestions) {
+            compliment = 'โหหห ได้เต็มเลยหรอเพ่!!';
+          }
+          certCompliment.innerText = compliment;
+        } else {
+          certContent.classList.add('hide');
+          failMessage.classList.remove('hide');
+        }
+      }
+
+      startButton.addEventListener('click', handleStartClick);
+      nextButton.addEventListener('click', () => {
+        currentQuestionIndex++;
+        setNextQuestion();
+      });
+      restartButton.addEventListener('click', () => {
+        switchScreen('start');
+      });
+      viewCertButton.addEventListener('click', showCertificate);
+      backToStartButton.addEventListener('click', () => {
+        switchScreen('start');
+      });
+    </script>
+  </body>
+</html>
