@@ -44,6 +44,6 @@ https://pp300950.github.io/bottictactoe/index.html
 
 https://pp300950.github.io/CAR_control/main.html
 
-https://pp300950.github.io/quiz/index.html
+https://pp300950.github.io/quiz/love/index.html
 
 https://pp300950.github.io/quiz/music.html
