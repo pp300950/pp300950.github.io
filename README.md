@@ -36,9 +36,6 @@ https://pp300950.github.io/Sensor_Monitoring_Dashboar/index.html
 
 https://pp300950.github.io/poster_templat/index.html
 
-https://pp300950.github.io/quiz/index.html
-
-https://pp300950.github.io/quiz/music.html
 https://pp300950.github.io/imgCompression/imgCompression.html
 
 https://pp300950.github.io/chatbot-1/index.html
@@ -46,3 +43,7 @@ https://pp300950.github.io/chatbot-1/index.html
 https://pp300950.github.io/bottictactoe/index.html
 
 https://pp300950.github.io/CAR_control/main.html
+
+https://pp300950.github.io/quiz/index.html
+
+https://pp300950.github.io/quiz/music.html
