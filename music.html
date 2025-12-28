@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Quiz Game</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      :root {
+        --primary-color: #ff4757;
+        --accent-glow: #ff6b81;
+        --bg-color: #000000;
+        --glass-bg: rgba(20, 20, 20, 0.65);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --text-color: #ffffff;
+        --secondary-text: #a4b0be;
+        --correct-color: #2ed573;
+        --wrong-color: #ff4757;
+      }
+
+      body {
+        font-family: 'Kanit', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        background-image: radial-gradient(
+            circle at 10% 20%,
+            rgba(255, 71, 87, 0.15) 0%,
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(46, 213, 115, 0.1) 0%,
+            transparent 40%
+          );
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        color: var(--text-color);
+        overflow-x: hidden;
+      }
+
+      /* --- Sound Check Modal --- */
+      #sound-check-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+        backdrop-filter: blur(5px);
+      }
+      .modal-content {
+        background: #1e1e1e;
+        color: white;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 90%;
+        width: 400px;
+        border: 1px solid #333;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .input-name {
+        width: 80%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        background: #2a2a2a;
+        color: white;
+        font-family: 'Kanit', sans-serif;
+        font-size: 16px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .input-name:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      /* --- Main Game Wrapper --- */
+      .game-wrapper {
+        width: 90%;
+        max-width: 450px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        margin: 20px;
+        transition: max-width 0.3s ease;
+        /* เพิ่ม min-height เพื่อป้องกันการยุบตัว */
+        min-height: 500px;
+      }
+
+      /* Responsive Layout (PC/iPad) */
+      @media (min-width: 768px) {
+        .game-wrapper {
+          max-width: 900px;
+        }
+        .game-content {
+          display: flex;
+          flex-direction: row;
+          align-items: stretch;
+        }
+        .player-area {
+          flex: 1;
+          border-right: 1px solid var(--glass-border);
+          padding: 40px !important;
+        }
+        .choices-area {
+          flex: 1;
+          background: transparent !important;
+          padding: 40px !important;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+      }
+
+      .header-score {
+        padding: 20px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid var(--glass-border);
+        position: relative;
+        z-index: 2;
+      }
+      .score-badge {
+        background: rgba(255, 71, 87, 0.2);
+        color: #ff6b81;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        border: 1px solid rgba(255, 71, 87, 0.3);
+      }
+
+      /* --- Player UI --- */
+      .player-area {
+        padding: 30px 20px;
+        text-align: center;
+      }
+      .vinyl-record {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #222 0%, #111 100%);
+        margin: 0 auto 25px;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        border: 4px solid #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: spin 6s linear infinite;
+        animation-play-state: paused;
+      }
+      .vinyl-record::after {
+        content: '';
+        width: 60px;
+        height: 60px;
+        background: url('https://cdn-icons-png.flaticon.com/512/9308/9308728.png')
+          no-repeat center/cover;
+        border-radius: 50%;
+        border: 2px solid #000;
+      }
+      .vinyl-record.playing {
+        animation-play-state: running;
+        box-shadow: 0 0 25px var(--accent-glow);
+        border-color: var(--primary-color);
+      }
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      h3 {
+        font-weight: 400;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+      }
+
+      .progress-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 25px;
+        font-size: 12px;
+        color: var(--secondary-text);
+      }
+      input[type='range'] {
+        flex-grow: 1;
+        height: 4px;
+        -webkit-appearance: none;
+        background: #444;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 10px var(--primary-color);
+      }
+
+      .controls {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .play-btn {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: none;
+        background: var(--primary-color);
+        color: white;
+        font-size: 28px;
+        cursor: pointer;
+        box-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s;
+      }
+      .play-btn:active {
+        transform: scale(0.95);
+      }
+
+      .volume-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: var(--secondary-text);
+      }
+      .volume-slider {
+        width: 80px;
+      }
+
+      /* --- Choices --- */
+      .choices-area {
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .choice-btn {
+        width: 100%;
+        padding: 18px 25px;
+        margin-bottom: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: #ddd;
+        font-family: 'Kanit', sans-serif;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.3s ease;
+      }
+      .choice-btn:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--primary-color);
+        color: white;
+        box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
+        transform: translateY(-2px);
+      }
+      .choice-btn.correct {
+        background: rgba(46, 213, 115, 0.2);
+        color: var(--correct-color);
+        border-color: var(--correct-color);
+      }
+      .choice-btn.wrong {
+        background: rgba(255, 71, 87, 0.2);
+        color: var(--wrong-color);
+        border-color: var(--wrong-color);
+      }
+
+      /* --- Result/Answer Section (Overlay) --- */
+      #result-overlay {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #111;
+        z-index: 10;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .video-container {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: black;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .song-info {
+        padding: 30px;
+        text-align: center;
+        color: white;
+        flex-grow: 1;
+      }
+
+      .type-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+      }
+      .type-badge.original {
+        background: #2ed573;
+        color: #000;
+      }
+      .type-badge.cover {
+        background: #ffa502;
+        color: #000;
+      }
+
+      .song-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: white;
+      }
+
+      /* Artist Info Styling */
+      .artist-block {
+        margin-bottom: 25px;
+        line-height: 1.6;
+      }
+      .main-artist {
+        font-size: 18px;
+        color: #ddd;
+      }
+      .sub-artist {
+        font-size: 14px;
+        color: #888;
+        margin-top: 5px;
+      }
+
+      .youtube-link-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        background: #ff0000;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 50px;
+        font-weight: 500;
+        font-size: 15px;
+        margin-bottom: 25px;
+        transition: transform 0.2s;
+        box-shadow: 0 5px 20px rgba(255, 0, 0, 0.4);
+      }
+      .youtube-link-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .next-btn,
+      .restart-btn {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+        padding: 12px 40px;
+        border-radius: 12px;
+        font-size: 18px;
+        cursor: pointer;
+        width: auto;
+        min-width: 200px;
+        transition: all 0.3s;
+        font-family: 'Kanit', sans-serif;
+      }
+      .next-btn:hover,
+      .restart-btn:hover {
+        background: white;
+        color: black;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+      }
+
+      /* --- Summary Screen --- */
+      #summary-screen {
+        display: none;
+        /* แก้ตรงนี้: เปลี่ยนจาก absolute เป็น relative หรือปิด absolute ไปเมื่อแสดงผล */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #0f0f0f;
+        z-index: 20;
+        flex-direction: column;
+        padding: 40px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        text-align: center;
+      }
+      .summary-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: left;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .summary-card.correct {
+        border-left: 5px solid var(--correct-color);
+      }
+      .summary-card.wrong {
+        border-left: 5px solid var(--wrong-color);
+      }
+
+      .sum-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .sum-detail {
+        font-size: 14px;
+        color: #aaa;
+      }
+      .sum-status {
+        float: right;
+        font-weight: bold;
+      }
+      .status-correct {
+        color: var(--correct-color);
+      }
+      .status-wrong {
+        color: var(--wrong-color);
+      }
+
+      .user-choice-wrong {
+        color: #ff6b81;
+        font-size: 13px;
+        margin-top: 5px;
+      }
+      .sum-link {
+        color: #3498db;
+        text-decoration: none;
+        font-size: 14px;
+        margin-top: 5px;
+        display: inline-block;
+      }
+
+      @keyframes popIn {
+        from {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sound-check-modal">
+      <div class="modal-content">
+        <div style="font-size: 40px; margin-bottom: 10px">🔊</div>
+        <h2 style="margin: 0 0 10px 0">Sound Check</h2>
+        <p style="color: #aaa; font-size: 14px; margin-bottom: 20px">
+          เกมนี้ต้องใช้การฟัง
+          <br />
+          กรุณากรอกชื่อและทดสอบลำโพง
+        </p>
+
+        <input
+          type="text"
+          id="player-name"
+          class="input-name"
+          placeholder="ชื่อเล่นของคุณ (เช่น น้องบีม)"
+        />
+
+        <button
+          onclick="playTestSound()"
+          class="play-btn"
+          style="
+            margin: 0 auto 15px;
+            width: 60px;
+            height: 60px;
+            font-size: 20px;
+            box-shadow: none;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+          "
+        >
+          ▶
+        </button>
+        <p id="test-status" style="font-size: 12px; color: #777">
+          กดเพื่อทดสอบเสียง
+        </p>
+
+        <div class="volume-container">
+          <span>🔈</span>
+          <input
+            type="range"
+            class="volume-slider"
+            id="modal-volume"
+            min="0"
+            max="1"
+            step="0.1"
+            value="0.5"
+          />
+          <span>🔊</span>
+        </div>
+
+        <button
+          onclick="startGame()"
+          style="
+            margin-top: 30px;
+            background: #2ed573;
+            color: white;
+            border: none;
+            padding: 15px 0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(46, 213, 115, 0.3);
+          "
+        >
+          พร้อมแล้ว! เริ่มเกม
+        </button>
+      </div>
+    </div>
+
+    <div class="game-wrapper">
+      <div class="header-score">
+        <span style="font-weight: 300; letter-spacing: 1px">🎵 Music Quiz</span>
+        <span class="score-badge" id="score-display">คะแนน: 0 / 0</span>
+      </div>
+
+      <div id="game-screen" class="game-content">
+        <div class="player-area">
+          <div class="vinyl-record" id="vinyl"></div>
+          <h3 id="question-text">ฟังเพลงแล้วทายชื่อ!</h3>
+          <p
+            style="font-size: 13px; color: var(--secondary-text); margin-top: 0"
+          >
+            ( ข้อที่
+            <span id="current-q-num">1</span>
+            )
+          </p>
+
+          <div class="progress-container">
+            <span id="curr-time">0:00</span>
+            <input type="range" id="seek-bar" value="0" step="0.1" />
+            <span id="dur-time">0:00</span>
+          </div>
+
+          <div class="controls">
+            <button class="play-btn" id="main-play-btn" onclick="togglePlay()">
+              ▶
+            </button>
+          </div>
+
+          <div class="volume-container">
+            <span>🔉</span>
+            <input
+              type="range"
+              class="volume-slider"
+              id="game-volume"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.5"
+            />
+            <span>🔊</span>
+          </div>
+        </div>
+
+        <div class="choices-area" id="choices-container"></div>
+      </div>
+
+      <div id="result-overlay">
+        <div class="video-container">
+          <iframe
+            id="yt-player"
+            width="100%"
+            height="100%"
+            src=""
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+
+        <div class="song-info">
+          <div
+            id="result-message"
+            style="margin-bottom: 10px; font-weight: bold; font-size: 24px"
+          ></div>
+          <div id="song-details-area"></div>
+
+          <a href="#" target="_blank" id="res-link" class="youtube-link-btn">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path
+                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+              />
+            </svg>
+            ฟังเพลงเต็มบน YouTube
+          </a>
+
+          <br />
+          <button class="next-btn" onclick="nextQuestion()">ข้อต่อไป ➜</button>
+        </div>
+      </div>
+
+      <div id="summary-screen">
+        <h1 style="color: var(--primary-color)">สรุปผลคะแนน</h1>
+        <div
+          id="summary-header"
+          style="font-size: 18px; margin-bottom: 20px; line-height: 1.6"
+        ></div>
+        <div
+          id="summary-compliment"
+          style="
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+          "
+        ></div>
+
+        <div id="summary-list" style="margin-bottom: 30px"></div>
+
+        <div
+          style="
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+          "
+        >
+          <button
+            onclick="downloadSummary('png')"
+            style="
+              background: #e1b12c;
+              color: #000;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: bold;
+            "
+          >
+            📸 เซฟรูป (PNG)
+          </button>
+          <button
+            onclick="downloadSummary('pdf')"
+            style="
+              background: #e74c3c;
+              color: #fff;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: bold;
+            "
+          >
+            📄 เซฟไฟล์ (PDF)
+          </button>
+        </div>
+
+        <button class="restart-btn" onclick="location.reload()">
+          🔄 เล่นใหม่อีกครั้ง
+        </button>
+      </div>
+    </div>
+
+    <audio id="main-audio"></audio>
+    <audio id="test-audio" src="test.mp3"></audio>
+
+    <script>
+      // --- 1. ข้อมูลเพลง ---
+      const songList = [
+        {
+          id: 1,
+          type: 'original',
+          artist: 'จีเหลิน สายหมอบ',
+          title: 'บักจีเหลิน - จีเหลิน สายหมอบ',
+          audioFile: 'song1.mp3',
+          youtubeId: 'f5GbsArbFgo',
+          choices: [
+            'ป.ขี้ไก่โป่ - ผึ้งหวาน ทีวีมิวสิค',
+            'บักแตงโม - วงฮันแนว',
+            'เนาะ(ເນາະ) - บอม ลูกพระธาตุ',
+            'บักจีเหลิน - จีเหลิน สายหมอบ',
+          ],
+          correctIndex: 3,
+        },
+        {
+          id: 2,
+          type: 'cover',
+          coverArtist: 'ออร์แกน',
+          originalArtist: 'MAIYARAP & MILLI',
+          title: 'แฟนใหม่หน้าคุ้น - MAIYARAP ft. MILLI [Cover by ออร์แกน]',
+          audioFile: 'song2.mp3',
+          youtubeId: 'c0mgCr8MJrM',
+          choices: [
+            'แฟนใหม่หน้าคุ้น - MAIYARAP ft. MILLI',
+            'คิด(แต่ไม่)ถึง - Tilly Birds',
+            'ถ้าเราเจอกันอีก - Tilly Birds',
+            'ลืมไปแล้วว่าลืมยังไง - Jeff Satur',
+          ],
+          correctIndex: 0,
+        },
+        {
+          id: 3,
+          type: 'cover',
+          coverArtist: 'ป๊อบ ปองกูล เเละ paiiinntt',
+          originalArtist: 'Calories Blah Blah',
+          title:
+            'แพ้คำว่ารัก - paiiinntt x ป๊อบ ปองกูล (POP PONGKOOL) |「Originals and paiiinntt」',
+          audioFile: 'song3.mp3',
+          youtubeId: 'PYlmVZlsoLI',
+          choices: [
+            'แพ้คำว่ารัก - paiiinntt x ป๊อบ ปองกูล',
+            'เพลงรัก - Three Man Down',
+            'รักแรกพบ - Tattoo Colour',
+            'เพลงรักเพลงแรก - LANDOKMAI (Blooming)',
+          ],
+          correctIndex: 0,
+        },
+        {
+          id: 4,
+          type: 'original',
+          artist: 'ASIA7',
+          title: 'Loop (ฉันจึงวนกลับมา) - ASIA7',
+          audioFile: 'song4.mp3',
+          youtubeId: 'gEsCDJGqrlc',
+          choices: [
+            'Loop (ฉันจึงวนกลับมา) - ASIA7',
+            'สนิทใจ - PALMY (เพลงจากละครรักร้าย)',
+            'ทีละน้อย - Hers (little by little)',
+            'ซ่อนกลิ่น - PALMY',
+          ],
+          correctIndex: 0,
+        },
+        {
+          id: 5,
+          type: 'cover',
+          coverArtist: 'นนนะ',
+          originalArtist: 'ตีหนึ่งที่คูเมือง - ILLSLICK',
+          title:
+            'นนนะ - ตีหนึ่งที่หลังโบสถ์ [ Original ตีหนึ่งที่คูเมือง ILLSLICK ]',
+          audioFile: 'song5.mp3',
+          youtubeId: 'B4fDaq2cRTU',
+          choices: [
+            'ตีหนึ่งที่หลังโบสถ์ - นนนะ',
+            'ตีหนึ่งที่คูเมือง - ILLSLICK',
+            'คนสวย - (feat. N0RMA1 & BARON)',
+            'ลืมไปแล้วว่าลืมยังไง - Jeff Satur',
+          ],
+          correctIndex: 0,
+        },
+        {
+          id: 6,
+          type: 'cover',
+          coverArtist: 'ดีเจกิต รีมิกซ์',
+          originalArtist: 'Moxy',
+          title:
+            'Ben10 ข่อยสิแปลงร่าง Ver. แดนซ์สายย่อ Remix BY [ ดีเจกิต รีมิกซ์ ]',
+          audioFile: 'song6.mp3',
+          youtubeId: 'MtnzEwpuC0E',
+          choices: [
+            'Ben10 - Cartoon Network Thai',
+            'Ben10 - Moxy',
+            'Saint Seiya - Legend Of Sanctuary',
+            'Ben10 - ดีเจกิต รีมิกซ์',
+          ],
+          correctIndex: 3,
+        },
+        {
+          id: 7,
+          type: 'cover',
+          coverArtist: 'เอ็ม ตำนาน',
+          originalArtist: 'ใจสั่งมา - LOSO',
+          title: 'ใจสั่งมา cover by เอ็ม ตำนาน',
+          audioFile: 'song7.mp3',
+          youtubeId: 'i8_EvENJKck',
+          choices: [
+            'ใจสั่งมา - cover by เอ็ม ตำนาน',
+            'ใจสั่งมา - LOSO',
+            'ใบสั่งจับ ใบสั่งใจ - นายประกอบ',
+            'มาสั่งใจ(ใบสั่งมา) - วงฟิวเจอร์แบนด์',
+          ],
+          correctIndex: 0,
+        },
+        {
+          id: 8,
+          type: 'original',
+          artist: 'NOAH',
+          title: 'NOAH - หยุดรักไม่ได้แล้ว FT. Archy',
+          audioFile: 'song8.mp3',
+          youtubeId: 'NO4bM4WW1GQ',
+          choices: [
+            'หยุดรักไม่ได้แล้ว - NOAH',
+            'ลองรักดูไหม - NOAH',
+            'ชอบเธออะ - PtrpStudio',
+            'ตกหลุมรัก - Waii',
+          ],
+          correctIndex: 0,
+        },
+        {
+          id: 9,
+          type: 'original',
+          artist: 'Tobadolls',
+          title: 'มะงึกๆอุ๋งๆ - ORNLY YOU',
+          audioFile: 'song9.mp3',
+          youtubeId: 'HI4voGt6LLM',
+          choices: [
+            'มะงึกๆอุ๋งๆ - ORNLY YOU',
+            'อุ๋งๆ - PORZAX',
+            'น่ารักดี - อ้อนแอ้น',
+            'เวลาเธอยิ้ม - POLYCAT (อ้อนแอ้น)',
+          ],
+          correctIndex: 0,
+        },{
+          id: 10,
+          type: 'cover',
+          coverArtist: 'ต้องแต้งบอมบี้มิวสิค',
+          originalArtist: 'The TOYS - ลาลาลอย (100%)',
+          title: 'ลาลาลอย (100%) ver. มามาหลอย - ต้องแต้งบอมบี้มิวสิค',
+          audioFile: 'song10.mp3',
+          youtubeId: 'Ik9BFphICuc',
+          choices: [
+            'ลาลาลอย (100%) - ต้องแต้งบอมบี้มิวสิค',
+            'ลาลาลอย (100%) - The TOYS',
+            'ไสว่าสิบ่ถิ่มกัน - ก้อง ห้วยไร่',
+            'The Spectre - Alan Walker',
+          ],
+          correctIndex: 0,
+        },{
+          id: 11,
+          type: 'cover',
+          coverArtist: 'ต้องแต้งบอมบี้มิวสิค', // คนที่ทำคลิป/ร้องใหม่
+          originalArtist: 'The Weeknd', // เจ้าของทำนอง/เพลงต้นฉบับจริงๆ
+          title: 'Die For You (เวอร์ชั่น พี่ไมค์ ภิรมย์พร) - ต้องแต้งบอมบี้มิวสิค',
+          audioFile: 'song11.mp3',
+          youtubeId: 'I_ISCwu_k_E',
+          choices: [
+            'Die For You (พี่ไมค์ ภิรมย์พร) - ต้องแต้งบอมบี้มิวสิค',
+            'บุญผลา - ไมค์ ภิรมย์พร', 
+            'Die For You - The Weeknd',
+            'กลับคำสาหล่า - ไมค์ ภิรมย์พร',
+          ],
+          correctIndex: 0,
+        },{
+          id: 12,
+          type: 'original',
+          artist: 'เสถียรธรรมสถาน',
+          title: 'ดั่งดอกไม้บาน.',
+          audioFile: 'song12.mp3',
+          youtubeId: 'dhFt7eURm78',
+          choices: [
+            'ดั่งดอกไม้บาน. - เสถียรธรรมสถาน',
+            'สงกรานต์ - ใจนักเลง',
+            'พระอาทิตย์ยิ้มแฉ่ง',
+            'ฤดูร้อน - PARADOX',
+          ],
+          correctIndex: 0,
+        },{
+          id: 13,
+          type: 'original',
+          artist: 'พี สะเดิด',
+          title: 'จี่หอย - พี สะเดิด',
+          audioFile: 'song13.mp3',
+          youtubeId: 'Jd4Hd-HFgls',
+          choices: [
+            'จี่หอย - พี สะเดิด',
+            'Bruno Mars - The Lazy Song',
+            'PSY - GANGNAM STYLE',
+            'Michael Jackson - Smooth Criminal',
+          ],
+          correctIndex: 0,
+        },{
+          id: 14,
+          type: 'cover',
+          coverArtist: 'Mr.Gamememe',
+          originalArtist: 'ZENTYARB(ZENTYARB - ฉบับสุดท้าย Feat.SARAN)',
+          title: 'SpongeBob-ฉบับสุดท้าย feat.Schnitzel (ai cover)',
+          audioFile: 'song14.mp3',
+          youtubeId: 'zoEnaMcbqIQ',
+          choices: [
+            'ฉบับสุดท้าย - SpongeBob',
+            'ฉบับสุดท้าย - ZENTYARB',
+            'รถไฟบนฟ้า - D GERRARD',
+            'ฉบับปรับปรุง - ZENTYARB x PUNYARB',
+          ],
+          correctIndex: 0,
+        },{
+          id: 15,
+          type: 'cover',
+          coverArtist: 'GaoGame',
+          originalArtist: 'ZENTYARB(ZENTYARB - ฉบับสุดท้าย Feat.SARAN)',
+          title: 'บทสวดอิติปิโส - [ver.Michael Jackson]',
+          audioFile: 'song15.mp3',
+          youtubeId: '-DvmeDKrJa8',
+          choices: [
+            'บทสวดอิติปิโส - ver.Michael Jackson',
+            'Billie Jean - Michael Jackson',
+            'Beat It - Michael Jackson',
+            'คาถาชินบัญชร - ver.Eminem',
+          ],
+          correctIndex: 0,
+        },
+      ];
+
+      // --- Variables ---
+      let currentQuestionIndex = 0;
+      let score = 0;
+      let isPlaying = false;
+      let playerName = '';
+      let userAnswers = [];
+
+      // --- Elements ---
+      const mainAudio = document.getElementById('main-audio');
+      const testAudio = document.getElementById('test-audio');
+      const playBtn = document.getElementById('main-play-btn');
+      const vinyl = document.getElementById('vinyl');
+      const seekBar = document.getElementById('seek-bar');
+      const currTimeText = document.getElementById('curr-time');
+      const durTimeText = document.getElementById('dur-time');
+      const choicesContainer = document.getElementById('choices-container');
+      const resultOverlay = document.getElementById('result-overlay');
+      const ytPlayer = document.getElementById('yt-player');
+      const songDetailsArea = document.getElementById('song-details-area');
+      const scoreDisplay = document.getElementById('score-display');
+      const summaryScreen = document.getElementById('summary-screen');
+
+      // --- Sound Check Functions ---
+      const modalVolume = document.getElementById('modal-volume');
+      const gameVolume = document.getElementById('game-volume');
+
+      function setVolume(val) {
+        mainAudio.volume = val;
+        testAudio.volume = val;
+        modalVolume.value = val;
+        gameVolume.value = val;
+      }
+
+      modalVolume.addEventListener('input', (e) => setVolume(e.target.value));
+      gameVolume.addEventListener('input', (e) => setVolume(e.target.value));
+
+      function playTestSound() {
+        if (testAudio.paused) {
+          testAudio.play();
+          document.getElementById('test-status').innerText = 'กำลังเล่น...';
+          document.getElementById('test-status').style.color = '#2ed573';
+        } else {
+          testAudio.pause();
+          testAudio.currentTime = 0;
+          document.getElementById('test-status').innerText =
+            'กดเพื่อทดสอบเสียง';
+          document.getElementById('test-status').style.color = '#777';
+        }
+      }
+
+      // ฟังก์ชันสำหรับสลับตำแหน่งอาเรย์ (Shuffle)
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      function startGame() {
+        const nameInput = document.getElementById('player-name').value.trim();
+        if (!nameInput) {
+          alert('กรุณากรอกชื่อเล่นก่อนเริ่มเกมครับ');
+          return;
+        }
+        playerName = nameInput;
+
+        // หยุดเสียงทดสอบ
+        testAudio.pause();
+        document.getElementById('sound-check-modal').style.display = 'none';
+
+        // ทำการสุ่มเพลงก่อนเริ่มเกม
+        shuffleArray(songList);
+
+        updateScoreDisplay();
+        loadQuestion(currentQuestionIndex);
+      }
+
+      function updateScoreDisplay() {
+        scoreDisplay.innerText = `คะแนน: ${score} / ${songList.length}`;
+      }
+
+      // --- Game Logic ---
+      function loadQuestion(index) {
+        if (index >= songList.length) {
+          showSummary();
+          return;
+        }
+
+        const song = songList[index];
+        currentQuestionIndex = index;
+
+        // แก้ไขจุดที่บัค: เปลี่ยนจาก question-number เป็น current-q-num ให้ตรงกับ HTML
+        const qNumElement = document.getElementById('current-q-num');
+        if (qNumElement) {
+          qNumElement.innerText = index + 1;
+        }
+
+        // Setup เพลง (แก้ไขให้ใช้ song.audioFile ตามโครงสร้างข้อมูลของคุณ)
+        mainAudio.src = song.audioFile;
+        mainAudio.load();
+
+        resetPlayerUI();
+
+        // รีเซ็ตหน้าจอเฉลย
+        ytPlayer.src = '';
+        resultOverlay.style.display = 'none';
+
+        const choicesContainer = document.getElementById('choices-container');
+        choicesContainer.innerHTML = '';
+
+        // --- ส่วนที่สลับตำแหน่งช้อยส์ ---
+        let choiceOptions = [...song.choices];
+        shuffleArray(choiceOptions);
+
+        choiceOptions.forEach((choiceText) => {
+          const btn = document.createElement('button');
+          btn.className = 'choice-btn';
+          btn.innerText = choiceText;
+
+          // ส่ง "ข้อความบนปุ่ม" ไปเช็คคำตอบแทนการส่งลำดับเลข
+          btn.onclick = () => checkAnswer(choiceText, btn);
+
+          choicesContainer.appendChild(btn);
+        });
+      }
+
+      function checkAnswer(selectedText, btnElement) {
+        const data = songList[currentQuestionIndex];
+
+        pauseAudio();
+
+        const allBtns = document.querySelectorAll('.choice-btn');
+        allBtns.forEach((b) => (b.disabled = true));
+
+        // หาข้อความที่ถูกต้องจริงๆ จาก index ของข้อมูลต้นฉบับ
+        const correctText = data.choices[data.correctIndex];
+        const isCorrect = selectedText === correctText;
+
+        // เก็บข้อมูลการตอบ
+        userAnswers.push({
+          questionId: data.id,
+          songTitle: data.title,
+          isCorrect: isCorrect,
+          selectedChoice: selectedText,
+          correctChoice: correctText,
+          youtubeId: data.youtubeId,
+        });
+
+        if (isCorrect) {
+          btnElement.classList.add('correct');
+          score++;
+          updateScoreDisplay();
+
+          document.getElementById('result-message').innerText =
+            'เยี่ยมมาก! ถูกต้องครับ ✅';
+          document.getElementById('result-message').style.color = '#2ed573';
+        } else {
+          btnElement.classList.add('wrong');
+          // ไฮไลท์ปุ่มที่ถูก โดยหาจากข้อความที่ตรงกับเฉลย
+          allBtns.forEach((b) => {
+            if (b.innerText === correctText) b.classList.add('correct');
+          });
+
+          document.getElementById('result-message').innerText = 'ผิดครับ! ❌';
+          document.getElementById('result-message').style.color = '#ff4757';
+        }
+
+        setTimeout(() => {
+          showResultOverlay(data);
+        }, 1500);
+      }
+
+      function showResultOverlay(data) {
+        resultOverlay.style.display = 'flex';
+
+        let badgeHtml = '';
+        let infoHtml = '';
+
+        if (data.type === 'cover') {
+          badgeHtml = `<span class="type-badge cover">Cover Version</span>`;
+          infoHtml = `
+                <div class="song-title">${data.title}</div>
+                <div class="artist-block">
+                    <div class="main-artist">🎙️ Cover by: <b>${data.coverArtist}</b></div>
+                    <div class="sub-artist">Original by: ${data.originalArtist}</div>
+                </div>
+            `;
+        } else {
+          badgeHtml = `<span class="type-badge original">Original Version</span>`;
+          infoHtml = `
+                <div class="song-title">${data.title}</div>
+                <div class="artist-block">
+                    <div class="main-artist">ศิลปิน: <b>${data.artist}</b></div>
+                </div>
+            `;
+        }
+
+        songDetailsArea.innerHTML = badgeHtml + infoHtml;
+
+        document.getElementById(
+          'res-link'
+        ).href = `https://www.youtube.com/watch?v=${data.youtubeId}`;
+        ytPlayer.src = `https://www.youtube.com/embed/${data.youtubeId}?autoplay=1&rel=0`;
+      }
+
+      function nextQuestion() {
+        currentQuestionIndex++;
+        loadQuestion(currentQuestionIndex);
+      }
+
+      function showSummary() {
+        // --- 1. หยุดเพลงและรีเซ็ต ---
+        pauseAudio();
+        mainAudio.currentTime = 0;
+        ytPlayer.src = '';
+
+        // --- 2. ตั้งค่าการแสดงผล ---
+        summaryScreen.style.position = 'relative';
+        summaryScreen.style.height = 'auto';
+
+        document.querySelector('.game-wrapper').style.maxWidth = '600px';
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('result-overlay').style.display = 'none';
+        document.querySelector('.header-score').style.display = 'none';
+
+        summaryScreen.style.display = 'flex';
+
+        // --- 3. คำนวณคะแนน ---
+        const total = songList.length;
+        const percent = (score / total) * 100;
+
+        let compliment = '';
+        if (percent === 100) compliment = '🎉 สุดยอด! คุณคือเทพเจ้าหูทิพย์!';
+        else if (percent >= 80)
+          compliment = '✨ เยี่ยมมาก! คุณเป็นแฟนพันธุ์แท้ตัวยงเลย';
+        else if (percent >= 50)
+          compliment = '👍 คุณทำได้ดี! ความจำแม่นใช้ได้เลยนะ';
+        else compliment = '✌️ ไม่เป็นไรนะ! ลองฟังเพลงให้เยอะขึ้นแล้วมาลองใหม่';
+
+        // --- 4. ส่วนที่แก้: เพิ่มชื่อเว็บไซต์ลงไปด้านล่างคะแนน ---
+
+        const websiteName = 'https://pp300950.github.io/quiz/music/music.html';
+
+        document.getElementById('summary-header').innerHTML = `
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; display:inline-block; margin-bottom:10px;">
+                ผู้เล่น: <b style="color:#f1c40f; font-size:32px; text-shadow: 2px 2px 4px #000;">${playerName}</b>
+            </div>
+            <br>
+            ตอบถูกทั้งหมด: <b style="font-size:24px;">${score}</b> / ${total} ข้อ (${Math.round(
+          percent
+        )}%)
+            
+            <div style="margin-top: 15px; font-size: 14px; color: #aaa;">
+                🔗 เล่นที่เว็บไซต์: <span style="color: #3498db;">${websiteName}</span>
+            </div>
+        `;
+        // ---------------------------------------------------
+
+        document.getElementById('summary-compliment').innerText = compliment;
+
+        const listContainer = document.getElementById('summary-list');
+        listContainer.innerHTML = '';
+
+        userAnswers.forEach((ans, index) => {
+          const card = document.createElement('div');
+          card.className = `summary-card ${
+            ans.isCorrect ? 'correct' : 'wrong'
+          }`;
+          const statusIcon = ans.isCorrect ? '✅ ถูกต้อง' : '❌ ผิด';
+          const statusClass = ans.isCorrect ? 'status-correct' : 'status-wrong';
+          let wrongDetail = !ans.isCorrect
+            ? `<div class="user-choice-wrong">คุณตอบ: ${ans.selectedChoice}</div>`
+            : '';
+
+          card.innerHTML = `
+                <div class="sum-title">
+                    ข้อที่ ${index + 1}: ${ans.songTitle}
+                    <span class="sum-status ${statusClass}">${statusIcon}</span>
+                </div>
+                ${wrongDetail}
+            `;
+          listContainer.appendChild(card);
+        });
+      }
+
+      // --- ส่วนที่เพิ่ม: ฟังก์ชันสำหรับดาวน์โหลด ---
+      function downloadSummary(type) {
+        const screen = document.getElementById('summary-screen');
+        const btns = document.querySelectorAll('button'); // ซ่อนปุ่มชั่วคราวตอนแคป
+
+        // ซ่อนปุ่มก่อนแคปภาพ
+        btns.forEach((b) => (b.style.display = 'none'));
+
+        html2canvas(screen, {
+          backgroundColor: '#0f0f0f', // บังคับพื้นหลังสีดำ
+          scale: 2, // เพิ่มความชัด
+        }).then((canvas) => {
+          if (type === 'png') {
+            const link = document.createElement('a');
+            link.download = `Score-${playerName}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+          } else if (type === 'pdf') {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const imgData = canvas.toDataURL('image/png');
+            const imgProps = doc.getImageProperties(imgData);
+            const pdfWidth = doc.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            doc.save(`Score-${playerName}.pdf`);
+          }
+
+          // แสดงปุ่มกลับมาเหมือนเดิม
+          btns.forEach((b) => (b.style.display = ''));
+          // ต้องปรับ display ปุ่มบางปุ่มให้ถูกต้องตาม Class เดิม
+          document.querySelector('.restart-btn').style.display = 'inline-block';
+          document.querySelector('.next-btn').style.display = 'inline-block';
+          // ปุ่มโหลดที่เราเพิ่งสร้าง
+          const dlBtns = screen.querySelectorAll('button');
+          dlBtns.forEach((b) => (b.style.display = ''));
+        });
+      }
+
+      // --- Player Logic ---
+      function togglePlay() {
+        if (mainAudio.paused) {
+          playAudio();
+        } else {
+          pauseAudio();
+        }
+      }
+
+      function playAudio() {
+        mainAudio.play();
+        isPlaying = true;
+        playBtn.innerText = '⏸';
+        vinyl.classList.add('playing');
+      }
+
+      function pauseAudio() {
+        mainAudio.pause();
+        isPlaying = false;
+        playBtn.innerText = '▶';
+        vinyl.classList.remove('playing');
+      }
+
+      function resetPlayerUI() {
+        pauseAudio();
+        seekBar.value = 0;
+        currTimeText.innerText = '0:00';
+        durTimeText.innerText = '0:00';
+      }
+
+      mainAudio.addEventListener('timeupdate', () => {
+        const ct = mainAudio.currentTime;
+        const dur = mainAudio.duration;
+        if (!isNaN(dur)) {
+          seekBar.max = dur;
+          seekBar.value = ct;
+          currTimeText.innerText = formatTime(ct);
+          durTimeText.innerText = formatTime(dur);
+        }
+      });
+
+      seekBar.addEventListener('input', () => {
+        mainAudio.currentTime = seekBar.value;
+      });
+
+      function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+      }
+
+      setVolume(0.5);
+    </script>
+  </body>
+</html>
