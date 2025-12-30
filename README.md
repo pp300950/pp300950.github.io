@@ -46,4 +46,4 @@ https://pp300950.github.io/CAR_control/main.html
 
 https://pp300950.github.io/quiz/love/index.html
 
-https://pp300950.github.io/quiz/music/music.html
+https://pp300950.github.io/quiz/music/music2.html
