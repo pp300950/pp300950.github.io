@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logic Flow Editor Pro (Wiring Control + Smart Copy)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* ปรับสีให้สบายตาขึ้น (Warm Gray / Soft Blue) */
+      --bg-color: #f4f6f8; 
+      --grid-color: #e0e6ed;
+      --panel-bg: #ffffff;
+      --text-color: #333;
+      --node-radius: 12px;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Prompt', sans-serif; 
+      overflow: hidden;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    /* --- Drawflow Grid Background --- */
+    #drawflow { 
+      height: 100vh; 
+      width: 100vw; 
+      position: relative; 
+      background-size: 25px 25px;
+      background-image: radial-gradient(var(--grid-color) 2px, transparent 2px);
+      background-position: 0px 0px;
+      outline: none;
+    }
+
+    /* --- Toolbar / Palette --- */
+    .palette { 
+      position: absolute; 
+      top: 20px; 
+      left: 20px; 
+      background: var(--panel-bg); 
+      padding: 15px; 
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      z-index: 10; 
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 170px;
+      max-height: 70vh;
+      overflow-y: auto; /* Scroll ในแนวตั้งถ้าเนื้อหาเยอะ */
+      overflow-x: hidden;
+      border: 1px solid #eee;
+      transition: height 0.3s, padding 0.3s;
+    }
+
+    /* สไตล์สำหรับการพับเก็บ */
+    .palette.collapsed {
+        height: 40px; /* ความสูงเมื่อพับ */
+        overflow: hidden;
+        padding-bottom: 0;
+    }
+    .palette.collapsed .drag-drawflow {
+        display: none;
+    }
+    
+    .palette-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .palette h3 {
+      margin: 0;
+      font-size: 16px;
+      text-align: center;
+      color: #555;
+      font-weight: 600;
+    }
+    
+    .toggle-palette-btn {
+        cursor: pointer;
+        color: #888;
+        transition: transform 0.3s;
+    }
+    .palette.collapsed .toggle-palette-btn {
+        transform: rotate(180deg);
+    }
+
+    .drag-drawflow { 
+      cursor: grab; 
+      background: #f8f9fa;
+      color: #555;
+      padding: 10px; 
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      transition: all 0.2s;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .drag-drawflow:hover { 
+        transform: translateY(-2px); 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* สีแถบเครื่องมือแบบพาสเทล */
+    .drag-drawflow[data-node="input"] { border-left: 5px solid #96e6a1; }
+    .drag-drawflow[data-node="operation"] { border-left: 5px solid #8fd3f4; }
+    .drag-drawflow[data-node="math"] { border-left: 5px solid #ff9a9e; }
+    .drag-drawflow[data-node="gate"] { border-left: 5px solid #a18cd1; }
+    .drag-drawflow[data-node="logic_and"] { border-left: 5px solid #f6d365; }
+    .drag-drawflow[data-node="logic_not"] { border-left: 5px solid #4facfe; }
+    .drag-drawflow[data-node="output"] { border-left: 5px solid #d57eeb; }
+    .drag-drawflow[data-node="transistor"] { border-left: 5px solid #ff7f50; }
+
+    /* --- Control Buttons --- */
+    .controls {
+      position: absolute;
+      top: 20px; 
+      right: 20px;
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      box-shadow: var(--shadow);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: white;
+      color: #444;
+      border: 1px solid #eee;
+    }
+
+    .btn:hover { background: #f8f9fa; transform: translateY(-1px); }
+    .btn:active { transform: scale(0.95); }
+    
+    .btn-run { background: #4caf50; color: white; border: none; }
+    .btn-run:hover { background: #43a047; }
+    
+    .btn-save { background: #2196f3; color: white; border: none; }
+    .btn-save:hover { background: #1e88e5; }
+
+    /* ปุ่ม Probe */
+    .btn-probe { background: #607d8b; color: white; border: none; }
+    .btn-probe:hover { background: #546e7a; }
+    .btn-probe.active { 
+        background: #ffc107; 
+        color: #333; 
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        animation: pulse-border 2s infinite;
+    }
+
+    @keyframes pulse-border {
+        0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+    }
+
+    /* Tooltip สำหรับ Probe */
+    #probe-tooltip {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.85);
+        color: #00e676;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        pointer-events: none;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        border: 1px solid #333;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+    }
+
+    /* --- Floating Copy Button (New) --- */
+    #floating-copy-btn {
+        position: absolute;
+        display: none;
+        background: #2196f3;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 25px;
+        cursor: pointer;
+        z-index: 999;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        border: 2px solid white;
+        transform: translate(-50%, -120%); /* ลอยอยู่เหนือบล็อก */
+        animation: floatUp 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    
+    #floating-copy-btn:hover {
+        background: #1976d2;
+        transform: translate(-50%, -125%);
+    }
+
+    @keyframes floatUp {
+        from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        to { opacity: 1; transform: translate(-50%, -120%) scale(1); }
+    }
+
+    /* --- Debugger Panel --- */
+    #debug-panel {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 25vh; /* ความสูงเริ่มต้น */
+        min-height: 100px;
+        max-height: 90vh;
+        background: #2d3436;
+        color: #dfe6e9;
+        z-index: 20;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease-in-out; /* เฉพาะตอนเลื่อนเข้าออก ไม่ใช่ตอน resize */
+        transform: translateY(100%); /* ซ่อนไว้ก่อน */
+    }
+
+    #debug-panel.active {
+        transform: translateY(0);
+    }
+    
+    /* ตัวปรับขนาด (Resizer) */
+    .debug-resizer {
+        width: 100%;
+        height: 8px;
+        background: #3e4a4e;
+        cursor: ns-resize; /* Cursor ลูกศรขึ้นลง */
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .debug-resizer::after {
+        content: "";
+        width: 40px;
+        height: 3px;
+        background: #7f8c8d;
+        border-radius: 2px;
+    }
+    .debug-resizer:hover { background: #505d61; }
+
+    .debug-header {
+        padding: 5px 20px 10px 20px;
+        background: #1e272e;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .debug-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 13px;
+    }
+
+    .log-entry {
+        margin-bottom: 8px;
+        padding: 5px;
+        border-bottom: 1px solid #444;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .log-step { color: #f1c40f; min-width: 60px; }
+    .log-node { color: #74b9ff; font-weight: bold; }
+    .log-action { color: #b2bec3; }
+    .log-result { color: #55efc4; font-weight: bold; }
+
+    /* --- Node Styling (Improved for Dragging) --- */
+    .drawflow-node { 
+      background: white; 
+      border: 1px solid #e0e0e0; 
+      padding: 0;
+      border-radius: var(--node-radius); 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      width: 160px;
+      transition: border 0.2s, box-shadow 0.2s;
+      user-select: none;
+      cursor: grab;
+    }
+
+    .drawflow-node:active {
+      cursor: grabbing;
+    }
+    
+    .drawflow-node.selected {
+      border: 2px solid #ff9a9e;
+      box-shadow: 0 0 15px rgba(255, 154, 158, 0.4);
+      z-index: 5 !important; 
+    }
+    
+    .drawflow-node.multi-selected {
+      outline: 2px dashed #ff9800;
+      outline-offset: 4px;
+      z-index: 5 !important;
+    }
+
+    .node-header {
+      padding: 8px 10px;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+    
+    .node-content { 
+        padding: 12px 10px; 
+        font-size: 13px; 
+        color: #555;
+        cursor: default; 
+    }
+    
+    /* Node Header Colors */
+    .input-node .node-header { background: #96e6a1; }
+    .op-node .node-header { background: #8fd3f4; }
+    .math-node .node-header { background: #ff9a9e; }
+    .gate-node .node-header { background: #a18cd1; }
+    .logic-node .node-header { background: #f6d365; color: #444; } 
+    .not-node .node-header { background: #4facfe; } 
+    .output-node .node-header { background: #d57eeb; }
+    .transistor-node .node-header { background: #ff7f50; }
+
+    select, input { 
+      width: 90%; 
+      padding: 6px; 
+      border-radius: 6px; 
+      border: 1px solid #ddd; 
+      font-family: 'Prompt', sans-serif;
+      outline: none;
+      background: #fdfdfd;
+    }
+    select:focus, input:focus {
+        border-color: #a18cd1;
+    }
+
+    /* --- Connector Styling (For Manual Routing) --- */
+    .drawflow .connection .main-path {
+      stroke-width: 3px;
+      stroke: #bdc3c7;
+      cursor: pointer; /* เมาส์เป็นรูปนิ้วมือเมื่อชี้สายไฟ */
+    }
+    .drawflow .connection .main-path:hover {
+        stroke: #ff9a9e;
+    }
+    
+    /* จุดดัดสายไฟ (Reroute Point) */
+    .drawflow .connection .point {
+        stroke: #999;
+        stroke-width: 2;
+        fill: white;
+        r: 6; /* จุดใหญ่ขึ้นเพื่อให้จับง่าย */
+        cursor: move;
+    }
+    .drawflow .connection .point:hover {
+        fill: #ff9a9e;
+        stroke: #d84315;
+    }
+    
+    .drawflow-node .input, .drawflow-node .output {
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border: 2px solid #bdc3c7;
+      border-radius: 50%;
+    }
+
+    .drawflow-node .input:hover, .drawflow-node .output:hover {
+        transform: scale(1.2);
+        border-color: #ffc107;
+    }
+
+    .drawflow-node .output.waiting-connect {
+      background: #ff9800;
+      box-shadow: 0 0 8px #ff9800;
+      animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: translateY(-50%) scale(1); }
+      50% { transform: translateY(-50%) scale(1.3); }
+      100% { transform: translateY(-50%) scale(1); }
+    }
+
+    /* --- Context Menu (Custom Right Click) --- */
+    #context-menu {
+        position: absolute;
+        z-index: 1000;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        display: none;
+        overflow: hidden;
+        border: 1px solid #eee;
+        font-size: 13px;
+        width: 150px;
+    }
+    #context-menu ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    #context-menu li {
+        padding: 10px 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #444;
+        transition: background 0.1s;
+    }
+    #context-menu li:hover {
+        background: #f1f2f6;
+        color: #000;
+    }
+    #context-menu li.delete-item { color: #e74c3c; }
+    #context-menu li.delete-item:hover { background: #ffebeb; }
+
+    /* --- Creator Profile Badge --- */
+    .creator-badge {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 15;
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+    }
+
+    .profile-image-container {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        cursor: pointer;
+        transition: transform 0.2s;
+        background: #ddd; /* Fallback color */
+    }
+    .profile-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .profile-image-container:hover {
+        transform: scale(1.1);
+    }
+
+    .creator-info {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        margin-bottom: 10px;
+        width: 200px;
+        font-size: 13px;
+        text-align: left;
+        display: none; /* ซ่อนไว้ก่อน */
+        animation: fadeIn 0.2s;
+    }
+    .creator-badge:hover .creator-info {
+        display: block;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .creator-info h4 { margin: 0 0 5px 0; color: #333; }
+    .creator-info p { margin: 0 0 10px 0; color: #666; font-size: 12px; line-height: 1.4; }
+    .social-links { display: flex; gap: 10px; }
+    .social-links a { color: #555; font-size: 16px; transition: color 0.2s; }
+    .social-links a:hover { color: #2196f3; }
+
+  </style>
+</head>
+<body>
+
+  <input type="file" id="file-input" accept=".json" style="display: none;">
+
+  <div id="floating-copy-btn"><i class="fas fa-copy"></i> คัดลอก</div>
+
+  <div id="probe-tooltip">Val: 0</div>
+
+  <div id="context-menu">
+      <ul>
+          <li id="cm-copy"><i class="fas fa-copy"></i> คัดลอก (Ctrl+C)</li>
+          <li id="cm-delete" class="delete-item"><i class="fas fa-trash-alt"></i> ลบ (Delete)</li>
+      </ul>
+  </div>
+
+  <div class="palette" id="palette-box">
+    <div class="palette-header">
+        <h3><i class="fas fa-cubes"></i> คลังคำสั่ง</h3>
+        <i class="fas fa-chevron-up toggle-palette-btn" id="palette-toggle"></i>
+    </div>
+    
+    <div class="drag-drawflow" draggable="true" data-node="input"><i class="fas fa-play-circle"></i> ค่าเริ่มต้น (Input)</div>
+    <div class="drag-drawflow" draggable="true" data-node="operation"><i class="fas fa-calculator"></i> ฟังก์ชัน (Func)</div>
+    <div class="drag-drawflow" draggable="true" data-node="math"><i class="fas fa-plus-minus"></i> รวมพลัง (+/-)</div>
+    
+    <div class="drag-drawflow" draggable="true" data-node="gate"><i class="fas fa-torii-gate"></i> ประตูพลัง (Gate)</div>
+    <div class="drag-drawflow" draggable="true" data-node="logic_and"><i class="fas fa-project-diagram"></i> ตรรกะ AND</div>
+    <div class="drag-drawflow" draggable="true" data-node="logic_not"><i class="fas fa-exclamation-circle"></i> ตรรกะ NOT</div>
+    
+    <div class="drag-drawflow" draggable="true" data-node="transistor"><i class="fas fa-microchip"></i> ทรานซิสเตอร์</div>
+
+    <div class="drag-drawflow" draggable="true" data-node="output"><i class="fas fa-flag-checkered"></i> ผลลัพธ์ (Output)</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-save" id="save-btn"><i class="fas fa-save"></i> บันทึก</button>
+    <button class="btn" id="load-btn"><i class="fas fa-folder-open"></i> เปิดไฟล์</button>
+    
+    <div style="width:10px;"></div> 
+    <button class="btn btn-probe" id="probe-btn" title="โหมดวัดไฟ Real-time"><i class="fas fa-wrench"></i> วัดไฟ</button>
+    
+    <button class="btn" id="copy-btn"><i class="fas fa-copy"></i> คัดลอก</button>
+    <button class="btn" id="zoom-out"><i class="fas fa-minus"></i></button>
+    <button class="btn" id="zoom-in"><i class="fas fa-plus"></i></button>
+    <button class="btn btn-run" id="run-btn"><i class="fas fa-play"></i> รันระบบ</button>
+  </div>
+
+  <div id="debug-panel">
+      <div class="debug-resizer" id="debug-resizer"></div>
+      
+      <div class="debug-header">
+          <span><i class="fas fa-terminal"></i> Debugger Console</span>
+          <span style="cursor:pointer;" onclick="document.getElementById('debug-panel').classList.remove('active')"><i class="fas fa-times"></i></span>
+      </div>
+      <div class="debug-content" id="debug-log">
+      </div>
+  </div>
+
+  <div class="creator-badge">
+      <div class="creator-info">
+          <h4>PungPon ปอนด์ปัง</h4>
+          <p>นักพัฒนาซอฟต์แวร์ผู้หลงใหลในการสร้างสรรค์วงจรไฟฟ้าในเกมส์ Mini World</p>
+          <div class="social-links">
+              <a href="https://web.facebook.com/profile.php?id=61584509074271" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+              <a href="https://github.com/pp300950" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="mailto:toaiseriesandcat@gmail.com" title="Gmail"><i class="fas fa-envelope"></i></a>
+          </div>
+      </div>
+      <div class="profile-image-container">
+          <img src="me.jpg" alt="Creator Profile">
+      </div>
+  </div>
+
+  <div id="drawflow"></div>
+  
+<script>
+    const container = document.getElementById('drawflow');
+    const editor = new Drawflow(container);
+    
+    // --- 1. ตั้งค่าพื้นฐานและการจำกัดการซูม (Fix Zoom Issues) ---
+    editor.reroute = true; 
+    editor.reroute_fix_curvature = true;
+    editor.draggable_inputs = false;
+    
+    // ** แก้ไข: เพิ่มขอบเขตการซูมเพื่อไม่ให้ทะลุจอ หรือเล็กจนมองไม่เห็น **
+    editor.zoom_max = 1.6; 
+    editor.zoom_min = 0.5; 
+    editor.zoom_value = 0.35; // ความละเอียดในการหมุนเมาส์แต่ละครั้ง
+
+    editor.start();
+
+    // --- 2. แก้ไขการคำนวณ Grid ให้ตรงกับระดับ Zoom (Fix Background Sync) ---
+    function updateGridBackground() {
+        const zoom = editor.zoom;
+        // ใช้ค่า canvas_x, canvas_y ที่ถูกต้องจากโมดูลปัจจุบัน
+        const x = editor.canvas_x;
+        const y = editor.canvas_y;
+
+        container.style.backgroundSize = `${25 * zoom}px ${25 * zoom}px`;
+        container.style.backgroundPosition = `${x}px ${y}px`;
+        
+        hideFloatingBtn();
+    }
+
+    editor.on('zoom', updateGridBackground);
+    editor.on('translate', updateGridBackground);
+
+    // --- 3. แก้ไขสูตรคำนวณตำแหน่งวาง Node ให้แม่นยำเมื่อมีการ Zoom (Fix Drop Position) ---
+    function addNodeToEditor(nodeType, clientX, clientY, data = null) {
+      if (!nodeTypes[nodeType]) return;
+      const typeData = nodeTypes[nodeType];
+
+      // ** สูตรคำนวณตำแหน่ง: (เมาส์ - ขอบเขต Canvas - ระยะเลื่อนแกน) / อัตราซูม **
+      // สูตรนี้จะแก้ปัญหา Node ลอยผิดที่เวลาซูมเข้า/ออก
+      const rect = editor.precanvas.getBoundingClientRect();
+      const pos_x = (clientX - rect.left - editor.canvas_x) / editor.zoom;
+      const pos_y = (clientY - rect.top - editor.canvas_y) / editor.zoom;
+      
+      const defaultData = { value: 15, op: 'div2', mathOp: 'add', result: '?' };
+      editor.addNode(nodeType, typeData.inputs, typeData.outputs, pos_x, pos_y, typeData.class, data || defaultData, typeData.html);
+    }
+    // --- Node HTML Templates ---
+    const nodeTypes = {
+      input: {
+        html: `<div class="node-header"><i class="fas fa-bolt"></i> Input</div>
+               <div class="node-content">ค่าไฟ: <input type="number" df-value value="15" min="0" max="15"></div>`,
+        inputs: 0, outputs: 1, class: 'input-node'
+      },
+      operation: {
+        html: `<div class="node-header"><i class="fas fa-cog"></i> Operation</div>
+               <div class="node-content"><select df-op>
+                  <option value="div2">/ 2 (ปัดลง)</option>
+                  <option value="sub7">- 7</option>
+                  <option value="sub4">- 4</option>
+                  <option value="sub1">- 1</option>
+               </select></div>`,
+        inputs: 1, outputs: 1, class: 'op-node'
+      },
+      math: {
+        html: `<div class="node-header"><i class="fas fa-calculator"></i> Math Mix</div>
+               <div class="node-content">โหมด: <select df-mathOp><option value="add">บวก (+)</option><option value="sub">ลบ (-)</option></select>
+               <div style="font-size:10px; color:#999; margin-top:5px;">*รับ 2 สายเข้า</div></div>`,
+        inputs: 2, outputs: 1, class: 'math-node'
+      },
+      gate: {
+        html: `<div class="node-header"><i class="fas fa-torii-gate"></i> Energy Gate</div>
+               <div class="node-content" style="text-align:center;"><div style="font-size:10px;">เงื่อนไข: หลัง &#8805; ข้าง</div></div>`,
+        inputs: 2, outputs: 1, class: 'gate-node'
+      },
+      logic_and: {
+        html: `<div class="node-header"><i class="fas fa-project-diagram"></i> AND</div>
+               <div class="node-content" style="text-align:center;"><div style="font-size:10px;">ต้องมีไฟทั้งคู่</div></div>`,
+        inputs: 2, outputs: 1, class: 'logic-node'
+      },
+      logic_not: {
+        html: `<div class="node-header"><i class="fas fa-exclamation-circle"></i> NOT</div>
+               <div class="node-content" style="text-align:center;"><div style="font-size:10px;">กลับค่า (ติด/ดับ)</div></div>`,
+        inputs: 1, outputs: 1, class: 'not-node'
+      },
+      transistor: {
+        html: `<div class="node-header"><i class="fas fa-microchip"></i> Transistor</div>
+               <div class="node-content" style="text-align:center;">
+                  <div style="font-size:10px; color:#666;">
+                    บน: สัญญาณ (Signal)<br>
+                    ล่าง: ควบคุม (Control)
+                  </div>
+                  <div style="font-size:9px; margin-top:5px; color:#999;">ถ้า Control มีไฟ -> ปล่อย Signal ผ่าน</div>
+               </div>`,
+        inputs: 2, outputs: 1, class: 'transistor-node'
+      },
+      output: {
+        html: `<div class="node-header"><i class="fas fa-lightbulb"></i> Output</div>
+               <div class="node-content" style="text-align:center;"><h2 style="margin:5px 0; color:#d57eeb;" df-result>?</h2></div>`,
+        inputs: 1, outputs: 0, class: 'output-node'
+      }
+    };
+
+    // --- Drag & Drop from Palette ---
+    const paletteItems = document.querySelectorAll('.drag-drawflow');
+    paletteItems.forEach(item => {
+      item.addEventListener('dragstart', (e) => e.dataTransfer.setData('node', e.target.dataset.node));
+    });
+
+    container.addEventListener('dragover', (e) => e.preventDefault());
+    container.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const nodeType = e.dataTransfer.getData('node');
+      addNodeToEditor(nodeType, e.clientX, e.clientY);
+    });
+
+   
+
+    // --- Palette Collapse Logic ---
+    const paletteBox = document.getElementById('palette-box');
+    const paletteToggle = document.getElementById('palette-toggle');
+    paletteToggle.addEventListener('click', () => {
+        paletteBox.classList.toggle('collapsed');
+    });
+
+    // --- Debugger Resizable Logic ---
+    const debugPanel = document.getElementById('debug-panel');
+    const resizer = document.getElementById('debug-resizer');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'ns-resize';
+        e.preventDefault(); 
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const newHeight = window.innerHeight - e.clientY;
+        if(newHeight > 100 && newHeight < (window.innerHeight - 50)) {
+            debugPanel.style.height = `${newHeight}px`;
+            debugPanel.style.transition = 'none';
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if(isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+            debugPanel.style.transition = 'transform 0.3s ease-in-out';
+        }
+    });
+
+    // --- Zoom & Connect Utils ---
+    document.getElementById('zoom-in').addEventListener('click', () => editor.zoom_in());
+    document.getElementById('zoom-out').addEventListener('click', () => editor.zoom_out());
+
+    let waitingConnection = null;
+    container.addEventListener('click', (e) => {
+      hideContextMenu();
+      
+      // ถ้าคลิกพื้นหลังว่างๆ ให้ซ่อนปุ่ม Copy และเคลียร์ Selection ที่ค้างอยู่
+      if (e.target.id === 'drawflow') {
+         hideFloatingBtn();
+         // --- แก้ไขเพิ่มเติม: ล้าง visual selection ที่เราทำไว้ใน context menu ---
+         document.querySelectorAll('.drawflow-node.selected').forEach(el => el.classList.remove('selected'));
+         editor.node_selected = null; // Reset internal state
+      }
+
+      if (e.target.classList.contains('output')) {
+        const node = e.target.closest('.drawflow-node');
+        const nodeId = node.id.replace('node-', '');
+        const outputClass = e.target.classList[1];
+        document.querySelectorAll('.waiting-connect').forEach(el => el.classList.remove('waiting-connect'));
+        waitingConnection = { nodeId, outputClass };
+        e.target.classList.add('waiting-connect');
+      } else if (e.target.classList.contains('input') && waitingConnection) {
+        const node = e.target.closest('.drawflow-node');
+        const targetNodeId = node.id.replace('node-', '');
+        const inputClass = e.target.classList[1];
+        if (waitingConnection.nodeId !== targetNodeId) editor.addConnection(waitingConnection.nodeId, waitingConnection.outputClass, targetNodeId, inputClass);
+        document.querySelectorAll('.waiting-connect').forEach(el => el.classList.remove('waiting-connect'));
+        waitingConnection = null;
+      } else if (e.target.id === 'drawflow') {
+         document.querySelectorAll('.waiting-connect').forEach(el => el.classList.remove('waiting-connect'));
+         waitingConnection = null;
+      }
+    });
+
+    // --- Context Menu Logic (Fixed) ---
+    const contextMenu = document.getElementById('context-menu');
+    let contextSelectedNodeId = null;
+
+    // --- Context Menu Logic (Fixed Error: undefined reading 'remove') ---
+    container.addEventListener('contextmenu', (e) => {
+        const nodeEl = e.target.closest('.drawflow-node');
+        if (nodeEl) {
+            e.preventDefault(); 
+            contextSelectedNodeId = nodeEl.id.replace('node-', '');
+            
+            // --- แก้ไขจุดที่เป็นบั๊ก: ---
+            // เราจะไม่กำหนด editor.node_selected = nodeEl ตรงนี้ เพราะจะทำให้ Drawflow งงเวลาคลิกที่อื่น
+            // แต่เราจะกำหนดเป็น null เพื่อตัดการทำงานของ Drawflow Internal Selection
+            editor.node_selected = null; 
+            
+            // จัดการ Class selected ด้วยตัวเองเพื่อแสดงผลทางภาพ
+            document.querySelectorAll('.drawflow-node.selected').forEach(el => el.classList.remove('selected'));
+            nodeEl.classList.add('selected');
+            // -------------------------------------------------------
+
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = `${e.clientX}px`;
+            contextMenu.style.top = `${e.clientY}px`;
+            hideFloatingBtn(); 
+        } else {
+            hideContextMenu();
+        }
+    });
+
+    function hideContextMenu() {
+        contextMenu.style.display = 'none';
+    }
+
+    document.getElementById('cm-copy').addEventListener('click', () => {
+        copySelectedNodes();
+        hideContextMenu();
+    });
+
+    document.getElementById('cm-delete').addEventListener('click', () => {
+        if(contextSelectedNodeId) {
+            editor.removeNodeId("node-" + contextSelectedNodeId);
+        }
+        hideContextMenu();
+    });
+
+    // --- Floating Copy Button Logic ---
+    const floatingBtn = document.getElementById('floating-copy-btn');
+    
+    function updateFloatingBtnPos(nodeId) {
+        const nodeEl = document.getElementById('node-' + nodeId);
+        if(nodeEl) {
+            const rect = nodeEl.getBoundingClientRect();
+            // วางปุ่มให้อยู่กึ่งกลางด้านบนของ Node
+            floatingBtn.style.display = 'block';
+            floatingBtn.style.left = `${rect.left + rect.width / 2}px`;
+            floatingBtn.style.top = `${rect.top}px`;
+        }
+    }
+
+    function hideFloatingBtn() {
+        floatingBtn.style.display = 'none';
+    }
+    
+    // เมื่อเลือก Node ให้แสดงปุ่ม
+    editor.on('nodeSelected', (id) => {
+        updateFloatingBtnPos(id);
+    });
+
+    // เมื่อไม่เลือก Node ให้ซ่อน
+    editor.on('nodeUnselected', () => {
+        // ใช้ setTimeout เล็กน้อยเผื่อ user คลิกสลับ Node เร็วๆ
+        setTimeout(() => {
+            if(!editor.node_selected) hideFloatingBtn();
+        }, 100);
+    });
+
+    // เมื่อลาก Node ให้ปุ่มตามไปด้วย
+    editor.on('nodeMoved', (id) => {
+        updateFloatingBtnPos(id);
+    });
+
+    // กดปุ่ม Floating Copy
+    // --- Floating Copy Button (Fixed Error: undefined reading 'Home') ---
+    floatingBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        
+        copySelectedNodes(); // 1. จำค่า
+
+        // 2. สั่งวาง (Duplicate)
+        if(clipboard && clipboard.length > 0) {
+            const exportData = editor.export();
+            
+            const firstId = clipboard[0];
+            // --- แก้ไข: ลบ .drawflow ที่ซ้ำออก (Export Object มีแค่ drawflow.Home) ---
+            const firstNode = exportData.drawflow.Home.data[firstId];
+            
+            if(firstNode) {
+                clipboard.forEach(id => {
+                    // --- แก้ไข: ลบ .drawflow ที่ซ้ำออก ---
+                    const nodeData = exportData.drawflow.Home.data[id];
+                    if (nodeData) {
+                        // นับจำนวน Keys ของ inputs/outputs แปลงเป็นตัวเลข
+                        const inputCount = Object.keys(nodeData.inputs).length;
+                        const outputCount = Object.keys(nodeData.outputs).length;
+
+                        editor.addNode(
+                            nodeData.name, 
+                            inputCount,   // ใส่จำนวนช่องแทน Object
+                            outputCount,  // ใส่จำนวนช่องแทน Object
+                            nodeData.pos_x + 50, 
+                            nodeData.pos_y + 50, 
+                            nodeData.class, 
+                            nodeData.data, 
+                            nodeData.html
+                        );
+                    }
+                });
+            }
+        }
+        
+        // Visual Feedback
+        const originalText = floatingBtn.innerHTML;
+        floatingBtn.innerHTML = '<i class="fas fa-check"></i> คัดลอกเรียบร้อย';
+        setTimeout(() => {
+            floatingBtn.innerHTML = originalText;
+            hideFloatingBtn();
+            clearSelection();
+        }, 800);
+    });
+
+
+    // --- Save / Load Feature ---
+    document.getElementById('save-btn').addEventListener('click', () => {
+        const data = editor.export();
+        const json = JSON.stringify(data);
+        const blob = new Blob([json], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "circuit-flow.json";
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('load-btn').addEventListener('click', () => {
+        document.getElementById('file-input').click();
+    });
+
+    document.getElementById('file-input').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const json = JSON.parse(e.target.result);
+                editor.clearModuleSelected();
+                editor.import(json);
+                alert("นำเข้าไฟล์สำเร็จ!");
+            } catch(err) {
+                alert("ไฟล์เสียหาย หรือรูปแบบไม่ถูกต้อง");
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = ''; 
+    });
+
+    // --- Multi-Select & GROUP MOVE Logic ---
+    let selectedNodeIds = new Set();
+    let isDraggingGroup = false;
+    let lastMousePosition = { x: 0, y: 0 };
+    let clipboard = null; 
+
+    container.addEventListener('click', (e) => {
+      const nodeEl = e.target.closest('.drawflow-node');
+      
+      if (nodeEl && e.shiftKey) {
+        const nodeId = nodeEl.id.replace('node-', '');
+        if (selectedNodeIds.has(nodeId)) {
+          selectedNodeIds.delete(nodeId);
+          nodeEl.classList.remove('multi-selected');
+        } else {
+          selectedNodeIds.add(nodeId);
+          nodeEl.classList.add('multi-selected');
+        }
+        hideFloatingBtn(); // ซ่อนปุ่ม Copy เดี่ยวเมื่อเลือกหลายอัน
+      } 
+      else if (!e.shiftKey && !e.target.closest('.btn') && !isDraggingGroup && !e.target.closest('#context-menu') && !e.target.closest('#floating-copy-btn')) {
+         if(e.target.id === 'drawflow') {
+             clearSelection();
+         }
+      }
+    });
+
+    function clearSelection() {
+        selectedNodeIds.forEach(id => { 
+            const el = document.getElementById('node-'+id); 
+            if(el) el.classList.remove('multi-selected'); 
+        });
+        selectedNodeIds.clear();
+    }
+
+    container.addEventListener('mousedown', (e) => {
+        if(e.button !== 0) return; 
+        const nodeEl = e.target.closest('.drawflow-node');
+        if (nodeEl) {
+            const nodeId = nodeEl.id.replace('node-', '');
+            if (selectedNodeIds.has(nodeId)) {
+                isDraggingGroup = true;
+                lastMousePosition = { x: e.clientX, y: e.clientY };
+            }
+        }
+    });
+
+    // --- Fixed Multi-Select Drag Logic ---
+    window.addEventListener('mousemove', (e) => {
+        if (!isDraggingGroup) return;
+        
+        const dx = (e.clientX - lastMousePosition.x) / editor.zoom;
+        const dy = (e.clientY - lastMousePosition.y) / editor.zoom;
+        
+        lastMousePosition = { x: e.clientX, y: e.clientY };
+        
+        const activeNodeId = editor.node_selected 
+            ? ((typeof editor.node_selected === 'object') ? editor.node_selected.id : editor.node_selected).replace('node-', '') 
+            : null;
+
+        const currentModule = editor.module; // รับค่า module ปัจจุบัน (ปกติคือ Home)
+
+        selectedNodeIds.forEach(id => {
+            if (id !== activeNodeId) {
+                // แก้ไข: เข้าถึง data ผ่าน editor.drawflow.drawflow[...] เพื่อป้องกัน Error undefined
+                // ใช้ Optional Chaining (?.) เพื่อความปลอดภัย
+                const nodeData = editor.drawflow.drawflow?.[currentModule]?.data?.[id];
+                
+                if (nodeData) {
+                    nodeData.pos_x += dx;
+                    nodeData.pos_y += dy;
+                    const el = document.getElementById('node-' + id);
+                    if (el) {
+                        el.style.top = `${nodeData.pos_y}px`;
+                        el.style.left = `${nodeData.pos_x}px`;
+                    }
+                    editor.updateConnectionNodes('node-' + id);
+                }
+            }
+        });
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDraggingGroup = false;
+    });
+
+    // --- Copy / Paste / Find Logic ---
+    
+function copySelectedNodes() {
+    // 1. กรณีเลือกหลาย Node (Shift+Click)
+    if (selectedNodeIds.size > 0) {
+        clipboard = Array.from(selectedNodeIds);
+    } 
+    // 2. กรณีเลือก Node เดียวแบบปกติ (Left Click)
+    else if (editor.node_selected) {
+        const selectedId = (typeof editor.node_selected === 'object') 
+            ? editor.node_selected.id 
+            : editor.node_selected;
+        
+        if(selectedId) {
+            const singleId = selectedId.replace('node-', '');
+            clipboard = [singleId];
+        }
+    } 
+    // 3. --- แก้ไข: กรณีเลือกผ่านคลิกขวา (Context Menu) ---
+    else if (contextSelectedNodeId) {
+        clipboard = [contextSelectedNodeId];
+    }
+    else {
+        clipboard = null;
+    }
+}
+
+function pasteNodes(mouseX, mouseY) {
+        if (!clipboard || clipboard.length === 0) return;
+
+        const exportData = editor.export();
+        
+        // คำนวณตำแหน่งเมาส์ใน Canvas
+        const canvasX = mouseX * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)));
+        const canvasY = mouseY * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
+
+        // --- แก้ไข: ลบ .drawflow ที่ซ้ำออก เพื่อแก้ Error 'Home' undefined ---
+        const firstNode = exportData.drawflow.Home.data[clipboard[0]];
+        if(!firstNode) return;
+        
+        const refX = firstNode.pos_x;
+        const refY = firstNode.pos_y;
+
+        clipboard.forEach(id => {
+            // --- แก้ไข: ลบ .drawflow ที่ซ้ำออก ---
+            const nodeData = exportData.drawflow.Home.data[id];
+            if (nodeData) {
+                const offsetX = nodeData.pos_x - refX;
+                const offsetY = nodeData.pos_y - refY;
+
+                // แปลงเป็นตัวเลข (Count)
+                const inputCount = Object.keys(nodeData.inputs).length;
+                const outputCount = Object.keys(nodeData.outputs).length;
+
+                editor.addNode(
+                    nodeData.name, 
+                    inputCount, 
+                    outputCount, 
+                    canvasX + offsetX, 
+                    canvasY + offsetY, 
+                    nodeData.class, 
+                    nodeData.data, 
+                    nodeData.html
+                );
+            }
+        });
+        clearSelection();
+    }
+
+    function searchNode() {
+        const id = prompt("ค้นหา Node ID (ใส่ตัวเลข):");
+        if(id) {
+            // --- แก้ไข: ตรงนี้เข้าถึง Internal Data ต้องใช้ drawflow.drawflow หรือ drawflow เฉยๆ ขึ้นอยู่กับ state ---
+            // ปกติการ search ใช้ editor.drawflow.drawflow.Home ได้ถ้าไม่ได้ export
+            // แต่เพื่อความชัวร์ ใช้ ?. ป้องกัน Error
+            const node = editor.drawflow.drawflow?.Home?.data?.[id];
+            if(node) {
+                clearSelection();
+                const el = document.getElementById("node-"+id);
+                if(el) {
+                    el.classList.add("selected");
+                    editor.node_selected = el; // Assign เป็น Element
+                    el.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+                    updateFloatingBtnPos(id); 
+                }
+            } else {
+                alert("ไม่พบ Node ID: " + id);
+            }
+        }
+    }
+
+    let currentMousePos = { x: 0, y: 0 };
+    window.addEventListener('mousemove', e => { currentMousePos = {x: e.clientX, y: e.clientY}; });
+
+    window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT') {
+                copySelectedNodes();
+            }
+        }
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) {
+            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT') {
+                pasteNodes(currentMousePos.x, currentMousePos.y);
+            }
+        }
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F')) {
+            e.preventDefault(); 
+            searchNode();
+        }
+    });
+
+    document.getElementById('copy-btn').addEventListener('click', () => {
+        copySelectedNodes();
+        if(!clipboard) return;
+        const exportData = editor.export();
+        clipboard.forEach(id => {
+            // --- แก้ไข: exportData เข้าถึงผ่าน drawflow.Home ---
+            const nodeData = exportData.drawflow.Home.data[id];
+            if (nodeData) {
+                const inputCount = Object.keys(nodeData.inputs).length;
+                const outputCount = Object.keys(nodeData.outputs).length;
+                
+                editor.addNode(nodeData.name, inputCount, outputCount, nodeData.pos_x + 50, nodeData.pos_y + 50, nodeData.class, nodeData.data, nodeData.html);
+            }
+        });
+        clearSelection();
+    });
+
+    // --- Core Simulation Logic ---
+    function simulateGraph(returnResultsOnly = false) {
+      // --- แก้ไข: ใช้ export().drawflow.Home ให้ตรงกัน ---
+      const exportData = editor.export();
+      const graph = exportData.drawflow.Home.data;
+      
+      const clamp = (num) => Math.min(15, Math.max(0, Math.floor(num)));
+      
+      const debugLogs = []; 
+      const memo = {}; 
+      
+      function log(nodeName, nodeId, action, result) {
+          if (!returnResultsOnly) {
+              debugLogs.push({
+                  id: nodeId,
+                  name: nodeName,
+                  action: action,
+                  result: result
+              });
+          }
+      }
+
+      function computeNode(nodeId, visited = new Set()) {
+        if (visited.has(nodeId)) return 0; 
+        if (memo[nodeId] !== undefined) return memo[nodeId]; 
+        
+        visited.add(nodeId);
+        const node = graph[nodeId];
+        if (!node) return 0;
+
+        let result = 0;
+        let actionMsg = "";
+
+        // 1. INPUT
+        if (node.name === 'input') {
+          const domInput = document.querySelector(`#node-${nodeId} input`);
+          const val = domInput ? domInput.value : node.data.value;
+          result = clamp(parseInt(val) || 0);
+          actionMsg = `ส่งค่าไฟเริ่มต้น`;
+          memo[nodeId] = result;
+          log("Input", nodeId, actionMsg, result);
+          return result;
+        }
+
+        // Get Inputs
+        let v1 = 0; 
+        if(node.inputs.input_1 && node.inputs.input_1.connections.length > 0) {
+            v1 = computeNode(node.inputs.input_1.connections[0].node, new Set(visited));
+        }
+
+        let v2 = 0;
+        if(node.inputs.input_2 && node.inputs.input_2.connections.length > 0) {
+            v2 = computeNode(node.inputs.input_2.connections[0].node, new Set(visited));
+        }
+
+        // 2. OPERATION
+        if (node.name === 'operation') {
+            const domSelect = document.querySelector(`#node-${nodeId} select`);
+            const op = domSelect ? domSelect.value : node.data.op;
+
+            if (op === 'div2') { result = Math.floor(v1 / 2); actionMsg = `${v1} / 2 = ${result}`; }
+            if (op === 'sub7') { result = v1 - 7; actionMsg = `${v1} - 7 = ${result}`; }
+            if (op === 'sub4') { result = v1 - 4; actionMsg = `${v1} - 4 = ${result}`; }
+            if (op === 'sub1') { result = v1 - 1; actionMsg = `${v1} - 1 = ${result}`; }
+            result = clamp(result);
+            actionMsg += ` (ปัดเป็น ${result})`;
+        }
+
+        // 3. MATH
+        else if (node.name === 'math') {
+            const domSelect = document.querySelector(`#node-${nodeId} select`);
+            const op = domSelect ? domSelect.value : node.data.mathOp;
+
+            if (op === 'add') { result = v1 + v2; actionMsg = `${v1} + ${v2} = ${result}`; }
+            if (op === 'sub') { result = v1 - v2; actionMsg = `${v1} - ${v2} = ${result}`; }
+            result = clamp(result);
+        }
+
+        // 4. GATE
+        else if (node.name === 'gate') {
+            if (v1 >= v2) {
+                result = clamp(v1);
+                actionMsg = `หลัง(${v1}) >= ข้าง(${v2}) -> ผ่าน`;
+            } else {
+                result = 0;
+                actionMsg = `หลัง(${v1}) < ข้าง(${v2}) -> ปิด`;
+            }
+        }
+
+        // 5. AND
+        else if (node.name === 'logic_and') {
+            if (v1 > 0 && v2 > 0) {
+                result = 15;
+                actionMsg = `ไฟเข้าทั้งคู่ (${v1}, ${v2}) -> ON`;
+            } else {
+                result = 0;
+                actionMsg = `ไฟไม่ครบ (${v1}, ${v2}) -> OFF`;
+            }
+        }
+
+        // 6. NOT
+        else if (node.name === 'logic_not') {
+            if (v1 > 0) {
+                result = 0;
+                actionMsg = `มีไฟเข้า (${v1}) -> ดับ`;
+            } else {
+                result = 15;
+                actionMsg = `ไม่มีไฟ (0) -> ติด`;
+            }
+        }
+
+        // 7. TRANSISTOR
+        else if (node.name === 'transistor') {
+            if (v2 > 0) {
+                result = v1; 
+                actionMsg = `ขาควบคุมมีไฟ (${v2}) -> ปล่อยสัญญาณ (${v1})`;
+            } else {
+                result = 0;
+                actionMsg = `ขาควบคุมดับ (0) -> ตัดวงจร`;
+            }
+        }
+
+        // 8. OUTPUT
+        else if (node.name === 'output') {
+            result = v1; 
+            const el = container.querySelector(`#node-${nodeId} [df-result]`);
+            if (el) el.innerText = result;
+            actionMsg = `แสดงผลลัพธ์`;
+        }
+
+        memo[nodeId] = result;
+        log(node.name, nodeId, actionMsg, result);
+        return result;
+      }
+
+      Object.keys(graph).forEach(nodeId => {
+          computeNode(nodeId);
+      });
+
+      return { logs: debugLogs, values: memo };
+    }
+
+    // --- Button Actions ---
+
+    document.getElementById('run-btn').addEventListener('click', () => {
+      const simResult = simulateGraph(false);
+      const debugLogs = simResult.logs;
+
+      debugPanel.classList.add('active');
+      const debugContent = document.getElementById('debug-log');
+      debugContent.innerHTML = '';
+
+      if (debugLogs.length === 0) {
+          debugContent.innerHTML = '<div style="padding:10px;">ไม่พบ Node หรือ Output ที่เชื่อมต่อกัน</div>';
+          return;
+      }
+
+      debugLogs.forEach((log, index) => {
+          const div = document.createElement('div');
+          div.className = 'log-entry';
+          
+          let icon = '<i class="fas fa-caret-right"></i>';
+          if(log.name === 'input') icon = '<i class="fas fa-bolt"></i>';
+          if(log.name === 'output') icon = '<i class="fas fa-flag-checkered"></i>';
+          if(log.name === 'gate') icon = '<i class="fas fa-torii-gate"></i>';
+          if(log.name === 'transistor') icon = '<i class="fas fa-microchip"></i>';
+
+          div.innerHTML = `
+            <div class="log-step">Step ${index+1}</div>
+            <div class="log-node">${icon} ${log.name.toUpperCase()} (ID:${log.id})</div>
+            <div class="log-action">${log.action}</div>
+            <div class="log-result">Output: ${log.result}</div>
+          `;
+          debugContent.appendChild(div);
+      });
+      
+      debugContent.scrollTop = debugContent.scrollHeight;
+    });
+
+    // Probe Tool Logic
+    let isProbeMode = false;
+    const probeBtn = document.getElementById('probe-btn');
+    const tooltip = document.getElementById('probe-tooltip');
+
+    probeBtn.addEventListener('click', () => {
+        isProbeMode = !isProbeMode;
+        if(isProbeMode) {
+            probeBtn.classList.add('active');
+            container.style.cursor = 'crosshair'; 
+        } else {
+            probeBtn.classList.remove('active');
+            container.style.cursor = 'default';
+            tooltip.style.display = 'none';
+        }
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        if(!isProbeMode) return;
+
+        const target = e.target;
+        const nodeEl = target.closest('.drawflow-node');
+        
+        if (nodeEl) {
+            const nodeId = nodeEl.id.replace('node-', '');
+            
+            const simResult = simulateGraph(true);
+            const val = simResult.values[nodeId];
+            
+            tooltip.style.display = 'block';
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+            
+            let label = "Node Out";
+            if (target.classList.contains('input')) label = "Input Slot";
+            if (target.classList.contains('output')) label = "Output Wire";
+
+            tooltip.innerHTML = `<i class="fas fa-bolt" style="color:#ffc107"></i> ${label}: <span style="font-size:14px; color:white;">${val !== undefined ? val : '?'}</span>`;
+        } else {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    container.addEventListener('change', (e) => {
+        if(isProbeMode) {
+             // Values update automatically on next mouse move via simulation
+        }
+    });
+
+  </script>
+</body>
+</html>
