@@ -659,13 +659,38 @@
       }
 
       .debug-console {
-  font-size: var(--debug-font-size);
-}
+        font-size: var(--debug-font-size);
+      }
 
-.debug-code {
-  font-size: var(--debug-font-size);
-}
+      .debug-code {
+        font-size: var(--debug-font-size);
+      }
 
+      .code-wrapper {
+        counter-reset: line;
+        font-family: 'Fira Code', monospace;
+      }
+
+      .code-line {
+        display: grid;
+        grid-template-columns: 50px 1fr;
+        border-bottom: 1px solid #3a3a3a;
+      }
+
+      .code-line::before {
+        counter-increment: line;
+        content: counter(line);
+        color: #6c757d;
+        background: #1f2326;
+        text-align: right;
+        padding: 0 10px;
+        user-select: none;
+      }
+
+      .code-content {
+        padding-left: 12px;
+        white-space: pre;
+      }
     </style>
   </head>
   <body>
@@ -755,27 +780,24 @@
       <div class="debug-resizer-top" id="debug-resizer-top"></div>
 
       <div class="debug-header">
-  <span>
-    <i class="fas fa-terminal"></i>
-    Debugger Console & Logic Code
-  </span>
+        <span>
+          <i class="fas fa-terminal"></i>
+          Debugger Console & Logic Code
+        </span>
 
-  <div style="display:flex; gap:8px; align-items:center;">
-    <button class="btn" id="font-minus" title="ลดขนาดตัวอักษร">
-      A-
-    </button>
-    <button class="btn" id="font-plus" title="เพิ่มขนาดตัวอักษร">
-      A+
-    </button>
-    <span
-      style="cursor: pointer"
-      onclick="document.getElementById('debug-panel').classList.remove('active')"
-    >
-      <i class="fas fa-times"></i>
-    </span>
-  </div>
-</div>
-
+        <div style="display: flex; gap: 8px; align-items: center">
+          <button class="btn" id="font-minus" title="ลดขนาดตัวอักษร">A-</button>
+          <button class="btn" id="font-plus" title="เพิ่มขนาดตัวอักษร">
+            A+
+          </button>
+          <span
+            style="cursor: pointer"
+            onclick="document.getElementById('debug-panel').classList.remove('active')"
+          >
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+      </div>
 
       <div class="debug-body" id="debug-body">
         <div class="debug-console" id="debug-log"></div>
@@ -783,9 +805,7 @@
         <div class="debug-resizer-mid" id="debug-resizer-mid"></div>
 
         <div class="debug-code" id="code-view">
-          <div style="color: #777; margin-top: 10px; text-align: center">
-            กดปุ่ม "รันระบบ" เพื่อสร้างโค้ดจำลอง
-          </div>
+          <div class="code-wrapper"></div>
         </div>
       </div>
     </div>
@@ -1022,37 +1042,36 @@
         }
         // ปรับความกว้าง Console
         if (isResizingWidth) {
-  const body = document.getElementById('debug-body');
-  const containerWidth = body.clientWidth;
+          const body = document.getElementById('debug-body');
+          const containerWidth = body.clientWidth;
 
-  let newWidthPercent = (e.clientX / containerWidth) * 100;
+          let newWidthPercent = (e.clientX / containerWidth) * 100;
 
-  // clamp แบบใหม่
-  if (newWidthPercent < 0) newWidthPercent = 0;
-  if (newWidthPercent > 95) newWidthPercent = 95;
+          // clamp แบบใหม่
+          if (newWidthPercent < 0) newWidthPercent = 0;
+          if (newWidthPercent > 95) newWidthPercent = 95;
 
-  debugConsole.style.width = `${newWidthPercent}%`;
+          debugConsole.style.width = `${newWidthPercent}%`;
 
-  // ถ้าชิดซ้ายมาก → ซ่อน console
-  if (newWidthPercent < 5) {
-    debugConsole.style.display = 'none';
-    resizerMid.style.display = 'none';
-  } else {
-    debugConsole.style.display = 'block';
-    resizerMid.style.display = 'flex';
-  }
-}
-resizerMid.addEventListener('dblclick', () => {
-  if (debugConsole.style.display === 'none') {
-    debugConsole.style.display = 'block';
-    debugConsole.style.width = '50%';
-    resizerMid.style.display = 'flex';
-  } else {
-    debugConsole.style.display = 'none';
-    resizerMid.style.display = 'none';
-  }
-});
-
+          // ถ้าชิดซ้ายมาก → ซ่อน console
+          if (newWidthPercent < 5) {
+            debugConsole.style.display = 'none';
+            resizerMid.style.display = 'none';
+          } else {
+            debugConsole.style.display = 'block';
+            resizerMid.style.display = 'flex';
+          }
+        }
+        resizerMid.addEventListener('dblclick', () => {
+          if (debugConsole.style.display === 'none') {
+            debugConsole.style.display = 'block';
+            debugConsole.style.width = '50%';
+            resizerMid.style.display = 'flex';
+          } else {
+            debugConsole.style.display = 'none';
+            resizerMid.style.display = 'none';
+          }
+        });
       });
 
       document.addEventListener('mouseup', () => {
@@ -1783,9 +1802,29 @@ resizerMid.addEventListener('dblclick', () => {
         if (generatedCode.length === 0) {
           debugCode.innerHTML = '// No Logic Detected';
         } else {
-          debugCode.innerHTML =
-            generatedCode.join('<br>') +
-            '<br><br><span class="code-comment">// End of Logic</span>';
+          debugCode.innerHTML = '';
+          const wrapper = document.createElement('div');
+          wrapper.className = 'code-wrapper';
+
+          generatedCode.forEach((line) => {
+            const row = document.createElement('div');
+            row.className = 'code-line';
+
+            const content = document.createElement('div');
+            content.className = 'code-content';
+            content.innerHTML = line;
+
+            row.appendChild(content);
+            wrapper.appendChild(row);
+          });
+
+          // End comment
+          const endRow = document.createElement('div');
+          endRow.className = 'code-line';
+          endRow.innerHTML = `<div class="code-content code-comment">// End of Logic</div>`;
+          wrapper.appendChild(endRow);
+
+          debugCode.appendChild(wrapper);
         }
         enableCodeVarsInteractivity(simResult);
 
@@ -1829,30 +1868,29 @@ resizerMid.addEventListener('dblclick', () => {
       });
 
       let debugFontSize = 13;
-const MIN_FONT = 10;
-const MAX_FONT = 24;
+      const MIN_FONT = 10;
+      const MAX_FONT = 24;
 
-function applyDebugFontSize() {
-  document.documentElement.style.setProperty(
-    '--debug-font-size',
-    debugFontSize + 'px'
-  );
-}
+      function applyDebugFontSize() {
+        document.documentElement.style.setProperty(
+          '--debug-font-size',
+          debugFontSize + 'px'
+        );
+      }
 
-document.getElementById('font-plus').addEventListener('click', () => {
-  if (debugFontSize < MAX_FONT) {
-    debugFontSize += 1;
-    applyDebugFontSize();
-  }
-});
+      document.getElementById('font-plus').addEventListener('click', () => {
+        if (debugFontSize < MAX_FONT) {
+          debugFontSize += 1;
+          applyDebugFontSize();
+        }
+      });
 
-document.getElementById('font-minus').addEventListener('click', () => {
-  if (debugFontSize > MIN_FONT) {
-    debugFontSize -= 1;
-    applyDebugFontSize();
-  }
-});
-
+      document.getElementById('font-minus').addEventListener('click', () => {
+        if (debugFontSize > MIN_FONT) {
+          debugFontSize -= 1;
+          applyDebugFontSize();
+        }
+      });
     </script>
   </body>
 </html>
