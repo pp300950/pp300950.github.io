@@ -1,916 +1,1157 @@
-
 <!DOCTYPE html>
 <html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Logic Flow Editor Pro - Responsive</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.css" />
-  <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
-  
-  <style>
-    :root {
-      --bg-color: #f4f6f8;
-      --grid-color: #e0e6ed;
-      --panel-bg: #ffffff;
-      --text-color: #333;
-      --node-radius: 12px;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --debug-font-size: 13px;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Logic Flow Editor Pro - Responsive</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Prompt', sans-serif;
-      overflow: hidden;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      touch-action: none;
-    }
-
-    #drawflow {
-      height: 100vh;
-      width: 100vw;
-      position: relative;
-      background-size: 25px 25px;
-      background-image: radial-gradient(var(--grid-color) 2px, transparent 2px);
-      background-position: 0px 0px;
-      outline: none;
-    }
-
-    /* --- Toolbar / Palette --- */
-    .palette {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: var(--panel-bg);
-      padding: 12px;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 160px;
-      max-height: 60vh;
-      overflow-y: auto;
-      overflow-x: hidden;
-      border: 1px solid #eee;
-      transition: all 0.3s;
-    }
-
-    .palette.collapsed {
-      height: 40px;
-      overflow: hidden;
-      padding-bottom: 0;
-    }
-    
-    .palette.collapsed .drag-drawflow {
-      display: none;
-    }
-
-    .palette-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-    }
-
-    .palette h3 {
-      margin: 0;
-      font-size: 14px;
-      text-align: center;
-      color: #555;
-      font-weight: 600;
-    }
-
-    .toggle-palette-btn {
-      cursor: pointer;
-      color: #888;
-      transition: transform 0.3s;
-    }
-    
-    .palette.collapsed .toggle-palette-btn {
-      transform: rotate(180deg);
-    }
-
-    .drag-drawflow {
-      cursor: grab;
-      background: #f8f9fa;
-      color: #555;
-      padding: 8px;
-      border-radius: 8px;
-      font-size: 12px;
-      text-align: center;
-      transition: all 0.2s;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    .drag-drawflow:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .drag-drawflow[data-node='input'] { border-left: 4px solid #96e6a1; }
-    .drag-drawflow[data-node='operation'] { border-left: 4px solid #8fd3f4; }
-    .drag-drawflow[data-node='math'] { border-left: 4px solid #ff9a9e; }
-    .drag-drawflow[data-node='gate'] { border-left: 4px solid #a18cd1; }
-    .drag-drawflow[data-node='logic_and'] { border-left: 4px solid #f6d365; }
-    .drag-drawflow[data-node='logic_not'] { border-left: 4px solid #4facfe; }
-    .drag-drawflow[data-node='output'] { border-left: 4px solid #d57eeb; }
-    .drag-drawflow[data-node='transistor'] { border-left: 4px solid #ff7f50; }
-
-    /* --- Control Buttons --- */
-    .controls {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      gap: 6px;
-      z-index: 10;
-      flex-wrap: wrap;
-      max-width: calc(100% - 200px);
-      justify-content: flex-end;
-    }
-
-    .btn {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: 'Prompt', sans-serif;
-      font-weight: 600;
-      font-size: 12px;
-      box-shadow: var(--shadow);
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: white;
-      color: #444;
-      border: 1px solid #eee;
-      white-space: nowrap;
-    }
-
-    .btn:hover {
-      background: #f8f9fa;
-      transform: translateY(-1px);
-    }
-    
-    .btn:active {
-      transform: scale(0.95);
-    }
-
-    .btn-run {
-      background: #4caf50;
-      color: white;
-      border: none;
-    }
-    
-    .btn-run:hover {
-      background: #43a047;
-    }
-
-    .btn-save {
-      background: #2196f3;
-      color: white;
-      border: none;
-    }
-    
-    .btn-save:hover {
-      background: #1e88e5;
-    }
-
-    .btn-undo {
-      background: #fff;
-      color: #e67e22;
-      border: 1px solid #e67e22;
-    }
-    
-    .btn-undo:hover {
-      background: #fff5e6;
-    }
-
-    .btn-probe {
-      background: #607d8b;
-      color: white;
-      border: none;
-    }
-    
-    .btn-probe:hover {
-      background: #546e7a;
-    }
-    
-    .btn-probe.active {
-      background: #ffc107;
-      color: #333;
-      box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-      animation: pulse-border 2s infinite;
-    }
-
-    @keyframes pulse-border {
-      0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
-    }
-
-    /* --- Tooltips and Floating Elements --- */
-    #probe-tooltip {
-      position: absolute;
-      background: rgba(0, 0, 0, 0.85);
-      color: #00e676;
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      pointer-events: none;
-      z-index: 1000;
-      display: none;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      border: 1px solid #333;
-      font-family: 'Courier New', Courier, monospace;
-      font-weight: bold;
-    }
-
-    #floating-copy-btn {
-      position: absolute;
-      display: none;
-      background: #2196f3;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      z-index: 999;
-      font-size: 11px;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
-      border: 2px solid white;
-      transform: translate(-50%, -120%);
-      animation: floatUp 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    }
-
-    #floating-copy-btn:hover {
-      background: #1976d2;
-      transform: translate(-50%, -125%);
-    }
-
-    @keyframes floatUp {
-      from {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.8);
+    <style>
+      :root {
+        --bg-color: #f4f6f8;
+        --grid-color: #e0e6ed;
+        --panel-bg: #ffffff;
+        --text-color: #333;
+        --node-radius: 12px;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --debug-font-size: 13px;
       }
-      to {
-        opacity: 1;
-        transform: translate(-50%, -120%) scale(1);
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Prompt', sans-serif;
+        overflow: hidden;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        touch-action: none;
       }
-    }
 
-    /* --- Debugger Panel --- */
-    #debug-panel {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 40vh;
-      min-height: 100px;
-      max-height: 85vh;
-      background: #2d3436;
-      color: #dfe6e9;
-      z-index: 20;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.15);
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.3s ease-in-out;
-      transform: translateY(100%);
-    }
+      #drawflow {
+        height: 100vh;
+        width: 100vw;
+        position: relative;
+        background-size: 25px 25px;
+        background-image: radial-gradient(
+          var(--grid-color) 2px,
+          transparent 2px
+        );
+        background-position: 0px 0px;
+        outline: none;
+      }
 
-    #debug-panel.active {
-      transform: translateY(0);
-    }
-
-    .debug-resizer-top {
-      width: 100%;
-      height: 8px;
-      background: #3e4a4e;
-      cursor: ns-resize;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-shrink: 0;
-      touch-action: none;
-    }
-    
-    .debug-resizer-top::after {
-      content: '';
-      width: 40px;
-      height: 3px;
-      background: #7f8c8d;
-      border-radius: 2px;
-    }
-
-    .debug-header {
-      padding: 8px 15px;
-      background: #1e272e;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
-
-    .debug-body {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .debug-console {
-      width: 50%;
-      overflow-y: auto;
-      padding: 12px;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: var(--debug-font-size);
-      background: #2d3436;
-    }
-
-    .debug-resizer-mid {
-      width: 6px;
-      background: #1e272e;
-      cursor: col-resize;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      touch-action: none;
-    }
-    
-    .debug-resizer-mid:hover {
-      background: #74b9ff;
-    }
-    
-    .debug-resizer-mid::after {
-      content: '';
-      height: 20px;
-      width: 2px;
-      background: #555;
-    }
-
-    .debug-code {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-      font-family: 'Fira Code', monospace;
-      font-size: var(--debug-font-size);
-      background: #262b2e;
-      color: #f1f2f6;
-      border-left: 1px solid #444;
-      line-height: 1.5;
-    }
-
-    .code-var { color: #f1c40f; cursor: pointer; text-decoration: underline dotted; }
-    .code-var.resolved { text-decoration: none; font-weight: 700; }
-    .code-key { color: #ff7f50; font-weight: bold; }
-    .code-op { color: #ff9a9e; }
-    .code-val { color: #55efc4; }
-    .code-comment { color: #636e72; font-style: italic; }
-
-    .log-entry {
-      margin-bottom: 8px;
-      padding: 5px;
-      border-bottom: 1px solid #444;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      flex-wrap: wrap;
-      font-size: 12px;
-    }
-    
-    .log-step { color: #f1c40f; min-width: 50px; }
-    .log-node { color: #74b9ff; font-weight: bold; }
-    .log-action { color: #b2bec3; }
-    .log-result { color: #55efc4; font-weight: bold; }
-
-    /* --- Nodes --- */
-    .drawflow-node {
-      background: white;
-      border: 1px solid #e0e0e0;
-      padding: 0;
-      border-radius: var(--node-radius);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      width: 150px;
-      transition: border 0.2s, box-shadow 0.2s;
-      user-select: none;
-      cursor: grab;
-      touch-action: none;
-    }
-    
-    .drawflow-node:active {
-      cursor: grabbing;
-    }
-    
-    .drawflow-node.selected {
-      border: 2px solid #ff9a9e;
-      box-shadow: 0 0 15px rgba(255, 154, 158, 0.4);
-      z-index: 5 !important;
-    }
-    
-    .drawflow-node.multi-selected {
-      outline: 2px dashed #ff9800;
-      outline-offset: 4px;
-      z-index: 5 !important;
-    }
-
-    .node-header {
-      padding: 8px;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      font-weight: 600;
-      color: white;
-      text-align: center;
-      font-size: 12px;
-      letter-spacing: 0.3px;
-    }
-
-    .node-content {
-      padding: 10px 8px;
-      font-size: 12px;
-      color: #555;
-      cursor: default;
-      background: white !important;
-    }
-
-    .input-node .node-header { background: #96e6a1; }
-    .op-node .node-header { background: #8fd3f4; }
-    .math-node .node-header { background: #ff9a9e; }
-    .gate-node .node-header { background: #a18cd1; }
-    .logic-node .node-header { background: #f6d365; color: #444; }
-    .not-node .node-header { background: #4facfe; }
-    .output-node .node-header { background: #d57eeb; }
-    .transistor-node .node-header { background: #ff7f50; }
-
-    select, input {
-      width: 90%;
-      padding: 5px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      outline: none;
-      background: #fdfdfd;
-      font-size: 12px;
-    }
-
-    .drawflow .connection .main-path {
-      stroke-width: 3px;
-      stroke: #bdc3c7;
-      cursor: pointer;
-    }
-    
-    .drawflow .connection .main-path:hover {
-      stroke: #ff9a9e;
-    }
-
-    .drawflow-node .input,
-    .drawflow-node .output {
-      width: 14px;
-      height: 14px;
-      background: #fff;
-      border: 2px solid #bdc3c7;
-      border-radius: 50%;
-    }
-    
-    .drawflow-node .input:hover,
-    .drawflow-node .output:hover {
-      transform: scale(1.3);
-      border-color: #ffc107;
-    }
-
-    /* --- Creator Badge --- */
-    .creator-badge {
-      position: absolute;
-      bottom: 15px;
-      right: 15px;
-      z-index: 15;
-      display: flex;
-      align-items: flex-end;
-      flex-direction: column;
-    }
-
-    .profile-image-container {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 3px solid white;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-      transition: transform 0.2s;
-      background: #ddd;
-    }
-    
-    .profile-image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .profile-image-container:hover {
-      transform: scale(1.1);
-    }
-
-    .creator-info {
-      background: white;
-      padding: 12px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-      margin-bottom: 8px;
-      width: 180px;
-      font-size: 12px;
-      text-align: left;
-      display: none;
-      animation: fadeIn 0.2s;
-    }
-    
-    .creator-badge:hover .creator-info {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .creator-info h4 {
-      margin: 0 0 5px 0;
-      color: #333;
-      font-size: 13px;
-    }
-    
-    .creator-info p {
-      margin: 0 0 8px 0;
-      color: #666;
-      font-size: 11px;
-      line-height: 1.4;
-    }
-    
-    .social-links {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .social-links a {
-      color: #555;
-      font-size: 14px;
-      transition: color 0.2s;
-    }
-    
-    .social-links a:hover {
-      color: #2196f3;
-    }
-
-    .code-wrapper {
-      counter-reset: line;
-      font-family: 'Fira Code', monospace;
-    }
-
-    .code-line {
-      display: grid;
-      grid-template-columns: 40px 1fr;
-      border-bottom: 1px solid #3a3a3a;
-    }
-
-    .code-line::before {
-      counter-increment: line;
-      content: counter(line);
-      color: #6c757d;
-      background: #1f2326;
-      text-align: right;
-      padding: 0 8px;
-      user-select: none;
-      font-size: 11px;
-    }
-
-    .code-content {
-      padding-left: 10px;
-      white-space: pre;
-    }
-
-    /* ========================================
-       MOBILE RESPONSIVE STYLES
-       ======================================== */
-    @media (max-width: 768px) {
-      /* Palette adjustments */
+      /* --- Toolbar / Palette --- */
       .palette {
-        top: 5px;
-        left: 5px;
-        width: 140px;
-        max-height: 50vh;
-        padding: 10px;
-        gap: 6px;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: var(--panel-bg);
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 160px;
+        max-height: 60vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border: 1px solid #eee;
+        transition: all 0.3s;
       }
 
-      .palette h3 {
-        font-size: 12px;
+      .palette.collapsed {
+        height: 40px;
+        overflow: hidden;
+        padding-bottom: 0;
       }
 
-      .drag-drawflow {
-        padding: 6px;
-        font-size: 11px;
-      }
-
-      /* Controls adjustments */
-      .controls {
-        top: 5px;
-        right: 5px;
-        gap: 4px;
-        max-width: calc(100% - 160px);
-      }
-
-      .btn {
-        padding: 6px 10px;
-        font-size: 11px;
-        gap: 3px;
-      }
-
-      .btn i {
-        font-size: 12px;
-      }
-
-      /* Hide text on mobile for space */
-      .btn span {
+      .palette.collapsed .drag-drawflow {
         display: none;
       }
 
-      /* Debug panel adjustments */
+      .palette-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+
+      .palette h3 {
+        margin: 0;
+        font-size: 14px;
+        text-align: center;
+        color: #555;
+        font-weight: 600;
+      }
+
+      .toggle-palette-btn {
+        cursor: pointer;
+        color: #888;
+        transition: transform 0.3s;
+      }
+
+      .palette.collapsed .toggle-palette-btn {
+        transform: rotate(180deg);
+      }
+
+      .drag-drawflow {
+        cursor: grab;
+        background: #f8f9fa;
+        color: #555;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 12px;
+        text-align: center;
+        transition: all 0.2s;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .drag-drawflow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .drag-drawflow[data-node='input'] {
+        border-left: 4px solid #96e6a1;
+      }
+      .drag-drawflow[data-node='operation'] {
+        border-left: 4px solid #8fd3f4;
+      }
+      .drag-drawflow[data-node='math'] {
+        border-left: 4px solid #ff9a9e;
+      }
+      .drag-drawflow[data-node='gate'] {
+        border-left: 4px solid #a18cd1;
+      }
+      .drag-drawflow[data-node='logic_and'] {
+        border-left: 4px solid #f6d365;
+      }
+      .drag-drawflow[data-node='logic_not'] {
+        border-left: 4px solid #4facfe;
+      }
+      .drag-drawflow[data-node='output'] {
+        border-left: 4px solid #d57eeb;
+      }
+      .drag-drawflow[data-node='transistor'] {
+        border-left: 4px solid #ff7f50;
+      }
+
+      /* --- Control Buttons --- */
+      .controls {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        gap: 6px;
+        z-index: 10;
+        flex-wrap: wrap;
+        max-width: calc(100% - 200px);
+        justify-content: flex-end;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: 'Prompt', sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        box-shadow: var(--shadow);
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: white;
+        color: #444;
+        border: 1px solid #eee;
+        white-space: nowrap;
+      }
+
+      .btn:hover {
+        background: #f8f9fa;
+        transform: translateY(-1px);
+      }
+
+      .btn:active {
+        transform: scale(0.95);
+      }
+
+      .btn-run {
+        background: #4caf50;
+        color: white;
+        border: none;
+      }
+
+      .btn-run:hover {
+        background: #43a047;
+      }
+
+      .btn-save {
+        background: #2196f3;
+        color: white;
+        border: none;
+      }
+
+      .btn-save:hover {
+        background: #1e88e5;
+      }
+
+      .btn-undo {
+        background: #fff;
+        color: #e67e22;
+        border: 1px solid #e67e22;
+      }
+
+      .btn-undo:hover {
+        background: #fff5e6;
+      }
+
+      .btn-probe {
+        background: #607d8b;
+        color: white;
+        border: none;
+      }
+
+      .btn-probe:hover {
+        background: #546e7a;
+      }
+
+      .btn-probe.active {
+        background: #ffc107;
+        color: #333;
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        animation: pulse-border 2s infinite;
+      }
+
+      @keyframes pulse-border {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+        }
+      }
+
+      /* --- Tooltips and Floating Elements --- */
+      #probe-tooltip {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.85);
+        color: #00e676;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        pointer-events: none;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        border: 1px solid #333;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+      }
+
+      #floating-copy-btn {
+        position: absolute;
+        display: none;
+        background: #2196f3;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        z-index: 999;
+        font-size: 11px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        border: 2px solid white;
+        transform: translate(-50%, -120%);
+        animation: floatUp 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      }
+
+      #floating-copy-btn:hover {
+        background: #1976d2;
+        transform: translate(-50%, -125%);
+      }
+
+      @keyframes floatUp {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -120%) scale(1);
+        }
+      }
+
+      /* --- Debugger Panel --- */
       #debug-panel {
-        height: 50vh;
-        max-height: 75vh;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 40vh;
+        min-height: 100px;
+        max-height: 85vh;
+        background: #2d3436;
+        color: #dfe6e9;
+        z-index: 20;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease-in-out;
+        transform: translateY(100%);
+      }
+
+      #debug-panel.active {
+        transform: translateY(0);
+      }
+
+      .debug-resizer-top {
+        width: 100%;
+        height: 8px;
+        background: #3e4a4e;
+        cursor: ns-resize;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        touch-action: none;
+      }
+
+      .debug-resizer-top::after {
+        content: '';
+        width: 40px;
+        height: 3px;
+        background: #7f8c8d;
+        border-radius: 2px;
       }
 
       .debug-header {
-        padding: 6px 10px;
-        font-size: 11px;
-        flex-wrap: wrap;
-        gap: 5px;
+        padding: 8px 15px;
+        background: #1e272e;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        font-weight: bold;
+        flex-shrink: 0;
       }
 
-      .debug-header span {
-        font-size: 11px;
-      }
-
-      /* Stack console and code vertically on mobile */
       .debug-body {
-        flex-direction: column;
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+        position: relative;
       }
 
       .debug-console {
-        width: 100%;
-        max-height: 50%;
-        border-bottom: 1px solid #444;
+        width: 50%;
+        overflow-y: auto;
+        padding: 12px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: var(--debug-font-size);
+        background: #2d3436;
       }
 
       .debug-resizer-mid {
-        display: none !important;
+        width: 6px;
+        background: #1e272e;
+        cursor: col-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+      }
+
+      .debug-resizer-mid:hover {
+        background: #74b9ff;
+      }
+
+      .debug-resizer-mid::after {
+        content: '';
+        height: 20px;
+        width: 2px;
+        background: #555;
       }
 
       .debug-code {
-        width: 100%;
-        border-left: none;
-        border-top: 1px solid #444;
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+        font-family: 'Fira Code', monospace;
+        font-size: var(--debug-font-size);
+        background: #262b2e;
+        color: #f1f2f6;
+        border-left: 1px solid #444;
+        line-height: 1.5;
       }
 
-      /* Node adjustments */
+      .code-var {
+        color: #f1c40f;
+        cursor: pointer;
+        text-decoration: underline dotted;
+      }
+      .code-var.resolved {
+        text-decoration: none;
+        font-weight: 700;
+      }
+      .code-key {
+        color: #ff7f50;
+        font-weight: bold;
+      }
+      .code-op {
+        color: #ff9a9e;
+      }
+      .code-val {
+        color: #55efc4;
+      }
+      .code-comment {
+        color: #636e72;
+        font-style: italic;
+      }
+
+      .log-entry {
+        margin-bottom: 8px;
+        padding: 5px;
+        border-bottom: 1px solid #444;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-size: 12px;
+      }
+
+      .log-step {
+        color: #f1c40f;
+        min-width: 50px;
+      }
+      .log-node {
+        color: #74b9ff;
+        font-weight: bold;
+      }
+      .log-action {
+        color: #b2bec3;
+      }
+      .log-result {
+        color: #55efc4;
+        font-weight: bold;
+      }
+
+      /* --- Nodes --- */
       .drawflow-node {
-        width: 130px;
+        background: white;
+        border: 1px solid #e0e0e0;
+        padding: 0;
+        border-radius: var(--node-radius);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        width: 150px;
+        transition: border 0.2s, box-shadow 0.2s;
+        user-select: none;
+        cursor: grab;
+        touch-action: none;
+      }
+
+      .drawflow-node:active {
+        cursor: grabbing;
+      }
+
+      .drawflow-node.selected {
+        border: 2px solid #ff9a9e;
+        box-shadow: 0 0 15px rgba(255, 154, 158, 0.4);
+        z-index: 5 !important;
+      }
+
+      .drawflow-node.multi-selected {
+        outline: 2px dashed #ff9800;
+        outline-offset: 4px;
+        z-index: 5 !important;
       }
 
       .node-header {
-        padding: 6px;
-        font-size: 11px;
+        padding: 8px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        font-weight: 600;
+        color: white;
+        text-align: center;
+        font-size: 12px;
+        letter-spacing: 0.3px;
       }
 
       .node-content {
-        padding: 8px 6px;
-        font-size: 11px;
+        padding: 10px 8px;
+        font-size: 12px;
+        color: #555;
+        cursor: default;
+        background: white !important;
       }
 
-      select, input {
-        font-size: 11px;
-        padding: 4px;
+      .input-node .node-header {
+        background: #96e6a1;
+      }
+      .op-node .node-header {
+        background: #8fd3f4;
+      }
+      .math-node .node-header {
+        background: #ff9a9e;
+      }
+      .gate-node .node-header {
+        background: #a18cd1;
+      }
+      .logic-node .node-header {
+        background: #f6d365;
+        color: #444;
+      }
+      .not-node .node-header {
+        background: #4facfe;
+      }
+      .output-node .node-header {
+        background: #d57eeb;
+      }
+      .transistor-node .node-header {
+        background: #ff7f50;
+      }
+
+      select,
+      input {
+        width: 90%;
+        padding: 5px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        outline: none;
+        background: #fdfdfd;
+        font-size: 12px;
+      }
+
+      .drawflow .connection .main-path {
+        stroke-width: 3px;
+        stroke: #bdc3c7;
+        cursor: pointer;
+      }
+
+      .drawflow .connection .main-path:hover {
+        stroke: #ff9a9e;
       }
 
       .drawflow-node .input,
       .drawflow-node .output {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
+        background: #fff;
+        border: 2px solid #bdc3c7;
+        border-radius: 50%;
       }
 
-      /* Creator badge */
+      .drawflow-node .input:hover,
+      .drawflow-node .output:hover {
+        transform: scale(1.3);
+        border-color: #ffc107;
+      }
+
+      /* --- Creator Badge --- */
       .creator-badge {
-        bottom: 10px;
-        right: 10px;
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        z-index: 15;
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
       }
 
       .profile-image-container {
-        width: 40px;
-        height: 40px;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.2s;
+        background: #ddd;
+      }
+
+      .profile-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .profile-image-container:hover {
+        transform: scale(1.1);
       }
 
       .creator-info {
-        width: 160px;
-        padding: 10px;
-        font-size: 11px;
+        background: white;
+        padding: 12px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        margin-bottom: 8px;
+        width: 180px;
+        font-size: 12px;
+        text-align: left;
+        display: none;
+        animation: fadeIn 0.2s;
+      }
+
+      .creator-badge:hover .creator-info {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .creator-info h4 {
-        font-size: 12px;
+        margin: 0 0 5px 0;
+        color: #333;
+        font-size: 13px;
       }
 
       .creator-info p {
-        font-size: 10px;
+        margin: 0 0 8px 0;
+        color: #666;
+        font-size: 11px;
+        line-height: 1.4;
       }
 
-      /* Adjust font sizes */
-      :root {
-        --debug-font-size: 11px;
+      .social-links {
+        display: flex;
+        gap: 8px;
       }
 
-      .log-entry {
-        font-size: 10px;
-        gap: 6px;
+      .social-links a {
+        color: #555;
+        font-size: 14px;
+        transition: color 0.2s;
+      }
+
+      .social-links a:hover {
+        color: #2196f3;
+      }
+
+      .code-wrapper {
+        counter-reset: line;
+        font-family: 'Fira Code', monospace;
       }
 
       .code-line {
-        grid-template-columns: 35px 1fr;
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        border-bottom: 1px solid #3a3a3a;
       }
 
       .code-line::before {
-        font-size: 10px;
-        padding: 0 6px;
-      }
-
-      .code-content {
-        padding-left: 8px;
+        counter-increment: line;
+        content: counter(line);
+        color: #6c757d;
+        background: #1f2326;
+        text-align: right;
+        padding: 0 8px;
+        user-select: none;
         font-size: 11px;
       }
 
-      /* Tooltip adjustments */
-      #probe-tooltip {
+      .code-content {
+        padding-left: 10px;
+        white-space: pre;
+      }
+
+      /* ========================================
+       MOBILE RESPONSIVE STYLES
+       ======================================== */
+      @media (max-width: 768px) {
+        /* Palette adjustments */
+        .palette {
+          top: 5px;
+          left: 5px;
+          width: 140px;
+          max-height: 50vh;
+          padding: 10px;
+          gap: 6px;
+        }
+
+        .palette h3 {
+          font-size: 12px;
+        }
+
+        .drag-drawflow {
+          padding: 6px;
+          font-size: 11px;
+        }
+
+        /* Controls adjustments */
+        .controls {
+          top: 5px;
+          right: 5px;
+          gap: 4px;
+          max-width: calc(100% - 160px);
+        }
+
+        .btn {
+          padding: 6px 10px;
+          font-size: 11px;
+          gap: 3px;
+        }
+
+        .btn i {
+          font-size: 12px;
+        }
+
+        /* Hide text on mobile for space */
+        .btn span {
+          display: none;
+        }
+
+        /* Debug panel adjustments */
+        #debug-panel {
+          height: 50vh;
+          max-height: 75vh;
+        }
+
+        .debug-header {
+          padding: 6px 10px;
+          font-size: 11px;
+          flex-wrap: wrap;
+          gap: 5px;
+        }
+
+        .debug-header span {
+          font-size: 11px;
+        }
+
+        /* Stack console and code vertically on mobile */
+        .debug-body {
+          flex-direction: column;
+        }
+
+        .debug-console {
+          width: 100%;
+          max-height: 50%;
+          border-bottom: 1px solid #444;
+        }
+
+        .debug-resizer-mid {
+          display: none !important;
+        }
+
+        .debug-code {
+          width: 100%;
+          border-left: none;
+          border-top: 1px solid #444;
+        }
+
+        /* Node adjustments */
+        .drawflow-node {
+          width: 130px;
+        }
+
+        .node-header {
+          padding: 6px;
+          font-size: 11px;
+        }
+
+        .node-content {
+          padding: 8px 6px;
+          font-size: 11px;
+        }
+
+        select,
+        input {
+          font-size: 11px;
+          padding: 4px;
+        }
+
+        .drawflow-node .input,
+        .drawflow-node .output {
+          width: 16px;
+          height: 16px;
+        }
+
+        /* Creator badge */
+        .creator-badge {
+          bottom: 10px;
+          right: 10px;
+        }
+
+        .profile-image-container {
+          width: 40px;
+          height: 40px;
+        }
+
+        .creator-info {
+          width: 160px;
+          padding: 10px;
+          font-size: 11px;
+        }
+
+        .creator-info h4 {
+          font-size: 12px;
+        }
+
+        .creator-info p {
+          font-size: 10px;
+        }
+
+        /* Adjust font sizes */
+        :root {
+          --debug-font-size: 11px;
+        }
+
+        .log-entry {
+          font-size: 10px;
+          gap: 6px;
+        }
+
+        .code-line {
+          grid-template-columns: 35px 1fr;
+        }
+
+        .code-line::before {
+          font-size: 10px;
+          padding: 0 6px;
+        }
+
+        .code-content {
+          padding-left: 8px;
+          font-size: 11px;
+        }
+
+        /* Tooltip adjustments */
+        #probe-tooltip {
+          font-size: 10px;
+          padding: 4px 8px;
+        }
+
+        #floating-copy-btn {
+          padding: 5px 10px;
+          font-size: 10px;
+        }
+      }
+
+      /* Extra small devices */
+      @media (max-width: 480px) {
+        .palette {
+          width: 120px;
+        }
+
+        .controls {
+          max-width: calc(100% - 140px);
+        }
+
+        .btn {
+          padding: 5px 8px;
+          font-size: 10px;
+        }
+
+        .drawflow-node {
+          width: 120px;
+        }
+
+        .node-header {
+          font-size: 10px;
+        }
+
+        .node-content {
+          font-size: 10px;
+        }
+
+        #debug-panel {
+          height: 55vh;
+        }
+
+        .creator-info {
+          display: none !important; /* Hide on tap for very small screens */
+        }
+      }
+
+      /* Landscape mobile */
+      @media (max-width: 768px) and (orientation: landscape) {
+        .palette {
+          max-height: 40vh;
+        }
+
+        #debug-panel {
+          height: 45vh;
+          max-height: 70vh;
+        }
+
+        .controls {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+        }
+      }
+      /* เพิ่มใน <style> */
+      .node-id-badge {
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        background: #ff9800;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 10px;
-        padding: 4px 8px;
+        font-weight: bold;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        pointer-events: none;
       }
 
-      #floating-copy-btn {
-        padding: 5px 10px;
-        font-size: 10px;
-      }
-    }
-
-    /* Extra small devices */
-    @media (max-width: 480px) {
-      .palette {
-        width: 120px;
-      }
-
-      .controls {
-        max-width: calc(100% - 140px);
+      /* สำหรับมือถือ */
+      @media (max-width: 768px) {
+        .node-id-badge {
+          width: 20px;
+          height: 20px;
+          font-size: 9px;
+          top: -8px;
+          right: -8px;
+        }
       }
 
-      .btn {
-        padding: 5px 8px;
-        font-size: 10px;
+      .search-node-panel {
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 15;
+        display: none;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 200px;
       }
 
-      .drawflow-node {
-        width: 120px;
+      .search-node-panel.active {
+        display: flex;
       }
 
-      .node-header {
-        font-size: 10px;
+      .search-node-input {
+        padding: 8px;
+        border: 2px solid #2196f3;
+        border-radius: 6px;
+        font-size: 14px;
+        outline: none;
+        font-family: 'Prompt', sans-serif;
       }
 
-      .node-content {
-        font-size: 10px;
+      .search-node-input:focus {
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
       }
 
-      #debug-panel {
-        height: 55vh;
+      .search-result-msg {
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+        padding: 5px;
       }
 
-      .creator-info {
-        display: none !important; /* Hide on tap for very small screens */
-      }
-    }
-
-    /* Landscape mobile */
-    @media (max-width: 768px) and (orientation: landscape) {
-      .palette {
-        max-height: 40vh;
+      .search-result-msg.error {
+        color: #f44336;
       }
 
-      #debug-panel {
-        height: 45vh;
-        max-height: 70vh;
+      .search-result-msg.success {
+        color: #4caf50;
       }
 
-      .controls {
-        flex-wrap: nowrap;
-        overflow-x: auto;
+      .node-highlight {
+        animation: highlight-pulse 1s ease-in-out 3;
       }
-    }
-  </style>
-</head>
-<body>
-  <input type="file" id="file-input" accept=".json" style="display: none" />
-  
-  <div id="floating-copy-btn">
-    <i class="fas fa-copy"></i>
-    <span>คัดลอก</span>
-  </div>
-  
-  <div id="probe-tooltip">Val: 0</div>
 
-  <div class="palette" id="palette-box">
-    <div class="palette-header">
-      <h3><i class="fas fa-cubes"></i> คลังคำสั่ง</h3>
-      <i class="fas fa-chevron-up toggle-palette-btn" id="palette-toggle"></i>
-    </div>
-    <div class="drag-drawflow" draggable="true" data-node="input">
-      <i class="fas fa-play-circle"></i> ค่าเริ่มต้น
-    </div>
-    <div class="drag-drawflow" draggable="true" data-node="operation">
-      <i class="fas fa-calculator"></i> ตัวลดพลังงาน
-    </div>
-    <div class="drag-drawflow" draggable="true" data-node="math">
-      <i class="fas fa-plus-minus"></i> กระทำการ
-    </div>
-    <div class="drag-drawflow" draggable="true" data-node="gate">
-      <i class="fas fa-torii-gate"></i> บล็อกเงื่อนไข
-    </div>
-    <div class="drag-drawflow" draggable="true" data-node="logic_and">
-      <i class="fas fa-project-diagram"></i> AND Gate
-    </div>
-    <div class="drag-drawflow" draggable="true" data-node="logic_not">
-      <i class="fas fa-exclamation-circle"></i> NOT Gate
-    </div>
-    <div class="drag-drawflow" draggable="true" data-node="transistor">
-      <i class="fas fa-microchip"></i> ทรานซิสเตอร์
-    </div>
-    <div class="drag-drawflow" draggable="true" data-node="output">
-      <i class="fas fa-flag-checkered"></i> ผลลัพธ์
-    </div>
-  </div>
+      @keyframes highlight-pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+          border-color: #2196f3;
+        }
+        50% {
+          box-shadow: 0 0 0 15px rgba(33, 150, 243, 0);
+          border-color: #ff9800;
+        }
+      }
 
-  <div class="controls">
-    <button class="btn btn-save" id="save-btn">
-      <i class="fas fa-save"></i><span>บันทึก</span>
-    </button>
-    <button class="btn" id="load-btn">
-      <i class="fas fa-folder-open"></i><span>เปิด</span>
-    </button>
-    <button class="btn btn-undo" id="undo-btn" title="ย้อนกลับ">
-      <i class="fas fa-undo"></i>
-    </button>
-    <button class="btn btn-probe" id="probe-btn" title="วัดไฟ">
-      <i class="fas fa-wrench"></i><span>วัดไฟ</span>
-    </button>
-    <button class="btn" id="copy-btn">
+      /* Mobile responsive */
+      @media (max-width: 768px) {
+        .search-node-panel {
+          top: 50px;
+          right: 5px;
+          min-width: 160px;
+          padding: 8px;
+        }
+
+        .search-node-input {
+          font-size: 12px;
+          padding: 6px;
+        }
+
+        .search-result-msg {
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <input type="file" id="file-input" accept=".json" style="display: none" />
+
+    <div id="floating-copy-btn">
       <i class="fas fa-copy"></i>
-    </button>
-    <button class="btn" id="zoom-out"><i class="fas fa-minus"></i></button>
-    <button class="btn" id="zoom-in"><i class="fas fa-plus"></i></button>
-    <button class="btn btn-run" id="run-btn">
-      <i class="fas fa-play"></i><span>รัน</span>
-    </button>
-  </div>
+      <span>คัดลอก</span>
+    </div>
 
-  <div id="debug-panel">
-    <div class="debug-resizer-top" id="debug-resizer-top"></div>
-    <div class="debug-header">
-      <span><i class="fas fa-terminal"></i> Console & Code</span>
-      <div style="display: flex; gap: 6px; align-items: center">
-        <button class="btn" id="font-minus" title="ลดขนาด">A-</button>
-        <button class="btn" id="font-plus" title="เพิ่มขนาด">A+</button>
-        <span style="cursor: pointer" onclick="document.getElementById('debug-panel').classList.remove('active')">
-          <i class="fas fa-times"></i>
+    <div id="probe-tooltip">Val: 0</div>
+
+    <div class="palette" id="palette-box">
+      <div class="palette-header">
+        <h3>
+          <i class="fas fa-cubes"></i>
+          คลังคำสั่ง
+        </h3>
+        <i class="fas fa-chevron-up toggle-palette-btn" id="palette-toggle"></i>
+      </div>
+      <div class="drag-drawflow" draggable="true" data-node="input">
+        <i class="fas fa-play-circle"></i>
+        ค่าเริ่มต้น
+      </div>
+      <div class="drag-drawflow" draggable="true" data-node="operation">
+        <i class="fas fa-calculator"></i>
+        ตัวลดพลังงาน
+      </div>
+      <div class="drag-drawflow" draggable="true" data-node="math">
+        <i class="fas fa-plus-minus"></i>
+        กระทำการ
+      </div>
+      <div class="drag-drawflow" draggable="true" data-node="gate">
+        <i class="fas fa-torii-gate"></i>
+        บล็อกเงื่อนไข
+      </div>
+      <div class="drag-drawflow" draggable="true" data-node="logic_and">
+        <i class="fas fa-project-diagram"></i>
+        AND Gate
+      </div>
+      <div class="drag-drawflow" draggable="true" data-node="logic_not">
+        <i class="fas fa-exclamation-circle"></i>
+        NOT Gate
+      </div>
+      <div class="drag-drawflow" draggable="true" data-node="transistor">
+        <i class="fas fa-microchip"></i>
+        ทรานซิสเตอร์
+      </div>
+      <div class="drag-drawflow" draggable="true" data-node="output">
+        <i class="fas fa-flag-checkered"></i>
+        ผลลัพธ์
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-save" id="save-btn">
+        <i class="fas fa-save"></i>
+        <span>บันทึก</span>
+      </button>
+      <button class="btn" id="load-btn">
+        <i class="fas fa-folder-open"></i>
+        <span>เปิด</span>
+      </button>
+      <button class="btn btn-undo" id="undo-btn" title="ย้อนกลับ">
+        <i class="fas fa-undo"></i>
+      </button>
+      <button class="btn btn-probe" id="probe-btn" title="วัดไฟ">
+        <i class="fas fa-wrench"></i>
+        <span>วัดไฟ</span>
+      </button>
+<button class="btn" id="search-btn" title="ค้นหา Node">
+    <i class="fas fa-search"></i>
+    <span>ค้นหา</span>
+  </button>
+      <button class="btn" id="copy-btn">
+        <i class="fas fa-copy"></i>
+      </button>
+      <button class="btn" id="zoom-out"><i class="fas fa-minus"></i></button>
+      <button class="btn" id="zoom-in"><i class="fas fa-plus"></i></button>
+      <button class="btn btn-run" id="run-btn">
+        <i class="fas fa-play"></i>
+        <span>รัน</span>
+      </button>
+    </div>
+    <!-- เพิ่มหลัง <div class="controls"> -->
+    <div class="search-node-panel" id="search-node-panel">
+      <input
+        type="number"
+        class="search-node-input"
+        id="search-node-input"
+        placeholder="ใส่ Node ID..."
+        min="1"
+      />
+      <div class="search-result-msg" id="search-result-msg"></div>
+    </div>
+
+    <div id="debug-panel">
+      <div class="debug-resizer-top" id="debug-resizer-top"></div>
+      <div class="debug-header">
+        <span>
+          <i class="fas fa-terminal"></i>
+          Console & Code
         </span>
+        <div style="display: flex; gap: 6px; align-items: center">
+          <button class="btn" id="font-minus" title="ลดขนาด">A-</button>
+          <button class="btn" id="font-plus" title="เพิ่มขนาด">A+</button>
+          <span
+            style="cursor: pointer"
+            onclick="document.getElementById('debug-panel').classList.remove('active')"
+          >
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+      </div>
+      <div class="debug-body" id="debug-body">
+        <div class="debug-console" id="debug-log"></div>
+        <div class="debug-resizer-mid" id="debug-resizer-mid"></div>
+        <div class="debug-code" id="code-view">
+          <div class="code-wrapper"></div>
+        </div>
       </div>
     </div>
-    <div class="debug-body" id="debug-body">
-      <div class="debug-console" id="debug-log"></div>
-      <div class="debug-resizer-mid" id="debug-resizer-mid"></div>
-      <div class="debug-code" id="code-view">
-        <div class="code-wrapper"></div>
-      </div>
-    </div>
-  </div>
 
     <div class="creator-badge">
       <div class="creator-info">
@@ -962,7 +1203,7 @@
         if (isActionFromUndo) return; // ถ้ากำลัง Undo อยู่ ไม่ต้องบันทึกซ้ำ
         const exportData = editor.export();
         history.push(JSON.stringify(exportData));
-        if (history.length > 20) history.shift(); // เก็บย้อนหลังสูงสุด 20 ครั้ง
+        if (history.length > 10) history.shift(); // เก็บย้อนหลังสูงสุด 20 ครั้ง
       }
 
       // ตรวจจับเหตุการณ์ต่างๆ เพื่อบันทึกประวัติ
@@ -971,6 +1212,18 @@
       editor.on('connectionCreated', saveHistory);
       editor.on('connectionRemoved', saveHistory);
       editor.on('nodeMoved', saveHistory);
+
+      // เพิ่มฟังก์ชันล้าง cache
+      function invalidateCache() {
+        globalMemo = {};
+        lastGraphState = null;
+      }
+
+      // เพิ่ม invalidate ในจุดที่ควรล้าง cache:
+      editor.on('nodeDataChanged', invalidateCache);
+      editor.on('connectionCreated', invalidateCache);
+      editor.on('connectionRemoved', invalidateCache);
+      editor.on('nodeRemoved', invalidateCache);
 
       // --- Grid Background ---
       function updateGridBackground() {
@@ -1436,6 +1689,8 @@
             ).replace('node-', '')
           : null;
 
+        let connectionUpdateTimeout;
+
         const currentModule = editor.module;
         selectedNodeIds.forEach((id) => {
           if (id !== activeNodeId) {
@@ -1449,7 +1704,11 @@
                 el.style.top = `${nodeData.pos_y}px`;
                 el.style.left = `${nodeData.pos_x}px`;
               }
-              editor.updateConnectionNodes('node-' + id);
+              if (connectionUpdateTimeout)
+                clearTimeout(connectionUpdateTimeout);
+              connectionUpdateTimeout = setTimeout(() => {
+                editor.updateConnectionNodes('node-' + id);
+              }, 16); // ~60fps
             }
           }
         });
@@ -1564,9 +1823,22 @@
         clearSelection();
       });
 
+      // เพิ่มตัวแปร cache ที่ระดับ global
+      let globalMemo = {};
+      let lastGraphState = null;
+
       // --- Core Simulation Logic + CODE GENERATOR ---
       function simulateGraph(returnResultsOnly = false) {
         const exportData = editor.export();
+        const currentState = JSON.stringify(exportData);
+
+        // ถ้ากราฟไม่เปลี่ยน ใช้ค่าเก่า
+        if (currentState === lastGraphState && returnResultsOnly) {
+          return { logs: [], values: globalMemo, code: [] };
+        }
+
+        lastGraphState = currentState;
+
         const graph = exportData.drawflow.Home.data;
         const clamp = (num) => Math.min(15, Math.max(0, Math.floor(num)));
 
@@ -1617,27 +1889,50 @@
             return result;
           }
 
-          // Get Inputs
-          let v1 = 0;
+          function getMaxInputValue(inputPort, visited) {
+            if (!inputPort || inputPort.connections.length === 0) return 0;
+
+            let maxVal = 0;
+            inputPort.connections.forEach((conn) => {
+              const val = computeNode(conn.node, new Set(visited));
+              if (val > maxVal) maxVal = val;
+            });
+            return maxVal;
+          }
+
+          const v1 = getMaxInputValue(node.inputs.input_1, visited);
+          const v2 = getMaxInputValue(node.inputs.input_2, visited);
+
+          // เก็บ id สำหรับแสดงในโค้ด (ใช้ตัวที่ให้ค่าสูงสุด)
           let id1 = null;
+          let id2 = null;
+
           if (
             node.inputs.input_1 &&
             node.inputs.input_1.connections.length > 0
           ) {
-            id1 = node.inputs.input_1.connections[0].node;
-            v1 = computeNode(id1, new Set(visited));
+            // หาว่า connection ไหนให้ค่า v1
+            for (const conn of node.inputs.input_1.connections) {
+              const testVal = computeNode(conn.node, new Set(visited));
+              if (testVal === v1) {
+                id1 = conn.node;
+                break;
+              }
+            }
           }
 
-          let v2 = 0;
-          let id2 = null;
           if (
             node.inputs.input_2 &&
             node.inputs.input_2.connections.length > 0
           ) {
-            id2 = node.inputs.input_2.connections[0].node;
-            v2 = computeNode(id2, new Set(visited));
+            for (const conn of node.inputs.input_2.connections) {
+              const testVal = computeNode(conn.node, new Set(visited));
+              if (testVal === v2) {
+                id2 = conn.node;
+                break;
+              }
+            }
           }
-
           // ตัวแปรอ้างอิงโค้ด
           const var1 = id1
             ? `<span class="code-var" data-node="${id1}">node_${id1}</span>`
@@ -1812,6 +2107,7 @@
           computeNode(nodeId);
         });
 
+        globalMemo = memo; // เก็บไว้
         return { logs: debugLogs, values: memo, code: codeLines };
       }
 
@@ -1860,94 +2156,130 @@
 
       // --- Run Button ---
       document.getElementById('run-btn').addEventListener('click', () => {
-        const simResult = simulateGraph(false);
-        const debugLogs = simResult.logs;
-        const generatedCode = simResult.code;
-
         debugPanel.classList.add('active');
+
+        requestAnimationFrame(() => {
+          const simResult = simulateGraph(false);
+          const debugLogs = simResult.logs;
+          const generatedCode = simResult.code;
+
+          const debugConsole = document.getElementById('debug-log');
+          const debugCode = document.getElementById('code-view');
+
+          debugConsole.innerHTML = '';
+          debugCode.innerHTML = '';
+
+          // แบ่งการ render ออกเป็นส่วนๆ
+          requestAnimationFrame(() => {
+            renderDebugInfo(debugLogs, generatedCode, simResult);
+          });
+        });
+      });
+
+      function renderDebugInfo(debugLogs, generatedCode, simResult) {
         const debugConsole = document.getElementById('debug-log');
         const debugCode = document.getElementById('code-view');
 
-        debugConsole.innerHTML = '';
-        debugCode.innerHTML = '';
-
-        // --- 1. Populate Console ---
+        // Render Console
         if (debugLogs.length === 0) {
           debugConsole.innerHTML =
             '<div style="padding:10px;">ไม่พบ Node หรือ Output ที่เชื่อมต่อกัน</div>';
         } else {
+          const fragment = document.createDocumentFragment();
           debugLogs.forEach((log, index) => {
             const div = document.createElement('div');
             div.className = 'log-entry';
             let icon = '<i class="fas fa-caret-right"></i>';
             if (log.name === 'input') icon = '<i class="fas fa-bolt"></i>';
             div.innerHTML = `
-                <div class="log-step">Step ${index + 1}</div>
-                <div class="log-node">${icon} ${log.name.toUpperCase()} (ID:${
+        <div class="log-step">Step ${index + 1}</div>
+        <div class="log-node">${icon} ${log.name.toUpperCase()} (ID:${
               log.id
             })</div>
-                <div class="log-action">${log.action}</div>
-                <div class="log-result">${log.result}</div>
-              `;
-            debugConsole.appendChild(div);
+        <div class="log-action">${log.action}</div>
+        <div class="log-result">${log.result}</div>
+      `;
+            fragment.appendChild(div);
           });
+          debugConsole.appendChild(fragment);
         }
 
-        // --- 2. Populate Code View ---
+        // Render Code
         if (generatedCode.length === 0) {
           debugCode.innerHTML = '// No Logic Detected';
         } else {
-          debugCode.innerHTML = '';
           const wrapper = document.createElement('div');
           wrapper.className = 'code-wrapper';
 
           generatedCode.forEach((line) => {
             const row = document.createElement('div');
             row.className = 'code-line';
-
             const content = document.createElement('div');
             content.className = 'code-content';
             content.innerHTML = line;
-
             row.appendChild(content);
             wrapper.appendChild(row);
           });
 
-          // End comment
           const endRow = document.createElement('div');
           endRow.className = 'code-line';
           endRow.innerHTML = `<div class="code-content code-comment">// End of Logic</div>`;
           wrapper.appendChild(endRow);
 
+          debugCode.innerHTML = '';
           debugCode.appendChild(wrapper);
         }
-        enableCodeVarsInteractivity(simResult);
 
+        enableCodeVarsInteractivity(simResult);
         debugConsole.scrollTop = debugConsole.scrollHeight;
-      });
+      }
 
       // Probe Tool
       let isProbeMode = false;
       const probeBtn = document.getElementById('probe-btn');
       const tooltip = document.getElementById('probe-tooltip');
 
+      let probeIdleTimer;
+
       probeBtn.addEventListener('click', () => {
         isProbeMode = !isProbeMode;
+
         if (isProbeMode) {
           probeBtn.classList.add('active');
           container.style.cursor = 'crosshair';
+
+          // ตั้งเวลาปิดอัตโนมัติ 30 วินาที
+          probeIdleTimer = setTimeout(() => {
+            isProbeMode = false;
+            probeBtn.classList.remove('active');
+            container.style.cursor = 'default';
+            tooltip.style.display = 'none';
+            console.log('Probe mode auto-disabled');
+          }, 30000);
         } else {
+          clearTimeout(probeIdleTimer);
           probeBtn.classList.remove('active');
           container.style.cursor = 'default';
           tooltip.style.display = 'none';
         }
       });
 
+      let probeTimeout;
+      // ✅ ใหม่: เพิ่มการล้าง tooltip เมื่อออกจาก node
       container.addEventListener('mousemove', (e) => {
         if (!isProbeMode) return;
+
+        clearTimeout(probeTimeout);
+
         const target = e.target;
         const nodeEl = target.closest('.drawflow-node');
-        if (nodeEl) {
+
+        if (!nodeEl) {
+          tooltip.style.display = 'none';
+          return;
+        }
+
+        probeTimeout = setTimeout(() => {
           const nodeId = nodeEl.id.replace('node-', '');
           const simResult = simulateGraph(true);
           const val = simResult.values[nodeId];
@@ -1957,9 +2289,7 @@
           tooltip.innerHTML = `<i class="fas fa-bolt" style="color:#ffc107"></i> Value: <span style="font-size:14px; color:white;">${
             val !== undefined ? val : '?'
           }</span>`;
-        } else {
-          tooltip.style.display = 'none';
-        }
+        }, 50);
       });
 
       let debugFontSize = 13;
@@ -1985,6 +2315,196 @@
           debugFontSize -= 1;
           applyDebugFontSize();
         }
+      });
+
+      // ใช้ Event Delegation แทน
+      container.addEventListener('input', (e) => {
+        if (e.target.matches('input[type="number"], select')) {
+          invalidateCache();
+        }
+      });
+
+      // เพิ่มการเตือนเมื่อ node เยอะเกินไป
+      editor.on('nodeCreated', () => {
+        const exportData = editor.export();
+        const nodeCount = Object.keys(exportData.drawflow.Home.data).length;
+
+        if (nodeCount > 50 && nodeCount % 10 === 0) {
+          console.warn(`⚠️ จำนวน nodes: ${nodeCount} - อาจทำให้ช้าลง`);
+        }
+
+        if (nodeCount > 100) {
+          alert('⚠️ คำเตือน: มี nodes มากกว่า 100 nodes อาจทำให้ระบบช้า');
+        }
+      });
+
+      // เพิ่มระบบตรวจสอบ performance
+      let performanceMode = 'normal'; // 'normal' หรือ 'optimized'
+      let lastFrameTime = performance.now();
+
+      function checkPerformance() {
+        const currentTime = performance.now();
+        const deltaTime = currentTime - lastFrameTime;
+
+        // ถ้า frame time > 50ms (< 20 FPS) = แล็ก
+        if (deltaTime > 50) {
+          if (performanceMode === 'normal') {
+            performanceMode = 'optimized';
+            console.warn('⚠️ ตรวจพบความล่าช้า - เปิดโหมด Optimized');
+            applyOptimizedMode();
+          }
+        } else if (deltaTime < 30 && performanceMode === 'optimized') {
+          performanceMode = 'normal';
+          console.log('✅ ประสิทธิภาพดีขึ้น - กลับสู่โหมดปกติ');
+          applyNormalMode();
+        }
+
+        lastFrameTime = currentTime;
+      }
+
+      function applyOptimizedMode() {
+        // ลด animation
+        container.style.setProperty('--transition-speed', '0s');
+        // ปิด shadow บาง node
+        document.querySelectorAll('.drawflow-node').forEach((node) => {
+          node.style.boxShadow = 'none';
+        });
+      }
+
+      function applyNormalMode() {
+        container.style.setProperty('--transition-speed', '0.2s');
+        document.querySelectorAll('.drawflow-node').forEach((node) => {
+          node.style.boxShadow = '';
+        });
+      }
+
+      // เรียกใช้ทุกครั้งที่มีการเปลี่ยนแปลง
+      editor.on('nodeMoved', checkPerformance);
+
+      // เพิ่มหลังบรรทัด editor.start();
+
+      // ฟังก์ชันสำหรับเพิ่ม Node ID Badge
+      function addNodeIdBadge(nodeId) {
+        setTimeout(() => {
+          const nodeEl = document.getElementById('node-' + nodeId);
+          if (nodeEl && !nodeEl.querySelector('.node-id-badge')) {
+            const badge = document.createElement('div');
+            badge.className = 'node-id-badge';
+            badge.textContent = nodeId;
+            badge.title = `Node ID: ${nodeId}`;
+            nodeEl.appendChild(badge);
+          }
+        }, 50);
+      }
+
+      // เพิ่ม Badge เมื่อสร้าง Node ใหม่
+      editor.on('nodeCreated', (id) => {
+        addNodeIdBadge(id);
+      });
+
+      // เพิ่ม Badge ให้ Node ที่มีอยู่แล้วตอน Load
+      editor.on('import', () => {
+        setTimeout(() => {
+          const exportData = editor.export();
+          Object.keys(exportData.drawflow.Home.data).forEach((nodeId) => {
+            addNodeIdBadge(nodeId);
+          });
+        }, 100);
+      });
+
+      // --- Search Node Feature ---
+      const searchPanel = document.getElementById('search-node-panel');
+      const searchInput = document.getElementById('search-node-input');
+      const searchResultMsg = document.getElementById('search-result-msg');
+      const searchBtn = document.getElementById('search-btn');
+
+      // Toggle Search Panel
+      searchBtn.addEventListener('click', () => {
+        const isActive = searchPanel.classList.toggle('active');
+        if (isActive) {
+          searchInput.focus();
+          searchResultMsg.textContent = '';
+          searchResultMsg.className = 'search-result-msg';
+        }
+      });
+
+      // Close panel when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!searchPanel.contains(e.target) && !searchBtn.contains(e.target)) {
+          searchPanel.classList.remove('active');
+        }
+      });
+
+      // Search and Navigate to Node
+      function searchAndNavigateToNode(nodeId) {
+        const exportData = editor.export();
+        const nodeData = exportData.drawflow.Home.data[nodeId];
+
+        if (!nodeData) {
+          searchResultMsg.textContent = `❌ ไม่พบ Node ID: ${nodeId}`;
+          searchResultMsg.className = 'search-result-msg error';
+          return;
+        }
+
+        // Calculate center position
+        const nodeEl = document.getElementById('node-' + nodeId);
+        if (!nodeEl) {
+          searchResultMsg.textContent = `❌ ไม่สามารถหา Node นี้ได้`;
+          searchResultMsg.className = 'search-result-msg error';
+          return;
+        }
+
+        // Get canvas center
+        const canvasWidth = editor.precanvas.clientWidth;
+        const canvasHeight = editor.precanvas.clientHeight;
+        const centerX = canvasWidth / 2;
+        const centerY = canvasHeight / 2;
+
+        // Calculate new canvas position to center the node
+        const newCanvasX =
+          centerX - nodeData.pos_x * editor.zoom - 75 * editor.zoom; // 75 = half of node width
+        const newCanvasY =
+          centerY - nodeData.pos_y * editor.zoom - 50 * editor.zoom;
+
+        // Move canvas to center the node
+        editor.canvas_x = newCanvasX;
+        editor.canvas_y = newCanvasY;
+        editor.precanvas.style.transform = `translate(${newCanvasX}px, ${newCanvasY}px) scale(${editor.zoom})`;
+
+        // Update grid background
+        updateGridBackground();
+
+        // Highlight the node
+        nodeEl.classList.add('node-highlight');
+        setTimeout(() => {
+          nodeEl.classList.remove('node-highlight');
+        }, 3000);
+
+        // Show success message
+        searchResultMsg.textContent = `✓ พบ Node ID: ${nodeId} (${nodeData.name})`;
+        searchResultMsg.className = 'search-result-msg success';
+
+        // Auto close panel after 2 seconds
+        setTimeout(() => {
+          searchPanel.classList.remove('active');
+        }, 2000);
+      }
+
+      // Handle Enter key
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const nodeId = searchInput.value.trim();
+          if (nodeId) {
+            searchAndNavigateToNode(nodeId);
+            searchInput.value = '';
+          }
+        }
+      });
+
+      // Handle input validation
+      searchInput.addEventListener('input', (e) => {
+        searchResultMsg.textContent = '';
+        searchResultMsg.className = 'search-result-msg';
       });
     </script>
   </body>
