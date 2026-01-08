@@ -42,6 +42,7 @@
         position: fixed;
         top: 10px;
         left: 10px;
+        z-index: 99;
         font-size: 18px;
         text-shadow: 0 0 3px #fff;
       }
@@ -52,13 +53,13 @@
       .controls {
         display: flex;
         justify-content: center;
-        gap: 40px;
+        gap: 5px;
       }
       .adjust {
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 10px;
+        gap: 5px;
       }
       .adj-btn {
         padding: 5px 10px;
@@ -81,7 +82,7 @@
       }
       #film {
         max-width: 350px;
-        width: 100%;
+        width: 50%;
         height: auto;
         transition: filter 0.5s;
         margin-top: 10px;
@@ -214,6 +215,7 @@
         }
         canvas {
           width: 100% !important;
+          height: 200px;
         }
       }
     </style>
@@ -227,7 +229,7 @@
       /10
     </div>
     <div id="container">
-      <h1>🩻 X-ray Exposure Training</h1>
+      <h1>X-ray Exposure Training</h1>
       <img id="film" />
       <canvas id="graph" height="250"></canvas>
       <div class="controls">
@@ -259,7 +261,7 @@
       <div id="films"></div>
     </div>
     <div id="intro">
-      <h1>🩻 X-ray Exposure Training</h1>
+      <h1>X-ray Exposure Training</h1>
       <p>วิธีเล่น:</p>
       <p>
         ปรับค่าแรงดัน (kV) และกระแส (mA)
