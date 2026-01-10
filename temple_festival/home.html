@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎡 ซุ้มยิงนิวเคลียร์หลังวัด 🎪</title>
+    <title>🎡 ซุ้มยิงลูปโป่งหลังวัด 🎪</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -102,58 +102,45 @@
         }
 
         .menu button {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 22px 30px;
-            margin: 20px 0;
-            font-size: 22px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 20px;
-            width: 100%;
-            box-shadow: 0 10px 30px var(--glow-blue);
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 1s ease-out forwards;
-            opacity: 0;
-        }
+    background: var(--accent-blue);  /* เปลี่ยนเป็นสีน้ำเงินเข้มสำหรับปุ่มแรก (หรือทั้งหมดถ้าต้องการ统一) */
+    color: white;
+    border: none;
+    padding: 22px 30px;
+    margin: 20px 0;
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 20px;
+    width: 100%;
+    box-shadow: 0 10px 30px var(--glow-blue);  /* ปรับ glow ให้เข้ากับสีใหม่ */
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 1s ease-out forwards;
+    opacity: 0;
+}
 
-        .menu button:nth-child(2) {
-            background: var(--primary-pink);
-            box-shadow: 0 10px 30px var(--glow-pink);
-            animation-delay: 0.3s;
-        }
+.menu button:nth-child(2) {
+    background: var(--accent-pink);  /* สีชมพูเข้มสำหรับปุ่มที่สอง */
+    box-shadow: 0 10px 30px var(--glow-pink);
+    animation-delay: 0.3s;
+}
 
-        .menu button:nth-child(1) { animation-delay: 0.1s; }
+.menu button:nth-child(1) { animation-delay: 0.1s; }
 
-        .menu button::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: 0.6s;
-        }
+/* Hover ยังคงเดิม แต่ถ้าต้องการให้ hover เข้มกว่านี้ก็ปรับได้ */
+.menu button:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
 
-        .menu button:hover::before {
-            left: 100%;
-        }
+.menu button:nth-child(1):hover {
+    background: #4a90c0;  /* สีน้ำเงินเข้มกว่าสำหรับ hover (หรือใช้ค่าเดิม var(--accent-blue) ถ้าไม่ต้องการเปลี่ยน) */
+}
 
-        .menu button:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .menu button:nth-child(1):hover {
-            background: var(--accent-blue);
-        }
-
-        .menu button:nth-child(2):hover {
-            background: var(--accent-pink);
-        }
+.menu button:nth-child(2):hover {
+    background: #ff7098;  /* สีชมพูเข้มกว่าสำหรับ hover */
+}
 
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(50px); }
@@ -303,7 +290,7 @@
     <div class="fireball" style="--drift: 200px; animation-duration: 19s; animation-delay: 12s;"></div>
     <div class="fireball" style="--drift: -50px; animation-duration: 23s; animation-delay: 15s;"></div>
 
-    <header>🎡 ซุ้มยิงนิวเคลียร์หลังวัด 🎪</header>
+    <header>🎡 ซุ้มยิงลูปโป่งหลังวัด 🎪</header>
     
     <section class="menu">
         <button onclick="window.location.href='https://game1-lcbb.onrender.com/player'">🔫 เกมส์ยิงเป้าปรอท (Franck-Hertz Experiment)</button>
@@ -409,7 +396,7 @@
     </section>
     
     <footer>
-        <h3>👥 ทีมซุ้มยิงนิวเคลียร์หลังวัด</h3>
+        <h3>👥 ทีมซุ้มยิงลูปโป่งหลังวัด</h3>
         <ul>
             <li><strong>นายราเชนทร์ ฮามศรีพรม</strong> ม.6/3 เลขที่ 1</li>
             <li><strong>นายปฏิพัท ชมเชย</strong> ม.6/3 เลขที่ 18</li>
@@ -417,7 +404,7 @@
             <li><strong>นายพงศกร ผาบจันทร์สิงห์</strong> ม.6/3 เลขที่ 25 (ผู้พัฒนาเว็ปไซต์)</li>
         </ul>
         <p style="margin-top: 40px; font-size: 18px; opacity: 0.8;">
-            🎪 ยินดีต้อนรับสู่ซุ้มยิงนิวเคลียร์หลังวัด! ขอให้สนุกและได้ความรู้ไปพร้อมกันเด้อ 🎆
+            🎪 ยินดีต้อนรับสู่ซุ้มยิงลูปโป่งหลังวัด! ขอให้สนุกและได้ความรู้ไปพร้อมกันเด้อครับ 🎆
         </p>
     </footer>
 
@@ -452,4 +439,3 @@
     </script>
 </body>
 </html>
-
