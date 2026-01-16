@@ -641,8 +641,8 @@
         .tutorial-btn {
           width: 15px;
           height: 45px;
-         font-size: 100;
-          top: 65px;      /* ขยับให้ชิดขอบมากขึ้นนิดหน่อย */
+          font-size: 100;
+          top: 65px; /* ขยับให้ชิดขอบมากขึ้นนิดหน่อย */
           left: 10px;
           border-width: 2px; /* ลดความหนาขอบลงให้สมส่วน */
         }
@@ -653,18 +653,38 @@
           height: 45px;
           border-width: 2px;
         }
-        
+
         /* ขยับตำแหน่ง Widget ผู้สร้างให้ชิดมุมมากขึ้นในมือถือ */
         .creator-widget {
           bottom: 10px;
           right: 10px;
         }
-        
+
         /* ปรับขนาดกล่องข้อความของผู้สร้างให้เล็กลงหน่อยเพื่อความสมดุล */
         .creator-bubble {
-            font-size: 0.75rem;
-            padding: 10px;
-            max-width: 150px;
+          font-size: 0.75rem;
+          padding: 10px;
+          max-width: 150px;
+        }
+      }
+
+      /* --- Mobile Touch Fixes (สำคัญมาก!) --- */
+      .grid-frame, 
+      .shop-container, 
+      .item, 
+      .placed,
+      .ghost {
+        /* ปิดการ Scroll/Zoom ของ Browser ในพื้นที่เกม */
+        touch-action: none; 
+        -webkit-touch-callout: none; /* สำหรับ iOS */
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      /* ขยายพื้นที่ Grid ให้กดง่ายขึ้นในมือถือ */
+      @media (max-width: 768px) {
+        .cell {
+            border-color: rgba(255,255,255,0.2);
         }
       }
     </style>
@@ -681,9 +701,7 @@
     >
       <div class="modal-content" style="max-width: 600px">
         <button class="close-btn" onclick="closeTutorial()">✕</button>
-        <h2 style="color: var(--highlight); font-size: 2rem">
-          วิธีเล่น
-        </h2>
+        <h2 style="color: var(--highlight); font-size: 2rem">วิธีเล่น</h2>
         <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 20px 0" />
 
         <div class="tutorial-list">
@@ -1130,72 +1148,152 @@
       }
 
       // --- Drag & Drop ---
+      // --- Improved Drag & Drop (รองรับมือถือ 100%) ---
       const ghost = document.getElementById('ghost');
       const gridFrame = document.getElementById('gridFrame');
 
-      function startDrag(e, item, el) {
-        // เพิ่มเงื่อนไข: ต้องเริ่มเกมแล้วถึงจะลากได้
-        if (time <= 0 || !isGameStarted) return;
+      // เก็บค่า Offset เพื่อให้เวลายกของ ของจะไม่ดีดไปที่มุมซ้ายบนของนิ้ว
+      let dragOffsetX = 0;
+      let dragOffsetY = 0;
 
+      function startDrag(e, item, el) {
+        if (time <= 0 || !isGameStarted) return;
+        
+        // ป้องกัน Browser ทำงานซ้อน (เช่น การ refresh หน้าจอ)
+        if (e.cancelable) e.preventDefault(); 
+        
         isDragging = true;
         currentDragItem = item;
         currentDragEl = el;
-        el.setPointerCapture(e.pointerId);
 
+        // คำนวณตำแหน่งสัมผัสเทียบกับตัว Item เพื่อให้ลากได้ติดมือ (Offset)
+        const rect = el.getBoundingClientRect();
+        // รองรับทั้ง MouseEvent และ TouchEvent
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        dragOffsetX = clientX - rect.left;
+        dragOffsetY = clientY - rect.top;
+
+        // ตั้งค่า Pointer Capture เพื่อให้ลากออกนอกจอแล้วไม่หลุด (เฉพาะ Desktop/Modern Mobile)
+        if(el.setPointerCapture && e.pointerId) {
+            el.setPointerCapture(e.pointerId);
+        }
+
+        // ตั้งค่า Ghost (ตัวเงาที่จะลาก)
         ghost.style.width = item.w * CELL_SIZE + (item.w - 1) * GRID_GAP + 'px';
-        ghost.style.height =
-          item.h * CELL_SIZE + (item.h - 1) * GRID_GAP + 'px';
+        ghost.style.height = item.h * CELL_SIZE + (item.h - 1) * GRID_GAP + 'px';
         ghost.style.display = 'block';
+        ghost.style.opacity = '0.8';
 
-        document.addEventListener('pointermove', onDrag);
+        // Update ตำแหน่ง Ghost ครั้งแรกทันที
+        updateGhostPosition(clientX, clientY);
+
+        // เพิ่ม Event Listeners (ใช้ชุดผสมเพื่อให้ครอบคลุมทุกอุปกรณ์)
+        document.addEventListener('pointermove', onDrag, { passive: false });
+        document.addEventListener('touchmove', onTouchMove, { passive: false }); // กันเหนียวสำหรับ iOS เก่า
         document.addEventListener('pointerup', endDrag);
+        document.addEventListener('touchend', endDrag);
+      }
+
+      // ฟังก์ชันแยกสำหรับ Touch Move เพื่อดึงค่า clientX/Y จาก touches array
+      function onTouchMove(e) {
+        if (!isDragging) return;
+        if(e.cancelable) e.preventDefault(); // ห้าม Scroll หน้าจอ 100%
+        const clientX = e.touches[0].clientX;
+        const clientY = e.touches[0].clientY;
+        updateGhostPosition(clientX, clientY);
       }
 
       function onDrag(e) {
         if (!isDragging) return;
-        const rect = gridFrame.getBoundingClientRect();
-        const rawX = e.clientX - rect.left;
-        const rawY = e.clientY - rect.top;
+        // ถ้าเป็น Pointer Event (Mouse/Touch สมัยใหม่)
+        if(e.cancelable) e.preventDefault(); 
+        updateGhostPosition(e.clientX, e.clientY);
+      }
 
+      function updateGhostPosition(clientX, clientY) {
+        // คำนวณตำแหน่งเทียบกับ gridFrame
+        const rect = gridFrame.getBoundingClientRect();
+        
+        // ตำแหน่งจริงของเมาส์/นิ้ว บน Grid
+        const rawX = clientX - rect.left;
+        const rawY = clientY - rect.top;
+
+        // เอาตำแหน่งเมาส์ ลบด้วยจุดที่จับ (Offset) เพื่อให้ Ghost อยู่ตรงนิ้วพอดี
+        // (ในเวอร์ชั่นก่อนหน้า Item จะดีดไปห้อยอยู่ที่มุมนิ้ว ทำให้กะยาก)
+        // แต่เพื่อความง่ายในการวาง ให้เอา Ghost อยู่ตรงกลางนิ้ว หรือตำแหน่งเดิม
+        // ในที่นี้ผมขอใช้แบบ "Center" ของนิ้วช่วยเล็งครับ
+        
         ghost.style.left = rawX + 'px';
         ghost.style.top = rawY + 'px';
 
-        let gx = Math.floor(rawX / (CELL_SIZE + GRID_GAP));
-        let gy = Math.floor(rawY / (CELL_SIZE + GRID_GAP));
-        const snapX = gx * (CELL_SIZE + GRID_GAP) + 5;
+        // คำนวณ Snap Grid
+        // ใช้จุดกึ่งกลางของ Ghost ในการตัดสินใจว่าจะลงช่องไหน (แม่นกว่าใช้มุมซ้ายบน)
+        const ghostRect = ghost.getBoundingClientRect();
+        const centerX = (ghostRect.left + ghostRect.width / 2) - rect.left;
+        const centerY = (ghostRect.top + ghostRect.height / 2) - rect.top;
+
+        let gx = Math.floor(centerX / (CELL_SIZE + GRID_GAP));
+        let gy = Math.floor(centerY / (CELL_SIZE + GRID_GAP));
+        
+        // ปรับให้ Ghost Snap เพื่อแสดงผลลัพธ์
+        // หมายเหตุ: การแสดงผล Snap อาจจะดูขัดตาถ้าใช้นิ้วบัง ให้แสดง Ghost ตามนิ้ว แล้ว Snap ตอนปล่อยดีกว่า
+        // แต่เพื่อให้เห็นภาพว่าลงช่องไหน ให้ Snap เงาเขียว/แดง
+        
+        // ชดเชยกลับไปหามุมซ้ายบนของช่อง Grid นั้น
+        const snapX = gx * (CELL_SIZE + GRID_GAP) + 5; 
         const snapY = gy * (CELL_SIZE + GRID_GAP) + 5;
-        ghost.style.transform = `translate(${snapX - rawX}px, ${
-          snapY - rawY
-        }px)`;
+
+        // ถ้าอยู่ในระยะ Grid ให้ Snap Ghost ไปที่ช่องนั้นเลยเพื่อให้รู้ว่าจะลงตรงไหน
+        if (gx >= 0 && gx + currentDragItem.w <= COLS && gy >= 0 && gy + currentDragItem.h <= ROWS) {
+             ghost.style.transform = `translate(${snapX - rawX}px, ${snapY - rawY}px)`;
+        } else {
+             ghost.style.transform = 'none'; // ถ้าหลุด Grid ให้ตามนิ้วไปเฉยๆ
+        }
 
         if (canPlace(gx, gy, currentDragItem.w, currentDragItem.h)) {
           ghost.classList.remove('invalid');
+          ghost.style.borderColor = '#0f0';
+          ghost.style.backgroundColor = 'rgba(0, 255, 0, 0.3)';
         } else {
           ghost.classList.add('invalid');
+          ghost.style.borderColor = '#f00';
+          ghost.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
         }
+        
+        // เก็บค่า gx, gy ล่าสุดไว้ใช้ตอนปล่อยมือ
+        ghost.dataset.gx = gx;
+        ghost.dataset.gy = gy;
       }
 
       function endDrag(e) {
         if (!isDragging) return;
         isDragging = false;
+        
+        // Cleanup Listeners
         document.removeEventListener('pointermove', onDrag);
+        document.removeEventListener('touchmove', onTouchMove);
         document.removeEventListener('pointerup', endDrag);
+        document.removeEventListener('touchend', endDrag);
+        
         ghost.style.display = 'none';
 
-        const rect = gridFrame.getBoundingClientRect();
-        const rawX = e.clientX - rect.left;
-        const rawY = e.clientY - rect.top;
-        let gx = Math.floor(rawX / (CELL_SIZE + GRID_GAP));
-        let gy = Math.floor(rawY / (CELL_SIZE + GRID_GAP));
+        // ดึงค่า gx, gy ที่คำนวณไว้ล่าสุดจาก updateGhostPosition
+        let gx = parseInt(ghost.dataset.gx);
+        let gy = parseInt(ghost.dataset.gy);
 
         if (canPlace(gx, gy, currentDragItem.w, currentDragItem.h)) {
           placeItem(gx, gy, currentDragItem);
         } else {
+          // ถ้าวางไม่ได้ ให้ Render ร้านค้าใหม่ (ของกลับที่เดิม)
           renderShop();
         }
         currentDragItem = null;
+        currentDragEl = null;
       }
 
+      
       function canPlace(x, y, w, h) {
         if (x < 0 || y < 0 || x + w > COLS || y + h > ROWS) return false;
         for (let r = y; r < y + h; r++) {
@@ -1254,6 +1352,7 @@
 
         renderShop();
       }
+      
 
       function removeItem(x, y, item, el) {
         if (time <= 0) return;
@@ -1653,15 +1752,10 @@
         document.getElementById('tutorialModal').style.display = 'none';
       }
 
-      // (ตัวเลือกเสริม) ถ้าอยากให้เปิดหน้าสอนอัตโนมัติเฉพาะครั้งแรกที่เข้าเว็บ
-      // ให้เอา comment ออกจากโค้ดด้านล่างนี้ครับ:
-
-      /*
-if (!localStorage.getItem('hasSeenTutorial')) {
-    openTutorial();
-    localStorage.setItem('hasSeenTutorial', 'true');
-}
-*/
+      if (!localStorage.getItem('hasSeenTutorial')) {
+        openTutorial();
+        localStorage.setItem('hasSeenTutorial', 'true');
+      }
 
       // Start
       initGame();
