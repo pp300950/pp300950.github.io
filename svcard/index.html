@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SV Integrator - Smart Solutions for Your Business</title>
+    <title>SV card- Smart Solutions for Your Business</title>
     <meta name="description" content="SV Integrator - ผู้เชี่ยวชาญด้านระบบบริหารลานจอด Smart Security และ Energy Solutions">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
@@ -24,8 +24,8 @@
             --gradient-accent: linear-gradient(135deg, hsl(35, 90%, 55%) 0%, hsl(25, 95%, 50%) 100%);
             --shadow-glow: 0 0 60px hsla(190, 80%, 50%, 0.15);
             --shadow-card: 0 8px 32px hsla(0, 0%, 0%, 0.3);
-            --font-heading: 'Kanit', sans-serif;
-            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
         }
 
         * {
@@ -124,6 +124,53 @@
         .nav-link:hover::after {
             width: 100%;
         }
+        .nav-item {
+    position: relative;
+}
+
+.has-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem 0;
+    min-width: 200px;
+    box-shadow: var(--shadow-card);
+    list-style: none;
+    z-index: 1000;
+}
+
+.has-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li {
+    padding: 0.75rem 1.5rem;
+}
+
+.dropdown-menu a {
+    color: var(--muted-foreground);
+    transition: color 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+    color: var(--foreground);
+}
+
+.fas.fa-chevron-down {
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+}
+
+/* สำหรับ logo img */
+.logo-img {
+    height: 40px;
+    width: auto;
+    background: transparent; /* Default transparent */
+}
 
         .nav-actions {
             display: flex;
@@ -910,26 +957,68 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="logo">SV Integrator</a>
-            <ul class="nav-links">
-                <li><a href="#home" class="nav-link" data-th="หน้าแรก" data-en="Home">หน้าแรก</a></li>
-                <li><a href="#services" class="nav-link" data-th="บริการ" data-en="Services">บริการ</a></li>
-                <li><a href="#about" class="nav-link" data-th="เกี่ยวกับเรา" data-en="About">เกี่ยวกับเรา</a></li>
-                <li><a href="#contact" class="nav-link" data-th="ติดต่อเรา" data-en="Contact">ติดต่อเรา</a></li>
-            </ul>
-            <div class="nav-actions">
-                <button class="lang-btn" onclick="toggleLanguage()">
-                    <i class="fas fa-globe"></i>
-                    <span id="lang-text">EN</span>
-                </button>
-                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
+    <div class="nav-container">
+        <a href="#">
+            <img src="logo.png" alt="SV Integrator" class="logo-img">
+        </a>
+        <ul class="nav-links">
+            <li class="nav-item has-dropdown">
+                <a class="nav-link" href="#">โครงการ <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <!-- Placeholder submenus สอดคล้องเนื้อหา: เพิ่มตามโครงการที่เกี่ยวข้องกับ services -->
+                    <li><a href="#parking">โครงการบริหารลานจอด</a></li>
+                    <li><a href="#security">โครงการ Smart Security</a></li>
+                    <li><a href="#energy">โครงการ Energy Solutions</a></li>
+                </ul>
+            </li>
+            <li class="nav-item has-dropdown">
+                <a class="nav-link" href="#">ผลงานของเรา <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <!-- Placeholder: สอดคล้องเนื้อหา เช่น case studies จาก services -->
+                    <li><a href="#case-studies">ผลงาน Parking Management</a></li>
+                    <li><a href="#case-studies">ผลงาน Smart Security</a></li>
+                    <li><a href="#case-studies">ผลงาน Energy Solutions</a></li>
+                </ul>
+            </li>
+            <li class="nav-item has-dropdown">
+                <a class="nav-link" href="#">อุตสาหกรรม <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <!-- Placeholder: สอดคล้องเนื้อหา เช่น industries ที่ใช้ solutions ของคุณ (adapt จาก g-able) -->
+                    <li><a href="#education">การศึกษา</a></li>
+                    <li><a href="#healthcare">สุขภาพ</a></li>
+                    <li><a href="#business">ธุรกิจทั่วไป</a></li>
+                </ul>
+            </li>
+            <li class="nav-item has-dropdown">
+                <a class="nav-link" href="#">โซลูชัน <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <!-- สอดคล้องเนื้อหาเว็บ: จาก services เดิม -->
+                    <li><a href="#parking">ระบบบริหารลานจอด</a></li>
+                    <li><a href="#security">Smart Security</a></li>
+                    <li><a href="#energy">Energy Solutions</a></li>
+                </ul>
+            </li>
+            <li class="nav-item has-dropdown">
+                <a class="nav-link" href="#">ข่าวสาร <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <!-- Placeholder: สอดคล้องเนื้อหา เช่น blog/insights -->
+                    <li><a href="#blog">ข่าวล่าสุด</a></li>
+                    <li><a href="#insights">insights</a></li>
+                    <li><a href="#events">กิจกรรม</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div class="nav-actions">
+            <button class="lang-btn" onclick="toggleLanguage()">
+                <i class="fas fa-globe"></i>
+                <span id="lang-text">EN</span> | TH
+            </button>
+            <!-- ถ้าต้องการเพิ่ม Contact Us และ Search คล้าย g-able -->
+            <a href="#contact" class="btn btn-primary">Contact Us</a>
+            <button class="search-btn"><i class="fas fa-search"></i></button>
         </div>
-    </nav>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+    </div>
 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
@@ -954,8 +1043,8 @@
                         <span data-th="พัฒนาธุรกิจของคุณ" data-en="Elevate Your Business">พัฒนาธุรกิจของคุณ</span><br>
                         <span data-th="ด้วย" data-en="with">ด้วย</span> <span class="gradient-text" data-th="เทคโนโลยีอัจฉริยะ" data-en="Smart Technology">เทคโนโลยีอัจฉริยะ</span>
                     </h1>
-                    <p data-th="SV Integrator ผู้เชี่ยวชาญด้านระบบบริหารลานจอด ระบบรักษาความปลอดภัยอัจฉริยะ และโซลูชันด้านพลังงาน ที่ช่วยให้ธุรกิจของคุณก้าวสู่ยุคดิจิทัลอย่างมั่นใจ" data-en="SV Integrator specializes in parking management, smart security systems, and energy solutions to help your business confidently step into the digital era">
-                        SV Integrator ผู้เชี่ยวชาญด้านระบบบริหารลานจอด ระบบรักษาความปลอดภัยอัจฉริยะ และโซลูชันด้านพลังงาน ที่ช่วยให้ธุรกิจของคุณก้าวสู่ยุคดิจิทัลอย่างมั่นใจ
+                    <p data-th="SV ผู้เชี่ยวชาญด้านระบบบริหารลานจอด ระบบรักษาความปลอดภัยอัจฉริยะ และโซลูชันด้านพลังงาน ที่ช่วยให้ธุรกิจของคุณก้าวสู่ยุคดิจิทัลอย่างมั่นใจ" data-en="SV Integrator specializes in parking management, smart security systems, and energy solutions to help your business confidently step into the digital era">
+                        SV ผู้เชี่ยวชาญด้านระบบบริหารลานจอด ระบบรักษาความปลอดภัยอัจฉริยะ และโซลูชันด้านพลังงาน ที่ช่วยให้ธุรกิจของคุณก้าวสู่ยุคดิจิทัลอย่างมั่นใจ
                     </p>
                     <div class="hero-buttons">
                         <a href="#contact" class="btn btn-primary">
