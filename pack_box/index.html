@@ -682,7 +682,7 @@
       <div class="modal-content" style="max-width: 600px">
         <button class="close-btn" onclick="closeTutorial()">✕</button>
         <h2 style="color: var(--highlight); font-size: 2rem">
-          วิธีเล่น (How to Play)
+          วิธีเล่น
         </h2>
         <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 20px 0" />
 
@@ -1293,7 +1293,7 @@
         }, 1000);
       }
 
-      // --- AI Logic (Greedy) ---
+      // --- AI Logic (Greedy Basic) ---
       function calculateGreedy() {
         let simGrid = Array(ROWS)
           .fill()
@@ -1331,6 +1331,74 @@
         return { score: aiScore, layout: placedItems };
       }
 
+      // --- AI Logic (ฉลาดขึ้น: ลองจัดหลายร้อยแบบแล้วเลือกที่ดีที่สุด) ---
+      /*
+      function calculateGreedy() {
+        let bestScore = -1;
+        let bestLayout = [];
+        
+        // จำนวนรอบที่จะให้ AI ลองจัดของ (ยิ่งเยอะยิ่งฉลาด แต่ถ้มือถือช้าอาจจะกระตุก)
+        // 500 รอบ กำลังดีสำหรับมือถือครับ
+        const iterations = 500; 
+
+        // เตรียมรายการของ
+        let baseItems = availableItems.map((i) => ({ ...i }));
+
+        for (let i = 0; i < iterations; i++) {
+            let currentItems = baseItems.map(item => ({ ...item }));
+            
+            // --- เทคนิคการสุ่มลำดับของ AI ในแต่ละรอบ ---
+            if (i === 0) {
+                // รอบที่ 1: สูตรเดิม (เรียงตามความคุ้มค่า Density) เพื่อกันเหนียว
+                currentItems.sort((a, b) => (b.val / (b.w * b.h)) - (a.val / (a.w * a.h)));
+            } else if (i === 1) {
+                // รอบที่ 2: เรียงตามราคาแพงสุดก่อน (Value)
+                currentItems.sort((a, b) => b.val - a.val);
+            } else if (i === 2) {
+                // รอบที่ 3: เรียงตามชิ้นใหญ่สุดก่อน (Area) - มักจะแก้ทางพวกของชิ้นใหญ่ไม่มีที่ลง
+                currentItems.sort((a, b) => (b.w * b.h) - (a.w * a.h));
+            } else {
+                // รอบที่เหลือ: สุ่มมั่วเลย! (เผื่อฟลุ๊คเจอท่าไม้ตาย)
+                currentItems.sort(() => Math.random() - 0.5);
+            }
+
+            // --- เริ่มจำลองการวางในรอบนี้ ---
+            let simGrid = Array(ROWS).fill().map(() => Array(COLS).fill(false));
+            let currentScore = 0;
+            let currentLayout = [];
+
+            for (let item of currentItems) {
+                let placed = false;
+                // พยายามวางไล่จากซ้ายไปขวา บนลงล่าง
+                for (let r = 0; r <= ROWS - item.h; r++) {
+                    if(placed) break;
+                    for (let c = 0; c <= COLS - item.w; c++) {
+                        if (canPlaceInSim(simGrid, c, r, item.w, item.h)) {
+                            // วางลงไปในกระดานจำลอง
+                            for (let y = r; y < r + item.h; y++) {
+                                for (let x = c; x < c + item.w; x++) {
+                                    simGrid[y][x] = true;
+                                }
+                            }
+                            currentScore += item.val;
+                            currentLayout.push({ ...item, x: c, y: r });
+                            placed = true;
+                            break; 
+                        }
+                    }
+                }
+            }
+
+            // ถ้าแบบที่จัดรอบนี้ คะแนนดีกว่าที่เคยทำได้ ให้จำแบบนี้ไว้เป็น "แบบที่ดีที่สุด"
+            if (currentScore > bestScore) {
+                bestScore = currentScore;
+                bestLayout = currentLayout;
+            }
+        }
+
+        return { score: bestScore, layout: bestLayout };
+      }
+      */
       function canPlaceInSim(grid, x, y, w, h) {
         for (let r = y; r < y + h; r++) {
           for (let c = x; c < x + w; c++) {
