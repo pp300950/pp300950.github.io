@@ -540,7 +540,26 @@
             </div>
         </div>
         <div style="margin-top:20px; color:#aaa;">Date: <span id="snapDate"></span></div>
-        <div class="snapshot-footer">https://pp300950.github.io/pack_box/index.html</div>
+        <div class="snapshot-footer" style="
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 20px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+        color: #FFD700;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        text-decoration: none;
+        border: 2px solid #FFD700;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    ">
+        <span style="margin-right: 8px;">🔗</span>
+        https://pp300950.github.io/pack_box/index.html
+    </div>
     </div>
 
 <script>
@@ -1039,7 +1058,7 @@
 
             const aDiv = document.createElement('div');
             aDiv.className = 'mini-grid-container';
-            aDiv.innerHTML = '<div class="mini-grid-label">AI Greedy</div>';
+            aDiv.innerHTML = '<div class="mini-grid-label">น้อง AI Greedy</div>';
             renderMiniGrid(aDiv, game.aiLayout, 0.4);
             visContainer.appendChild(aDiv);
         });
