@@ -636,6 +636,37 @@
         padding: 0 5px;
         border-radius: 4px;
       }
+      @media (max-width: 768px) {
+        /* ลดขนาดปุ่มวิธีเล่นลงครึ่งหนึ่ง (50px -> 25px) */
+        .tutorial-btn {
+          width: 25px;
+          height: 45px;
+         
+          top: 10px;      /* ขยับให้ชิดขอบมากขึ้นนิดหน่อย */
+          left: 10px;
+          border-width: 2px; /* ลดความหนาขอบลงให้สมส่วน */
+        }
+
+        /* ลดขนาดรูปผู้สร้างลงครึ่งหนึ่ง (60px -> 30px) */
+        .creator-avatar {
+          width: 45px;
+          height: 45px;
+          border-width: 2px;
+        }
+        
+        /* ขยับตำแหน่ง Widget ผู้สร้างให้ชิดมุมมากขึ้นในมือถือ */
+        .creator-widget {
+          bottom: 10px;
+          right: 10px;
+        }
+        
+        /* ปรับขนาดกล่องข้อความของผู้สร้างให้เล็กลงหน่อยเพื่อความสมดุล */
+        .creator-bubble {
+            font-size: 0.75rem;
+            padding: 10px;
+            max-width: 150px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -817,7 +848,7 @@
         <div>ประสิทธิภาพของคุณ</div>
         <div class="big-percent" id="finalPercent">0%</div>
 
-        <h3>น้อง AI จัดแบบนี้ (รูปเเบบที่ดีที่สุด):</h3>
+        <h3>น้อง AI จัดแบบนี้ (รูปเเบบที่อาจจะดีที่สุด):</h3>
         <div
           id="greedyResultContainer"
           style="display: inline-block; margin-bottom: 20px"
