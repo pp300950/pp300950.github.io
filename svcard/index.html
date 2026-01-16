@@ -18,32 +18,24 @@
     />
     <style>
       :root {
-        --background: hsl(210, 50%, 10%); /* น้ำเงินเข้มคล้าย jpark */
-        --foreground: hsl(0, 0%, 100%); /* ขาวสำหรับ text */
-        --card: hsl(210, 40%, 15%); /* การ์ดเข้มขึ้น */
-        --card-foreground: hsl(0, 0%, 100%);
-        --primary: hsl(210, 80%, 50%); /* น้ำเงินสดสำหรับ button/accent */
-        --primary-foreground: hsl(0, 0%, 100%);
-        --secondary: hsl(210, 30%, 20%);
-        --muted: hsl(210, 20%, 25%);
-        --muted-foreground: hsl(210, 10%, 70%);
-        --accent: hsl(210, 90%, 60%); /* Blue accent */
-        --border: hsl(210, 20%, 30%);
-        --gradient-primary: linear-gradient(
-          135deg,
-          hsl(210, 80%, 50%) 0%,
-          hsl(210, 90%, 40%) 100%
-        );
-        --gradient-accent: linear-gradient(
-          135deg,
-          hsl(210, 90%, 60%) 0%,
-          hsl(200, 95%, 50%) 100%
-        );
-        --shadow-glow: 0 0 60px hsla(210, 80%, 50%, 0.15);
-        --shadow-card: 0 8px 32px hsla(0, 0%, 0%, 0.3);
-        --font-heading: 'Inter', sans-serif;
-        --font-body: 'Inter', sans-serif;
-      }
+  --background: hsl(210, 50%, 10%); /* น้ำเงินเข้มคล้าย jpark */
+  --foreground: hsl(0, 0%, 100%); /* ขาวสำหรับ text */
+  --card: hsl(210, 40%, 15%); /* การ์ดเข้มขึ้น */
+  --card-foreground: hsl(0, 0%, 100%);
+  --primary: hsl(210, 80%, 50%); /* น้ำเงินสดสำหรับ button/accent */
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(210, 30%, 20%);
+  --muted: hsl(210, 20%, 25%);
+  --muted-foreground: hsl(210, 10%, 70%);
+  --accent: hsl(210, 90%, 60%); /* Blue accent */
+  --border: hsl(210, 20%, 30%);
+  --gradient-primary: linear-gradient(135deg, hsl(210, 80%, 50%) 0%, hsl(210, 90%, 40%) 100%);
+  --gradient-accent: linear-gradient(135deg, hsl(210, 90%, 60%) 0%, hsl(200, 95%, 50%) 100%);
+  --shadow-glow: 0 0 60px hsla(210, 80%, 50%, 0.15);
+  --shadow-card: 0 8px 32px hsla(0, 0%, 0%, 0.3);
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
 
       * {
         margin: 0;
@@ -56,50 +48,46 @@
       }
 
       body {
-        font-family: var(--font-body);
-        background-color: #0a0e14; /* Fallback */
-        background: linear-gradient(
-          180deg,
-          var(--background) 0%,
-          hsl(210, 50%, 5%) 100%
-        ); /* Gradient น้ำเงินเข้ม */
-        color: var(--foreground);
-        line-height: 1.6;
-        min-height: 100vh;
-        padding-top: 40px;
-      }
+  font-family: var(--font-body);
+  background-color: #0a0e14; /* Fallback */
+  background: linear-gradient(180deg, var(--background) 0%, hsl(210, 50%, 5%) 100%); /* Gradient น้ำเงินเข้ม */
+  color: var(--foreground);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-top: 40px;
+}
 
-      .hero {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        padding-top: 2rem;
-        position: relative;
-        overflow: hidden;
-        background: var(--background); /* Fallback ถ้าวิดีโอไม่ load */
-      }
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 2rem;
+  position: relative;
+  overflow: hidden;
+  background: var(--background); /* Fallback ถ้าวิดีโอไม่ load */
+}
 
-      .hero-video {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        overflow: hidden;
-      }
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
 
-      .hero-video iframe {
-        width: 100vw;
-        height: 56.25vw; /* Aspect ratio 16:9 */
-        min-height: 100vh;
-        min-width: 177.77vh; /* เพื่อ cover เต็ม */
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border: none;
-      }
+.hero-video iframe {
+  width: 100vw;
+  height: 56.25vw; /* Aspect ratio 16:9 */
+  min-height: 100vh;
+  min-width: 177.77vh; /* เพื่อ cover เต็ม */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+}
 
       h1,
       h2,
@@ -123,16 +111,16 @@
 
       /* Navbar */
       .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: hsla(210, 50%, 10%, 0.9); /* น้ำเงินเข้มโปร่งใส */
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 1rem 0;
-}
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: hsla(220, 25%, 8%, 0.9);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 0;
+      }
 
       .nav-container {
         display: flex;
@@ -272,76 +260,76 @@
       }
 
       .mobile-menu-btn {
-        display: none; /* ซ่อนใน desktop */
-        background: none;
-        border: none;
-        color: var(--foreground);
-        font-size: 1.5rem;
-        cursor: pointer;
-      }
+  display: none; /* ซ่อนใน desktop */
+  background: none;
+  border: none;
+  color: var(--foreground);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
 
-      #mobile-menu {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(10, 14, 20, 0.95); /* สีมืด semi-transparent */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-        z-index: 999;
-      }
+#mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 14, 20, 0.95); /* สีมืด semi-transparent */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 999;
+}
 
-      #mobile-menu.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
+#mobile-menu.active {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-      .mobile-nav-links {
-        list-style: none;
-        text-align: center;
-        padding: 0;
-      }
+.mobile-nav-links {
+  list-style: none;
+  text-align: center;
+  padding: 0;
+}
 
-      .mobile-nav-links li {
-        margin: 1.5rem 0;
-      }
+.mobile-nav-links li {
+  margin: 1.5rem 0;
+}
 
-      .mobile-nav-links .nav-link {
-        font-size: 1.25rem;
-        color: var(--foreground);
-      }
+.mobile-nav-links .nav-link {
+  font-size: 1.25rem;
+  color: var(--foreground);
+}
 
-      .mobile-nav-links .dropdown-menu {
-        position: static; /* ใน mobile ไม่ absolute */
-        display: none;
-        background: none;
-        border: none;
-        box-shadow: none;
-        padding: 0.5rem 0;
-      }
+.mobile-nav-links .dropdown-menu {
+  position: static; /* ใน mobile ไม่ absolute */
+  display: none;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0.5rem 0;
+}
 
-      .mobile-nav-links .has-dropdown.active .dropdown-menu {
-        display: block; /* แสดง dropdown เมื่อ active ใน mobile */
-      }
+.mobile-nav-links .has-dropdown.active .dropdown-menu {
+  display: block; /* แสดง dropdown เมื่อ active ใน mobile */
+}
 
-      /* Responsive media query */
-      @media (max-width: 768px) {
-        .nav-links {
-          display: none; /* ซ่อน nav แนวยาวใน mobile */
-        }
-        .mobile-menu-btn {
-          display: block; /* แสดง hamburger */
-        }
-        .nav-actions {
-          gap: 0.5rem; /* ปรับช่องว่างใน mobile */
-        }
-      }
+/* Responsive media query */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; /* ซ่อน nav แนวยาวใน mobile */
+  }
+  .mobile-menu-btn {
+    display: block; /* แสดง hamburger */
+  }
+  .nav-actions {
+    gap: 0.5rem; /* ปรับช่องว่างใน mobile */
+  }
+}
 
       .search-btn:hover {
         background: var(--muted);
@@ -1133,166 +1121,43 @@
       </a>
       <ul class="nav-links">
         <li class="nav-item has-dropdown">
-          <a class="nav-link" data-th="โครงการ" data-en="Projects" href="#">
-            โครงการ
-            <i class="fas fa-chevron-down"></i>
-          </a>
+          <a class="nav-link" data-th="โครงการ" data-en="Projects" href="#">โครงการ <i class="fas fa-chevron-down"></i></a>
           <ul class="dropdown-menu">
-            <li>
-              <a
-                href="#parking"
-                data-th="โครงการบริหารลานจอด"
-                data-en="Parking Management Projects"
-              >
-                โครงการบริหารลานจอด
-              </a>
-            </li>
-            <li>
-              <a
-                href="#security"
-                data-th="โครงการ Smart Security"
-                data-en="Smart Security Projects"
-              >
-                โครงการ Smart Security
-              </a>
-            </li>
-            <li>
-              <a
-                href="#energy"
-                data-th="โครงการ Energy Solutions"
-                data-en="Energy Solutions Projects"
-              >
-                โครงการ Energy Solutions
-              </a>
-            </li>
+            <li><a href="#parking" data-th="โครงการบริหารลานจอด" data-en="Parking Management Projects">โครงการบริหารลานจอด</a></li>
+            <li><a href="#security" data-th="โครงการ Smart Security" data-en="Smart Security Projects">โครงการ Smart Security</a></li>
+            <li><a href="#energy" data-th="โครงการ Energy Solutions" data-en="Energy Solutions Projects">โครงการ Energy Solutions</a></li>
           </ul>
         </li>
         <li class="nav-item has-dropdown">
-          <a
-            class="nav-link"
-            data-th="ผลงานของเรา"
-            data-en="Our Portfolio"
-            href="#"
-          >
-            ผลงานของเรา
-            <i class="fas fa-chevron-down"></i>
-          </a>
+          <a class="nav-link" data-th="ผลงานของเรา" data-en="Our Portfolio" href="#">ผลงานของเรา <i class="fas fa-chevron-down"></i></a>
           <ul class="dropdown-menu">
-            <li>
-              <a
-                href="#case-studies"
-                data-th="ผลงาน Parking Management"
-                data-en="Parking Management Portfolio"
-              >
-                ผลงาน Parking Management
-              </a>
-            </li>
-            <li>
-              <a
-                href="#case-studies"
-                data-th="ผลงาน Smart Security"
-                data-en="Smart Security Portfolio"
-              >
-                ผลงาน Smart Security
-              </a>
-            </li>
-            <li>
-              <a
-                href="#case-studies"
-                data-th="ผลงาน Energy Solutions"
-                data-en="Energy Solutions Portfolio"
-              >
-                ผลงาน Energy Solutions
-              </a>
-            </li>
+            <li><a href="#case-studies" data-th="ผลงาน Parking Management" data-en="Parking Management Portfolio">ผลงาน Parking Management</a></li>
+            <li><a href="#case-studies" data-th="ผลงาน Smart Security" data-en="Smart Security Portfolio">ผลงาน Smart Security</a></li>
+            <li><a href="#case-studies" data-th="ผลงาน Energy Solutions" data-en="Energy Solutions Portfolio">ผลงาน Energy Solutions</a></li>
           </ul>
         </li>
         <li class="nav-item has-dropdown">
-          <a
-            class="nav-link"
-            data-th="อุตสาหกรรม"
-            data-en="Industries"
-            href="#"
-          >
-            อุตสาหกรรม
-            <i class="fas fa-chevron-down"></i>
-          </a>
+          <a class="nav-link" data-th="อุตสาหกรรม" data-en="Industries" href="#">อุตสาหกรรม <i class="fas fa-chevron-down"></i></a>
           <ul class="dropdown-menu">
-            <li>
-              <a href="#education" data-th="การศึกษา" data-en="Education">
-                การศึกษา
-              </a>
-            </li>
-            <li>
-              <a href="#healthcare" data-th="สุขภาพ" data-en="Healthcare">
-                สุขภาพ
-              </a>
-            </li>
-            <li>
-              <a
-                href="#business"
-                data-th="ธุรกิจทั่วไป"
-                data-en="General Business"
-              >
-                ธุรกิจทั่วไป
-              </a>
-            </li>
+            <li><a href="#education" data-th="การศึกษา" data-en="Education">การศึกษา</a></li>
+            <li><a href="#healthcare" data-th="สุขภาพ" data-en="Healthcare">สุขภาพ</a></li>
+            <li><a href="#business" data-th="ธุรกิจทั่วไป" data-en="General Business">ธุรกิจทั่วไป</a></li>
           </ul>
         </li>
         <li class="nav-item has-dropdown">
-          <a class="nav-link" data-th="โซลูชัน" data-en="Solutions" href="#">
-            โซลูชัน
-            <i class="fas fa-chevron-down"></i>
-          </a>
+          <a class="nav-link" data-th="โซลูชัน" data-en="Solutions" href="#">โซลูชัน <i class="fas fa-chevron-down"></i></a>
           <ul class="dropdown-menu">
-            <li>
-              <a
-                href="#parking"
-                data-th="ระบบบริหารลานจอด"
-                data-en="Parking Management System"
-              >
-                ระบบบริหารลานจอด
-              </a>
-            </li>
-            <li>
-              <a
-                href="#security"
-                data-th="Smart Security"
-                data-en="Smart Security"
-              >
-                Smart Security
-              </a>
-            </li>
-            <li>
-              <a
-                href="#energy"
-                data-th="Energy Solutions"
-                data-en="Energy Solutions"
-              >
-                Energy Solutions
-              </a>
-            </li>
+            <li><a href="#parking" data-th="ระบบบริหารลานจอด" data-en="Parking Management System">ระบบบริหารลานจอด</a></li>
+            <li><a href="#security" data-th="Smart Security" data-en="Smart Security">Smart Security</a></li>
+            <li><a href="#energy" data-th="Energy Solutions" data-en="Energy Solutions">Energy Solutions</a></li>
           </ul>
         </li>
         <li class="nav-item has-dropdown">
-          <a class="nav-link" data-th="ข่าวสาร" data-en="News" href="#">
-            ข่าวสาร
-            <i class="fas fa-chevron-down"></i>
-          </a>
+          <a class="nav-link" data-th="ข่าวสาร" data-en="News" href="#">ข่าวสาร <i class="fas fa-chevron-down"></i></a>
           <ul class="dropdown-menu">
-            <li>
-              <a href="#blog" data-th="ข่าวล่าสุด" data-en="Latest News">
-                ข่าวล่าสุด
-              </a>
-            </li>
-            <li>
-              <a href="#insights" data-th="insights" data-en="Insights">
-                insights
-              </a>
-            </li>
-            <li>
-              <a href="#events" data-th="กิจกรรม" data-en="Events">กิจกรรม</a>
-            </li>
+            <li><a href="#blog" data-th="ข่าวล่าสุด" data-en="Latest News">ข่าวล่าสุด</a></li>
+            <li><a href="#insights" data-th="insights" data-en="Insights">insights</a></li>
+            <li><a href="#events" data-th="กิจกรรม" data-en="Events">กิจกรรม</a></li>
           </ul>
         </li>
       </ul>
@@ -1302,14 +1167,7 @@
           <span id="lang-text">TH</span>
         </button>
         <!-- ถ้าต้องการเพิ่ม Contact Us และ Search คล้าย g-able -->
-        <a
-          href="#contact"
-          class="btn btn-primary"
-          data-th="ติดต่อเรา"
-          data-en="Contact Us"
-        >
-          ติดต่อเรา
-        </a>
+        <a href="#contact" class="btn btn-primary" data-th="ติดต่อเรา" data-en="Contact Us">ติดต่อเรา</a>
         <button class="search-btn"><i class="fas fa-search"></i></button>
       </div>
       <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
@@ -1318,393 +1176,234 @@
     </div>
 
     <div id="mobile-menu">
-      <ul class="mobile-nav-links">
-        <li class="nav-item has-dropdown">
-          <a class="nav-link" href="#">
-            โครงการ
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#parking">โครงการบริหารลานจอด</a></li>
-            <li><a href="#security">โครงการ Smart Security</a></li>
-            <li><a href="#energy">โครงการ Energy Solutions</a></li>
-          </ul>
-        </li>
-        <li class="nav-item has-dropdown">
-          <a class="nav-link" href="#">
-            ผลงานของเรา
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#case-studies">ผลงาน Parking Management</a></li>
-            <li><a href="#case-studies">ผลงาน Smart Security</a></li>
-            <li><a href="#case-studies">ผลงาน Energy Solutions</a></li>
-          </ul>
-        </li>
-        <li class="nav-item has-dropdown">
-          <a class="nav-link" href="#">
-            อุตสาหกรรม
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#education">การศึกษา</a></li>
-            <li><a href="#healthcare">สุขภาพ</a></li>
-            <li><a href="#business">ธุรกิจทั่วไป</a></li>
-          </ul>
-        </li>
-        <li class="nav-item has-dropdown">
-          <a class="nav-link" href="#">
-            โซลูชัน
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#parking">ระบบบริหารลานจอด</a></li>
-            <li><a href="#security">Smart Security</a></li>
-            <li><a href="#energy">Energy Solutions</a></li>
-          </ul>
-        </li>
-        <li class="nav-item has-dropdown">
-          <a class="nav-link" href="#">
-            ข่าวสาร
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#blog">ข่าวล่าสุด</a></li>
-            <li><a href="#insights">insights</a></li>
-            <li><a href="#events">กิจกรรม</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
+        <ul class="mobile-nav-links">
+          <li class="nav-item has-dropdown">
+            <a class="nav-link" href="#">โครงการ <i class="fas fa-chevron-down"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="#parking">โครงการบริหารลานจอด</a></li>
+              <li><a href="#security">โครงการ Smart Security</a></li>
+              <li><a href="#energy">โครงการ Energy Solutions</a></li>
+            </ul>
+          </li>
+          <li class="nav-item has-dropdown">
+            <a class="nav-link" href="#">ผลงานของเรา <i class="fas fa-chevron-down"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="#case-studies">ผลงาน Parking Management</a></li>
+              <li><a href="#case-studies">ผลงาน Smart Security</a></li>
+              <li><a href="#case-studies">ผลงาน Energy Solutions</a></li>
+            </ul>
+          </li>
+          <li class="nav-item has-dropdown">
+            <a class="nav-link" href="#">อุตสาหกรรม <i class="fas fa-chevron-down"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="#education">การศึกษา</a></li>
+              <li><a href="#healthcare">สุขภาพ</a></li>
+              <li><a href="#business">ธุรกิจทั่วไป</a></li>
+            </ul>
+          </li>
+          <li class="nav-item has-dropdown">
+            <a class="nav-link" href="#">โซลูชัน <i class="fas fa-chevron-down"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="#parking">ระบบบริหารลานจอด</a></li>
+              <li><a href="#security">Smart Security</a></li>
+              <li><a href="#energy">Energy Solutions</a></li>
+            </ul>
+          </li>
+          <li class="nav-item has-dropdown">
+            <a class="nav-link" href="#">ข่าวสาร <i class="fas fa-chevron-down"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="#blog">ข่าวล่าสุด</a></li>
+              <li><a href="#insights">insights</a></li>
+              <li><a href="#events">กิจกรรม</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
-      <ul class="mobile-nav-links">
-        <li class="nav-item has-dropdown">
-          <a class="nav-link" data-th="โครงการ" data-en="Projects" href="#">
-            โครงการ
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a
-                href="#parking"
-                data-th="โครงการบริหารลานจอด"
-                data-en="Parking Management Projects"
-              >
-                โครงการบริหารลานจอด
-              </a>
+        <ul class="mobile-nav-links">
+            <li class="nav-item has-dropdown">
+              <a class="nav-link" data-th="โครงการ" data-en="Projects" href="#">โครงการ <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="#parking" data-th="โครงการบริหารลานจอด" data-en="Parking Management Projects">โครงการบริหารลานจอด</a></li>
+                <li><a href="#security" data-th="โครงการ Smart Security" data-en="Smart Security Projects">โครงการ Smart Security</a></li>
+                <li><a href="#energy" data-th="โครงการ Energy Solutions" data-en="Energy Solutions Projects">โครงการ Energy Solutions</a></li>
+              </ul>
             </li>
-            <li>
-              <a
-                href="#security"
-                data-th="โครงการ Smart Security"
-                data-en="Smart Security Projects"
-              >
-                โครงการ Smart Security
-              </a>
+            <li class="nav-item has-dropdown">
+              <a class="nav-link" data-th="ผลงานของเรา" data-en="Our Portfolio" href="#">ผลงานของเรา <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="#case-studies" data-th="ผลงาน Parking Management" data-en="Parking Management Portfolio">ผลงาน Parking Management</a></li>
+                <li><a href="#case-studies" data-th="ผลงาน Smart Security" data-en="Smart Security Portfolio">ผลงาน Smart Security</a></li>
+                <li><a href="#case-studies" data-th="ผลงาน Energy Solutions" data-en="Energy Solutions Portfolio">ผลงาน Energy Solutions</a></li>
+              </ul>
             </li>
-            <li>
-              <a
-                href="#energy"
-                data-th="โครงการ Energy Solutions"
-                data-en="Energy Solutions Projects"
-              >
-                โครงการ Energy Solutions
-              </a>
+            <li class="nav-item has-dropdown">
+              <a class="nav-link" data-th="อุตสาหกรรม" data-en="Industries" href="#">อุตสาหกรรม <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="#education" data-th="การศึกษา" data-en="Education">การศึกษา</a></li>
+                <li><a href="#healthcare" data-th="สุขภาพ" data-en="Healthcare">สุขภาพ</a></li>
+                <li><a href="#business" data-th="ธุรกิจทั่วไป" data-en="General Business">ธุรกิจทั่วไป</a></li>
+              </ul>
             </li>
-          </ul>
-        </li>
-        <li class="nav-item has-dropdown">
-          <a
-            class="nav-link"
-            data-th="ผลงานของเรา"
-            data-en="Our Portfolio"
-            href="#"
-          >
-            ผลงานของเรา
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a
-                href="#case-studies"
-                data-th="ผลงาน Parking Management"
-                data-en="Parking Management Portfolio"
-              >
-                ผลงาน Parking Management
-              </a>
+            <li class="nav-item has-dropdown">
+              <a class="nav-link" data-th="โซลูชัน" data-en="Solutions" href="#">โซลูชัน <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="#parking" data-th="ระบบบริหารลานจอด" data-en="Parking Management System">ระบบบริหารลานจอด</a></li>
+                <li><a href="#security" data-th="Smart Security" data-en="Smart Security">Smart Security</a></li>
+                <li><a href="#energy" data-th="Energy Solutions" data-en="Energy Solutions">Energy Solutions</a></li>
+              </ul>
             </li>
-            <li>
-              <a
-                href="#case-studies"
-                data-th="ผลงาน Smart Security"
-                data-en="Smart Security Portfolio"
-              >
-                ผลงาน Smart Security
-              </a>
-            </li>
-            <li>
-              <a
-                href="#case-studies"
-                data-th="ผลงาน Energy Solutions"
-                data-en="Energy Solutions Portfolio"
-              >
-                ผลงาน Energy Solutions
-              </a>
+            <li class="nav-item has-dropdown">
+              <a class="nav-link" data-th="ข่าวสาร" data-en="News" href="#">ข่าวสาร <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="#blog" data-th="ข่าวล่าสุด" data-en="Latest News">ข่าวล่าสุด</a></li>
+                <li><a href="#insights" data-th="insights" data-en="Insights">insights</a></li>
+                <li><a href="#events" data-th="กิจกรรม" data-en="Events">กิจกรรม</a></li>
+              </ul>
             </li>
           </ul>
-        </li>
-        <li class="nav-item has-dropdown">
-          <a
-            class="nav-link"
-            data-th="อุตสาหกรรม"
-            data-en="Industries"
-            href="#"
-          >
-            อุตสาหกรรม
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="#education" data-th="การศึกษา" data-en="Education">
-                การศึกษา
-              </a>
-            </li>
-            <li>
-              <a href="#healthcare" data-th="สุขภาพ" data-en="Healthcare">
-                สุขภาพ
-              </a>
-            </li>
-            <li>
-              <a
-                href="#business"
-                data-th="ธุรกิจทั่วไป"
-                data-en="General Business"
-              >
-                ธุรกิจทั่วไป
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item has-dropdown">
-          <a class="nav-link" data-th="โซลูชัน" data-en="Solutions" href="#">
-            โซลูชัน
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a
-                href="#parking"
-                data-th="ระบบบริหารลานจอด"
-                data-en="Parking Management System"
-              >
-                ระบบบริหารลานจอด
-              </a>
-            </li>
-            <li>
-              <a
-                href="#security"
-                data-th="Smart Security"
-                data-en="Smart Security"
-              >
-                Smart Security
-              </a>
-            </li>
-            <li>
-              <a
-                href="#energy"
-                data-th="Energy Solutions"
-                data-en="Energy Solutions"
-              >
-                Energy Solutions
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item has-dropdown">
-          <a class="nav-link" data-th="ข่าวสาร" data-en="News" href="#">
-            ข่าวสาร
-            <i class="fas fa-chevron-down"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="#blog" data-th="ข่าวล่าสุด" data-en="Latest News">
-                ข่าวล่าสุด
-              </a>
-            </li>
-            <li>
-              <a href="#insights" data-th="insights" data-en="Insights">
-                insights
-              </a>
-            </li>
-            <li>
-              <a href="#events" data-th="กิจกรรม" data-en="Events">กิจกรรม</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
     </div>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
       <div class="container">
-        <section class="hero">
-          <div class="hero-video">
-            <iframe
-              src="https://www.youtube.com/embed/DpAOunEREo4?autoplay=1&mute=1&loop=1&playlist=DpAOunEREo4&controls=0&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3&enablejsapi=1"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
-          </div>
-          <!-- เนื้อหา hero เดิมของคุณ เช่น .container, headline, etc. -->
-
-          <div class="hero-content">
-            <div class="hero-text">
-              <span class="hero-badge">
-                <i class="fas fa-star"></i>
-                <span
-                  data-th="ผู้นำด้าน Smart Solutions"
-                  data-en="Leading Smart Solutions Provider"
-                >
-                  ผู้นำด้าน Smart Solutions
-                </span>
-              </span>
-              <h1>
-                <span
-                  data-th="พัฒนาธุรกิจของคุณ"
-                  data-en="Elevate Your Business"
-                >
-                  พัฒนาธุรกิจของคุณ
-                </span>
-                <br />
-                <span data-th="ด้วย" data-en="with">ด้วย</span>
-                <span
-                  class="gradient-text"
-                  data-th="เทคโนโลยีอัจฉริยะ"
-                  data-en="Smart Technology"
-                >
-                  เทคโนโลยีอัจฉริยะ
-                </span>
-              </h1>
-              <p
-                data-th="SV ผู้เชี่ยวชาญด้านระบบบริหารลานจอด ระบบรักษาความปลอดภัยอัจฉริยะ และโซลูชันด้านพลังงาน ที่ช่วยให้ธุรกิจของคุณก้าวสู่ยุคดิจิทัลอย่างมั่นใจ"
-                data-en="SV Integrator specializes in parking management, smart security systems, and energy solutions to help your business confidently step into the digital era"
+        <div class="hero-content">
+          <div class="hero-text">
+            <span class="hero-badge">
+              <i class="fas fa-star"></i>
+              <span
+                data-th="ผู้นำด้าน Smart Solutions"
+                data-en="Leading Smart Solutions Provider"
               >
-                SV ผู้เชี่ยวชาญด้านระบบบริหารลานจอด ระบบรักษาความปลอดภัยอัจฉริยะ
-                และโซลูชันด้านพลังงาน
-                ที่ช่วยให้ธุรกิจของคุณก้าวสู่ยุคดิจิทัลอย่างมั่นใจ
-              </p>
-              <div class="hero-buttons">
-                <a href="#contact" class="btn btn-primary">
-                  <i class="fas fa-phone"></i>
-                  <span data-th="ติดต่อเรา" data-en="Contact Us">
-                    ติดต่อเรา
-                  </span>
-                </a>
-                <a href="#services" class="btn btn-outline">
-                  <span data-th="ดูบริการ" data-en="Our Services">
-                    ดูบริการ
-                  </span>
-                  <i class="fas fa-arrow-right"></i>
-                </a>
+                ผู้นำด้าน Smart Solutions
+              </span>
+            </span>
+            <h1>
+              <span data-th="พัฒนาธุรกิจของคุณ" data-en="Elevate Your Business">
+                พัฒนาธุรกิจของคุณ
+              </span>
+              <br />
+              <span data-th="ด้วย" data-en="with">ด้วย</span>
+              <span
+                class="gradient-text"
+                data-th="เทคโนโลยีอัจฉริยะ"
+                data-en="Smart Technology"
+              >
+                เทคโนโลยีอัจฉริยะ
+              </span>
+            </h1>
+            <p
+              data-th="SV ผู้เชี่ยวชาญด้านระบบบริหารลานจอด ระบบรักษาความปลอดภัยอัจฉริยะ และโซลูชันด้านพลังงาน ที่ช่วยให้ธุรกิจของคุณก้าวสู่ยุคดิจิทัลอย่างมั่นใจ"
+              data-en="SV Integrator specializes in parking management, smart security systems, and energy solutions to help your business confidently step into the digital era"
+            >
+              SV ผู้เชี่ยวชาญด้านระบบบริหารลานจอด ระบบรักษาความปลอดภัยอัจฉริยะ
+              และโซลูชันด้านพลังงาน
+              ที่ช่วยให้ธุรกิจของคุณก้าวสู่ยุคดิจิทัลอย่างมั่นใจ
+            </p>
+            <div class="hero-buttons">
+              <a href="#contact" class="btn btn-primary">
+                <i class="fas fa-phone"></i>
+                <span data-th="ติดต่อเรา" data-en="Contact Us">ติดต่อเรา</span>
+              </a>
+              <a href="#services" class="btn btn-outline">
+                <span data-th="ดูบริการ" data-en="Our Services">ดูบริการ</span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+            <div class="hero-stats">
+              <div class="stat-item">
+                <h3>10+</h3>
+                <p data-th="ปีประสบการณ์" data-en="Years Experience">
+                  ปีประสบการณ์
+                </p>
               </div>
-              <div class="hero-stats">
-                <div class="stat-item">
-                  <h3>10+</h3>
-                  <p data-th="ปีประสบการณ์" data-en="Years Experience">
-                    ปีประสบการณ์
-                  </p>
-                </div>
-                <div class="stat-item">
-                  <h3>500+</h3>
-                  <p data-th="โปรเจกต์สำเร็จ" data-en="Projects Completed">
-                    โปรเจกต์สำเร็จ
-                  </p>
-                </div>
-                <div class="stat-item">
-                  <h3>100%</h3>
-                  <p data-th="ลูกค้าพึงพอใจ" data-en="Client Satisfaction">
-                    ลูกค้าพึงพอใจ
-                  </p>
-                </div>
+              <div class="stat-item">
+                <h3>500+</h3>
+                <p data-th="โปรเจกต์สำเร็จ" data-en="Projects Completed">
+                  โปรเจกต์สำเร็จ
+                </p>
+              </div>
+              <div class="stat-item">
+                <h3>100%</h3>
+                <p data-th="ลูกค้าพึงพอใจ" data-en="Client Satisfaction">
+                  ลูกค้าพึงพอใจ
+                </p>
               </div>
             </div>
-            <div class="hero-visual">
-              <div class="hero-card">
-                <div class="hero-card-header">
-                  <div class="hero-card-icon">
-                    <i class="fas fa-cogs"></i>
+          </div>
+          <div class="hero-visual">
+            <div class="hero-card">
+              <div class="hero-card-header">
+                <div class="hero-card-icon">
+                  <i class="fas fa-cogs"></i>
+                </div>
+                <div>
+                  <h3 data-th="โซลูชันครบวงจร" data-en="Complete Solutions">
+                    โซลูชันครบวงจร
+                  </h3>
+                  <p
+                    data-th="ตอบโจทย์ทุกความต้องการ"
+                    data-en="Meeting all your needs"
+                  >
+                    ตอบโจทย์ทุกความต้องการ
+                  </p>
+                </div>
+              </div>
+              <div class="service-preview">
+                <div class="service-item">
+                  <div class="service-icon">
+                    <i class="fas fa-car"></i>
                   </div>
                   <div>
-                    <h3 data-th="โซลูชันครบวงจร" data-en="Complete Solutions">
-                      โซลูชันครบวงจร
-                    </h3>
+                    <h4 data-th="ระบบบริหารลานจอด" data-en="Parking Management">
+                      ระบบบริหารลานจอด
+                    </h4>
                     <p
-                      data-th="ตอบโจทย์ทุกความต้องการ"
-                      data-en="Meeting all your needs"
+                      data-th="จัดการที่จอดรถอัตโนมัติ"
+                      data-en="Automated parking solutions"
                     >
-                      ตอบโจทย์ทุกความต้องการ
+                      จัดการที่จอดรถอัตโนมัติ
                     </p>
                   </div>
                 </div>
-                <div class="service-preview">
-                  <div class="service-item">
-                    <div class="service-icon">
-                      <i class="fas fa-car"></i>
-                    </div>
-                    <div>
-                      <h4
-                        data-th="ระบบบริหารลานจอด"
-                        data-en="Parking Management"
-                      >
-                        ระบบบริหารลานจอด
-                      </h4>
-                      <p
-                        data-th="จัดการที่จอดรถอัตโนมัติ"
-                        data-en="Automated parking solutions"
-                      >
-                        จัดการที่จอดรถอัตโนมัติ
-                      </p>
-                    </div>
+                <div class="service-item">
+                  <div class="service-icon">
+                    <i class="fas fa-shield-alt"></i>
                   </div>
-                  <div class="service-item">
-                    <div class="service-icon">
-                      <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <div>
-                      <h4 data-th="Smart Security" data-en="Smart Security">
-                        Smart Security
-                      </h4>
-                      <p
-                        data-th="ระบบรักษาความปลอดภัย"
-                        data-en="Intelligent security systems"
-                      >
-                        ระบบรักษาความปลอดภัย
-                      </p>
-                    </div>
+                  <div>
+                    <h4 data-th="Smart Security" data-en="Smart Security">
+                      Smart Security
+                    </h4>
+                    <p
+                      data-th="ระบบรักษาความปลอดภัย"
+                      data-en="Intelligent security systems"
+                    >
+                      ระบบรักษาความปลอดภัย
+                    </p>
                   </div>
-                  <div class="service-item">
-                    <div class="service-icon">
-                      <i class="fas fa-bolt"></i>
-                    </div>
-                    <div>
-                      <h4 data-th="Energy Solutions" data-en="Energy Solutions">
-                        Energy Solutions
-                      </h4>
-                      <p
-                        data-th="โซลูชันพลังงานอัจฉริยะ"
-                        data-en="Smart energy solutions"
-                      >
-                        โซลูชันพลังงานอัจฉริยะ
-                      </p>
-                    </div>
+                </div>
+                <div class="service-item">
+                  <div class="service-icon">
+                    <i class="fas fa-bolt"></i>
+                  </div>
+                  <div>
+                    <h4 data-th="Energy Solutions" data-en="Energy Solutions">
+                      Energy Solutions
+                    </h4>
+                    <p
+                      data-th="โซลูชันพลังงานอัจฉริยะ"
+                      data-en="Smart energy solutions"
+                    >
+                      โซลูชันพลังงานอัจฉริยะ
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </section>
 
@@ -2272,27 +1971,25 @@
 
       // Mobile Menu
       function toggleMobileMenu() {
-        const menu = document.getElementById('mobile-menu');
-        const btnIcon = document.querySelector('.mobile-menu-btn i');
-        menu.classList.toggle('active');
-        btnIcon.classList.toggle('fa-bars');
-        btnIcon.classList.toggle('fa-times');
-
-        // Close menu when clicking a link
-        document.querySelectorAll('#mobile-menu a').forEach((link) => {
-          link.addEventListener('click', closeMobileMenu);
-        });
-
-        // Toggle dropdown in mobile (click to open sub-menu)
-        document
-          .querySelectorAll('.mobile-nav-links .has-dropdown > a')
-          .forEach((parent) => {
-            parent.addEventListener('click', (e) => {
-              e.preventDefault();
-              parent.parentElement.classList.toggle('active');
-            });
-          });
-      }
+  const menu = document.getElementById('mobile-menu');
+  const btnIcon = document.querySelector('.mobile-menu-btn i');
+  menu.classList.toggle('active');
+  btnIcon.classList.toggle('fa-bars');
+  btnIcon.classList.toggle('fa-times');
+  
+  // Close menu when clicking a link
+  document.querySelectorAll('#mobile-menu a').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+  
+  // Toggle dropdown in mobile (click to open sub-menu)
+  document.querySelectorAll('.mobile-nav-links .has-dropdown > a').forEach(parent => {
+    parent.addEventListener('click', (e) => {
+      e.preventDefault();
+      parent.parentElement.classList.toggle('active');
+    });
+  });
+}
 
       function closeMobileMenu() {
         document.getElementById('mobile-menu').classList.remove('active');
