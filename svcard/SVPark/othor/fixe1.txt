@@ -1,0 +1,2282 @@
+
+        <div class="bg-neutral-200 flex-1">
+          <main
+            class="h-full overflow-x-hidden overflow-y-hidden app description-text"
+          >
+            <div class="h-[640px] lg:h-[810px] relative">
+              <div
+                class="z-10 h-[600px] lg:h-[810px] w-full absolute pointer-events-none bg-transparent"
+              >
+                <div
+                  class="absolute right-[16px] lg:right-[80px] bottom-[60px] lg:bottom-[55px]"
+                >
+                  <div class="relative">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                      <circle
+                        class="fill-transparent stroke-white"
+                        cx="40"
+                        cy="40"
+                        r="39"
+                        stroke-width="2px"
+                        shape-rendering="geometricPrecision "
+                      ></circle>
+                      <circle
+                        class="fill-transparent stroke-primary"
+                        cx="40"
+                        cy="40"
+                        r="39"
+                        stroke-width="2px"
+                        transform="rotate(-90 40 40)"
+                        shape-rendering="geometricPrecision "
+                        style="
+                          stroke-dasharray: 245.04422698000386;
+                          stroke-dashoffset: 2.842170943040401e-14;
+                        "
+                      ></circle>
+                    </svg>
+                    <span
+                      class="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-body-large"
+                    >
+                      1
+                      <span class="ml-[0.5px] mr-[0.5px]">/</span>
+                      1
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper h-full">
+                <div class="swiper-wrapper">
+                  <div class="swiper-slide">
+                    <span
+                      style="
+                        box-sizing: border-box;
+                        display: block;
+                        overflow: hidden;
+                        width: initial;
+                        height: initial;
+                        background: none;
+                        opacity: 1;
+                        border: 0;
+                        margin: 0;
+                        padding: 0;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        bottom: 0;
+                        right: 0;
+                      "
+                    >
+                      <img
+                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                        decoding="async"
+                        data-nimg="fill"
+                        class="object-cover swiper-lazy"
+                        style="
+                          position: absolute;
+                          top: 0;
+                          left: 0;
+                          bottom: 0;
+                          right: 0;
+                          box-sizing: border-box;
+                          padding: 0;
+                          border: none;
+                          margin: auto;
+                          display: block;
+                          width: 0;
+                          height: 0;
+                          min-width: 100%;
+                          max-width: 100%;
+                          min-height: 100%;
+                          max-height: 100%;
+                        "
+                      />
+                      <noscript>
+                        <img
+                          sizes="100vw"
+                          srcset="
+                            _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fnew_4e3a4f7b9e.png&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fnew_4e3a4f7b9e.png&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fnew_4e3a4f7b9e.png&amp;w=828&amp;q=75e.png&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fnew_4e3a4f7b9e.png&amp;w=1080&amp;q=753a4f7b9e_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fnew_4e3a4f7b9e.png&amp;w=1200&amp;q=752Fnew_4e_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fnew_4e3a4f7b9e.png&amp;w=1920&amp;q=75aws.com%_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fnew_4e3a4f7b9e.png&amp;w=2048&amp;q=751.amazon_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fnew_4e3a4f7b9e.png&amp;w=3840&amp;q=75utheast-1.amazonaws.com%2Fnew_4e3a4f7b9e.png&amp;w=3840&amp;q=75 3840w
+                          "
+                          src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fnew_4e3a4f7b9e.png&amp;w=3840&amp;q=75"
+                          decoding="async"
+                          data-nimg="fill"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                            box-sizing: border-box;
+                            padding: 0;
+                            border: none;
+                            margin: auto;
+                            display: block;
+                            width: 0;
+                            height: 0;
+                            min-width: 100%;
+                            max-width: 100%;
+                            min-height: 100%;
+                            max-height: 100%;
+                          "
+                          class="object-cover swiper-lazy"
+                          loading="lazy"
+                        />
+                      </noscript>
+                    </span>
+                    <div
+                      class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 absolute top-[136px] left-1/2 -translate-x-1/2 lg:top-[232px]"
+                    >
+                      <div class="w-full lg:px-0">
+                        <h1
+                          class="text-white text-7xl md:text-8xl font-bold break-words lg:w-[613px]"
+                        ></h1>
+                        <div
+                          class="font-bold text-white mt-4 lg:mt-6 opacity-80 text-base lg:text-[24px]"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="background-color: #323232">
+              <div
+                class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8"
+              >
+                <div class="text-center" style="color: white">
+                  <p class="text-4xl lg:text-7xl font-bold mb-2">
+                    About
+                    <span class="text-primary">G-Able</span>
+                  </p>
+                </div>
+                <div
+                  class="text-body-medium text-center mt-2 lg:w-[874px] lg:mx-auto mb-8"
+                  style="color: white"
+                >
+                  We partner with world-class tech companies to provide our
+                  clients with modern digital solutions, enterprise business
+                  solutions, and IT infrastructure solutions
+                </div>
+                <div
+                  class="flex flex-col space-y-4 lg:flex-row lg:mb-0 lg:justify-center lg:space-x-8 lg:space-y-0 lg:pb-0"
+                >
+                  <div
+                    class="bg-white lg:w-[315px] lg:h-[234px] h-[89px] items-center flex lg:flex-col lg:text-center px-4 lg:px-0 space-x-4 lg:space-x-0"
+                  >
+                    <h1 class="inline-block font-bold lg:pt-8">
+                      36
+                      <span class="text-primary">Y</span>
+                    </h1>
+                    <div
+                      class="lg:text-body-large text-neutral-600 lg:mt-2 lg:w-[238px] lg:mx-auto"
+                    >
+                      More than three decades of experience and expertise in
+                      digital technology
+                    </div>
+                  </div>
+                  <div
+                    class="bg-white lg:w-[315px] lg:h-[234px] h-[89px] items-center flex lg:flex-col lg:text-center px-4 lg:px-0 space-x-4 lg:space-x-0"
+                  >
+                    <h1 class="inline-block font-bold lg:pt-8">
+                      100
+                      <span class="text-primary">+</span>
+                    </h1>
+                    <div
+                      class="lg:text-body-large text-neutral-600 lg:mt-2 lg:w-[238px] lg:mx-auto"
+                    >
+                      We work with world-class corporate alliance
+                    </div>
+                  </div>
+                  <div
+                    class="bg-white lg:w-[315px] lg:h-[234px] h-[89px] items-center flex lg:flex-col lg:text-center px-4 lg:px-0 space-x-4 lg:space-x-0"
+                  >
+                    <h1 class="inline-block font-bold lg:pt-8">
+                      1,000
+                      <span class="text-primary">+</span>
+                    </h1>
+                    <div
+                      class="lg:text-body-large text-neutral-600 lg:mt-2 lg:w-[238px] lg:mx-auto"
+                    >
+                      Active Customers from various industries
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pt-8 pb-8 bg-white lg:pt-16 lg:pb-16">
+              <div
+                class="static flex flex-col m-auto lg:relative lg:flex-row lg:max-w-4xl xl:max-w-7xl lg:justify-between"
+              >
+                <div class="lg:w-[32%]">
+                  <div
+                    class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0"
+                  >
+                    <div class="mb-2 text-gray-500 uppercase">
+                      Our Solutions
+                    </div>
+                    <h2
+                      class="md:text-[40px] font-bold text-black lg:w-full mb-6 lg:mb-10"
+                    >
+                      Exceed All Your Business Needs
+                    </h2>
+                  </div>
+                  <div>
+                    <div class="hover:cursor-pointer">
+                      <div>
+                        <div
+                          class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0"
+                        >
+                          <div>
+                            <div
+                              class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between"
+                            >
+                              <div class="font-bold text-primary">
+                                Cybersecurity
+                              </div>
+                              <div>
+                                <svg
+                                  width="13"
+                                  height="13"
+                                  viewBox="0 0 13 13"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  class="rotate-90 md:rotate-0"
+                                >
+                                  <path
+                                    d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z"
+                                    fill="#F2900A"
+                                  ></path>
+                                </svg>
+                              </div>
+                            </div>
+                            <div class="h-[1px] bg-neutral-400 w-full"></div>
+                          </div>
+                        </div>
+                        <div
+                          class="ReactCollapse--collapse"
+                          style="height: auto; overflow: initial"
+                          aria-hidden="false"
+                        >
+                          <div class="ReactCollapse--content">
+                            <div class="lg:hidden border-b pb-8 bg-gray-200">
+                              <div
+                                class="w-screen h-[220px] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]"
+                              >
+                                <span
+                                  style="
+                                    box-sizing: border-box;
+                                    display: block;
+                                    overflow: hidden;
+                                    width: initial;
+                                    height: initial;
+                                    background: none;
+                                    opacity: 1;
+                                    border: 0;
+                                    margin: 0;
+                                    padding: 0;
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    bottom: 0;
+                                    right: 0;
+                                  "
+                                >
+                                  <img
+                                    sizes="100vw"
+                                    srcset="
+                                      _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=828&amp;q=756.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=1080&amp;q=75928d7886_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=1200&amp;q=75T_3_1_3a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=1920&amp;q=75urity_OP_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=2048&amp;q=75_Ads_Sec_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=3840&amp;q=75%2FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=3840&amp;q=75 3840w
+                                    "
+                                    src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=3840&amp;q=75"
+                                    decoding="async"
+                                    data-nimg="fill"
+                                    class="object-cover w-full h-full"
+                                    style="
+                                      position: absolute;
+                                      top: 0;
+                                      left: 0;
+                                      bottom: 0;
+                                      right: 0;
+                                      box-sizing: border-box;
+                                      padding: 0;
+                                      border: none;
+                                      margin: auto;
+                                      display: block;
+                                      width: 0;
+                                      height: 0;
+                                      min-width: 100%;
+                                      max-width: 100%;
+                                      min-height: 100%;
+                                      max-height: 100%;
+                                    "
+                                  />
+                                </span>
+                              </div>
+                              <div>
+                                <div class="p-6">
+                                  Ensure your business isn’t vulnerable to cyber
+                                  attacks and cybercrime with our end-to-end
+                                  services and experienced solutions team.
+                                </div>
+                                <button
+                                  class="w-[90%] m-auto flex justify-center items-center text-lg font-semibold drop-shadow-sm hover:drop-shadow-md tran transition-all px-[25px] py-[13px] text-white bg-primary hover:bg-orange-400 active:bg-orange-500 focus:outline-none focus:ring focus:bg-orange-300"
+                                >
+                                  Learn More
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0"
+                        >
+                          <div>
+                            <div
+                              class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between"
+                            >
+                              <div class="font-normal">
+                                Cloud and Data Center Modernization
+                              </div>
+                              <div>
+                                <svg
+                                  width="13"
+                                  height="13"
+                                  viewBox="0 0 13 13"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z"
+                                    fill="#4A4A4A"
+                                  ></path>
+                                </svg>
+                              </div>
+                            </div>
+                            <div class="h-[1px] bg-neutral-400 w-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0"
+                        >
+                          <div>
+                            <div
+                              class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between"
+                            >
+                              <div class="font-normal">Data and Analytics</div>
+                              <div>
+                                <svg
+                                  width="13"
+                                  height="13"
+                                  viewBox="0 0 13 13"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z"
+                                    fill="#4A4A4A"
+                                  ></path>
+                                </svg>
+                              </div>
+                            </div>
+                            <div class="h-[1px] bg-neutral-400 w-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0"
+                        >
+                          <div>
+                            <div
+                              class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between"
+                            >
+                              <div class="font-normal">
+                                Digital Business and Application
+                              </div>
+                              <div>
+                                <svg
+                                  width="13"
+                                  height="13"
+                                  viewBox="0 0 13 13"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z"
+                                    fill="#4A4A4A"
+                                  ></path>
+                                </svg>
+                              </div>
+                            </div>
+                            <div class="h-[1px] bg-neutral-400 w-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0"
+                        >
+                          <div>
+                            <div
+                              class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between"
+                            >
+                              <div class="font-normal">
+                                Managed Tech Services
+                              </div>
+                              <div>
+                                <svg
+                                  width="13"
+                                  height="13"
+                                  viewBox="0 0 13 13"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z"
+                                    fill="#4A4A4A"
+                                  ></path>
+                                </svg>
+                              </div>
+                            </div>
+                            <div class="h-[1px] bg-neutral-400 w-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0"
+                      >
+                        <div class="mt-8 lg:hmt-10">
+                          <div
+                            class="flex items-center hover:text-primary hover:cursor-pointer"
+                          >
+                            <span class="font-bold mr-3">
+                              View All Solutions
+                            </span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="2"
+                              stroke="currentColor"
+                              aria-hidden="true"
+                              class="w-[20px]"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"
+                              ></path>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="lg:w-[60%] lg:relative">
+                  <div
+                    class="hidden relative lg:block solution-image lg:w-[100%] w-[784px]"
+                  >
+                    <span
+                      style="
+                        box-sizing: border-box;
+                        display: block;
+                        overflow: hidden;
+                        width: initial;
+                        height: initial;
+                        background: none;
+                        opacity: 1;
+                        border: 0;
+                        margin: 0;
+                        padding: 0;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        bottom: 0;
+                        right: 0;
+                      "
+                    >
+                      <img
+                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                        decoding="async"
+                        data-nimg="fill"
+                        class="object-cover w-full h-full image-hover"
+                        style="
+                          position: absolute;
+                          top: 0;
+                          left: 0;
+                          bottom: 0;
+                          right: 0;
+                          box-sizing: border-box;
+                          padding: 0;
+                          border: none;
+                          margin: auto;
+                          display: block;
+                          width: 0;
+                          height: 0;
+                          min-width: 100%;
+                          max-width: 100%;
+                          min-height: 100%;
+                          max-height: 100%;
+                          object-fit: cover;
+                          filter: blur(20px);
+                          background-size: cover;
+                          background-image: url(https://www.g-able.com/'/_next/image?url=https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=16&amp;q=1');
+                          background-position: 0% 0%;
+                        "
+                      />
+                      <noscript>
+                        <img
+                          sizes="100vw"
+                          srcset="
+                            _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=828&amp;q=756.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=1080&amp;q=75928d7886_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=1200&amp;q=75T_3_1_3a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=1920&amp;q=75urity_OP_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=2048&amp;q=75_Ads_Sec_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=3840&amp;q=75%2FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=3840&amp;q=75 3840w
+                          "
+                          src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_Security_OPT_3_1_3a928d7886.jpg&amp;w=3840&amp;q=75"
+                          decoding="async"
+                          data-nimg="fill"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                            box-sizing: border-box;
+                            padding: 0;
+                            border: none;
+                            margin: auto;
+                            display: block;
+                            width: 0;
+                            height: 0;
+                            min-width: 100%;
+                            max-width: 100%;
+                            min-height: 100%;
+                            max-height: 100%;
+                            object-fit: cover;
+                          "
+                          class="object-cover w-full h-full image-hover"
+                          loading="lazy"
+                        />
+                      </noscript>
+                    </span>
+                    <div
+                      class="w-[569px] lg:w-[74%] min-h-[266px] absolute bottom-0 left-0 bg-neutral-200 px-8"
+                    >
+                      <h3
+                        class="font-bold mt-8 text-black text-[30px] leading-[44.8px]"
+                      >
+                        Cybersecurity
+                      </h3>
+                      <div class="mt-4 line-clamp-3">
+                        Ensure your business isn’t vulnerable to cyber attacks
+                        and cybercrime with our end-to-end services and
+                        experienced solutions team.
+                      </div>
+                      <button
+                        class="mt-6 mb-4 flex justify-center items-center text-lg font-semibold drop-shadow-sm hover:drop-shadow-md tran transition-all px-[25px] py-[13px] text-white bg-primary hover:bg-orange-400 active:bg-orange-500 focus:outline-none focus:ring focus:bg-orange-300"
+                      >
+                        Learn More
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="relative">
+              <span
+                style="
+                  box-sizing: border-box;
+                  display: block;
+                  overflow: hidden;
+                  width: initial;
+                  height: initial;
+                  background: none;
+                  opacity: 1;
+                  border: 0;
+                  margin: 0;
+                  padding: 0;
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  bottom: 0;
+                  right: 0;
+                "
+              >
+                <img
+                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                  decoding="async"
+                  data-nimg="fill"
+                  style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    box-sizing: border-box;
+                    padding: 0;
+                    border: none;
+                    margin: auto;
+                    display: block;
+                    width: 0;
+                    height: 0;
+                    min-width: 100%;
+                    max-width: 100%;
+                    min-height: 100%;
+                    max-height: 100%;
+                    object-fit: cover;
+                  "
+                />
+                <noscript>
+                  <img
+                    sizes="100vw"
+                    srcset="
+                      _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FBG_Insight_CI_02_61a1230860.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FBG_Insight_CI_02_61a1230860.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FBG_Insight_CI_02_61a1230860.jpg&amp;w=828&amp;q=750.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FBG_Insight_CI_02_61a1230860.jpg&amp;w=1080&amp;q=75a1230860_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FBG_Insight_CI_02_61a1230860.jpg&amp;w=1200&amp;q=75CI_02_61_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FBG_Insight_CI_02_61a1230860.jpg&amp;w=1920&amp;q=75Insight__next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FBG_Insight_CI_02_61a1230860.jpg&amp;w=2048&amp;q=75om%2FBG__next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FBG_Insight_CI_02_61a1230860.jpg&amp;w=3840&amp;q=75zonaws.com%2FBG_Insight_CI_02_61a1230860.jpg&amp;w=3840&amp;q=75 3840w
+                    "
+                    src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FBG_Insight_CI_02_61a1230860.jpg&amp;w=3840&amp;q=75"
+                    decoding="async"
+                    data-nimg="fill"
+                    style="
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      bottom: 0;
+                      right: 0;
+                      box-sizing: border-box;
+                      padding: 0;
+                      border: none;
+                      margin: auto;
+                      display: block;
+                      width: 0;
+                      height: 0;
+                      min-width: 100%;
+                      max-width: 100%;
+                      min-height: 100%;
+                      max-height: 100%;
+                      object-fit: cover;
+                    "
+                    loading="lazy"
+                  />
+                </noscript>
+              </span>
+              <div
+                class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8 relative"
+              >
+                <div class="text-center" style="color: #ffff">
+                  <p class="text-4xl lg:text-7xl font-bold mb-2">
+                    Our
+                    <span class="text-primary">Insights</span>
+                  </p>
+                  <div
+                    class="text-[18px] leading-[25.2px] text-center lg:w-[874px] w-full mx-auto px-4"
+                  >
+                    Keep up to date with business trends and innovation
+                    technology to unlock idea and drive your business
+                  </div>
+                </div>
+                <div
+                  class="flex flex-col w-full mt-8 space-y-6 lg:space-y-0 lg:flex-row lg:space-x-8"
+                >
+                  <div class="shrink-0">
+                    <div
+                      class="card lg:w-[626px] bg-white hover:cursor-pointer hover:scale-[1.03]"
+                    >
+                      <div class="relative w-full lg:h-[352px] h-[192px] block">
+                        <span
+                          style="
+                            box-sizing: border-box;
+                            display: block;
+                            overflow: hidden;
+                            width: initial;
+                            height: initial;
+                            background: none;
+                            opacity: 1;
+                            border: 0;
+                            margin: 0;
+                            padding: 0;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                          "
+                        >
+                          <img
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                            decoding="async"
+                            data-nimg="fill"
+                            class="w-[626px] overflow-hidden image-hover"
+                            style="
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                              box-sizing: border-box;
+                              padding: 0;
+                              border: none;
+                              margin: auto;
+                              display: block;
+                              width: 0;
+                              height: 0;
+                              min-width: 100%;
+                              max-width: 100%;
+                              min-height: 100%;
+                              max-height: 100%;
+                              object-fit: cover;
+                            "
+                          />
+                          <noscript>
+                            <img
+                              sizes="100vw"
+                              srcset="
+                                _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=828&amp;q=759.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=1080&amp;q=75e7d80b09_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=1200&amp;q=75080px_f6_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=1920&amp;q=75e_1920x1_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=2048&amp;q=75Wholesal_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=3840&amp;q=752FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=3840&amp;q=75 3840w
+                              "
+                              src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Wholesale_1920x1080px_f6e7d80b09.jpg&amp;w=3840&amp;q=75"
+                              decoding="async"
+                              data-nimg="fill"
+                              style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                bottom: 0;
+                                right: 0;
+                                box-sizing: border-box;
+                                padding: 0;
+                                border: none;
+                                margin: auto;
+                                display: block;
+                                width: 0;
+                                height: 0;
+                                min-width: 100%;
+                                max-width: 100%;
+                                min-height: 100%;
+                                max-height: 100%;
+                                object-fit: cover;
+                              "
+                              class="w-[626px] overflow-hidden image-hover"
+                              loading="lazy"
+                            />
+                          </noscript>
+                        </span>
+                        <div
+                          class="absolute top-2 right-2 text-white bg-black text-caption font-bold px-[10px] py-1 bg-opacity-60"
+                        >
+                          DATA ANALYTICS
+                        </div>
+                      </div>
+                      <div class="p-4 lg:h-[246px]">
+                        <div class="card-title-lg line-clamp-3">
+                          Improving Wholesale Operations with Data-Driven
+                          Supplier Dashboards
+                        </div>
+                        <div class="mt-4 hidden lg:line-clamp-2">
+                          The supplier dashboard is a part of the wholesale
+                          company&#x27;s data monetization strategy. It provides
+                          insightful data analytics to help suppliers understand
+                          their own performance and capabilities, ensuring they
+                          maintain a successful and profitable business. The
+                          dashboard enhances suppliers&#x27; visibility into
+                          their purchase and sales performance while also
+                          offering valuable insights into the overall
+                          performance of the wholesale company.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="space-y-6 lg:space-y-8 lg:w-[630px]">
+                    <div
+                      class="card h-[97px] flex lg:flex lg:h-[177px] hover:cursor-pointer hover:scale-[1.03] lg:w-[166px]"
+                    >
+                      <div
+                        class="relative w-[154px] lg:w-[316px] h-full block shrink-0"
+                      >
+                        <span
+                          style="
+                            box-sizing: border-box;
+                            display: block;
+                            overflow: hidden;
+                            width: initial;
+                            height: initial;
+                            background: none;
+                            opacity: 1;
+                            border: 0;
+                            margin: 0;
+                            padding: 0;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                          "
+                        >
+                          <img
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                            decoding="async"
+                            data-nimg="fill"
+                            class="w-full h-full overflow-hidden lg:w-full image-hover"
+                            style="
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                              box-sizing: border-box;
+                              padding: 0;
+                              border: none;
+                              margin: auto;
+                              display: block;
+                              width: 0;
+                              height: 0;
+                              min-width: 100%;
+                              max-width: 100%;
+                              min-height: 100%;
+                              max-height: 100%;
+                              object-fit: cover;
+                            "
+                          />
+                          <noscript>
+                            <img
+                              sizes="100vw"
+                              srcset="
+                                _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=828&amp;q=751.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=1080&amp;q=754d452c51_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=1200&amp;q=75080px_93_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=1920&amp;q=75m_1920x1_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=2048&amp;q=75r_Teleco_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=3840&amp;q=75m%2FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=3840&amp;q=75 3840w
+                              "
+                              src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Telecom_1920x1080px_934d452c51.jpg&amp;w=3840&amp;q=75"
+                              decoding="async"
+                              data-nimg="fill"
+                              style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                bottom: 0;
+                                right: 0;
+                                box-sizing: border-box;
+                                padding: 0;
+                                border: none;
+                                margin: auto;
+                                display: block;
+                                width: 0;
+                                height: 0;
+                                min-width: 100%;
+                                max-width: 100%;
+                                min-height: 100%;
+                                max-height: 100%;
+                                object-fit: cover;
+                              "
+                              class="w-full h-full overflow-hidden lg:w-full image-hover"
+                              loading="lazy"
+                            />
+                          </noscript>
+                        </span>
+                        <div
+                          class="absolute top-2 right-2 text-white bg-black text-caption font-bold px-[10px] py-1 bg-opacity-60"
+                        >
+                          DATA ANALYTICS
+                        </div>
+                      </div>
+                      <div
+                        class="w-full px-2 bg-white lg:px-6 lg:w-auto lg:pt-3 lg:shrink-0"
+                      >
+                        <div class="pt-2 mb-2 text-sm lg:pt-0 text-neutral-600">
+                          07 August, 2024
+                        </div>
+                        <div
+                          class="font-bold text-base lg:card-title-md mb-3 lg:w-[282px] lg:text-lg line-clamp-2"
+                        >
+                          Near Real-Time Anomaly Detection: Detect Network
+                          Signal Anomalies Within 5 Seconds
+                        </div>
+                        <div
+                          class="hidden lg:block lg:w-[282px] lg:line-clamp-2"
+                        >
+                          Nowadays, AI technology is widely adopted, even in
+                          large organizations, to address various internal
+                          issues across multiple functions, including marketing,
+                          services, production, research and development
+                          (R&amp;D), accounting and finance, and many more.
+                          Organizations increasingly recognize the benefits of
+                          AI in creating value for businesses, both directly and
+                          indirectly.
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="card h-[97px] flex lg:flex lg:h-[177px] hover:cursor-pointer hover:scale-[1.03] lg:w-[166px]"
+                    >
+                      <div
+                        class="relative w-[154px] lg:w-[316px] h-full block shrink-0"
+                      >
+                        <span
+                          style="
+                            box-sizing: border-box;
+                            display: block;
+                            overflow: hidden;
+                            width: initial;
+                            height: initial;
+                            background: none;
+                            opacity: 1;
+                            border: 0;
+                            margin: 0;
+                            padding: 0;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                          "
+                        >
+                          <img
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                            decoding="async"
+                            data-nimg="fill"
+                            class="w-full h-full overflow-hidden lg:w-full image-hover"
+                            style="
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                              box-sizing: border-box;
+                              padding: 0;
+                              border: none;
+                              margin: auto;
+                              display: block;
+                              width: 0;
+                              height: 0;
+                              min-width: 100%;
+                              max-width: 100%;
+                              min-height: 100%;
+                              max-height: 100%;
+                              object-fit: cover;
+                            "
+                          />
+                          <noscript>
+                            <img
+                              sizes="100vw"
+                              srcset="
+                                _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=828&amp;q=757.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=1080&amp;q=755d9fcac7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=1200&amp;q=75080px_0b_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=1920&amp;q=75e_1920x1_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=2048&amp;q=75Warehous_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=3840&amp;q=752FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=3840&amp;q=75 3840w
+                              "
+                              src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Warehouse_1920x1080px_0b5d9fcac7.jpg&amp;w=3840&amp;q=75"
+                              decoding="async"
+                              data-nimg="fill"
+                              style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                bottom: 0;
+                                right: 0;
+                                box-sizing: border-box;
+                                padding: 0;
+                                border: none;
+                                margin: auto;
+                                display: block;
+                                width: 0;
+                                height: 0;
+                                min-width: 100%;
+                                max-width: 100%;
+                                min-height: 100%;
+                                max-height: 100%;
+                                object-fit: cover;
+                              "
+                              class="w-full h-full overflow-hidden lg:w-full image-hover"
+                              loading="lazy"
+                            />
+                          </noscript>
+                        </span>
+                        <div
+                          class="absolute top-2 right-2 text-white bg-black text-caption font-bold px-[10px] py-1 bg-opacity-60"
+                        >
+                          DATA ANALYTICS
+                        </div>
+                      </div>
+                      <div
+                        class="w-full px-2 bg-white lg:px-6 lg:w-auto lg:pt-3 lg:shrink-0"
+                      >
+                        <div class="pt-2 mb-2 text-sm lg:pt-0 text-neutral-600">
+                          07 August, 2024
+                        </div>
+                        <div
+                          class="font-bold text-base lg:card-title-md mb-3 lg:w-[282px] lg:text-lg line-clamp-2"
+                        >
+                          Empowering Business Operations in the Logistics
+                          Industry with Data Warehouse
+                        </div>
+                        <div
+                          class="hidden lg:block lg:w-[282px] lg:line-clamp-2"
+                        >
+                          The logistics industry relies heavily on data and
+                          often struggles with keeping data in separate systems.
+                          Due to its complex and connected processes, logistics
+                          operations produce a lot of data from different
+                          sources, making it essential to integrate and manage
+                          this data for smooth operations. One of
+                          Thailand&#x27;s largest logistics companies tackled
+                          these issues directly as they began their journey
+                          towards sustainable growth and digital transformation.
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="card h-[97px] flex lg:flex lg:h-[177px] hover:cursor-pointer hover:scale-[1.03] lg:w-[166px]"
+                    >
+                      <div
+                        class="relative w-[154px] lg:w-[316px] h-full block shrink-0"
+                      >
+                        <span
+                          style="
+                            box-sizing: border-box;
+                            display: block;
+                            overflow: hidden;
+                            width: initial;
+                            height: initial;
+                            background: none;
+                            opacity: 1;
+                            border: 0;
+                            margin: 0;
+                            padding: 0;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                          "
+                        >
+                          <img
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                            decoding="async"
+                            data-nimg="fill"
+                            class="w-full h-full overflow-hidden lg:w-full image-hover"
+                            style="
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                              box-sizing: border-box;
+                              padding: 0;
+                              border: none;
+                              margin: auto;
+                              display: block;
+                              width: 0;
+                              height: 0;
+                              min-width: 100%;
+                              max-width: 100%;
+                              min-height: 100%;
+                              max-height: 100%;
+                              object-fit: cover;
+                            "
+                          />
+                          <noscript>
+                            <img
+                              sizes="100vw"
+                              srcset="
+                                _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=828&amp;q=755.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=1080&amp;q=756ccb5e95_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=1200&amp;q=75080px_92_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=1920&amp;q=75n_1920x1_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=2048&amp;q=75Educatio_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=3840&amp;q=752FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=3840&amp;q=75 3840w
+                              "
+                              src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FCover_Education_1920x1080px_926ccb5e95.jpg&amp;w=3840&amp;q=75"
+                              decoding="async"
+                              data-nimg="fill"
+                              style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                bottom: 0;
+                                right: 0;
+                                box-sizing: border-box;
+                                padding: 0;
+                                border: none;
+                                margin: auto;
+                                display: block;
+                                width: 0;
+                                height: 0;
+                                min-width: 100%;
+                                max-width: 100%;
+                                min-height: 100%;
+                                max-height: 100%;
+                                object-fit: cover;
+                              "
+                              class="w-full h-full overflow-hidden lg:w-full image-hover"
+                              loading="lazy"
+                            />
+                          </noscript>
+                        </span>
+                        <div
+                          class="absolute top-2 right-2 text-white bg-black text-caption font-bold px-[10px] py-1 bg-opacity-60"
+                        >
+                          DATA ANALYTICS
+                        </div>
+                      </div>
+                      <div
+                        class="w-full px-2 bg-white lg:px-6 lg:w-auto lg:pt-3 lg:shrink-0"
+                      >
+                        <div class="pt-2 mb-2 text-sm lg:pt-0 text-neutral-600">
+                          07 August, 2024
+                        </div>
+                        <div
+                          class="font-bold text-base lg:card-title-md mb-3 lg:w-[282px] lg:text-lg line-clamp-2"
+                        >
+                          Enhancing Operational Efficiency in the Education
+                          Industry with Big Data Platform
+                        </div>
+                        <div
+                          class="hidden lg:block lg:w-[282px] lg:line-clamp-2"
+                        >
+                          The education industry is increasingly relying on big
+                          data to drive decision-making and improve educational
+                          outcomes. However, this reliance comes with
+                          significant challenges. Data silos, where information
+                          is stored in separate systems, prevent comprehensive
+                          analysis. The complexity of integrating data across
+                          different functions and sources can impede efforts to
+                          gain a holistic view of performance. Additionally, the
+                          need for real-time data to support community
+                          development projects adds another layer of complexity.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="mx-auto mt-8 flex justify-center items-center text-lg font-semibold drop-shadow-sm hover:drop-shadow-md tran transition-all px-[25px] py-[13px] text-white bg-primary hover:bg-orange-400 active:bg-orange-500 focus:outline-none focus:ring focus:bg-orange-300"
+                >
+                  View All
+                </button>
+              </div>
+            </div>
+            <div class="text-center bg-white">
+              <div
+                class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8"
+              >
+                <div class="text-center">
+                  <p class="text-4xl lg:text-7xl font-bold mb-2">
+                    Partner
+                    <span class="text-primary">Solutions</span>
+                  </p>
+                  <div
+                    class="text-[18px] leading-[25.2px] text-center lg:w-[874px] w-full mx-auto px-4"
+                  >
+                    Solutions from our partner alliances focus on innovation and
+                    technology. Support your business readiness for digital
+                    transformation
+                  </div>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4 mt-8">
+                  <div
+                    class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none"
+                  >
+                    <div
+                      class="relative inline-block hover:cursor-pointer h-[50px] w-full"
+                    >
+                      <span
+                        style="
+                          box-sizing: border-box;
+                          display: block;
+                          overflow: hidden;
+                          width: initial;
+                          height: initial;
+                          background: none;
+                          opacity: 1;
+                          border: 0;
+                          margin: 0;
+                          padding: 0;
+                          position: absolute;
+                          top: 0;
+                          left: 0;
+                          bottom: 0;
+                          right: 0;
+                        "
+                      >
+                        <img
+                          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                          decoding="async"
+                          data-nimg="fill"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                            box-sizing: border-box;
+                            padding: 0;
+                            border: none;
+                            margin: auto;
+                            display: block;
+                            width: 0;
+                            height: 0;
+                            min-width: 100%;
+                            max-width: 100%;
+                            min-height: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                          "
+                        />
+                        <noscript>
+                          <img
+                            sizes="100vw"
+                            srcset="
+                              _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F10_a237c7a48f.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F10_a237c7a48f.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F10_a237c7a48f.jpg&amp;w=828&amp;q=75f.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F10_a237c7a48f.jpg&amp;w=1080&amp;q=7537c7a48f_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F10_a237c7a48f.jpg&amp;w=1200&amp;q=75%2F10_a2_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F10_a237c7a48f.jpg&amp;w=1920&amp;q=75naws.com_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F10_a237c7a48f.jpg&amp;w=2048&amp;q=75-1.amazo_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F10_a237c7a48f.jpg&amp;w=3840&amp;q=75outheast-1.amazonaws.com%2F10_a237c7a48f.jpg&amp;w=3840&amp;q=75 3840w
+                            "
+                            src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F10_a237c7a48f.jpg&amp;w=3840&amp;q=75"
+                            decoding="async"
+                            data-nimg="fill"
+                            style="
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                              box-sizing: border-box;
+                              padding: 0;
+                              border: none;
+                              margin: auto;
+                              display: block;
+                              width: 0;
+                              height: 0;
+                              min-width: 100%;
+                              max-width: 100%;
+                              min-height: 100%;
+                              max-height: 100%;
+                              object-fit: contain;
+                            "
+                            loading="lazy"
+                          />
+                        </noscript>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none"
+                  >
+                    <div
+                      class="relative inline-block hover:cursor-pointer h-[50px] w-full"
+                    >
+                      <span
+                        style="
+                          box-sizing: border-box;
+                          display: block;
+                          overflow: hidden;
+                          width: initial;
+                          height: initial;
+                          background: none;
+                          opacity: 1;
+                          border: 0;
+                          margin: 0;
+                          padding: 0;
+                          position: absolute;
+                          top: 0;
+                          left: 0;
+                          bottom: 0;
+                          right: 0;
+                        "
+                      >
+                        <img
+                          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                          decoding="async"
+                          data-nimg="fill"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                            box-sizing: border-box;
+                            padding: 0;
+                            border: none;
+                            margin: auto;
+                            display: block;
+                            width: 0;
+                            height: 0;
+                            min-width: 100%;
+                            max-width: 100%;
+                            min-height: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                          "
+                        />
+                        <noscript>
+                          <img
+                            sizes="100vw"
+                            srcset="
+                              _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fdell_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fdell_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fdell_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=828&amp;q=757.png&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fdell_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=1080&amp;q=75f14e18a7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fdell_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=1200&amp;q=75_Copy_a1_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fdell_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=1920&amp;q=75cabff7c0_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fdell_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=2048&amp;q=75ogies_88_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fdell_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=3840&amp;q=75_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=3840&amp;q=75 3840w
+                            "
+                            src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fdell_technologies_88cabff7c0_Copy_a1f14e18a7.png&amp;w=3840&amp;q=75"
+                            decoding="async"
+                            data-nimg="fill"
+                            style="
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                              box-sizing: border-box;
+                              padding: 0;
+                              border: none;
+                              margin: auto;
+                              display: block;
+                              width: 0;
+                              height: 0;
+                              min-width: 100%;
+                              max-width: 100%;
+                              min-height: 100%;
+                              max-height: 100%;
+                              object-fit: contain;
+                            "
+                            loading="lazy"
+                          />
+                        </noscript>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none"
+                  >
+                    <div
+                      class="relative inline-block hover:cursor-pointer h-[50px] w-full"
+                    >
+                      <span
+                        style="
+                          box-sizing: border-box;
+                          display: block;
+                          overflow: hidden;
+                          width: initial;
+                          height: initial;
+                          background: none;
+                          opacity: 1;
+                          border: 0;
+                          margin: 0;
+                          padding: 0;
+                          position: absolute;
+                          top: 0;
+                          left: 0;
+                          bottom: 0;
+                          right: 0;
+                        "
+                      >
+                        <img
+                          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                          decoding="async"
+                          data-nimg="fill"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                            box-sizing: border-box;
+                            padding: 0;
+                            border: none;
+                            margin: auto;
+                            display: block;
+                            width: 0;
+                            height: 0;
+                            min-width: 100%;
+                            max-width: 100%;
+                            min-height: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                          "
+                        />
+                        <noscript>
+                          <img
+                            sizes="100vw"
+                            srcset="
+                              _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fhuawei_1_8735d09732.png&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fhuawei_1_8735d09732.png&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fhuawei_1_8735d09732.png&amp;w=828&amp;q=752.png&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fhuawei_1_8735d09732.png&amp;w=1080&amp;q=7535d09732_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fhuawei_1_8735d09732.png&amp;w=1200&amp;q=75wei_1_87_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fhuawei_1_8735d09732.png&amp;w=1920&amp;q=75om%2Fhua_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fhuawei_1_8735d09732.png&amp;w=2048&amp;q=75zonaws.c_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fhuawei_1_8735d09732.png&amp;w=3840&amp;q=75st-1.amazonaws.com%2Fhuawei_1_8735d09732.png&amp;w=3840&amp;q=75 3840w
+                            "
+                            src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fhuawei_1_8735d09732.png&amp;w=3840&amp;q=75"
+                            decoding="async"
+                            data-nimg="fill"
+                            style="
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                              box-sizing: border-box;
+                              padding: 0;
+                              border: none;
+                              margin: auto;
+                              display: block;
+                              width: 0;
+                              height: 0;
+                              min-width: 100%;
+                              max-width: 100%;
+                              min-height: 100%;
+                              max-height: 100%;
+                              object-fit: contain;
+                            "
+                            loading="lazy"
+                          />
+                        </noscript>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none"
+                  >
+                    <div
+                      class="relative inline-block hover:cursor-pointer h-[50px] w-full"
+                    >
+                      <span
+                        style="
+                          box-sizing: border-box;
+                          display: block;
+                          overflow: hidden;
+                          width: initial;
+                          height: initial;
+                          background: none;
+                          opacity: 1;
+                          border: 0;
+                          margin: 0;
+                          padding: 0;
+                          position: absolute;
+                          top: 0;
+                          left: 0;
+                          bottom: 0;
+                          right: 0;
+                        "
+                      >
+                        <img
+                          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                          decoding="async"
+                          data-nimg="fill"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                            box-sizing: border-box;
+                            padding: 0;
+                            border: none;
+                            margin: auto;
+                            display: block;
+                            width: 0;
+                            height: 0;
+                            min-width: 100%;
+                            max-width: 100%;
+                            min-height: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                          "
+                        />
+                        <noscript>
+                          <img
+                            sizes="100vw"
+                            srcset="
+                              _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=828&amp;q=754.png&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=1080&amp;q=75ee2f35a4_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=1200&amp;q=75e7ae6_91_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=1920&amp;q=75ft_85b1e_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=2048&amp;q=75Fmicroso_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=3840&amp;q=75ws.com%2Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=3840&amp;q=75 3840w
+                            "
+                            src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Fmicrosoft_85b1ee7ae6_91ee2f35a4.png&amp;w=3840&amp;q=75"
+                            decoding="async"
+                            data-nimg="fill"
+                            style="
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                              box-sizing: border-box;
+                              padding: 0;
+                              border: none;
+                              margin: auto;
+                              display: block;
+                              width: 0;
+                              height: 0;
+                              min-width: 100%;
+                              max-width: 100%;
+                              min-height: 100%;
+                              max-height: 100%;
+                              object-fit: contain;
+                            "
+                            loading="lazy"
+                          />
+                        </noscript>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none"
+                  >
+                    <div
+                      class="relative inline-block hover:cursor-pointer h-[50px] w-full"
+                    >
+                      <span
+                        style="
+                          box-sizing: border-box;
+                          display: block;
+                          overflow: hidden;
+                          width: initial;
+                          height: initial;
+                          background: none;
+                          opacity: 1;
+                          border: 0;
+                          margin: 0;
+                          padding: 0;
+                          position: absolute;
+                          top: 0;
+                          left: 0;
+                          bottom: 0;
+                          right: 0;
+                        "
+                      >
+                        <img
+                          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                          decoding="async"
+                          data-nimg="fill"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                            box-sizing: border-box;
+                            padding: 0;
+                            border: none;
+                            margin: auto;
+                            display: block;
+                            width: 0;
+                            height: 0;
+                            min-width: 100%;
+                            max-width: 100%;
+                            min-height: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                          "
+                        />
+                        <noscript>
+                          <img
+                            sizes="100vw"
+                            srcset="
+                              _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Foracle_df2cd4befb_1a98809337.png&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Foracle_df2cd4befb_1a98809337.png&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Foracle_df2cd4befb_1a98809337.png&amp;w=828&amp;q=757.png&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Foracle_df2cd4befb_1a98809337.png&amp;w=1080&amp;q=7598809337_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Foracle_df2cd4befb_1a98809337.png&amp;w=1200&amp;q=754befb_1a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Foracle_df2cd4befb_1a98809337.png&amp;w=1920&amp;q=75le_df2cd_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Foracle_df2cd4befb_1a98809337.png&amp;w=2048&amp;q=75m%2Forac_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Foracle_df2cd4befb_1a98809337.png&amp;w=3840&amp;q=75onaws.com%2Foracle_df2cd4befb_1a98809337.png&amp;w=3840&amp;q=75 3840w
+                            "
+                            src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252Foracle_df2cd4befb_1a98809337.png&amp;w=3840&amp;q=75"
+                            decoding="async"
+                            data-nimg="fill"
+                            style="
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                              box-sizing: border-box;
+                              padding: 0;
+                              border: none;
+                              margin: auto;
+                              display: block;
+                              width: 0;
+                              height: 0;
+                              min-width: 100%;
+                              max-width: 100%;
+                              min-height: 100%;
+                              max-height: 100%;
+                              object-fit: contain;
+                            "
+                            loading="lazy"
+                          />
+                        </noscript>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8"
+            >
+              <div class="text-center">
+                <div class="text-center">
+                  <p class="text-4xl lg:text-7xl font-bold mb-2">
+                    Customer
+                    <span class="text-primary">Success Stories</span>
+                  </p>
+                  <div
+                    class="text-[18px] leading-[25.2px] text-center lg:w-[874px] w-full mx-auto px-4"
+                  >
+                    Increase your business potential with tailored solutions to
+                    meet your organization&#x27;s unique needs
+                  </div>
+                </div>
+                <div class="lg:flex lg:mt-8 lg:space-x-20">
+                  <div class="text-left">
+                    <p class="font-bold mb-2 w-[447px] pt-6 lg:pt-0">
+                      Industries
+                    </p>
+                    <div class="relative bg-red-200">
+                      <div class="w-full lg:w-[447px]">
+                        <div class="h-full">
+                          <button
+                            class="flex items-center justify-center w-full h-full px-4 py-2 font-medium bg-white border focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 border-neutral-500"
+                            id="headlessui-menu-button-:Rpjr6:"
+                            type="button"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
+                            <div class="flex-1 text-left line-clamp-1">
+                              Education
+                            </div>
+                            <div>
+                              <svg
+                                width="16"
+                                height="9"
+                                viewBox="0 0 16 9"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  d="M15 1L8 8L1 1"
+                                  stroke="#323232"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                ></path>
+                              </svg>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="lg:flex-1">
+                    <p
+                      class="text-left text-base lg:text-body-medium mt-6 lg:mt-0"
+                    >
+                      At G-Able, we see our clients as our most valuable asset.
+                      We believe that your success is our success, and we are
+                      here to provide your with the technologies, services, and
+                      consultation get to help you reach your goals.
+                    </p>
+                    <div
+                      class="flex items-center hover:text-primary hover:cursor-pointer mt-8 mb-8 lg:mb-0 lg:mt-6 text-xl lg:text-desktop-medium-xl"
+                    >
+                      <span class="font-bold mr-3">View All Solutions</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                        class="w-[30px]"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                        ></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="lg:w-full flex bg-white lg:mt-16 flex-col-reverse lg:flex-row lg:h-[527px]"
+                >
+                  <div class="p-4 lg:pt-16 lg:pl-16 lg:pr-16 lg:w-[525px]">
+                    <div class="lg:min-h-[300px] transition-all">
+                      <p
+                        class="text-left text-lg lg:main-title-text sm:description-text font-bold"
+                      >
+                        Education Industry
+                      </p>
+                      <p
+                        class="text-left pt-2 lg:pt-4 sm:text-base lg:description-text"
+                      >
+                        A holistic approach to educational institution&#x27;s
+                        efficiency. We enhance teaching and learning
+                        environments and make school management processes easy,
+                        adaptable, and seamless.
+                      </p>
+                    </div>
+                    <div
+                      class="flex items-center hover:text-primary hover:cursor-pointer text-base mt-4 lg:mt-6"
+                    >
+                      <span class="font-bold mr-3">Learn More</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                        class="w-[20px]"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                        ></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div
+                    class="lg:flex-auto lg:w-[755px] lg:h-full relative h-[238px] w-full"
+                  >
+                    <span
+                      style="
+                        box-sizing: border-box;
+                        display: block;
+                        overflow: hidden;
+                        width: initial;
+                        height: initial;
+                        background: none;
+                        opacity: 1;
+                        border: 0;
+                        margin: 0;
+                        padding: 0;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        bottom: 0;
+                        right: 0;
+                      "
+                    >
+                      <img
+                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                        decoding="async"
+                        data-nimg="fill"
+                        class="object-cover"
+                        style="
+                          position: absolute;
+                          top: 0;
+                          left: 0;
+                          bottom: 0;
+                          right: 0;
+                          box-sizing: border-box;
+                          padding: 0;
+                          border: none;
+                          margin: auto;
+                          display: block;
+                          width: 0;
+                          height: 0;
+                          min-width: 100%;
+                          max-width: 100%;
+                          min-height: 100%;
+                          max-height: 100%;
+                        "
+                      />
+                      <noscript>
+                        <img
+                          sizes="100vw"
+                          srcset="
+                            _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=828&amp;q=756.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=1080&amp;q=75438d3dc6_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=1200&amp;q=75U_V31_bb_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=1920&amp;q=75ds_CI_ED_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=2048&amp;q=75FFinal_A_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=3840&amp;q=75ws.com%2FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=3840&amp;q=75 3840w
+                          "
+                          src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFinal_Ads_CI_EDU_V31_bb438d3dc6.jpg&amp;w=3840&amp;q=75"
+                          decoding="async"
+                          data-nimg="fill"
+                          style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            right: 0;
+                            box-sizing: border-box;
+                            padding: 0;
+                            border: none;
+                            margin: auto;
+                            display: block;
+                            width: 0;
+                            height: 0;
+                            min-width: 100%;
+                            max-width: 100%;
+                            min-height: 100%;
+                            max-height: 100%;
+                          "
+                          class="object-cover"
+                          loading="lazy"
+                        />
+                      </noscript>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white">
+              <div
+                class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8"
+              >
+                <div class="text-center">
+                  <div class="text-center">
+                    <p class="text-4xl lg:text-7xl font-bold mb-2">
+                      Our
+                      <span class="text-primary">News</span>
+                    </p>
+                  </div>
+                  <div
+                    class="flex flex-col mt-6 space-y-8 lg:flex-row lg:space-y-0 lg:space-x-4 lg:mt-10"
+                  >
+                    <a
+                      href="https://www.g-able.com/insights/g-able-signs-comprehensice-partnership-w-thai-ns-solutions"
+                    >
+                      <div
+                        class="text-left last:flex flex-col hover:cursor-pointer lg:w-[285px] xl:w-[405px] border border-neutral-400 hover:scale-[1.03] transition-all h-full"
+                      >
+                        <div class="relative w-full h-[227px]">
+                          <span
+                            style="
+                              box-sizing: border-box;
+                              display: block;
+                              overflow: hidden;
+                              width: initial;
+                              height: initial;
+                              background: none;
+                              opacity: 1;
+                              border: 0;
+                              margin: 0;
+                              padding: 0;
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                            "
+                          >
+                            <img
+                              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                              decoding="async"
+                              data-nimg="fill"
+                              class="object-cover"
+                              style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                bottom: 0;
+                                right: 0;
+                                box-sizing: border-box;
+                                padding: 0;
+                                border: none;
+                                margin: auto;
+                                display: block;
+                                width: 0;
+                                height: 0;
+                                min-width: 100%;
+                                max-width: 100%;
+                                min-height: 100%;
+                                max-height: 100%;
+                              "
+                            />
+                            <noscript>
+                              <img
+                                sizes="100vw"
+                                srcset="
+                                  _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F3_8a1263c9ea.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F3_8a1263c9ea.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F3_8a1263c9ea.jpg&amp;w=828&amp;q=75a.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F3_8a1263c9ea.jpg&amp;w=1080&amp;q=751263c9ea_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F3_8a1263c9ea.jpg&amp;w=1200&amp;q=75m%2F3_8a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F3_8a1263c9ea.jpg&amp;w=1920&amp;q=75onaws.co_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F3_8a1263c9ea.jpg&amp;w=2048&amp;q=75t-1.amaz_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F3_8a1263c9ea.jpg&amp;w=3840&amp;q=75southeast-1.amazonaws.com%2F3_8a1263c9ea.jpg&amp;w=3840&amp;q=75 3840w
+                                "
+                                src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F3_8a1263c9ea.jpg&amp;w=3840&amp;q=75"
+                                decoding="async"
+                                data-nimg="fill"
+                                style="
+                                  position: absolute;
+                                  top: 0;
+                                  left: 0;
+                                  bottom: 0;
+                                  right: 0;
+                                  box-sizing: border-box;
+                                  padding: 0;
+                                  border: none;
+                                  margin: auto;
+                                  display: block;
+                                  width: 0;
+                                  height: 0;
+                                  min-width: 100%;
+                                  max-width: 100%;
+                                  min-height: 100%;
+                                  max-height: 100%;
+                                "
+                                class="object-cover"
+                                loading="lazy"
+                              />
+                            </noscript>
+                          </span>
+                        </div>
+                        <div class="px-6 py-6 bg-white flex-1">
+                          <p class="text-neutral-600">16 January, 2025</p>
+                          <p class="text-lg font-bold mt-2 lg:mt-4">
+                            G-ABLE Signs Comprehensive Partnership Agreement
+                            with Thai NS Solutions Strengthening Technological
+                            Capabilities and Accelerating Customer Base
+                            Expansion
+                          </p>
+                          <p
+                            class="mt-4 hidden lg:line-clamp-3 description-text"
+                          >
+                            G-Able Public Company Limited has announced a
+                            business collaboration with Thai NS Solutions (Thai
+                            NS), a subsidiary of NS Solutions Corporation from
+                            Japan. This partnership marks a significant
+                            milestone, aiming to enhance capabilities and
+                            deliver digital solutions to a broader customer
+                            base, particularly in the manufacturing sector. The
+                            collaboration creates a competitive edge for
+                            enterprises aspiring to lead in their respective
+                            industries while also supporting G-Able’s expansion
+                            of its customer base.
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      href="https://www.g-able.com/insights/g-able-digitech-ai-2024"
+                    >
+                      <div
+                        class="text-left last:flex flex-col hover:cursor-pointer lg:w-[285px] xl:w-[405px] border border-neutral-400 hover:scale-[1.03] transition-all h-full"
+                      >
+                        <div class="relative w-full h-[227px]">
+                          <span
+                            style="
+                              box-sizing: border-box;
+                              display: block;
+                              overflow: hidden;
+                              width: initial;
+                              height: initial;
+                              background: none;
+                              opacity: 1;
+                              border: 0;
+                              margin: 0;
+                              padding: 0;
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                            "
+                          >
+                            <img
+                              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                              decoding="async"
+                              data-nimg="fill"
+                              class="object-cover"
+                              style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                bottom: 0;
+                                right: 0;
+                                box-sizing: border-box;
+                                padding: 0;
+                                border: none;
+                                margin: auto;
+                                display: block;
+                                width: 0;
+                                height: 0;
+                                min-width: 100%;
+                                max-width: 100%;
+                                min-height: 100%;
+                                max-height: 100%;
+                              "
+                            />
+                            <noscript>
+                              <img
+                                sizes="100vw"
+                                srcset="
+                                  _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F1_Copy_939c0a9619.JPG&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F1_Copy_939c0a9619.JPG&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F1_Copy_939c0a9619.JPG&amp;w=828&amp;q=759.JPG&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F1_Copy_939c0a9619.JPG&amp;w=1080&amp;q=759c0a9619_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F1_Copy_939c0a9619.JPG&amp;w=1200&amp;q=75_Copy_93_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F1_Copy_939c0a9619.JPG&amp;w=1920&amp;q=75.com%2F1_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F1_Copy_939c0a9619.JPG&amp;w=2048&amp;q=75mazonaws_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F1_Copy_939c0a9619.JPG&amp;w=3840&amp;q=75east-1.amazonaws.com%2F1_Copy_939c0a9619.JPG&amp;w=3840&amp;q=75 3840w
+                                "
+                                src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252F1_Copy_939c0a9619.JPG&amp;w=3840&amp;q=75"
+                                decoding="async"
+                                data-nimg="fill"
+                                style="
+                                  position: absolute;
+                                  top: 0;
+                                  left: 0;
+                                  bottom: 0;
+                                  right: 0;
+                                  box-sizing: border-box;
+                                  padding: 0;
+                                  border: none;
+                                  margin: auto;
+                                  display: block;
+                                  width: 0;
+                                  height: 0;
+                                  min-width: 100%;
+                                  max-width: 100%;
+                                  min-height: 100%;
+                                  max-height: 100%;
+                                "
+                                class="object-cover"
+                                loading="lazy"
+                              />
+                            </noscript>
+                          </span>
+                        </div>
+                        <div class="px-6 py-6 bg-white flex-1">
+                          <p class="text-neutral-600">21 November, 2024</p>
+                          <p class="text-lg font-bold mt-2 lg:mt-4">
+                            G-Able Joins Tech Gurus to Unveil Key Technology
+                            Capabilities for Businesses to Thrive in the AI Era
+                            at DigiTech ASEAN Thailand &amp; AI Connect 2024
+                          </p>
+                          <p
+                            class="mt-4 hidden lg:line-clamp-3 description-text"
+                          >
+                            G-Able is steadfast in developing digital solutions
+                            while equipping businesses with the tools to
+                            navigate challenges and achieve their future goals
+                            as AI-ready organizations. To this end, G-Able has
+                            brought together its top experts in Cloud, MarTech,
+                            Gen-AI Solutions, ERP, CRM, and Cybersecurity to
+                            showcase cutting-edge AI-integrated technology
+                            capabilities at DigiTech ASEAN Thailand &amp; AI
+                            Connect 2024, enabling businesses to embark on a
+                            sustainable digital transformation journey.
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      href="https://www.g-able.com/insights/g-able-join-forces-with-bangkok-university"
+                    >
+                      <div
+                        class="text-left last:flex flex-col hover:cursor-pointer lg:w-[285px] xl:w-[405px] border border-neutral-400 hover:scale-[1.03] transition-all h-full"
+                      >
+                        <div class="relative w-full h-[227px]">
+                          <span
+                            style="
+                              box-sizing: border-box;
+                              display: block;
+                              overflow: hidden;
+                              width: initial;
+                              height: initial;
+                              background: none;
+                              opacity: 1;
+                              border: 0;
+                              margin: 0;
+                              padding: 0;
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              bottom: 0;
+                              right: 0;
+                            "
+                          >
+                            <img
+                              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                              decoding="async"
+                              data-nimg="fill"
+                              class="object-cover"
+                              style="
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                bottom: 0;
+                                right: 0;
+                                box-sizing: border-box;
+                                padding: 0;
+                                border: none;
+                                margin: auto;
+                                display: block;
+                                width: 0;
+                                height: 0;
+                                min-width: 100%;
+                                max-width: 100%;
+                                min-height: 100%;
+                                max-height: 100%;
+                              "
+                            />
+                            <noscript>
+                              <img
+                                sizes="100vw"
+                                srcset="
+                                  _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FMOU_BU_1_fbe9e020ec.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FMOU_BU_1_fbe9e020ec.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FMOU_BU_1_fbe9e020ec.jpg&amp;w=828&amp;q=75c.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FMOU_BU_1_fbe9e020ec.jpg&amp;w=1080&amp;q=75e9e020ec_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FMOU_BU_1_fbe9e020ec.jpg&amp;w=1200&amp;q=75_BU_1_fb_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FMOU_BU_1_fbe9e020ec.jpg&amp;w=1920&amp;q=75om%2FMOU_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FMOU_BU_1_fbe9e020ec.jpg&amp;w=2048&amp;q=75zonaws.c_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FMOU_BU_1_fbe9e020ec.jpg&amp;w=3840&amp;q=75st-1.amazonaws.com%2FMOU_BU_1_fbe9e020ec.jpg&amp;w=3840&amp;q=75 3840w
+                                "
+                                src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FMOU_BU_1_fbe9e020ec.jpg&amp;w=3840&amp;q=75"
+                                decoding="async"
+                                data-nimg="fill"
+                                style="
+                                  position: absolute;
+                                  top: 0;
+                                  left: 0;
+                                  bottom: 0;
+                                  right: 0;
+                                  box-sizing: border-box;
+                                  padding: 0;
+                                  border: none;
+                                  margin: auto;
+                                  display: block;
+                                  width: 0;
+                                  height: 0;
+                                  min-width: 100%;
+                                  max-width: 100%;
+                                  min-height: 100%;
+                                  max-height: 100%;
+                                "
+                                class="object-cover"
+                                loading="lazy"
+                              />
+                            </noscript>
+                          </span>
+                        </div>
+                        <div class="px-6 py-6 bg-white flex-1">
+                          <p class="text-neutral-600">13 November, 2024</p>
+                          <p class="text-lg font-bold mt-2 lg:mt-4">
+                            G-Able and Bangkok University Join Forces to Bridge
+                            the Talent Gap in Tech
+                          </p>
+                          <p
+                            class="mt-4 hidden lg:line-clamp-3 description-text"
+                          >
+                            G-Able, a Tech Enabler leading technology company,
+                            and Bangkok University have signed a Memorandum of
+                            Understanding (MOU) to collaborate on developing a
+                            highly skilled workforce for the technology
+                            industry. The agreement was signed by Ms. Thitikarn
+                            Krisanaviparkporn, Senior Executive Vice President
+                            of Human Resources at G-Able, and Asst. Prof.
+                            Sansern Milindasuta, Executive Vice President for
+                            Academic Affairs at Bangkok University, on November
+                            7, 2024.
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                  <button
+                    class="mx-auto mt-10 w-[96%] md:w-auto flex justify-center items-center text-lg font-semibold drop-shadow-sm hover:drop-shadow-md tran transition-all px-[25px] py-[13px] text-white bg-primary hover:bg-orange-400 active:bg-orange-500 focus:outline-none focus:ring focus:bg-orange-300"
+                  >
+                    View All
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="relative w-full h-[600px]">
+              <span
+                style="
+                  box-sizing: border-box;
+                  display: block;
+                  overflow: hidden;
+                  width: initial;
+                  height: initial;
+                  background: none;
+                  opacity: 1;
+                  border: 0;
+                  margin: 0;
+                  padding: 0;
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  bottom: 0;
+                  right: 0;
+                "
+              >
+                <img
+                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                  decoding="async"
+                  data-nimg="fill"
+                  style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    box-sizing: border-box;
+                    padding: 0;
+                    border: none;
+                    margin: auto;
+                    display: block;
+                    width: 0;
+                    height: 0;
+                    min-width: 100%;
+                    max-width: 100%;
+                    min-height: 100%;
+                    max-height: 100%;
+                    object-fit: cover;
+                  "
+                />
+                <noscript>
+                  <img
+                    sizes="100vw"
+                    srcset="
+                      _next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=640&amp;q=75amp;q=7_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=750&amp;q=75p;w=750_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=828&amp;q=75e.jpg&a_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=1080&amp;q=75e15afe0e_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=1200&amp;q=75V1_02_ab_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=1920&amp;q=750x605px__next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=2048&amp;q=75ooter144_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=3840&amp;q=75.com%2FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=3840&amp;q=75 3840w
+                    "
+                    src="_next/image@url=https%253A%252F%252Fgable-prod.s3.ap-southeast-1.amazonaws.com%252FFooter1440x605px_V1_02_abe15afe0e.jpg&amp;w=3840&amp;q=75"
+                    decoding="async"
+                    data-nimg="fill"
+                    style="
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      bottom: 0;
+                      right: 0;
+                      box-sizing: border-box;
+                      padding: 0;
+                      border: none;
+                      margin: auto;
+                      display: block;
+                      width: 0;
+                      height: 0;
+                      min-width: 100%;
+                      max-width: 100%;
+                      min-height: 100%;
+                      max-height: 100%;
+                      object-fit: cover;
+                    "
+                    loading="lazy"
+                  />
+                </noscript>
+              </span>
+              <div
+                class="absolute left-[-16px] top-[63px] hidden lg:block xl:block"
+              >
+                <img
+                  src="https://g-able-strapi-stg.morphosis.dev/noimage.jpg"
+                />
+              </div>
+              <div
+                class="absolute top-20 lg:right-32 md:right-32 right-4 bg-white lg:max-w-md md:max-w-md ml-5 block p-6 shadow-lg w-[92%]"
+              >
+                <div class="mb-10">
+                  <h1 class="mb-2 font-bold card-title-text">
+                    How Can We Help?
+                  </h1>
+                  <p class="mb-4 text-base text-gray-700">
+                    We&#x27;re here to answer any question you might have
+                  </p>
+                  <div
+                    class="flex items-center hover:text-primary hover:cursor-pointer"
+                  >
+                    <span class="font-bold mr-3">Contact Us</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                      class="w-[20px]"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="mb-10">
+                  <h1 class="mb-2 font-bold card-title-text">Join Our Team</h1>
+                  <p class="mb-4 text-base text-gray-700">
+                    Learn more about the exciting career opportunities available
+                    at G-Able
+                  </p>
+                  <a href="https://careers.g-able.com/" target="blank">
+                    <div
+                      class="flex items-center hover:text-primary hover:cursor-pointer"
+                    >
+                      <span class="font-bold mr-3">Career</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                        class="w-[20px]"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                        ></path>
+                      </svg>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>

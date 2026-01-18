@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SVcard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon.png" />
+    
+    <link rel="stylesheet" href="_next/static/css/b8ee2434264082cb.css" />
+       
+    <style>
+    /* ==========================================
+   DROPDOWN FIXES - ป้องกันซ้อนกัน
+   ========================================== */
+
+.dropdown-content {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  z-index: 999; /* เพิ่ม z-index */
+  border-radius: 8px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: normal; /* แก้ text ซ้อน */
+}
+
+/* แก้ความกว้างของแต่ละ dropdown */
+.dropdown-content {
+  min-width: 320px;
+  max-width: 90vw; /* ไม่ให้เกินหน้าจอ */
+}
+
+/* Industries dropdown - กว้างกว่า */
+.group:nth-child(2) .dropdown-content {
+  min-width: 750px;
+}
+
+/* About Us dropdown - กว้างกว่า */
+.group:nth-child(4) .dropdown-content {
+  min-width: 620px;
+}
+/* ==========================================
+   BEAUTIFUL MOBILE MENU
+   ========================================== */
+
+   #mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 85%;
+  max-width: 380px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  z-index: 9999;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  box-shadow: -5px 0 30px rgba(0, 0, 0, 0.6);
+}
+
+#mobile-menu.active {
+  transform: translateX(0);
+}
+
+/* Custom Scrollbar */
+#mobile-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+#mobile-menu::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#mobile-menu::-webkit-scrollbar-thumb {
+  background: #F2900A;
+  border-radius: 3px;
+}
+
+/* Close Button Enhancement */
+#mobile-menu-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(242, 144, 10, 0.1);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+#mobile-menu-close:hover {
+  background: rgba(242, 144, 10, 0.2);
+  transform: rotate(90deg);
+}
+
+#mobile-menu-close svg {
+  color: #F2900A;
+}
+
+/* Menu Items Enhancement */
+.mobile-dropdown-trigger {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.mobile-dropdown-trigger::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: #F2900A;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.mobile-dropdown-trigger:hover::before,
+.mobile-dropdown-trigger.active::before {
+  transform: scaleY(1);
+}
+
+.mobile-dropdown-trigger:hover {
+  background: rgba(242, 144, 10, 0.1);
+  transform: translateX(5px);
+}
+
+/* Dropdown Content */
+.mobile-dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0 0 12px 12px;
+  margin-top: 8px;
+}
+
+.mobile-dropdown-content.active {
+  max-height: 800px;
+}
+
+.mobile-dropdown-content a {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.mobile-dropdown-content a::before {
+  content: '→';
+  position: absolute;
+  left: 1rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.mobile-dropdown-content a:hover::before {
+  opacity: 1;
+  left: 0.75rem;
+}
+
+/* Language Switcher Enhancement */
+#mobile-menu .flex.items-center.justify-center {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+#mobile-menu button.bg-primary {
+  background: linear-gradient(135deg, #F2900A 0%, #FF6B00 100%);
+  box-shadow: 0 4px 15px rgba(242, 144, 10, 0.3);
+  transition: all 0.3s ease;
+}
+
+#mobile-menu button.bg-primary:hover {
+  box-shadow: 0 6px 20px rgba(242, 144, 10, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Overlay Enhancement */
+#mobile-menu-overlay {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.7);
+}
+/* ==========================================
+   MOBILE MENU STYLES
+   ========================================== */
+
+#mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+#mobile-menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+#mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 320px;
+  background: #1f1f1f;
+  z-index: 50;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
+}
+
+#mobile-menu.active {
+  transform: translateX(0);
+}
+
+/* Mobile dropdown */
+.mobile-dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-dropdown-content.active {
+  max-height: 1000px;
+}
+
+.mobile-dropdown-trigger svg {
+  transition: transform 0.3s ease;
+}
+
+.mobile-dropdown-trigger.active svg {
+  transform: rotate(180deg);
+}
+
+/* ==========================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================== */
+
+@media (max-width: 1024px) {
+  .dropdown-content {
+    display: none !important;
+  }
+}
+
+/* Prevent body scroll when menu open */
+body.menu-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+
+/* ==========================================
+   HERO IMAGE KEN BURNS EFFECT
+   ========================================== */
+
+.swiper-slide img {
+  animation: kenBurns 20s ease-out infinite alternate;
+  transform-origin: center center;
+}
+
+@keyframes kenBurns {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.15);
+  }
+}
+
+/* หยุด animation เมื่อ hover */
+.swiper-slide:hover img {
+  animation-play-state: paused;
+}
+
+/* ==========================================
+   SOLUTIONS SECTION ENHANCEMENTS
+   ========================================== */
+
+   .solution-image img {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.solution-image + div h3,
+.solution-image + div .line-clamp-3 {
+  transition: opacity 0.5s ease;
+}
+
+/* Solution Button Hover Effects */
+.hover\:text-primary {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.hover\:text-primary::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%) scaleX(0);
+  width: 3px;
+  height: 70%;
+  background: #F2900A;
+  border-radius: 2px;
+  transition: transform 0.3s ease;
+}
+
+.hover\:text-primary:hover::before,
+.hover\:text-primary.active::before {
+  transform: translateY(-50%) scaleX(1);
+}
+
+.hover\:text-primary svg {
+  transition: all 0.3s ease;
+}
+
+.hover\:text-primary:hover svg {
+  transform: translateX(5px);
+}
+
+/* Dropdown hover effect */
+.group:hover .group-hover\:visible {
+  visibility: visible;
+}
+
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+/* Smooth transition for dropdown */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+/* เพิ่มใน style tag หรือ CSS file */
+.relative.bg-red-200 {
+  position: relative;
+  z-index: 10; /* ให้ dropdown อยู่ด้านบน */
+}
+      </style>
+  </head>
+  <!-- MOBILE MENU OVERLAY -->
+<div id="mobile-menu-overlay"></div>
+
+<!-- MOBILE MENU SIDEBAR -->
+<div id="mobile-menu">
+  <div class="p-6">
+    <!-- Close Button -->
+    <button id="mobile-menu-close" class="absolute top-5 right-5 text-white p-2 hover:bg-neutral-800 rounded-full transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <!-- Logo -->
+    <div class="mt-12 mb-8">
+      <img src="/SVpark/assets/images/uploads/2024/12/cropped-New-Logo-192x192.png" alt="G-Able" class="h-14">
+    </div>
+
+    <!-- Menu Items -->
+    <nav class="space-y-2">
+      
+      <!-- Solutions -->
+      <div class="mobile-dropdown">
+        <button class="mobile-dropdown-trigger w-full flex items-center justify-between py-3.5 px-4 text-white font-medium hover:bg-neutral-800 rounded-lg transition-all">
+          <span>Solutions</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <div class="mobile-dropdown-content">
+          <div class="pl-4 pt-2 pb-2 space-y-0.5">
+            <a href="/solutions/cybersecurity" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Cybersecurity</a>
+            <a href="/solutions/cloud" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Cloud & Data Center</a>
+            <a href="/solutions/data-analytics" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Data & Analytics</a>
+            <a href="/solutions/digital" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Digital Business</a>
+            <a href="/solutions/managed" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Managed Services</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Industries -->
+      <div class="mobile-dropdown">
+        <button class="mobile-dropdown-trigger w-full flex items-center justify-between py-3.5 px-4 text-white font-medium hover:bg-neutral-800 rounded-lg transition-all">
+          <span>Industries</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <div class="mobile-dropdown-content">
+          <div class="pl-4 pt-2 pb-2 space-y-0.5">
+            <a href="/industries/education" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Education</a>
+            <a href="/industries/energy" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Energy & Industrial</a>
+            <a href="/industries/financial" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">FSI (Financial)</a>
+            <a href="/industries/telecom" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Telecommunication</a>
+            <a href="/industries/media" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Media</a>
+            <a href="/industries/retail" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Retail</a>
+            <a href="/industries/healthcare" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Healthcare</a>
+            <a href="/industries/real-estate" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Real Estate</a>
+            <a href="/industries/service" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Service</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Insights -->
+      <a href="/insights" class="block py-3.5 px-4 text-white font-medium hover:bg-neutral-800 rounded-lg transition-colors">
+        Insights
+      </a>
+
+      <!-- About Us -->
+      <div class="mobile-dropdown">
+        <button class="mobile-dropdown-trigger w-full flex items-center justify-between py-3.5 px-4 text-white font-medium hover:bg-neutral-800 rounded-lg transition-all">
+          <span>About Us</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <div class="mobile-dropdown-content">
+          <div class="pl-4 pt-2 pb-2 space-y-0.5">
+            <a href="/about/g-able" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">About G-Able</a>
+            <a href="/about/board" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">Board of Directors</a>
+            <a href="/about/news" class="block py-2.5 px-4 text-sm text-neutral-300 hover:text-primary hover:bg-neutral-800 rounded-lg transition-colors">News & Events</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other Links -->
+      <a href="https://investor.g-able.com" target="_blank" class="block py-3.5 px-4 text-white font-medium hover:bg-neutral-800 rounded-lg transition-colors">
+        Investor Relations
+      </a>
+      
+      <a href="/career" class="block py-3.5 px-4 text-white font-medium hover:bg-neutral-800 rounded-lg transition-colors">
+        Career
+      </a>
+
+    </nav>
+
+    <!-- Language & Contact -->
+    <div class="mt-8 pt-6 border-t border-neutral-700">
+      <div class="flex items-center justify-center space-x-4 mb-5">
+        <button class="px-3 py-1 text-white font-bold bg-primary rounded">EN</button>
+        <span class="text-neutral-500">|</span>
+        <button class="px-3 py-1 text-neutral-400 font-bold hover:text-white transition-colors">TH</button>
+      </div>
+      <button class="w-full py-3.5 bg-primary text-white font-semibold rounded-lg hover:bg-orange-400 active:bg-orange-500 transition-colors shadow-lg">
+        Contact Us
+      </button>
+    </div>
+  </div>
+</div>
+  <body>
+    <div id="__next">
+      <div class="h-screen flex flex-col">
+
+        <div class="fixed z-[60] text-white bg-neutral-900 w-full h-[64px] lg:h-[86px] flex items-center transition-all duration-500 -top-[90px]">
+          <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8">
+            <div class="flex items-center">
+              <form class="w-full">
+                <input
+                  type="text"
+                  placeholder="Type to search..."
+                  class="flex-1 w-full border-none appearance-none bg-neutral-900 placeholder-neutral-500 focus:outline-none order-transparent focus:border-transparent focus:ring-0"
+                  value=""
+                />
+              </form>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                aria-hidden="true"
+                class="w-6 h-6 cursor-pointer"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+      
+      <div class="h-screen flex flex-col">
+
+
+        
+        <div
+          class="fixed z-[60] text-white bg-neutral-900 w-full h-[64px] lg:h-[86px] flex items-center transition-all duration-500 -top-[90px]"
+        >
+          <div
+            class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8"
+          >
+            <div class="flex items-center">
+              <form class="w-full">
+                <input
+                  placeholder="Type to search..."
+                  class="flex-1 w-full border-none appearance-none bg-neutral-900 placeholder-neutral-500 focus:outline-none order-transparent focus:border-transparent focus:ring-0"
+                  value=""
+                />
+              </form>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                aria-hidden="true"
+                class="w-6 h-6 cursor-pointer"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="fixed bg-neutral-900 top-0 z-50 left-0 right-0 transition-all duration-500 h-[64px] lg:h-[86px] flex justify-center items-center">
+          <div class="w-full xl:max-w-7xl mx-auto lg:px-0 flex h-full items-center z-40">
+            <div class="container lg:px-4 xl:px-0 lg:mx-auto flex items-center">
+              
+              <div class="mr-1 -my-2 lg:hidden justify-self-start">
+                <div class="inline-flex items-center justify-center p-2 text-gray-400 rounded-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="block w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                  </svg>
+                </div>
+              </div>
+
+              <div>
+                <a class="flex items-center" href="index.html">
+                  <span class="sr-only">SVpark</span>
+                  <img
+                    alt="SVpark"
+                    src="/SVpark/assets/images/uploads/2024/12/cropped-New-Logo-192x192.png"
+                    class="object-cover lg:w-[50px] lg:h-[50px] w-[50px] h-[50px] lg:mr-[36.5px]"
+                  />
+                </a>
+              </div>
+
+              <div class="hidden lg:flex-1 lg:flex lg:items-center lg:justify-between">
+                <nav class="flex items-baseline">
+                 <!-- ==========================================
+     NAVIGATION MENU WITH DROPDOWNS
+     ========================================== -->
+
+     <!-- ส่วน Solutions -->
+<div class="group relative">
+  <div class="inline-flex items-center text-base lg:text-xs xl:text-[16px] whitespace-nowrap font-medium relative lg:mr-[17px] cursor-pointer">
+    <span class="text-white group-hover:text-primary transition-colors">Solutions</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+      class="text-white group-hover:text-primary lg:w-4 lg:h-4 xl:w-5 w-5 h-5 ml-2 transition"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+        clip-rule="evenodd"
+      ></path>
+    </svg>
+  </div>
+  
+  <!-- Dropdown Menu -->
+  <div class="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 absolute left-0 top-full pt-4 z-50">
+    <div class="bg-white shadow-xl rounded-lg p-6 w-[320px]">
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Cybersecurity
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Cloud and Data Center Modernization
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Data and Analytics
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Digital Business and Application
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors">
+        Managed Tech Services
+      </a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ส่วน Industries -->
+<div class="group relative">
+  <div class="inline-flex items-center text-base lg:text-xs xl:text-[16px] whitespace-nowrap font-medium relative lg:mr-[17px] cursor-pointer">
+    <span class="text-white group-hover:text-primary transition-colors">Industries</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+      class="text-white group-hover:text-primary lg:w-4 lg:h-4 xl:w-5 w-5 h-5 ml-2 transition"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+        clip-rule="evenodd"
+      ></path>
+    </svg>
+  </div>
+  
+  <!-- Dropdown Menu with 3 columns -->
+  <div class="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 absolute left-0 top-full pt-4 z-50">
+    <div class="bg-white shadow-xl rounded-lg p-6 w-[420px]">
+      <div class="grid grid-cols-3 gap-4">
+        <!-- Column 1 -->
+        <div>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+            Education
+          </a>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+            Energy & Industrial
+          </a>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+            FSI (Financial)
+          </a>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors">
+            Telecommunication
+          </a>
+        </div>
+        
+        <!-- Column 2 -->
+        <div>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+            Media
+          </a>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+            Retail
+          </a>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+            Healthcare
+          </a>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors">
+            Real Estate
+          </a>
+        </div>
+        
+        <!-- Column 3 -->
+        <div>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+            Service
+          </a>
+          <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors">
+            SMEs & Startups
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 3. INSIGHTS LINK (No Dropdown) -->
+<a class="font-medium lg:text-xs xl:text-[16px] whitespace-nowrap text-skin-base hover:font-bold hover:text-skin-inverted lg:mr-[32px]" href="/insights">
+  Insights
+</a>
+
+<!-- ส่วน About Us -->
+<div class="group relative">
+  <div class="inline-flex items-center text-base lg:text-xs xl:text-[16px] whitespace-nowrap font-medium relative lg:mr-[17px] cursor-pointer">
+    <span class="text-white group-hover:text-primary transition-colors">About Us</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+      class="text-white group-hover:text-primary lg:w-4 lg:h-4 xl:w-5 w-5 h-5 ml-2 transition"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+        clip-rule="evenodd"
+      ></path>
+    </svg>
+  </div>
+  
+  <!-- Dropdown Menu -->
+  <div class="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 absolute left-0 top-full pt-4 z-50">
+    <div class="bg-white shadow-xl rounded-lg p-6 w-[300px]">
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        About G-Able
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Business Structure
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Organization Structure
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Board of Directors
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Sub-Committees
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Executives
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        News & Events
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors mb-1">
+        Awards & Recognition
+      </a>
+      <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-yellow-50 hover:text-primary rounded-md transition-colors">
+        Technology Alliance
+      </a>
+    </div>
+  </div>
+</div>
+
+                  <a href="https://investor.g-able.com/en/home" target="_blank" rel="noopener noreferrer" class="font-medium lg:text-xs xl:text-[16px] whitespace-nowrap text-skin-base hover:font-bold hover:text-skin-inverted lg:mr-[32px]">
+                    Investor Relations
+                  </a>
+
+                  <a href="policy/Careers-ma.html" target="_blank" rel="noopener noreferrer" class="font-medium lg:text-xs xl:text-[16px] whitespace-nowrap text-skin-base hover:font-bold hover:text-skin-inverted lg:mr-[32px]">
+                    Career
+                  </a>
+                </nav>
+
+                <div class="flex items-center lg:ml-0 md:ml-12">
+                  <div class="flex w-20 text-white justify-evenly">
+                    <div class="hover:cursor-pointer">
+                      <a class="font-bold text-skin-inverted hover:text-skin-inverted-hover">EN</a>
+                    </div>
+                    |
+                    <div class="hover:cursor-pointer">
+                      <a class="font-bold text-skin-base hover:text-skin-inverted">TH</a>
+                    </div>
+                  </div>
+
+                  <button class="mx-8 flex justify-center items-center text-lg font-semibold drop-shadow-sm hover:drop-shadow-md tran transition-all px-[17px] py-[9px] text-white bg-primary hover:bg-orange-400 active:bg-orange-500 focus:outline-none focus:ring focus:bg-orange-300">
+                    Contact Us
+                  </button>
+
+                  <button type="button" class="inline-flex items-center p-1 mr-6 text-white border border-transparent rounded-full shadow-sm hover:text-skin-inverted-hover">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="absolute lg:hidden xl:hidden lg:top-2 lg:right-0 -right-4">
+                <button type="button" class="inline-flex items-center p-2 mr-6 text-white border border-transparent rounded-full shadow-sm lg:p-1 hover:text-skin-inverted-hover">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <div class="bg-neutral-200 flex-1">
+          <main class="h-full overflow-x-hidden overflow-y-hidden app description-text">
+            
+            <div class="h-[640px] lg:h-[810px] relative">
+              <div class="z-10 h-[600px] lg:h-[810px] w-full absolute pointer-events-none bg-transparent">
+                <div class="absolute right-[16px] lg:right-[80px] bottom-[60px] lg:bottom-[55px]">
+                  <div class="relative">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                      <circle class="fill-transparent stroke-white" cx="40" cy="40" r="39" stroke-width="2px" shape-rendering="geometricPrecision"></circle>
+                      <circle
+                        class="fill-transparent stroke-primary"
+                        cx="40"
+                        cy="40"
+                        r="39"
+                        stroke-width="2px"
+                        transform="rotate(-90 40 40)"
+                        shape-rendering="geometricPrecision"
+                        style="stroke-dasharray: 245.044; stroke-dashoffset: 0;"
+                      ></circle>
+                    </svg>
+                    <span class="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-body-large">
+                      1<span class="ml-[0.5px] mr-[0.5px]">/</span>1
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="swiper h-full">
+                <div class="swiper-wrapper">
+                  <div class="swiper-slide relative w-full h-full">
+                    <img
+                      src="/SV_park/assets/images/uploads/2024/12/Car-9-Parking-1280x721.png"
+                      class="object-cover w-full h-full absolute inset-0"
+                      alt="Hero Banner"
+                    />
+                    <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 absolute top-[136px] left-1/2 -translate-x-1/2 lg:top-[232px]">
+                      <div class="w-full lg:px-0">
+                        <h1 class="text-white text-7xl md:text-8xl font-bold break-words lg:w-[613px]"></h1>
+                        <div class="font-bold text-white mt-4 lg:mt-6 opacity-80 text-base lg:text-[24px]"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background-color: #323232">
+              <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8">
+                <div class="text-center" style="color: white">
+                  <p class="text-4xl lg:text-7xl font-bold mb-2">
+                    About <span class="text-primary">G-Able</span>
+                  </p>
+                </div>
+                <div class="text-body-medium text-center mt-2 lg:w-[874px] lg:mx-auto mb-8" style="color: white">
+                  We partner with world-class tech companies to provide our clients with modern digital solutions, enterprise business solutions, and IT infrastructure solutions
+                </div>
+                
+                <div class="flex flex-col space-y-4 lg:flex-row lg:mb-0 lg:justify-center lg:space-x-8 lg:space-y-0 lg:pb-0">
+                  <div class="bg-white lg:w-[315px] lg:h-[234px] h-[89px] items-center flex lg:flex-col lg:text-center px-4 lg:px-0 space-x-4 lg:space-x-0">
+                    <h1 class="inline-block font-bold lg:pt-8">36<span class="text-primary">Y</span></h1>
+                    <div class="lg:text-body-large text-neutral-600 lg:mt-2 lg:w-[238px] lg:mx-auto">
+                      More than three decades of experience and expertise in digital technology
+                    </div>
+                  </div>
+                  <div class="bg-white lg:w-[315px] lg:h-[234px] h-[89px] items-center flex lg:flex-col lg:text-center px-4 lg:px-0 space-x-4 lg:space-x-0">
+                    <h1 class="inline-block font-bold lg:pt-8">100<span class="text-primary">+</span></h1>
+                    <div class="lg:text-body-large text-neutral-600 lg:mt-2 lg:w-[238px] lg:mx-auto">
+                      We work with world-class corporate alliance
+                    </div>
+                  </div>
+                  <div class="bg-white lg:w-[315px] lg:h-[234px] h-[89px] items-center flex lg:flex-col lg:text-center px-4 lg:px-0 space-x-4 lg:space-x-0">
+                    <h1 class="inline-block font-bold lg:pt-8">1,000<span class="text-primary">+</span></h1>
+                    <div class="lg:text-body-large text-neutral-600 lg:mt-2 lg:w-[238px] lg:mx-auto">
+                      Active Customers from various industries
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-8 pb-8 bg-white lg:pt-16 lg:pb-16">
+              <div class="static flex flex-col m-auto lg:relative lg:flex-row lg:max-w-4xl xl:max-w-7xl lg:justify-between">
+                
+                <div class="lg:w-[32%]">
+                  <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0">
+                    <div class="mb-2 text-gray-500 uppercase">Our Solutions</div>
+                    <h2 class="md:text-[40px] font-bold text-black lg:w-full mb-6 lg:mb-10">
+                      Exceed All Your Business Needs
+                    </h2>
+                  </div>
+
+                  <div class="hover:cursor-pointer">
+                    <div>
+                      <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0">
+                        <div>
+                          <div class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between">
+                            <div class="font-bold text-primary">Cybersecurity</div>
+                            <div>
+                              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" class="rotate-90 md:rotate-0">
+                                <path d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z" fill="#F2900A"></path>
+                              </svg>
+                            </div>
+                          </div>
+                          <div class="h-[1px] bg-neutral-400 w-full"></div>
+                        </div>
+                      </div>
+                      <div class="lg:hidden border-b pb-8 bg-gray-200 block">
+                         <div class="w-screen h-[220px] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+                            <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_Security_OPT_3_1_3a928d7886.jpg" class="object-cover w-full h-full" alt="Cybersecurity">
+                         </div>
+                         <div class="p-6">
+                            Ensure your business isn’t vulnerable to cyber attacks and cybercrime with our end-to-end services and experienced solutions team.
+                         </div>
+                         <button class="w-[90%] m-auto flex justify-center items-center text-lg font-semibold drop-shadow-sm hover:drop-shadow-md transition-all px-[25px] py-[13px] text-white bg-primary hover:bg-orange-400">
+                            Learn More
+                         </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0">
+                        <div class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between">
+                          <div class="font-normal">Cloud and Data Center Modernization</div>
+                          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z" fill="#4A4A4A"></path></svg>
+                        </div>
+                        <div class="h-[1px] bg-neutral-400 w-full"></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0">
+                        <div class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between">
+                          <div class="font-normal">Data and Analytics</div>
+                          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z" fill="#4A4A4A"></path></svg>
+                        </div>
+                        <div class="h-[1px] bg-neutral-400 w-full"></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0">
+                        <div class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between">
+                          <div class="font-normal">Digital Business and Application</div>
+                          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z" fill="#4A4A4A"></path></svg>
+                        </div>
+                        <div class="h-[1px] bg-neutral-400 w-full"></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0">
+                        <div class="flex items-center w-full text-body-small lg:text-body-large py-3 hover:text-primary justify-between">
+                          <div class="font-normal">Managed Tech Services</div>
+                          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M0.166992 0.333008L12.667 6.62333L0.166992 12.833L3.12752 6.62333L0.166992 0.333008Z" fill="#4A4A4A"></path></svg>
+                        </div>
+                        <div class="h-[1px] bg-neutral-400 w-full"></div>
+                      </div>
+                    </div>
+
+                    <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0">
+                      <div class="mt-8 lg:mt-10">
+                        <div class="flex items-center hover:text-primary hover:cursor-pointer">
+                          <span class="font-bold mr-3">View All Solutions</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="w-[20px]">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="lg:w-[60%] lg:relative">
+                  <div class="hidden relative lg:block solution-image lg:w-[100%] w-[784px]">
+                    <img
+                      src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_Security_OPT_3_1_3a928d7886.jpg"
+                      class="object-cover w-full h-full image-hover absolute inset-0"
+                      alt="Cybersecurity"
+                    />
+                    <div class="w-[569px] lg:w-[74%] min-h-[266px] absolute bottom-0 left-0 bg-neutral-200 px-8">
+                      <h3 class="font-bold mt-8 text-black text-[30px] leading-[44.8px]">Cybersecurity</h3>
+                      <div class="mt-4 line-clamp-3">
+                        Ensure your business isn’t vulnerable to cyber attacks and cybercrime with our end-to-end services and experienced solutions team.
+                      </div>
+                      <button class="mt-6 mb-4 flex justify-center items-center text-lg font-semibold drop-shadow-sm hover:drop-shadow-md transition-all px-[25px] py-[13px] text-white bg-primary hover:bg-orange-400">
+                        Learn More
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="relative">
+              <img
+                src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/BG_Insight_CI_02_61a1230860.jpg"
+                class="absolute inset-0 object-cover w-full h-full"
+                alt="Background"
+              />
+              
+              <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8 relative">
+                <div class="text-center" style="color: #ffff">
+                  <p class="text-4xl lg:text-7xl font-bold mb-2">Our <span class="text-primary">Insights</span></p>
+                  <div class="text-[18px] leading-[25.2px] text-center lg:w-[874px] w-full mx-auto px-4">
+                    Keep up to date with business trends and innovation technology to unlock idea and drive your business
+                  </div>
+                </div>
+
+                <div class="flex flex-col w-full mt-8 space-y-6 lg:space-y-0 lg:flex-row lg:space-x-8">
+                  <div class="shrink-0">
+                    <div class="card lg:w-[626px] bg-white hover:cursor-pointer hover:scale-[1.03]">
+                      <div class="relative w-full lg:h-[352px] h-[192px] block">
+                        <img
+                          src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/Cover_Wholesale_1920x1080px_f6e7d80b09.jpg"
+                          class="w-full h-full object-cover"
+                          alt="Wholesale"
+                        />
+                        <div class="absolute top-2 right-2 text-white bg-black text-caption font-bold px-[10px] py-1 bg-opacity-60">
+                          DATA ANALYTICS
+                        </div>
+                      </div>
+                      <div class="p-4 lg:h-[246px]">
+                        <div class="card-title-lg line-clamp-3">
+                          Improving Wholesale Operations with Data-Driven Supplier Dashboards
+                        </div>
+                        <div class="mt-4 hidden lg:line-clamp-2">
+                          The supplier dashboard is a part of the wholesale company's data monetization strategy.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-6 lg:space-y-8 lg:w-[630px]">
+                    
+                    <div class="card h-[97px] flex lg:flex lg:h-[177px] hover:cursor-pointer hover:scale-[1.03] lg:w-[166px]">
+                      <div class="relative w-[154px] lg:w-[316px] h-full block shrink-0">
+                        <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/Cover_Telecom_1920x1080px_934d452c51.jpg" class="w-full h-full object-cover" alt="Telecom">
+                        <div class="absolute top-2 right-2 text-white bg-black text-caption font-bold px-[10px] py-1 bg-opacity-60">DATA ANALYTICS</div>
+                      </div>
+                      <div class="w-full px-2 bg-white lg:px-6 lg:w-auto lg:pt-3 lg:shrink-0">
+                        <div class="pt-2 mb-2 text-sm lg:pt-0 text-neutral-600">07 August, 2024</div>
+                        <div class="font-bold text-base lg:card-title-md mb-3 lg:w-[282px] lg:text-lg line-clamp-2">
+                          Near Real-Time Anomaly Detection: Detect Network Signal Anomalies Within 5 Seconds
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card h-[97px] flex lg:flex lg:h-[177px] hover:cursor-pointer hover:scale-[1.03] lg:w-[166px]">
+                       <div class="relative w-[154px] lg:w-[316px] h-full block shrink-0">
+                        <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/Cover_Warehouse_1920x1080px_0b5d9fcac7.jpg" class="w-full h-full object-cover" alt="Warehouse">
+                        <div class="absolute top-2 right-2 text-white bg-black text-caption font-bold px-[10px] py-1 bg-opacity-60">DATA ANALYTICS</div>
+                      </div>
+                      <div class="w-full px-2 bg-white lg:px-6 lg:w-auto lg:pt-3 lg:shrink-0">
+                        <div class="pt-2 mb-2 text-sm lg:pt-0 text-neutral-600">07 August, 2024</div>
+                        <div class="font-bold text-base lg:card-title-md mb-3 lg:w-[282px] lg:text-lg line-clamp-2">
+                          Empowering Business Operations in the Logistics Industry with Data Warehouse
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card h-[97px] flex lg:flex lg:h-[177px] hover:cursor-pointer hover:scale-[1.03] lg:w-[166px]">
+                       <div class="relative w-[154px] lg:w-[316px] h-full block shrink-0">
+                        <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/Cover_Education_1920x1080px_926ccb5e95.jpg" class="w-full h-full object-cover" alt="Education">
+                        <div class="absolute top-2 right-2 text-white bg-black text-caption font-bold px-[10px] py-1 bg-opacity-60">DATA ANALYTICS</div>
+                      </div>
+                      <div class="w-full px-2 bg-white lg:px-6 lg:w-auto lg:pt-3 lg:shrink-0">
+                        <div class="pt-2 mb-2 text-sm lg:pt-0 text-neutral-600">07 August, 2024</div>
+                        <div class="font-bold text-base lg:card-title-md mb-3 lg:w-[282px] lg:text-lg line-clamp-2">
+                          Enhancing Operational Efficiency in the Education Industry with Big Data Platform
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                
+                <button class="mx-auto mt-8 flex justify-center items-center text-lg font-semibold drop-shadow-sm hover:drop-shadow-md transition-all px-[25px] py-[13px] text-white bg-primary hover:bg-orange-400">
+                  View All
+                </button>
+              </div>
+            </div>
+
+            <div class="text-center bg-white">
+              <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8">
+                <div class="text-center">
+                  <p class="text-4xl lg:text-7xl font-bold mb-2">Partner <span class="text-primary">Solutions</span></p>
+                  <div class="text-[18px] leading-[25.2px] text-center lg:w-[874px] w-full mx-auto px-4">
+                    Solutions from our partner alliances focus on innovation and technology. Support your business readiness for digital transformation
+                  </div>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-4 mt-8">
+                  <div class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none">
+                    <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/10_a237c7a48f.jpg" class="max-h-full max-w-full object-contain" alt="Partner">
+                  </div>
+                  <div class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none">
+                    <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/dell_technologies_88cabff7c0_Copy_a1f14e18a7.png" class="max-h-full max-w-full object-contain" alt="Dell">
+                  </div>
+                  <div class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none">
+                    <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/huawei_1_8735d09732.png" class="max-h-full max-w-full object-contain" alt="Huawei">
+                  </div>
+                   <div class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none">
+                    <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/microsoft_85b1ee7ae6_91ee2f35a4.png" class="max-h-full max-w-full object-contain" alt="Microsoft">
+                  </div>
+                   <div class="lg:w-[167.96px] lg:h-[68.24px] bg-white shrink-0 w-[160px] h-[68px] flex items-center justify-center shadow-sm border border-neutral-200 lg:border-none">
+                    <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/oracle_df2cd4befb_1a98809337.png" class="max-h-full max-w-full object-contain" alt="Oracle">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8">
+              <div class="text-center">
+                <div class="text-center">
+                  <p class="text-4xl lg:text-7xl font-bold mb-2">Customer <span class="text-primary">Success Stories</span></p>
+                  <div class="text-[18px] leading-[25.2px] text-center lg:w-[874px] w-full mx-auto px-4">
+                    Increase your business potential with tailored solutions to meet your organization's unique needs
+                  </div>
+                </div>
+                
+                <div class="lg:flex lg:mt-8 lg:space-x-20">
+                  <div class="text-left">
+                    <p class="font-bold mb-2 w-[447px] pt-6 lg:pt-0">Industries</p>
+                    <div class="relative z-10">
+                      <div class="w-full lg:w-[447px]">
+                        <button
+                          onclick="toggleIndustryDropdown()"
+                          class="flex items-center justify-center w-full px-4 py-2 font-medium bg-white border focus:outline-none border-neutral-500"
+                          type="button"
+                        >
+                          <div class="flex-1 text-left line-clamp-1" id="selected-industry">Education</div>
+                          <div>
+                            <svg width="16" height="9" viewBox="0 0 16 9" fill="none">
+                              <path d="M15 1L8 8L1 1" stroke="#323232" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                          </div>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div id="industry-dropdown" class="hidden absolute w-full bg-white border border-neutral-500 mt-1 max-h-60 overflow-y-auto z-20 shadow-lg">
+                          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="selectIndustry(0)">Education</div>
+                          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="selectIndustry(1)">FSI (Financial)</div>
+                          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="selectIndustry(2)">Telecommunication</div>
+                          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="selectIndustry(3)">Media</div>
+                          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="selectIndustry(4)">Retail</div>
+                          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="selectIndustry(5)">Healthcare</div>
+                          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="selectIndustry(6)">Real Estate</div>
+                          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" onclick="selectIndustry(7)">Service</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="lg:flex-1">
+                    <p class="text-left text-base lg:text-body-medium mt-6 lg:mt-0">
+                      At G-Able, we see our clients as our most valuable asset. We believe that your success is our success, and we are here to provide your with the technologies, services, and consultation get to help you reach your goals.
+                    </p>
+                    <div class="flex items-center hover:text-primary hover:cursor-pointer mt-8 mb-8 lg:mb-0 lg:mt-6 text-xl lg:text-desktop-medium-xl">
+                      <span class="font-bold mr-3">View All Solutions</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-[30px]">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="lg:w-full flex bg-white lg:mt-16 flex-col-reverse lg:flex-row lg:h-[527px]">
+                  <div class="p-4 lg:pt-16 lg:pl-16 lg:pr-16 lg:w-[525px]">
+                    <div class="lg:min-h-[300px] transition-all">
+                      <p id="industry-title" class="text-left text-lg lg:main-title-text sm:description-text font-bold">
+                        Education Industry
+                      </p>
+                      <p id="industry-description" class="text-left pt-2 lg:pt-4 sm:text-base lg:description-text whitespace-pre-line">
+                        A holistic approach to educational institution's efficiency.
+                
+                We enhance teaching and learning environments and make school management processes easy, adaptable, and seamless.
+                      </p>
+                    </div>
+                    <div class="flex items-center hover:text-primary hover:cursor-pointer text-base mt-4 lg:mt-6">
+                      <span class="font-bold mr-3">Learn More</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-[20px]">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  <div class="lg:flex-auto lg:w-[755px] lg:h-full relative h-[238px] w-full overflow-hidden">
+                    <img
+                      id="industry-image"
+                      src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_EDU_V31_bb438d3dc6.jpg"
+                      class="object-cover w-full h-full transition-all duration-300"
+                      alt="Industry"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white">
+              <div class="container max-w-[91.4%] md:max-w-[4xl] lg:max-w-4xl xl:max-w-7xl mx-auto lg:px-0 lg:pt-16 pt-8 lg:pb-16 pb-8">
+                <div class="text-center">
+                  <div class="text-center">
+                    <p class="text-4xl lg:text-7xl font-bold mb-2">Our <span class="text-primary">News</span></p>
+                  </div>
+                  
+                  <div class="flex flex-col mt-6 space-y-8 lg:flex-row lg:space-y-0 lg:space-x-4 lg:mt-10">
+                    <a href="#" class="block">
+                      <div class="text-left last:flex flex-col hover:cursor-pointer lg:w-[285px] xl:w-[405px] border border-neutral-400 hover:scale-[1.03] transition-all h-full">
+                        <div class="relative w-full h-[227px]">
+                          <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/3_8a1263c9ea.jpg" class="object-cover w-full h-full" alt="News 1">
+                        </div>
+                        <div class="px-6 py-6 bg-white flex-1">
+                          <p class="text-neutral-600">16 January, 2025</p>
+                          <p class="text-lg font-bold mt-2 lg:mt-4">
+                            G-ABLE Signs Comprehensive Partnership Agreement with Thai NS Solutions...
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a href="#" class="block">
+                      <div class="text-left last:flex flex-col hover:cursor-pointer lg:w-[285px] xl:w-[405px] border border-neutral-400 hover:scale-[1.03] transition-all h-full">
+                        <div class="relative w-full h-[227px]">
+                          <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/1_Copy_939c0a9619.JPG" class="object-cover w-full h-full" alt="News 2">
+                        </div>
+                        <div class="px-6 py-6 bg-white flex-1">
+                          <p class="text-neutral-600">21 November, 2024</p>
+                          <p class="text-lg font-bold mt-2 lg:mt-4">
+                            G-Able Joins Tech Gurus to Unveil Key Technology Capabilities...
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a href="#" class="block">
+                      <div class="text-left last:flex flex-col hover:cursor-pointer lg:w-[285px] xl:w-[405px] border border-neutral-400 hover:scale-[1.03] transition-all h-full">
+                        <div class="relative w-full h-[227px]">
+                          <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/MOU_BU_1_fbe9e020ec.jpg" class="object-cover w-full h-full" alt="News 3">
+                        </div>
+                        <div class="px-6 py-6 bg-white flex-1">
+                          <p class="text-neutral-600">13 November, 2024</p>
+                          <p class="text-lg font-bold mt-2 lg:mt-4">
+                            G-Able and Bangkok University Join Forces to Bridge the Talent Gap in Tech
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+
+                  <button class="mx-auto mt-10 w-[96%] md:w-auto flex justify-center items-center text-lg font-semibold drop-shadow-sm hover:drop-shadow-md transition-all px-[25px] py-[13px] text-white bg-primary hover:bg-orange-400">
+                    View All
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="relative w-full h-[600px]">
+              <img src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/Footer1440x605px_V1_02_abe15afe0e.jpg" class="object-cover w-full h-full absolute inset-0" alt="Footer Background">
+              
+              <div class="absolute left-[-16px] top-[63px] hidden lg:block xl:block">
+                <img src="https://g-able-strapi-stg.morphosis.dev/noimage.jpg" alt="Decoration">
+              </div>
+              
+              <div class="absolute top-20 lg:right-32 md:right-32 right-4 bg-white lg:max-w-md md:max-w-md ml-5 block p-6 shadow-lg w-[92%]">
+                <div class="mb-10">
+                  <h1 class="mb-2 font-bold card-title-text">How Can We Help?</h1>
+                  <p class="mb-4 text-base text-gray-700">We're here to answer any question you might have</p>
+                  <div class="flex items-center hover:text-primary hover:cursor-pointer">
+                    <span class="font-bold mr-3">Contact Us</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-[20px]">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="mb-10">
+                  <h1 class="mb-2 font-bold card-title-text">Join Our Team</h1>
+                  <p class="mb-4 text-base text-gray-700">Learn more about the exciting career opportunities available at G-Able</p>
+                  <a href="#" target="blank">
+                    <div class="flex items-center hover:text-primary hover:cursor-pointer">
+                      <span class="font-bold mr-3">Career</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-[20px]">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      </svg>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          </main>
+        </div>
+
+
+
+
+        <footer
+          class="text-white bg-neutral-900 lg:px-16 lg:pb-8"
+          aria-labelledby="footer-heading"
+        >
+          <div class="flex flex-col lg:flex-row">
+            <div class="footer-title-warp p-4 mt-4 flex-auto lg:w-[320px]">
+              <div
+                class="relative lg:w-[168px] lg:h-[56px] lg:-left-[10px] w-[138px] h-[46px] mb-3 lg:mb-0"
+              >
+                <span
+                  style="
+                    box-sizing: border-box;
+                    display: block;
+                    overflow: hidden;
+                    width: initial;
+                    height: initial;
+                    background: none;
+                    opacity: 1;
+                    border: 0;
+                    margin: 0;
+                    padding: 0;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                  "
+                >
+                  <img
+                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                    decoding="async"
+                    data-nimg="fill"
+                    class="object-cover"
+                    style="
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      bottom: 0;
+                      right: 0;
+                      box-sizing: border-box;
+                      padding: 0;
+                      border: none;
+                      margin: auto;
+                      display: block;
+                      width: 0;
+                      height: 0;
+                      min-width: 100%;
+                      max-width: 100%;
+                      min-height: 100%;
+                      max-height: 100%;
+                    "
+                  />
+                  <noscript>
+                    <img
+                      sizes="100vw"
+                      srcset="
+                        https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg  640w,
+                        https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg  750w,
+                        https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg  828w,
+                        https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg 1080w,
+                        https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg 1200w,
+                        https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg 1920w,
+                        https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg 2048w,
+                        https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg 3840w
+                      "
+                      src="https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg"
+                      decoding="async"
+                      data-nimg="fill"
+                      style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        bottom: 0;
+                        right: 0;
+                        box-sizing: border-box;
+                        padding: 0;
+                        border: none;
+                        margin: auto;
+                        display: block;
+                        width: 0;
+                        height: 0;
+                        min-width: 100%;
+                        max-width: 100%;
+                        min-height: 100%;
+                        max-height: 100%;
+                      "
+                      class="object-cover"
+                      loading="lazy"
+                    />
+                  </noscript>
+                </span>
+              </div>
+              <p
+                class="lg:mt-8 text-neutral-500 lg:text-[16px] lg:leading-[25.6px] sm:text-caption"
+              >
+                G-Able Group, the leader in &quot;Tech Enabler&quot; that helps
+                elevate businesses to the digital age in all dimensions
+              </p>
+            </div>
+            <div
+              class="flex-auto footer-icon-warp basic-full xl:basis-3/4 lg:basis-3/4"
+            >
+              <div
+                class="flex flex-col-reverse pr-0 mt-5 lg:pr-10 md:pr-10 xl:mt-24 lg:mt-24 md:mt-10 lg:flex-col"
+              >
+                <div
+                  class="flex mt-10 ml-5 space-x-6 xl:justify-end lg:justify-end md:justify-start lg:ml-10 md:ml-10"
+                >
+                  <a
+                    href="https://www.linkedin.com/company/g-able-group/"
+                    target="_blank"
+                  >
+                    <span class="sr-only">LinkedIn</span>
+                    <svg
+                      width="32"
+                      height="33"
+                      viewBox="0 0 32 33"
+                      fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M0 16.4807C0 7.64416 7.16344 0.480713 16 0.480713C24.8366 0.480713 32 7.64416 32 16.4807C32 25.3173 24.8366 32.4807 16 32.4807C7.16344 32.4807 0 25.3173 0 16.4807ZM8.2 13.7807V24.4807H11.6V13.7807H8.2ZM8 10.3807C8 11.4807 8.8 12.2807 9.9 12.2807C11 12.2807 11.8 11.4807 11.8 10.3807C11.8 9.28072 11 8.48071 9.9 8.48071C8.9 8.48071 8 9.28072 8 10.3807ZM20.6 24.4807H23.8V17.8807C23.8 14.5807 21.8 13.4807 19.9 13.4807C18.2 13.4807 17 14.5807 16.7 15.2807V13.7807H13.5V24.4807H16.9V18.7807C16.9 17.2807 17.9 16.4807 18.9 16.4807C19.9 16.4807 20.6 16.9807 20.6 18.6807V24.4807Z"
+                        fill="white"
+                      ></path>
+                    </svg>
+                  </a>
+                  <a href="https://www.facebook.com/gable.th" target="_blank">
+                    <span class="sr-only">Facebook</span>
+                    <svg
+                      width="32"
+                      height="33"
+                      viewBox="0 0 32 33"
+                      fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M0 16.4797C0 7.64312 7.16344 0.479675 16 0.479675C24.8366 0.479675 32 7.64312 32 16.4797C32 25.3162 24.8366 32.4797 16 32.4797C7.16344 32.4797 0 25.3162 0 16.4797ZM16 8.47968C20.4 8.47968 24 12.0797 24 16.4797C24 20.4797 21.1 23.8797 17.1 24.4797V18.7797H19L19.4 16.4797H17.2V14.9797C17.2 14.3797 17.5 13.7797 18.5 13.7797H19.5V11.7797C19.5 11.7797 18.6 11.5797 17.7 11.5797C15.9 11.5797 14.7 12.6797 14.7 14.6797V16.4797H12.7V18.7797H14.7V24.3797C10.9 23.7797 8 20.4797 8 16.4797C8 12.0797 11.6 8.47968 16 8.47968Z"
+                        fill="white"
+                      ></path>
+                    </svg>
+                  </a>
+                  <a
+                    href="https://www.youtube.com/channel/UCGOGel89MX0kXNAhyFEpAdw/"
+                    target="_blank"
+                  >
+                    <span class="sr-only">Youtube</span>
+                    <svg
+                      width="32"
+                      height="33"
+                      viewBox="0 0 32 33"
+                      fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M18.6 16.4797L14.4 14.0797V18.8797L18.6 16.4797Z"
+                        fill="white"
+                      ></path>
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M0 16.4797C0 7.64312 7.16344 0.479675 16 0.479675C24.8366 0.479675 32 7.64312 32 16.4797C32 25.3162 24.8366 32.4797 16 32.4797C7.16344 32.4797 0 25.3162 0 16.4797ZM22.2 11.1797C22.9 11.3797 23.4 11.8797 23.6 12.5797C24 13.8797 24 16.4797 24 16.4797C24 16.4797 24 19.0797 23.7 20.3797C23.5 21.0797 23 21.5797 22.3 21.7797C21 22.0797 16 22.0797 16 22.0797C16 22.0797 10.9 22.0797 9.7 21.7797C9 21.5797 8.5 21.0797 8.3 20.3797C8 19.0797 8 16.4797 8 16.4797C8 16.4797 8 13.8797 8.2 12.5797C8.4 11.8797 8.90001 11.3797 9.60001 11.1797C10.9 10.8797 15.9 10.8797 15.9 10.8797C15.9 10.8797 21 10.8797 22.2 11.1797Z"
+                        fill="white"
+                      ></path>
+                    </svg>
+                  </a>
+                  <a href=" https://twitter.com/GAble_TH" target="_blank">
+                    <span class="sr-only">Twitter</span>
+                    <svg
+                      width="32"
+                      height="33"
+                      viewBox="0 0 32 33"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M0 16.4797C0 7.64312 7.16344 0.479675 16 0.479675C24.8366 0.479675 32 7.64312 32 16.4797C32 25.3162 24.8366 32.4797 16 32.4797C7.16344 32.4797 0 25.3162 0 16.4797ZM22.1 11.9797C22.8 11.8797 23.4 11.7797 24 11.4797C23.6 12.1797 23 12.7797 22.3 13.1797C22.5 17.8797 19.1 22.9797 13 22.9797C11.2 22.9797 9.5 22.3797 8 21.4797C9.7 21.6797 11.5 21.1797 12.7 20.2797C11.2 20.2797 10 19.2797 9.6 17.9797C10.1 18.0797 10.6 17.9797 11.1 17.8797C9.6 17.4797 8.5 16.0797 8.5 14.5797C9 14.7797 9.5 14.9797 10 14.9797C8.6 13.9797 8.1 12.0797 9 10.5797C10.7 12.5797 13.1 13.8797 15.8 13.9797C15.3 11.9797 16.9 9.97968 19 9.97968C19.9 9.97968 20.8 10.3797 21.4 10.9797C22.2 10.7797 22.9 10.5797 23.5 10.1797C23.3 10.9797 22.8 11.5797 22.1 11.9797Z"
+                        fill="white"
+                      ></path>
+                    </svg>
+                  </a>
+                </div>
+                <nav
+                  class="flex flex-wrap px-4 mt-4 ml-0 lg:space-x-6 xl:justify-end lg:justify-end md:justify-start lg:ml-5 md:ml-5"
+                  aria-label="Footer"
+                >
+                  <ul class="flex flex-wrap gap-4">
+                    <li class="py-2 mr-3 text-sm xl:mr-2 lg:mr-2 md:mr-2">
+                      <a href="contact.html">Contact Us</a>
+                    </li>
+                    <li class="py-2 mr-3 text-sm xl:mr-2 lg:mr-2 md:mr-2">
+                      <a
+                        href="policy/Careers-ma.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Careers
+                      </a>
+                    </li>
+                    <li class="py-2 mr-3 text-sm xl:mr-2 lg:mr-2 md:mr-2">
+                      <a href="https://www.g-able.com/events">
+                        News &amp; Events
+                      </a>
+                    </li>
+                    <li class="py-2 mr-3 text-sm xl:mr-2 lg:mr-2 md:mr-2">
+                      <a href="glossary.html">Technology Glossary</a>
+                    </li>
+                    <li class="py-2 mr-3 text-sm xl:mr-2 lg:mr-2 md:mr-2">
+                      <a href="policy/privacy.html">Privacy Policy</a>
+                    </li>
+                    <li class="py-2 mr-3 text-sm xl:mr-2 lg:mr-2 md:mr-2">
+                      <a href="policy/notice.html">Privacy Notice</a>
+                    </li>
+                    <li class="py-2 mr-3 text-sm xl:mr-2 lg:mr-2 md:mr-2">
+                      <a href="policy/cookie-policy.html">Cookie Policy</a>
+                    </li>
+                    <li class="py-2 mr-3 text-sm xl:mr-2 lg:mr-2 md:mr-2">
+                      <a href="sitemap.html">Site Map</a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-col-reverse lg:hidden lg:flex-row md:flex-row items-center pl-5 lg:pl-10 md:pl-10 pb-5 pr-5 lg:pr-10 md:pr-10 lg:mt-10 md:mt-10 mt-[5px]"
+          >
+            <p class="text-neutral-600 text-caption lg:w-[327px]">
+              © Copyright 2022 G-Able Public Company Limited All Rights
+              Reserved.
+            </p>
+            <div
+              class="ml-[0px] lg:ml-10 md:ml-10 w-full lg:w-full md:w-[75%] mt-[30px] border-t border-neutral-600 pt-8 lg:block"
+            ></div>
+          </div>
+        </footer>
+
+      </div>
+    </div>
+
+    <script>
+      // Mobile Menu Toggle
+      document.addEventListener('DOMContentLoaded', function() {
+        // ปุ่มแฮมเบอร์เกอร์
+        const mobileMenuBtn = document.querySelector('.lg\\:hidden .inline-flex');
+        const mobileMenu = document.querySelector('.mobile-menu'); // ต้องสร้าง element นี้
+        
+        if (mobileMenuBtn) {
+          mobileMenuBtn.addEventListener('click', function() {
+            // Toggle mobile menu
+            console.log('Mobile menu clicked');
+          });
+        }
+      
+        // Dropdown Menus
+        const dropdowns = document.querySelectorAll('.group');
+        
+        dropdowns.forEach(dropdown => {
+          dropdown.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Toggle dropdown content
+            const dropdownContent = this.querySelector('.dropdown-content');
+            if (dropdownContent) {
+              dropdownContent.classList.toggle('hidden');
+            }
+            
+            // Rotate arrow
+            const arrow = this.querySelector('svg');
+            if (arrow) {
+              arrow.classList.toggle('rotate-180');
+            }
+          });
+        });
+      
+        // Search Toggle
+        const searchBtn = document.querySelectorAll('button[type="button"]');
+        const searchBar = document.querySelector('.fixed.z-\\[60\\]');
+        
+        searchBtn.forEach(btn => {
+          if (btn.querySelector('svg path[d*="M21 21l-6-6"]')) {
+            btn.addEventListener('click', function() {
+              if (searchBar) {
+                searchBar.style.top = '0';
+              }
+            });
+          }
+        });
+      
+        // Close search
+        const closeSearchBtn = document.querySelector('.fixed.z-\\[60\\] svg');
+        if (closeSearchBtn) {
+          closeSearchBtn.addEventListener('click', function() {
+            if (searchBar) {
+              searchBar.style.top = '-90px';
+            }
+          });
+        }
+      });
+
+
+
+
+
+
+
+    
+      // ==========================================
+// Enhanced Navigation & Image Loader
+// SEO-Optimized with Lazy Loading
+// ==========================================
+// ==========================================
+// Enhanced Navigation & Image Loader
+// SEO-Optimized with Lazy Loading
+// ==========================================
+
+(function() {
+  'use strict';
+
+  // ==========================================
+  // 1. NAVIGATION HANDLER
+  // ==========================================
+  
+  class NavigationManager {
+    constructor() {
+      this.mobileMenuOpen = false;
+      this.activeDropdown = null;
+      this.menu = document.getElementById('mobile-menu');
+      this.overlay = document.getElementById('mobile-menu-overlay');
+      this.init();
+    }
+
+    init() {
+      this.setupMobileMenu();
+      this.setupDropdowns();
+      this.setupSearch();
+      this.setupAccessibility();
+      this.setupMobileDropdowns();
+    }
+
+    setupMobileMenu() {
+      const openBtn = document.querySelector('.lg\\:hidden .inline-flex');
+      const closeBtn = document.getElementById('mobile-menu-close');
+      
+      if (!openBtn) return;
+
+      // Open menu
+      openBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openMobileMenu();
+      });
+
+      // Close menu
+      closeBtn?.addEventListener('click', () => {
+        this.closeMobileMenu();
+      });
+
+      this.overlay?.addEventListener('click', () => {
+        this.closeMobileMenu();
+      });
+
+      // ESC key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.mobileMenuOpen) {
+          this.closeMobileMenu();
+        }
+      });
+    }
+
+    openMobileMenu() {
+      this.mobileMenuOpen = true;
+      this.menu?.classList.add('active');
+      this.overlay?.classList.add('active');
+      document.body.classList.add('menu-open');
+    }
+
+    closeMobileMenu() {
+      this.mobileMenuOpen = false;
+      this.menu?.classList.remove('active');
+      this.overlay?.classList.remove('active');
+      document.body.classList.remove('menu-open');
+    }
+
+    setupMobileDropdowns() {
+      const triggers = document.querySelectorAll('.mobile-dropdown-trigger');
+      
+      triggers.forEach(trigger => {
+        trigger.addEventListener('click', (e) => {
+          e.preventDefault();
+          const dropdown = trigger.closest('.mobile-dropdown');
+          const content = dropdown.querySelector('.mobile-dropdown-content');
+          const isActive = content.classList.contains('active');
+
+          // Close all dropdowns
+          document.querySelectorAll('.mobile-dropdown-content').forEach(c => {
+            c.classList.remove('active');
+          });
+          document.querySelectorAll('.mobile-dropdown-trigger').forEach(t => {
+            t.classList.remove('active');
+          });
+
+          // Toggle current
+          if (!isActive) {
+            content.classList.add('active');
+            trigger.classList.add('active');
+          }
+        });
+      });
+    }
+
+    setupDropdowns() {
+      const dropdowns = document.querySelectorAll('.group');
+      
+      dropdowns.forEach(dropdown => {
+        const trigger = dropdown;
+        const content = dropdown.querySelector('.dropdown-content');
+        const arrow = dropdown.querySelector('svg');
+        
+        if (!content) return;
+
+        // Mouse events for desktop
+        let timeout;
+        
+        trigger.addEventListener('mouseenter', () => {
+          clearTimeout(timeout);
+          this.openDropdown(content, arrow);
+        });
+
+        trigger.addEventListener('mouseleave', () => {
+          timeout = setTimeout(() => {
+            this.closeDropdown(content, arrow);
+          }, 200);
+        });
+
+        // Click for mobile/tablet
+        trigger.addEventListener('click', (e) => {
+          if (window.innerWidth < 1024) {
+            e.preventDefault();
+            this.toggleDropdown(content, arrow);
+          }
+        });
+
+        // Keep open when hovering content
+        content?.addEventListener('mouseenter', () => {
+          clearTimeout(timeout);
+        });
+
+        content?.addEventListener('mouseleave', () => {
+          timeout = setTimeout(() => {
+            this.closeDropdown(content, arrow);
+          }, 200);
+        });
+      });
+
+      // Close on outside click
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.group')) {
+          this.closeAllDropdowns();
+        }
+      });
+    }
+
+    openDropdown(content, arrow) {
+      if (!content) return;
+      content.style.opacity = '1';
+      content.style.visibility = 'visible';
+      arrow?.classList.add('rotate-180');
+    }
+
+    closeDropdown(content, arrow) {
+      if (!content) return;
+      content.style.opacity = '0';
+      content.style.visibility = 'hidden';
+      arrow?.classList.remove('rotate-180');
+    }
+
+    toggleDropdown(content, arrow) {
+      const isOpen = content.style.opacity === '1';
+      isOpen ? this.closeDropdown(content, arrow) : this.openDropdown(content, arrow);
+    }
+
+    closeAllDropdowns() {
+      document.querySelectorAll('.dropdown-content').forEach(content => {
+        content.style.opacity = '0';
+        content.style.visibility = 'hidden';
+      });
+      document.querySelectorAll('.group svg').forEach(arrow => {
+        arrow.classList.remove('rotate-180');
+      });
+    }
+
+    setupSearch() {
+      const searchBtns = document.querySelectorAll('button[type="button"]');
+      const searchBar = document.querySelector('.fixed.z-\\[60\\]');
+      
+      searchBtns.forEach(btn => {
+        const svg = btn.querySelector('svg');
+        if (svg?.querySelector('path[d*="M21 21l-6-6"]')) {
+          btn.addEventListener('click', () => {
+            if (searchBar) {
+              searchBar.style.top = '0';
+              searchBar.querySelector('input')?.focus();
+            }
+          });
+        }
+      });
+
+      // Close search
+      const closeBtn = searchBar?.querySelector('svg');
+      closeBtn?.addEventListener('click', () => {
+        searchBar.style.top = '-90px';
+      });
+
+      // ESC key to close
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && searchBar?.style.top === '0px') {
+          searchBar.style.top = '-90px';
+        }
+      });
+    }
+
+    setupAccessibility() {
+      // Keyboard navigation for dropdowns
+      document.querySelectorAll('.group').forEach(dropdown => {
+        dropdown.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const content = dropdown.querySelector('.dropdown-content');
+            const arrow = dropdown.querySelector('svg');
+            this.toggleDropdown(content, arrow);
+          }
+        });
+      });
+    }
+
+    toggleMobileMenu() {
+      console.log('Mobile menu toggled:', this.mobileMenuOpen);
+      // Add your mobile menu implementation here
+    }
+  }
+
+  // ==========================================
+  // 2. SMART IMAGE LOADER (SEO-Optimized)
+  // ==========================================
+
+  const CONFIG = {
+    baseURL: './assets/images/uploads',
+    fallbackURL: 'https://gable-prod.s3.ap-southeast-1.amazonaws.com',
+    sizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    lazyLoadOffset: '50px',
+    blurDataURL: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZTVlN2ViIi8+PC9zdmc+'
+  };
+
+  const imageDB = {
+    'Car-9-Parking-1280x721.png': { priority: true, subPath: '2024/12' },
+    'Final_Ads_Security_OPT_3_1_3a928d7886.jpg': { priority: false },
+    'New-Logo-980x880.png': { priority: false, subPath: '2024/12' }
+    // Add other images from your imageDatabase here
+  };
+
+  class SmartImageLoader {
+    constructor() {
+      this.observer = null;
+      this.loadedImages = new Set();
+      this.init();
+    }
+
+    init() {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => this.processImages());
+      } else {
+        this.processImages();
+      }
+    }
+
+    async processImages() {
+      const placeholders = document.querySelectorAll('img[src^="data:image"]');
+      
+      // Setup Intersection Observer for lazy loading
+      this.setupObserver();
+
+      for (const img of placeholders) {
+        const metadata = this.getImageMetadata(img);
+        if (!metadata) continue;
+
+        const { filename, config } = metadata;
+        
+        // Set blur placeholder
+        img.src = CONFIG.blurDataURL;
+        img.style.filter = 'blur(10px)';
+        
+        // Build URLs
+        const localURL = this.buildURL(filename, config, false);
+        const fallbackURL = this.buildURL(filename, config, true);
+        
+        // Check if local exists
+        const useLocal = await this.checkImage(localURL);
+        const finalURL = useLocal ? localURL : fallbackURL;
+        
+        // Set srcset for responsive images
+        img.srcset = this.generateSrcset(filename, config, !useLocal);
+        img.sizes = this.getSizes(img);
+        
+        // Store final URL
+        img.dataset.src = finalURL;
+        img.dataset.loaded = 'false';
+        
+        // Load high priority images immediately
+        if (config.priority) {
+          this.loadImage(img);
+        } else {
+          this.observer.observe(img);
+        }
+      }
+    }
+
+    setupObserver() {
+      const options = {
+        root: null,
+        rootMargin: CONFIG.lazyLoadOffset,
+        threshold: 0.01
+      };
+
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && entry.target.dataset.loaded === 'false') {
+            this.loadImage(entry.target);
+            this.observer.unobserve(entry.target);
+          }
+        });
+      }, options);
+    }
+
+    loadImage(img) {
+      const tempImg = new Image();
+      
+      tempImg.onload = () => {
+        img.src = img.dataset.src;
+        img.srcset = img.srcset;
+        img.style.filter = 'blur(0)';
+        img.style.transition = 'filter 0.3s ease-out';
+        img.dataset.loaded = 'true';
+        this.loadedImages.add(img.dataset.src);
+      };
+
+      tempImg.onerror = () => {
+        console.warn('Failed to load:', img.dataset.src);
+      };
+
+      tempImg.src = img.dataset.src;
+    }
+
+    getImageMetadata(img) {
+      const noscript = img.closest('span')?.querySelector('noscript');
+      if (!noscript) return null;
+
+      const content = noscript.textContent;
+      
+      for (const [filename, config] of Object.entries(imageDB)) {
+        if (content.includes(filename)) {
+          return { filename, config };
+        }
+      }
+      
+      return null;
+    }
+
+    buildURL(filename, config, useFallback) {
+      const base = useFallback ? CONFIG.fallbackURL : CONFIG.baseURL;
+      const path = config.subPath && !useFallback ? `${base}/${config.subPath}` : base;
+      return `${path}/${filename}`;
+    }
+
+    generateSrcset(filename, config, useFallback) {
+      const baseURL = this.buildURL(filename, config, useFallback);
+      return CONFIG.sizes.map(w => `${baseURL} ${w}w`).join(', ');
+    }
+
+    getSizes(img) {
+      // Determine sizes based on image classes/context
+      if (img.closest('.swiper-slide')) return '100vw';
+      if (img.closest('.card')) return '(min-width: 1024px) 405px, 100vw';
+      return '(min-width: 1024px) 50vw, 100vw';
+    }
+
+    async checkImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const timeout = setTimeout(() => resolve(false), 2000);
+        
+        img.onload = () => {
+          clearTimeout(timeout);
+          resolve(true);
+        };
+        
+        img.onerror = () => {
+          clearTimeout(timeout);
+          resolve(false);
+        };
+        
+        img.src = url;
+      });
+    }
+  }
+
+  // ==========================================
+  // 3. INITIALIZE
+  // ==========================================
+
+  // Start Navigation
+  new NavigationManager();
+  
+  // Start Image Loader
+  new SmartImageLoader();
+
+  // Log initialization
+  console.log('✅ Enhanced Navigation & Image Loader initialized');
+
+})();
+
+
+// ==========================================
+// SOLUTIONS INTERACTIVE SECTION
+// ==========================================
+
+class SolutionsManager {
+  constructor() {
+    this.solutions = [
+      {
+        name: 'Cybersecurity',
+        description: "Ensure your business isn't vulnerable to cyber attacks and cybercrime with our end-to-end services and experienced solutions team.",
+        image: 'https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_Security_OPT_3_1_3a928d7886.jpg'
+      },
+      {
+        name: 'Cloud and Data Center Modernization',
+        description: 'Leverage our cloud technology services and modernize your data center for a smooth and efficient transition to the cloud.',
+        image: 'https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_SOL_Cloud_OPT_03_26668ce6e0.jpg'
+      },
+      {
+        name: 'Data and Analytics',
+        description: 'Make better business decisions by analyzing business performance, productivity and customer insight with our data and analytics service.',
+        image: 'https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_SOL_Data_Analytic_OPT_03_f4026316ab.jpg'
+      },
+      {
+        name: 'Digital Business and Application',
+        description: 'Ensure your business is ready for and responsive to new opportunities in the current highly competitive environment.',
+        image: 'https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_SOL_Digital_OPT_03_73d96ee1a2.jpg'
+      },
+      {
+        name: 'Managed Tech Services',
+        description: 'Transform your core business operations and maximize operational efficiencies with our range of innovative services.',
+        image: 'https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_SOL_Tech_S_Vl_OPT_03_16e25ee0dd.jpg'
+      }
+    ];
+    
+    this.currentIndex = 0;
+    this.init();
+  }
+
+  init() {
+    this.setupSolutionButtons();
+    this.updateDisplay(0); // แสดงตัวแรก
+  }
+
+  setupSolutionButtons() {
+    const buttons = document.querySelectorAll('.hover\\:text-primary');
+    
+    buttons.forEach((button, index) => {
+      if (index < this.solutions.length) {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.updateDisplay(index);
+          
+          // อัพเดท UI
+          buttons.forEach(btn => {
+            btn.querySelector('.font-bold, .font-normal')?.classList.remove('font-bold', 'text-primary');
+            btn.querySelector('.font-bold, .font-normal')?.classList.add('font-normal');
+            btn.querySelector('svg path')?.setAttribute('fill', '#4A4A4A');
+          });
+          
+          const textEl = button.querySelector('.font-bold, .font-normal');
+          textEl?.classList.remove('font-normal');
+          textEl?.classList.add('font-bold', 'text-primary');
+          button.querySelector('svg path')?.setAttribute('fill', '#F2900A');
+        });
+      }
+    });
+  }
+
+  updateDisplay(index) {
+    this.currentIndex = index;
+    const solution = this.solutions[index];
+    
+    // อัพเดทรูปภาพ
+    const imageContainer = document.querySelector('.solution-image img');
+    if (imageContainer) {
+      // Fade out
+      imageContainer.style.opacity = '0';
+      imageContainer.style.transform = 'scale(0.95)';
+      
+      setTimeout(() => {
+        imageContainer.src = solution.image;
+        
+        // Fade in
+        setTimeout(() => {
+          imageContainer.style.transition = 'all 0.5s ease';
+          imageContainer.style.opacity = '1';
+          imageContainer.style.transform = 'scale(1)';
+        }, 50);
+      }, 300);
+    }
+    
+    // อัพเดทข้อความ
+    const titleEl = document.querySelector('.solution-image + div h3');
+    const descEl = document.querySelector('.solution-image + div .line-clamp-3');
+    
+    if (titleEl && descEl) {
+      titleEl.style.opacity = '0';
+      descEl.style.opacity = '0';
+      
+      setTimeout(() => {
+        titleEl.textContent = solution.name;
+        descEl.textContent = solution.description;
+        
+        titleEl.style.transition = 'opacity 0.5s ease';
+        descEl.style.transition = 'opacity 0.5s ease';
+        titleEl.style.opacity = '1';
+        descEl.style.opacity = '1';
+      }, 300);
+    }
+  }
+}
+
+// เริ่มต้น Solutions Manager
+document.addEventListener('DOMContentLoaded', () => {
+  new SolutionsManager();
+});
+   // Industry data
+const industriesData = [
+  {
+    name: "Education",
+    title: "Education Industry",
+    description: "A holistic approach to educational institution's efficiency.\n\nWe enhance teaching and learning environments and make school management processes easy, adaptable, and seamless.",
+    image: "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_EDU_V31_bb438d3dc6.jpg"
+  },
+  {
+    name: "FSI (Financial)",
+    title: "Financial Industry",
+    description: "We ensure that every transaction proceeds smoothly and efficiency without interruption and guarantee ultimate safety for organizations.",
+    image: "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Finance_V31_38b5b97bc8.jpg"
+  },
+  {
+    name: "Telecommunication",
+    title: "Telecommunication Industry",
+    description: "We help ensure your business has a fluid connection accessible anytime, anywhere.",
+    image: "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Telecomm_V31_904e4e700b.jpg"
+  },
+  {
+    name: "Media",
+    title: "Media Industry",
+    description: "To support Communication and Entertainment business to get more audiences understanding.",
+    image: "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Media_V31_63989fe085.jpg"
+  },
+  {
+    name: "Retail",
+    title: "Retail Industry",
+    description: "We can help you enhance your workflow and streamline your supply chain management with our comprehensive IT solutions. They include inventory management, order management, e-commerce solutions, and more.",
+    image: "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Retail_V31_958110805d.jpg"
+  },
+  {
+    name: "Healthcare",
+    title: "Healthcare Industry",
+    description: "We build sustainable healthcare systems with improved processing speeds and security you can trust. From facilitating better care coordination and improving practice efficiencies to data tracking and more.",
+    image: "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Healthcare_V31_d90de4b320.jpg"
+  },
+  {
+    name: "Real Estate",
+    title: "Real Estate Industry",
+    description: "We provide solutions for real estate that cover everything from property management and valuation to management solutions, CRM, tenant management, and more.",
+    image: "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Real_Estate_V31_633cbb374f.jpg"
+  },
+  {
+    name: "Service",
+    title: "Service Industry",
+    description: "We cover a wide range of services from Hospitality management, hotel & in-room service system, cleaning and sanitary solutions, and more.",
+    image: "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Service_V31_a78c698e10.jpg"
+  }
+];
+
+function toggleIndustryDropdown() {
+  const dropdown = document.getElementById('industry-dropdown');
+  dropdown.classList.toggle('hidden');
+}
+
+function selectIndustry(index) {
+  const data = industriesData[index];
+  
+  // Update dropdown text
+  document.getElementById('selected-industry').textContent = data.name;
+  
+  // Hide dropdown
+  document.getElementById('industry-dropdown').classList.add('hidden');
+  
+  // Update content with fade effect
+  const title = document.getElementById('industry-title');
+  const description = document.getElementById('industry-description');
+  const image = document.getElementById('industry-image');
+  
+  // Fade out
+  title.style.opacity = '0';
+  description.style.opacity = '0';
+  image.style.opacity = '0';
+  
+  setTimeout(() => {
+    title.textContent = data.title;
+    description.textContent = data.description;
+    image.src = data.image;
+    
+    // Fade in
+    title.style.transition = 'opacity 0.3s';
+    description.style.transition = 'opacity 0.3s';
+    image.style.transition = 'opacity 0.3s';
+    title.style.opacity = '1';
+    description.style.opacity = '1';
+    image.style.opacity = '1';
+  }, 300);
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+  const dropdown = document.getElementById('industry-dropdown');
+  const button = event.target.closest('button[onclick="toggleIndustryDropdown()"]');
+  
+  if (!button && !dropdown?.contains(event.target)) {
+    dropdown?.classList.add('hidden');
+  }
+});
+
+</script>
+  </body>
+</html>
