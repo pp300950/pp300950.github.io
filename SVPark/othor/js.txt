@@ -1,0 +1,782 @@
+
+    <script id="__NEXT_DATA__" type="application/json">
+      {
+        "props": {
+          "data": {
+            "NavigationBar": {
+              "about_page_collection": {
+                "data": { "attributes": { "slug": "g-able" } }
+              },
+              "Logo": {
+                "data": {
+                  "attributes": {
+                    "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/logo_2e12331ff9_d9108c05a3.svg"
+                  }
+                }
+              },
+              "industries": {
+                "data": [
+                  {
+                    "attributes": {
+                      "IndustryName": "Education",
+                      "slug": "education"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "IndustryName": "Energy \u0026 Industrial",
+                      "slug": "energy-and-industrial"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "IndustryName": "FSI (Financial)",
+                      "slug": "financial"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "IndustryName": "Telecommunication",
+                      "slug": "telecommunication"
+                    }
+                  },
+                  {
+                    "attributes": { "IndustryName": "Media", "slug": "media" }
+                  },
+                  {
+                    "attributes": {
+                      "IndustryName": "Retail ",
+                      "slug": "retail"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "IndustryName": "Healthcare",
+                      "slug": "health-care"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "IndustryName": "Real Estate",
+                      "slug": "real-estate"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "IndustryName": "Service",
+                      "slug": "service"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "IndustryName": "SMEs \u0026 Startups",
+                      "slug": "smes-and-startups"
+                    }
+                  }
+                ]
+              },
+              "solutions": {
+                "data": [
+                  {
+                    "attributes": {
+                      "SolutionName": "Cybersecurity ",
+                      "slug": "cybersecurity"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "SolutionName": "Cloud and Data Center Modernization",
+                      "slug": "cloud-and-data-center-modernization"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "SolutionName": "Data and Analytics",
+                      "slug": "data-and-analytics"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "SolutionName": "Digital Business and Application",
+                      "slug": "digital-business-and-application"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "SolutionName": "Managed Tech Services",
+                      "slug": "managed-tech-services"
+                    }
+                  }
+                ]
+              },
+              "solution_partners": {
+                "data": [
+                  {
+                    "attributes": {
+                      "SolutionPartnerName": "AWS Solution",
+                      "slug": "aws"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "SolutionPartnerName": "DELL Technologies",
+                      "slug": "dell"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "SolutionPartnerName": "Huawei Solution",
+                      "slug": "huawei"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "SolutionPartnerName": "Microsoft Solution",
+                      "slug": "microsoft"
+                    }
+                  },
+                  {
+                    "attributes": {
+                      "SolutionPartnerName": "ORACLE Solution",
+                      "slug": "oracle"
+                    }
+                  }
+                ]
+              },
+              "Solution": {
+                "navTitle": "Solutions",
+                "dropdownTitle": "All Solutions",
+                "solutionsTitle": "OUR SOLUTIONS",
+                "solutionPartnerTitle": "OUR PARTNERS"
+              },
+              "Industry": {
+                "navTitle": "Industries",
+                "dropdownTitle": "All Industries",
+                "industriesTitle": "INDUSTRIES"
+              },
+              "Insight": { "navTitle": "Insights" },
+              "About": {
+                "navTitle": "About Us",
+                "dropdownTitle": "About Us",
+                "whoWeAreTitle": "WHO WE ARE",
+                "aboutGableText": "About G-Able",
+                "businessStructureText": "Business Structure",
+                "organizationStructureText": "Organization Structure",
+                "boardOfDirectorsText": "Board of Directors",
+                "subCommitteesText": "Sub-Committees",
+                "executivesText": "Executives",
+                "eventText": "News \u0026 Events",
+                "awardText": "Awards \u0026 Recognition",
+                "alliancepartnersText": "Technology Alliance",
+                "howWeWorkTitle": "HOW WE WORK",
+                "expertiseText": "Our Expertise",
+                "technologyText": "Technology",
+                "strategyText": "Strategy",
+                "creativityText": "Creativity"
+              },
+              "InvestorRelation": {
+                "navTitle": "Investor Relations",
+                "InvestorRelationLink": "https://investor.g-able.com/en/home"
+              },
+              "Career": {
+                "navTitle": " Career",
+                "CareerLink": "/policy/Careers-ma"
+              }
+            },
+            "Footer": {
+              "FooterDescription": "G-Able Group, the leader in \"Tech Enabler\" that helps elevate businesses to the digital age in all dimensions",
+              "LinkedInLink": "https://www.linkedin.com/company/g-able-group/",
+              "FacebookLink": "https://www.facebook.com/gable.th",
+              "YoutubeLink": "https://www.youtube.com/channel/UCGOGel89MX0kXNAhyFEpAdw/",
+              "TwitterLink": " https://twitter.com/GAble_TH",
+              "policy_page_collection": {
+                "data": { "attributes": { "slug": "privacy" } }
+              },
+              "FooterLinks": [
+                {
+                  "id": "1",
+                  "linkText": "Contact Us",
+                  "link": "/contact",
+                  "isExternal": false
+                },
+                {
+                  "id": "69",
+                  "linkText": "Careers",
+                  "link": "/policy/Careers-ma",
+                  "isExternal": true
+                },
+                {
+                  "id": "6",
+                  "linkText": "News \u0026 Events",
+                  "link": "/events",
+                  "isExternal": false
+                },
+                {
+                  "id": "2",
+                  "linkText": "Technology Glossary",
+                  "link": "/glossary",
+                  "isExternal": false
+                },
+                {
+                  "id": "5",
+                  "linkText": "Privacy Policy ",
+                  "link": "/policy/privacy",
+                  "isExternal": false
+                },
+                {
+                  "id": "34",
+                  "linkText": "Privacy Notice",
+                  "link": "/policy/notice",
+                  "isExternal": false
+                },
+                {
+                  "id": "3",
+                  "linkText": "Cookie Policy",
+                  "link": "/policy/cookie-policy",
+                  "isExternal": false
+                },
+                {
+                  "id": "4",
+                  "linkText": "Site Map ",
+                  "link": "/sitemap",
+                  "isExternal": false
+                }
+              ]
+            }
+          },
+          "locale": "en",
+          "__N_SSP": true,
+          "pageProps": {
+            "data": {
+              "Banner": [
+                {
+                  "id": "48",
+                  "BannerMedia": {
+                    "data": {
+                      "attributes": {
+                        "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/new_4e3a4f7b9e.png",
+                        "mime": "image/png"
+                      }
+                    }
+                  },
+                  "BannerTitle": null,
+                  "BannerDescription": null,
+                  "ShowButton": false,
+                  "ButtonText": null,
+                  "ButtonLink": null
+                }
+              ],
+              "AboutSession": {
+                "title": "About \u003cspan class=\"text-primary\"\u003eG-Able\u003c/span\u003e",
+                "description": "We partner with world-class tech companies to provide our clients with modern digital solutions, enterprise business solutions, and IT infrastructure solutions",
+                "BackgroundColor": "#323232",
+                "AchievementCards": [
+                  {
+                    "title": "36\u003cspan class=\"text-primary\"\u003eY\u003c/span\u003e",
+                    "description": "More than three decades of experience and expertise in digital technology\n"
+                  },
+                  {
+                    "title": "100\u003cspan class=\"text-primary\"\u003e+\u003c/span\u003e",
+                    "description": "We work with world-class corporate alliance\n"
+                  },
+                  {
+                    "title": "1,000\u003cspan class=\"text-primary\"\u003e+\u003c/span\u003e",
+                    "description": "Active Customers from various industries \n"
+                  }
+                ]
+              },
+              "SolutionSession": {
+                "title": "Our Solutions",
+                "subtitle": "Exceed All Your Business Needs",
+                "solutions": {
+                  "data": [
+                    {
+                      "id": "1",
+                      "attributes": {
+                        "slug": "cybersecurity",
+                        "SolutionName": "Cybersecurity ",
+                        "SolutionShortDescription": "Ensure your business isn’t vulnerable to cyber attacks and cybercrime with our end-to-end services and experienced solutions team.",
+                        "SolutionCoverPhoto": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_Security_OPT_3_1_3a928d7886.jpg"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "2",
+                      "attributes": {
+                        "slug": "cloud-and-data-center-modernization",
+                        "SolutionName": "Cloud and Data Center Modernization",
+                        "SolutionShortDescription": "Leverage our cloud technology services and modernize your data center for a smooth and efficient transition to the cloud.",
+                        "SolutionCoverPhoto": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_SOL_Cloud_OPT_03_26668ce6e0.jpg"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "3",
+                      "attributes": {
+                        "slug": "data-and-analytics",
+                        "SolutionName": "Data and Analytics",
+                        "SolutionShortDescription": "Make better business decisions by analyzing business performance, productivity and customer insight with our data and analytics service.",
+                        "SolutionCoverPhoto": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_SOL_Data_Analytic_OPT_03_f4026316ab.jpg"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "4",
+                      "attributes": {
+                        "slug": "digital-business-and-application",
+                        "SolutionName": "Digital Business and Application",
+                        "SolutionShortDescription": "Ensure your business is ready for and responsive to new opportunities in the current highly competitive environment. ",
+                        "SolutionCoverPhoto": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_SOL_Digital_OPT_03_73d96ee1a2.jpg"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "5",
+                      "attributes": {
+                        "slug": "managed-tech-services",
+                        "SolutionName": "Managed Tech Services",
+                        "SolutionShortDescription": "Transform your core business operations and maximize operational efficiencies with our range of innovative services.",
+                        "SolutionCoverPhoto": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_SOL_Tech_S_Vl_OPT_03_16e25ee0dd.jpg"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "HomeNewsSession": { "id": "1", "title": "Our [News]" },
+              "InsightTextColor": "#ffff",
+              "insightTitle": "Our [Insights]",
+              "insightDescription": "Keep up to date with business trends and innovation technology\nto unlock idea and drive your business",
+              "InsightBackgroundImage": {
+                "data": {
+                  "attributes": {
+                    "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/BG_Insight_CI_02_61a1230860.jpg"
+                  }
+                }
+              },
+              "PartnerSession": {
+                "title": "Partner \u003cspan class=\"text-primary\"\u003eSolutions\u003c/span\u003e",
+                "subtitle": "Solutions from our partner alliances focus on innovation and technology. Support your business readiness for digital transformation",
+                "solution_partners": {
+                  "data": [
+                    {
+                      "id": "1",
+                      "attributes": {
+                        "slug": "aws",
+                        "SolutionPartnerName": "AWS Solution",
+                        "SolutionPartnerLogo": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/10_a237c7a48f.jpg"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "2",
+                      "attributes": {
+                        "slug": "dell",
+                        "SolutionPartnerName": "DELL Technologies",
+                        "SolutionPartnerLogo": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/dell_technologies_88cabff7c0_Copy_a1f14e18a7.png"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "4",
+                      "attributes": {
+                        "slug": "huawei",
+                        "SolutionPartnerName": "Huawei Solution",
+                        "SolutionPartnerLogo": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/huawei_1_8735d09732.png"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "5",
+                      "attributes": {
+                        "slug": "microsoft",
+                        "SolutionPartnerName": "Microsoft Solution",
+                        "SolutionPartnerLogo": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/microsoft_85b1ee7ae6_91ee2f35a4.png"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "6",
+                      "attributes": {
+                        "slug": "oracle",
+                        "SolutionPartnerName": "ORACLE Solution",
+                        "SolutionPartnerLogo": {
+                          "data": {
+                            "attributes": {
+                              "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/oracle_df2cd4befb_1a98809337.png"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "CustomerSuccessSession": {
+                "title": "Customer [Success Stories]",
+                "subtitle": "Increase your business potential with tailored solutions to meet your organization's unique needs ",
+                "description": "At G-Able, we see our clients as our most valuable asset. We believe that your success is our success, and we are here to provide your with the technologies, services, and consultation get to help you reach your goals.",
+                "industries": {
+                  "data": [
+                    {
+                      "id": "2",
+                      "attributes": {
+                        "IndustryName": "Education",
+                        "slug": "education",
+                        "IndustryInfomation": [
+                          {
+                            "id": "15",
+                            "title": "Education Industry",
+                            "description": "A holistic approach to educational institution's efficiency.\n\nWe enhance teaching and learning environments and make school management processes easy, adaptable, and seamless.",
+                            "CoverMedia": {
+                              "data": {
+                                "attributes": {
+                                  "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_EDU_V31_bb438d3dc6.jpg"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "7",
+                      "attributes": {
+                        "IndustryName": "FSI (Financial)",
+                        "slug": "financial",
+                        "IndustryInfomation": [
+                          {
+                            "id": "18",
+                            "title": "Financial Industry",
+                            "description": "We ensure that every transaction proceeds smoothly and efficiency without interruption and guarantee ultimate safety for organizations. ",
+                            "CoverMedia": {
+                              "data": {
+                                "attributes": {
+                                  "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Finance_V31_38b5b97bc8.jpg"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "8",
+                      "attributes": {
+                        "IndustryName": "Telecommunication",
+                        "slug": "telecommunication",
+                        "IndustryInfomation": [
+                          {
+                            "id": "19",
+                            "title": "Telecommunication Industry",
+                            "description": "We help ensure your business has a fluid connection accessible anytime, anywhere. ",
+                            "CoverMedia": {
+                              "data": {
+                                "attributes": {
+                                  "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Telecomm_V31_904e4e700b.jpg"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "9",
+                      "attributes": {
+                        "IndustryName": "Media",
+                        "slug": "media",
+                        "IndustryInfomation": [
+                          {
+                            "id": "20",
+                            "title": "Media Industry",
+                            "description": "To support Communication and Entertainment business to get more audiences understanding.",
+                            "CoverMedia": {
+                              "data": {
+                                "attributes": {
+                                  "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Media_V31_63989fe085.jpg"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "10",
+                      "attributes": {
+                        "IndustryName": "Retail ",
+                        "slug": "retail",
+                        "IndustryInfomation": [
+                          {
+                            "id": "21",
+                            "title": "Retail Industry",
+                            "description": "We can help you enhance your workflow and streamline your supply chain management with our comprehensive IT solutions. They include inventory management, order management, e-commerce solutions, and more.",
+                            "CoverMedia": {
+                              "data": {
+                                "attributes": {
+                                  "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Retail_V31_958110805d.jpg"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "11",
+                      "attributes": {
+                        "IndustryName": "Healthcare",
+                        "slug": "health-care",
+                        "IndustryInfomation": [
+                          {
+                            "id": "22",
+                            "title": "Healthcare Industry",
+                            "description": "We build sustainable healthcare systems with improved processing speeds and security you can trust. From facilitating better care coordination and improving practice efficiencies to data tracking and more.",
+                            "CoverMedia": {
+                              "data": {
+                                "attributes": {
+                                  "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Healthcare_V31_d90de4b320.jpg"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "12",
+                      "attributes": {
+                        "IndustryName": "Real Estate",
+                        "slug": "real-estate",
+                        "IndustryInfomation": [
+                          {
+                            "id": "23",
+                            "title": "Real Estate Industry",
+                            "description": "We provide solutions for real estate that cover everything from property management and valuation to management solutions, CRM, tenant management, and more.",
+                            "CoverMedia": {
+                              "data": {
+                                "attributes": {
+                                  "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Real_Estate_V31_633cbb374f.jpg"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "13",
+                      "attributes": {
+                        "IndustryName": "Service",
+                        "slug": "service",
+                        "IndustryInfomation": [
+                          {
+                            "id": "24",
+                            "title": "Service Industry",
+                            "description": "We cover a wide range of services from Hospitality management, hotel \u0026 in-room service system, cleaning and sanitary solutions, and more.",
+                            "CoverMedia": {
+                              "data": {
+                                "attributes": {
+                                  "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Final_Ads_CI_Service_V31_a78c698e10.jpg"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "HelpSession": {
+                "BackgroundMedia": {
+                  "data": {
+                    "attributes": {
+                      "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Footer1440x605px_V1_02_abe15afe0e.jpg"
+                    }
+                  }
+                },
+                "LogoMark": { "data": null },
+                "HelpTitle": "How Can We Help?",
+                "HelpText": "We're here to answer any question you might have",
+                "JoinTitle": "Join Our Team",
+                "JoinText": "Learn more about the exciting career opportunities available at G-Able"
+              }
+            },
+            "newsData": [
+              {
+                "id": "520",
+                "slug": "g-able-signs-comprehensice-partnership-w-thai-ns-solutions",
+                "title": "G-ABLE Signs Comprehensive Partnership Agreement with Thai NS Solutions Strengthening Technological Capabilities and Accelerating Customer Base Expansion ",
+                "image": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/3_8a1263c9ea.jpg",
+                "description": "G-Able Public Company Limited has announced a business collaboration with Thai NS Solutions (Thai NS), a subsidiary of NS Solutions Corporation from Japan. This partnership marks a significant milestone, aiming to enhance capabilities and deliver digital solutions to a broader customer base, particularly in the manufacturing sector. The collaboration creates a competitive edge for enterprises aspiring to lead in their respective industries while also supporting G-Able’s expansion of its customer base.",
+                "createdAt": "2025-01-16T04:15:07.095Z"
+              },
+              {
+                "id": "511",
+                "slug": "g-able-digitech-ai-2024",
+                "title": "G-Able Joins Tech Gurus to Unveil Key Technology Capabilities for Businesses to Thrive in the AI Era at DigiTech ASEAN Thailand \u0026 AI Connect 2024",
+                "image": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/1_Copy_939c0a9619.JPG",
+                "description": "G-Able is steadfast in developing digital solutions while equipping businesses with the tools to navigate challenges and achieve their future goals as AI-ready organizations. To this end, G-Able has brought together its top experts in Cloud, MarTech, Gen-AI Solutions, ERP, CRM, and Cybersecurity to showcase cutting-edge AI-integrated technology capabilities at DigiTech ASEAN Thailand \u0026 AI Connect 2024, enabling businesses to embark on a sustainable digital transformation journey.",
+                "createdAt": "2024-11-21T07:22:24.959Z"
+              },
+              {
+                "id": "507",
+                "slug": "g-able-join-forces-with-bangkok-university",
+                "title": "G-Able and Bangkok University Join Forces to Bridge the Talent Gap in Tech",
+                "image": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/MOU_BU_1_fbe9e020ec.jpg",
+                "description": "G-Able, a Tech Enabler leading technology company, and Bangkok University have signed a Memorandum of Understanding (MOU) to collaborate on developing a highly skilled workforce for the technology industry. The agreement was signed by Ms. Thitikarn Krisanaviparkporn, Senior Executive Vice President of Human Resources at G-Able, and Asst. Prof. Sansern Milindasuta, Executive Vice President for Academic Affairs at Bangkok University, on November 7, 2024.",
+                "createdAt": "2024-11-13T03:42:56.554Z"
+              }
+            ],
+            "insightData": [
+              {
+                "id": "482",
+                "attributes": {
+                  "slug": "improving-wholesale-operations-with-data-driven",
+                  "title": "Improving Wholesale Operations with Data-Driven Supplier Dashboards",
+                  "short_description": "The supplier dashboard is a part of the wholesale company's data monetization strategy. It provides insightful data analytics to help suppliers understand their own performance and capabilities, ensuring they maintain a successful and profitable business. The dashboard enhances suppliers' visibility into their purchase and sales performance while also offering valuable insights into the overall performance of the wholesale company.",
+                  "publishedAt": "2024-08-07T02:23:49.429Z",
+                  "tags": "DATA ANALYTICS",
+                  "image": {
+                    "data": {
+                      "attributes": {
+                        "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Cover_Wholesale_1920x1080px_f6e7d80b09.jpg"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "id": "480",
+                "attributes": {
+                  "slug": "anomaly-detection-on-network-traffic-for-telecom",
+                  "title": "Near Real-Time Anomaly Detection: Detect Network Signal Anomalies Within 5 Seconds",
+                  "short_description": "Nowadays, AI technology is widely adopted, even in large organizations, to address various internal issues across multiple functions, including marketing, services, production, research and development (R\u0026D), accounting and finance, and many more. Organizations increasingly recognize the benefits of AI in creating value for businesses, both directly and indirectly.",
+                  "publishedAt": "2024-08-07T02:23:43.826Z",
+                  "tags": "DATA ANALYTICS",
+                  "image": {
+                    "data": {
+                      "attributes": {
+                        "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Cover_Telecom_1920x1080px_934d452c51.jpg"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "id": "478",
+                "attributes": {
+                  "slug": "logistics-with-data-warehouse",
+                  "title": "Empowering Business Operations in the Logistics Industry with Data Warehouse",
+                  "short_description": "The logistics industry relies heavily on data and often struggles with keeping data in separate systems. Due to its complex and connected processes, logistics operations produce a lot of data from different sources, making it essential to integrate and manage this data for smooth operations. One of Thailand's largest logistics companies tackled these issues directly as they began their journey towards sustainable growth and digital transformation.",
+                  "publishedAt": "2024-08-07T02:22:06.992Z",
+                  "tags": "DATA ANALYTICS",
+                  "image": {
+                    "data": {
+                      "attributes": {
+                        "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Cover_Warehouse_1920x1080px_0b5d9fcac7.jpg"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "id": "476",
+                "attributes": {
+                  "slug": "education-industry-with-big-data",
+                  "title": "Enhancing Operational Efficiency in the Education Industry with Big Data Platform",
+                  "short_description": "The education industry is increasingly relying on big data to drive decision-making and improve educational outcomes. However, this reliance comes with significant challenges. Data silos, where information is stored in separate systems, prevent comprehensive analysis. The complexity of integrating data across different functions and sources can impede efforts to gain a holistic view of performance. Additionally, the need for real-time data to support community development projects adds another layer of complexity.",
+                  "publishedAt": "2024-08-07T02:22:02.054Z",
+                  "tags": "DATA ANALYTICS",
+                  "image": {
+                    "data": {
+                      "attributes": {
+                        "url": "https://gable-prod.s3.ap-southeast-1.amazonaws.com/Cover_Education_1920x1080px_926ccb5e95.jpg"
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "locale": "en",
+            "_nextI18Next": {
+              "initialI18nStore": {
+                "en": {
+                  "common": { "locale.testing": "testing" },
+                  "navbar": {},
+                  "footer": {}
+                }
+              },
+              "initialLocale": "en",
+              "ns": ["common", "navbar", "footer"],
+              "userConfig": {
+                "i18n": { "defaultLocale": "en", "locales": ["en", "th"] },
+                "localePath": "/app/apps/web/public/locales",
+                "reloadOnPrerender": false,
+                "react": { "useSuspense": false }
+              }
+            }
+          }
+        },
+        "page": "/",
+        "query": {},
+        "buildId": "wmYvPXSW3PuqKwL53agTK",
+        "runtimeConfig": {
+          "NEXT_PUBLIC_BACKEND": "https://web.gable-backend.com:1337"
+        },
+        "isFallback": false,
+        "gssp": true,
+        "appGip": true,
+        "locale": "en",
+        "locales": ["en", "th"],
+        "defaultLocale": "en",
+        "scriptLoader": []
+      }
+    </script>
