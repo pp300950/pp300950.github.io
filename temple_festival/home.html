@@ -340,6 +340,22 @@
             .info { padding: 30px 15px; margin: 20px auto; }
             .info h2 { font-size: 24px; }
         }
+
+.presenter-box {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 25px;
+    margin: 40px auto 20px;
+    max-width: 800px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    text-align: center;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-dark);
+    border: 3px solid var(--accent-blue);
+    animation: fadeInUp 1s ease-out;
+}
     </style>
 </head>
 <body>
@@ -370,8 +386,12 @@
         </div>
         
         <p>เฮ้ย เพื่อนเอ๊ย! การทดลอง Franck-Hertz นี่มันเจ๋งมากเลยนะ เป็นหนึ่งในการทดลองแรกๆ ที่พิสูจน์ว่าพลังงานในอะตอมมันเป็นขั้นๆ (quantized) จริงๆ ตามที่ Niels Bohr เสนอไว้เมื่อปี 1913 แต่ตอนที่ James Franck กับ Gustav Hertz ทำการทดลองช่วงปี 1911-1914 นี่ เขายังไม่รู้จักทฤษฎีของ Bohr เลยด้วยซ้ำ! เขาแค่ตั้งใจศึกษาการชนกันระหว่างอิเล็กตรอนกับอะตอมปรอท แต่ผลที่ได้กลับกลายเป็นหลักฐานชั้นยอดสนับสนุนโมเดลอะตอมแบบควอนตัม ทำให้ทั้งคู่ได้รางวัลโนเบลฟิสิกส์ปี 1925 เลย</p>
+        <p>ไอเดียหลักคือ อะตอมจะดูดซับพลังงานจากอิเล็กตรอนที่ชนมันได้เฉพาะตอนที่พลังงานพอดีกับช่องว่างระหว่างระดับพลังงานเท่านั้น ไม่ใช่ดูดซับแบบต่อเนื่องตามฟิสิกส์คลาสสิก ถ้าพลังงานไม่พอ อิเล็กตรอนก็แค่เด้งชนแบบยืดหยุ่น (elastic collision) ความเร็วแทบไม่เปลี่ยน แต่พอพลังงานถึงจุดวิกฤตปุ๊บ มันจะสูญเสียพลังงานกะทันหันให้อะตอม ทำให้อะตอมถูกกระตุ้น (excited) ไปอยู่ระดับพลังงานสูงขึ้น แล้วต่อมาอะตอมก็จะคายพลังงานออกมาเป็นแสง UV</p>
 
-<p>ไอเดียหลักคือ อะตอมจะดูดซับพลังงานจากอิเล็กตรอนที่ชนมันได้เฉพาะตอนที่พลังงานพอดีกับช่องว่างระหว่างระดับพลังงานเท่านั้น ไม่ใช่ดูดซับแบบต่อเนื่องตามฟิสิกส์คลาสสิก ถ้าพลังงานไม่พอ อิเล็กตรอนก็แค่เด้งชนแบบยืดหยุ่น (elastic collision) ความเร็วแทบไม่เปลี่ยน แต่พอพลังงานถึงจุดวิกฤตปุ๊บ มันจะสูญเสียพลังงานกะทันหันให้อะตอม ทำให้อะตอมถูกกระตุ้น (excited) ไปอยู่ระดับพลังงานสูงขึ้น แล้วต่อมาอะตอมก็จะคายพลังงานออกมาเป็นแสง UV</p>
+        <div style="text-align: center; margin: 20px auto; max-width: 560px;">
+           
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/3ogCGjvsitw?start=17" title="การทดลองของ ฟรังก์ และ เฮิร์ซ (Animation)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="display: block; margin: 0 auto;"></iframe>
+        </div>
 
 <grok-card data-id="978061" data-type="image_card"  data-arg-size="LARGE" ></grok-card>
 
@@ -461,13 +481,17 @@
     </section>
     
     <footer>
-        <h3>👥 ทีมซุ้มยิงลูกโป่งหลังวัด</h3>
+        <h3>👥 กลุ่มซุ้มยิงลูกโป่งหลังวัด</h3>
         <ul>
             <li><strong>นายราเชนทร์ ฮามศรีพรม</strong> ม.6/3 เลขที่ 1</li>
             <li><strong>นายปฏิพัท ชมเชย</strong> ม.6/3 เลขที่ 18</li>
             <li><strong>นายทศพล ดานุวงค์</strong> ม.6/3 เลขที่ 24</li>
             <li><strong>นายพงศกร ผาบจันทร์สิงห์</strong> ม.6/3 เลขที่ 25 (ผู้พัฒนาเว็ปไซต์)</li>
         </ul>
+        <!-- เพิ่มส่วนนี้ใน footer หลัง <ul> แต่ก่อน </footer> -->
+<div class="presenter-box">
+    เสนอโดยครู อัมมรา มารศรี กลุ่มสาระการเรียนรู้ฟิสิกส์ ว30206 เรื่อง ฟิสิกส์นิวเคลียร์
+</div>
         <p style="margin-top: 40px; font-size: 18px; opacity: 0.8;">
             🎪 ยินดีต้อนรับสู่ซุ้มยิงลูกโป่งหลังวัด! ขอให้สนุกและได้ความรู้ไปพร้อมกันเด้อครับ 🎆
         </p>
