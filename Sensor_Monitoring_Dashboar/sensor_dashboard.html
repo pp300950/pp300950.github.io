@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Air Quality Monitor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;600&display=swap" rel="stylesheet">
@@ -22,191 +22,144 @@
     --font-body: 'Noto Sans Thai', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    min-height: 100vh;
-  }
-
-  /* ─── scanline overlay ─── */
+  body { background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh; }
   body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background: repeating-linear-gradient(
-      0deg, transparent, transparent 2px,
-      rgba(0,229,255,0.015) 2px, rgba(0,229,255,0.015) 4px
-    );
-    pointer-events: none; z-index: 1000;
+    content:'';position:fixed;inset:0;
+    background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,229,255,0.015) 2px,rgba(0,229,255,0.015) 4px);
+    pointer-events:none;z-index:1000;
   }
 
+  /* HEADER */
   header {
-    border-bottom: 1px solid var(--border);
-    padding: 18px 32px;
-    display: flex; align-items: center; gap: 16px;
-    background: linear-gradient(90deg, #0a0e14 0%, #111d2a 100%);
+    border-bottom:1px solid var(--border);padding:12px 16px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    background:linear-gradient(90deg,#0a0e14 0%,#111d2a 100%);
+    position:sticky;top:0;z-index:100;
   }
   .logo-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: pulse 2s infinite;
+    width:10px;height:10px;border-radius:50%;flex-shrink:0;
+    background:var(--accent);box-shadow:0 0 8px var(--accent);
+    animation:pulse 2s infinite;
   }
-  @keyframes pulse {
-    0%,100% { opacity: 1; }
-    50% { opacity: 0.3; }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  header h1 { font-family:var(--font-mono);font-size:0.8rem;letter-spacing:3px;color:var(--accent);text-transform:uppercase; }
+
+  .header-right { margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap; }
+
+  /* ONLINE BADGE — จำนวน sensor ที่ online จริง */
+  .online-badge {
+    display:flex;align-items:center;gap:6px;
+    font-family:var(--font-mono);font-size:0.68rem;
+    background:var(--surface);border:1px solid var(--border);
+    padding:5px 12px;border-radius:20px;white-space:nowrap;
   }
-  header h1 {
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    letter-spacing: 4px;
-    color: var(--accent);
-    text-transform: uppercase;
-  }
-  .api-config {
-    margin-left: auto;
-    display: flex; gap: 8px; align-items: center;
-  }
-  .api-config input {
-    background: var(--surface); border: 1px solid var(--border);
-    color: var(--text); padding: 6px 12px;
-    font-family: var(--font-mono); font-size: 0.75rem;
-    border-radius: 4px; width: 300px;
-    outline: none;
-  }
-  .api-config input:focus { border-color: var(--accent); }
+  .badge-dot { width:7px;height:7px;border-radius:50%; }
+  .badge-dot.ok  { background:var(--good);box-shadow:0 0 5px var(--good); }
+  .badge-dot.bad { background:var(--danger); }
+
   .btn {
-    background: transparent; border: 1px solid var(--accent);
-    color: var(--accent); padding: 6px 14px;
-    font-family: var(--font-mono); font-size: 0.75rem;
-    cursor: pointer; border-radius: 4px; letter-spacing: 1px;
-    transition: all .2s;
+    background:transparent;border:1px solid var(--accent);color:var(--accent);
+    padding:6px 14px;font-family:var(--font-mono);font-size:0.7rem;
+    cursor:pointer;border-radius:4px;letter-spacing:1px;transition:all .2s;white-space:nowrap;
   }
-  .btn:hover { background: var(--accent); color: #000; }
+  .btn:hover{background:var(--accent);color:#000;}
+  .btn.muted{border-color:var(--muted);color:var(--muted);}
 
-  .container { max-width: 1400px; margin: 0 auto; padding: 28px 32px; }
+  /* CONTAINER */
+  .container{max-width:1400px;margin:0 auto;padding:18px 14px;}
 
+  /* STATUS BAR */
   .status-bar {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 28px;
-    font-family: var(--font-mono); font-size: 0.7rem;
-    color: var(--muted); letter-spacing: 1px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    margin-bottom:18px;font-family:var(--font-mono);font-size:0.67rem;
+    color:var(--muted);letter-spacing:1px;
   }
-  .status-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--muted);
-  }
-  .status-dot.online { background: var(--good); box-shadow: 0 0 6px var(--good); }
-  .status-dot.error  { background: var(--danger); }
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+  .status-dot.online{background:var(--good);box-shadow:0 0 6px var(--good);}
+  .status-dot.error{background:var(--danger);}
 
-  /* ─── sensor grid ─── */
+  /* SENSOR GRID */
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    margin-bottom: 36px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:12px;margin-bottom:28px;
   }
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-    animation: fadeUp .4s ease both;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:10px;padding:16px;position:relative;overflow:hidden;
+    animation:fadeUp .4s ease both;
   }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   .card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--accent), transparent);
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--accent),transparent);
   }
-  .card.offline::before { background: linear-gradient(90deg, var(--muted), transparent); }
+  .card.offline::before{background:linear-gradient(90deg,var(--danger),transparent);}
+  .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+  .sensor-name{font-family:var(--font-mono);font-size:0.82rem;font-weight:700;color:var(--accent);letter-spacing:2px;}
+  .sensor-status{font-family:var(--font-mono);font-size:0.6rem;padding:3px 8px;border-radius:3px;letter-spacing:1px;}
+  .sensor-status.online{background:rgba(57,255,20,.1);color:var(--good);border:1px solid var(--good);}
+  .sensor-status.offline{background:rgba(255,56,96,.1);color:var(--danger);border:1px solid var(--danger);}
 
-  .card-header {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    margin-bottom: 16px;
-  }
-  .sensor-name {
-    font-family: var(--font-mono);
-    font-size: 0.85rem; font-weight: 700;
-    color: var(--accent); letter-spacing: 2px;
-  }
-  .sensor-status {
-    font-family: var(--font-mono);
-    font-size: 0.65rem; padding: 3px 8px;
-    border-radius: 3px; letter-spacing: 1px;
-  }
-  .sensor-status.online { background: rgba(57,255,20,.1); color: var(--good); border: 1px solid var(--good); }
-  .sensor-status.offline { background: rgba(255,56,96,.1); color: var(--danger); border: 1px solid var(--danger); }
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .metric-label{font-size:0.6rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+  .metric-value{font-family:var(--font-mono);font-size:1.15rem;font-weight:700;color:var(--text);}
+  .metric-unit{font-size:0.65rem;color:var(--muted);}
+  .metric-value.pm-good{color:var(--good);}
+  .metric-value.pm-mod{color:var(--warn);}
+  .metric-value.pm-bad{color:var(--accent2);}
+  .metric-value.pm-danger{color:var(--danger);}
 
-  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .metric { }
-  .metric-label {
-    font-size: 0.65rem; color: var(--muted);
-    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px;
+  .offline-warn {
+    margin-top:8px;font-family:var(--font-mono);font-size:0.6rem;
+    color:var(--danger);letter-spacing:0.5px;
   }
-  .metric-value {
-    font-family: var(--font-mono);
-    font-size: 1.3rem; font-weight: 700;
-    color: var(--text);
-  }
-  .metric-unit { font-size: 0.7rem; color: var(--muted); }
-  .metric-value.pm-good  { color: var(--good); }
-  .metric-value.pm-mod   { color: var(--warn); }
-  .metric-value.pm-bad   { color: var(--accent2); }
-  .metric-value.pm-danger{ color: var(--danger); }
-
   .card-footer {
-    margin-top: 14px;
-    font-family: var(--font-mono);
-    font-size: 0.62rem; color: var(--muted);
-    border-top: 1px solid var(--border); padding-top: 10px;
+    margin-top:10px;font-family:var(--font-mono);font-size:0.58rem;
+    color:var(--muted);border-top:1px solid var(--border);padding-top:8px;
   }
 
-  /* ─── chart section ─── */
+  /* SECTION TITLE */
   .section-title {
-    font-family: var(--font-mono); font-size: 0.75rem;
-    letter-spacing: 3px; color: var(--accent);
-    text-transform: uppercase; margin-bottom: 16px;
-    display: flex; align-items: center; gap: 10px;
+    font-family:var(--font-mono);font-size:0.7rem;letter-spacing:3px;
+    color:var(--accent);text-transform:uppercase;margin-bottom:12px;
+    display:flex;align-items:center;gap:10px;
   }
-  .section-title::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
-  .chart-controls {
-    display: flex; gap: 10px; align-items: center;
-    margin-bottom: 16px; flex-wrap: wrap;
-  }
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* CHART */
+  .chart-controls{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
   .chart-controls select {
-    background: var(--surface); border: 1px solid var(--border);
-    color: var(--text); padding: 6px 12px;
-    font-family: var(--font-mono); font-size: 0.75rem;
-    border-radius: 4px; outline: none; cursor: pointer;
+    background:var(--surface);border:1px solid var(--border);color:var(--text);
+    padding:6px 10px;font-family:var(--font-mono);font-size:0.7rem;
+    border-radius:4px;outline:none;cursor:pointer;flex:1;min-width:110px;max-width:180px;
   }
   canvas#chart {
-    width: 100% !important;
-    background: var(--surface);
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 16px;
+    width:100%!important;background:var(--surface);
+    border:1px solid var(--border);border-radius:8px;padding:10px;
   }
 
   .error-msg {
-    background: rgba(255,56,96,.08); border: 1px solid var(--danger);
-    color: var(--danger); padding: 14px 18px;
-    border-radius: 6px; font-family: var(--font-mono); font-size: 0.8rem;
-    margin-bottom: 20px; display: none;
+    background:rgba(255,56,96,.08);border:1px solid var(--danger);color:var(--danger);
+    padding:12px 16px;border-radius:6px;font-family:var(--font-mono);
+    font-size:0.73rem;margin-bottom:14px;display:none;
   }
   .loading {
-    text-align: center; padding: 60px;
-    font-family: var(--font-mono); color: var(--muted);
-    letter-spacing: 3px; font-size: 0.8rem;
-    animation: blink 1s infinite;
+    text-align:center;padding:50px;font-family:var(--font-mono);
+    color:var(--muted);letter-spacing:3px;font-size:0.75rem;animation:blink 1s infinite;
   }
-  @keyframes blink { 50% { opacity: 0.2; } }
+  @keyframes blink{50%{opacity:0.2}}
+
+  /* MOBILE */
+  @media(max-width:480px){
+    header h1{font-size:0.7rem;letter-spacing:2px;}
+    .header-right{width:100%;justify-content:flex-end;}
+    .grid{grid-template-columns:1fr;}
+    .chart-controls select{max-width:100%;}
+  }
+  @media(min-width:481px) and (max-width:860px){
+    .grid{grid-template-columns:repeat(2,1fr);}
+  }
 </style>
 </head>
 <body>
@@ -214,17 +167,20 @@
 <header>
   <div class="logo-dot"></div>
   <h1>Air Quality Monitor</h1>
-  <div class="api-config">
-    <input id="apiUrl" type="text" placeholder="https://xxxx.ngrok.io  (URL จาก ngrok/cloudflare)" />
-    <button class="btn" onclick="applyUrl()">CONNECT</button>
-    <button class="btn" onclick="refresh()" style="border-color:var(--muted);color:var(--muted)">↻ REFRESH</button>
+  <div class="header-right">
+    <div class="online-badge">
+      <div class="badge-dot ok" id="badgeDot"></div>
+      <span id="onlineCount">— / —</span>
+      <span style="color:var(--muted)">online</span>
+    </div>
+    <button class="btn muted" onclick="loadAll()">↻ REFRESH</button>
   </div>
 </header>
 
 <div class="container">
   <div class="status-bar">
     <div class="status-dot" id="statusDot"></div>
-    <span id="statusText">ยังไม่ได้เชื่อมต่อ — กรอก URL แล้วกด CONNECT</span>
+    <span id="statusText">กำลังเชื่อมต่อ…</span>
     <span style="margin-left:auto" id="lastUpdate"></span>
   </div>
 
@@ -232,12 +188,12 @@
 
   <div class="section-title">Live Sensors</div>
   <div id="sensorGrid" class="grid">
-    <div class="loading">WAITING FOR CONNECTION…</div>
+    <div class="loading">CONNECTING…</div>
   </div>
 
-  <div class="section-title" style="margin-top:32px">History Chart</div>
+  <div class="section-title" style="margin-top:24px">History Chart</div>
   <div class="chart-controls">
-    <select id="chartSensor"><option value="">— เลือก Sensor —</option></select>
+    <select id="chartSensor"><option value="">— ทุก Sensor —</option></select>
     <select id="chartMetric">
       <option value="pm2.5">PM2.5</option>
       <option value="pm10">PM10</option>
@@ -252,117 +208,132 @@
     </select>
     <button class="btn" onclick="loadChart()">LOAD</button>
   </div>
-  <canvas id="chart" height="280"></canvas>
+  <canvas id="chart" height="250"></canvas>
 </div>
 
-<!-- Chart.js CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-
 <script>
-let BASE_URL = localStorage.getItem('sensorApiUrl') || '';
+// ═══════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════
+const BASE_URL    = 'https://unimpressionable-ambroise-unsmug.ngrok-free.dev';
+const OFFLINE_MIN = 10;    // ถ้าไม่ส่งข้อมูลนานกว่า 10 นาที = offline
+const REFRESH_MS  = 15000; // auto-refresh ทุก 15 วิ
+
 let chartInstance = null;
 
-// ─── restore saved URL ───
-if (BASE_URL) {
-  document.getElementById('apiUrl').value = BASE_URL;
-  loadAll();
-}
-
-function applyUrl() {
-  let v = document.getElementById('apiUrl').value.trim().replace(/\/$/, '');
-  if (!v) return;
-  BASE_URL = v;
-  localStorage.setItem('sensorApiUrl', BASE_URL);
-  loadAll();
-}
-
+// ── helpers ─────────────────────────────────
 async function apiFetch(path) {
-  const res = await fetch(BASE_URL + path);
+  const res = await fetch(BASE_URL + path, {
+    headers: { 'ngrok-skip-browser-warning': 'true' }
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-function pmClass(pm25) {
-  if (pm25 <= 12)  return 'pm-good';
-  if (pm25 <= 35)  return 'pm-mod';
-  if (pm25 <= 75)  return 'pm-bad';
+function minutesAgo(ts) {
+  return (Date.now() - new Date(ts).getTime()) / 60000;
+}
+
+// ตรวจ online จริง: status ต้องเป็น online AND ส่งข้อมูลมาไม่เกิน OFFLINE_MIN นาที
+function isOnline(sensor) {
+  return sensor.status === 'online' && minutesAgo(sensor.timestamp) <= OFFLINE_MIN;
+}
+
+function pmClass(v) {
+  if (v <= 12) return 'pm-good';
+  if (v <= 35) return 'pm-mod';
+  if (v <= 75) return 'pm-bad';
   return 'pm-danger';
 }
 
-// ─── render sensor cards ───
+// ── render cards ────────────────────────────
 function renderCards(sensors) {
   const grid = document.getElementById('sensorGrid');
-  if (!sensors.length) { grid.innerHTML = '<div class="loading">ไม่พบข้อมูล Sensor</div>'; return; }
+  if (!sensors.length) {
+    grid.innerHTML = '<div class="loading">ไม่พบข้อมูล Sensor</div>';
+    return;
+  }
+
+  // นับ online
+  const onlineList = sensors.filter(s => isOnline(s));
+  const total      = sensors.length;
+  document.getElementById('onlineCount').textContent = `${onlineList.length} / ${total}`;
+  document.getElementById('badgeDot').className = onlineList.length > 0 ? 'badge-dot ok' : 'badge-dot bad';
 
   grid.innerHTML = sensors.map((s, i) => {
-    const d = s.data;
-    const cls = pmClass(d['pm2.5']);
+    const d       = s.data;
+    const online  = isOnline(s);
+    const minsAgo = Math.floor(minutesAgo(s.timestamp));
+    const cls     = pmClass(d['pm2.5'] || 0);
+
+    const offlineWarn = !online
+      ? `<div class="offline-warn">⚠ ไม่มีข้อมูลนาน ${minsAgo} นาที</div>`
+      : '';
+
     return `
-    <div class="card ${s.status !== 'online' ? 'offline' : ''}" style="animation-delay:${i*60}ms">
+    <div class="card ${online?'':'offline'}" style="animation-delay:${i*50}ms">
       <div class="card-header">
         <div class="sensor-name">${s.id}</div>
-        <div class="sensor-status ${s.status}">${s.status.toUpperCase()}</div>
+        <div class="sensor-status ${online?'online':'offline'}">${online?'ONLINE':'OFFLINE'}</div>
       </div>
       <div class="metrics">
         <div class="metric">
           <div class="metric-label">PM2.5</div>
-          <div class="metric-value ${cls}">${d['pm2.5'].toFixed(1)} <span class="metric-unit">μg/m³</span></div>
+          <div class="metric-value ${cls}">${(d['pm2.5']||0).toFixed(1)} <span class="metric-unit">μg/m³</span></div>
         </div>
         <div class="metric">
           <div class="metric-label">PM10</div>
-          <div class="metric-value">${d['pm10'].toFixed(1)} <span class="metric-unit">μg/m³</span></div>
+          <div class="metric-value">${(d['pm10']||0).toFixed(1)} <span class="metric-unit">μg/m³</span></div>
         </div>
         <div class="metric">
           <div class="metric-label">อุณหภูมิ</div>
-          <div class="metric-value">${d['temperature'].toFixed(1)} <span class="metric-unit">°C</span></div>
+          <div class="metric-value">${(d['temperature']||0).toFixed(1)} <span class="metric-unit">°C</span></div>
         </div>
         <div class="metric">
           <div class="metric-label">ความชื้น</div>
-          <div class="metric-value">${d['humidity'].toFixed(1)} <span class="metric-unit">%</span></div>
+          <div class="metric-value">${(d['humidity']||0).toFixed(1)} <span class="metric-unit">%</span></div>
         </div>
         <div class="metric">
           <div class="metric-label">PM1</div>
-          <div class="metric-value">${d['pm1'].toFixed(1)} <span class="metric-unit">μg/m³</span></div>
+          <div class="metric-value">${(d['pm1']||0).toFixed(1)} <span class="metric-unit">μg/m³</span></div>
         </div>
       </div>
+      ${offlineWarn}
       <div class="card-footer">${s.timestamp}</div>
     </div>`;
   }).join('');
 
-  // populate sensor select
+  // sensor select สำหรับกราฟ
   const sel = document.getElementById('chartSensor');
   const cur = sel.value;
   sel.innerHTML = '<option value="">— ทุก Sensor —</option>' +
     sensors.map(s => `<option value="${s.id}" ${s.id===cur?'selected':''}>${s.id}</option>`).join('');
 }
 
-// ─── load live data ───
+// ── load live ───────────────────────────────
 async function loadAll() {
-  if (!BASE_URL) return;
   const dot  = document.getElementById('statusDot');
   const stxt = document.getElementById('statusText');
   const err  = document.getElementById('errBox');
-
   try {
     const json = await apiFetch('/api/sensor-data');
-    renderCards(json.sensors);
+    renderCards(json.sensors || []);
     dot.className = 'status-dot online';
     stxt.textContent = `เชื่อมต่อสำเร็จ — ${json.sensors.length} sensor`;
-    document.getElementById('lastUpdate').textContent = 'อัปเดตล่าสุด: ' + new Date().toLocaleTimeString('th-TH');
+    document.getElementById('lastUpdate').textContent =
+      'อัปเดต: ' + new Date().toLocaleTimeString('th-TH');
     err.style.display = 'none';
   } catch(e) {
     dot.className = 'status-dot error';
     stxt.textContent = 'เชื่อมต่อไม่ได้';
     err.style.display = 'block';
-    err.textContent = 'ERROR: ' + e.message + ' — ตรวจสอบว่า sensor_api.py รันอยู่และ URL ถูกต้อง';
+    err.textContent = 'ERROR: ' + e.message;
   }
 }
 
-function refresh() { loadAll(); }
-
-// ─── chart ───
+// ── chart ────────────────────────────────────
 async function loadChart() {
-  if (!BASE_URL) return;
   const sensorId = document.getElementById('chartSensor').value;
   const metric   = document.getElementById('chartMetric').value;
   const days     = document.getElementById('chartDays').value;
@@ -370,55 +341,44 @@ async function loadChart() {
   let url = `/api/logs?days=${days}&limit=300`;
   if (sensorId) url += `&sensor_id=${sensorId}`;
 
-  const json = await apiFetch(url);
-  const logs = json.logs.reverse(); // oldest first
-
-  const labels = logs.map(l => {
-    const d = new Date(l.timestamp);
-    return d.toLocaleDateString('th-TH', {day:'2-digit', month:'2-digit'}) + ' ' +
-           d.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-  });
-  const values = logs.map(l => l.data[metric] ?? 0);
-
-  const canvas = document.getElementById('chart');
-  if (chartInstance) chartInstance.destroy();
-
-  chartInstance = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: metric.toUpperCase(),
-        data: values,
-        borderColor: '#00e5ff',
-        backgroundColor: 'rgba(0,229,255,0.06)',
-        borderWidth: 1.5,
-        pointRadius: 0,
-        tension: 0.3,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { labels: { color: '#c8d8e8', font: { family: 'Space Mono' } } }
+  try {
+    const json = await apiFetch(url);
+    const logs  = (json.logs || []).reverse();
+    const labels = logs.map(l => {
+      const d = new Date(l.timestamp);
+      return d.toLocaleDateString('th-TH',{day:'2-digit',month:'2-digit'}) + ' ' +
+             d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+    });
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(document.getElementById('chart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: metric.toUpperCase(),
+          data: logs.map(l => l.data[metric] ?? 0),
+          borderColor: '#00e5ff',
+          backgroundColor: 'rgba(0,229,255,0.06)',
+          borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: true
+        }]
       },
-      scales: {
-        x: {
-          ticks: { color: '#556677', font: { family: 'Space Mono', size: 10 }, maxTicksLimit: 12 },
-          grid: { color: '#1e2a38' }
-        },
-        y: {
-          ticks: { color: '#556677', font: { family: 'Space Mono', size: 10 } },
-          grid: { color: '#1e2a38' }
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color:'#c8d8e8', font:{family:'Space Mono'} } } },
+        scales: {
+          x: { ticks:{color:'#556677',font:{family:'Space Mono',size:10},maxTicksLimit:10}, grid:{color:'#1e2a38'} },
+          y: { ticks:{color:'#556677',font:{family:'Space Mono',size:10}}, grid:{color:'#1e2a38'} }
         }
       }
-    }
-  });
+    });
+  } catch(e) {
+    alert('โหลดกราฟไม่ได้: ' + e.message);
+  }
 }
 
-// ─── auto refresh ทุก 30 วิ ───
-setInterval(loadAll, 30000);
+// ── boot ─────────────────────────────────────
+loadAll();
+setInterval(loadAll, REFRESH_MS);
 </script>
 </body>
 </html>
