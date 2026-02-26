@@ -1,0 +1,2770 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sensor Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap');
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', 'Kanit', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+      }
+
+      .modal {
+        transition: opacity 0.25s ease;
+      }
+
+      .modal-active {
+        overflow: hidden;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 30px;
+        font-weight: 500;
+      }
+
+      /* ===== DASHBOARD GRID ===== */
+      .dashboard {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        max-width: 1400px;
+        margin: auto;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 48px rgba(31, 38, 135, 0.25);
+      }
+
+      .card:hover::before {
+        opacity: 1;
+      }
+
+      .card h2 {
+        margin: 0 0 16px;
+        font-size: 20px;
+        font-weight: 600;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .chart-container {
+        position: relative;
+        flex-grow: 1;
+        height: 250px;
+        width: 100%;
+      }
+
+      /* ===== METRICS ===== */
+      .metrics {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 20px;
+        font-size: 15px;
+        font-weight: 600;
+        flex-wrap: wrap;
+      }
+
+      .metric-item {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 12px 20px;
+        border-radius: 12px;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+      }
+
+      .metric-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
+
+      .advice-box {
+        margin-top: 20px;
+        padding: 18px 24px;
+        border-radius: 16px;
+        text-align: center;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .advice-title {
+        font-weight: 700;
+        font-size: 1.15em;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .advice-desc {
+        font-size: 0.95em;
+        opacity: 0.95;
+        line-height: 1.5;
+      }
+
+      /* ธีมสีสำหรับคำแนะนำ */
+      .status-good {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        color: #155724;
+        border-color: #28a745;
+      }
+
+      .status-warning {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+        color: #856404;
+        border-color: #ffc107;
+      }
+
+      .status-danger {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        border-color: #dc3545;
+      }
+
+      .status-info {
+        background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+        color: #0c5460;
+        border-color: #17a2b8;
+      }
+
+      @media (max-width: 900px) {
+        .dashboard {
+          grid-template-columns: 1fr;
+        }
+        .chart-container {
+          height: 250px;
+        }
+      }
+
+      canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* ===== SIDEBAR NAVIGATION ===== */
+      .app-container {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 280px;
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        color: white;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        overflow-y: auto;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 40;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+      }
+
+      .sidebar-header {
+        padding: 32px 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.1) 0%,
+          rgba(118, 75, 162, 0.1) 100%
+        );
+      }
+
+      .sidebar-logo {
+        font-size: 22px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        letter-spacing: -0.5px;
+      }
+
+      .sidebar-logo i {
+        font-size: 28px;
+        color: #667eea;
+      }
+
+      .sidebar-nav {
+        padding: 24px 0;
+      }
+
+      .nav-item {
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        margin: 4px 12px;
+        border-radius: 12px;
+        font-weight: 500;
+      }
+
+      .nav-item:hover {
+        background: rgba(102, 126, 234, 0.15);
+        color: white;
+        transform: translateX(4px);
+      }
+
+      .nav-item.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .nav-item i {
+        font-size: 22px;
+        min-width: 22px;
+      }
+
+      .main-content {
+        flex: 1;
+        margin-left: 280px;
+        transition: margin-left 0.3s ease;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        position: fixed;
+        top: 24px;
+        left: 24px;
+        z-index: 50;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 14px;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .mobile-menu-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+      }
+
+      .content-page {
+        display: none;
+      }
+
+      .content-page.active {
+        display: block;
+        animation: fadeIn 0.4s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .sidebar {
+          transform: translateX(-100%);
+          width: 280px;
+        }
+
+        .sidebar.open {
+          transform: translateX(0);
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+
+        .mobile-menu-btn {
+          display: block;
+        }
+      }
+
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 35;
+        transition: opacity 0.3s ease;
+      }
+
+      .overlay.active {
+        display: block;
+      }
+
+      /* Enhanced Button Styles */
+      button,
+      .btn {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
+      }
+
+      button:hover:not(:disabled),
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      button:active,
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      /* Enhanced Input Styles */
+      input[type='range'] {
+        cursor: pointer;
+        height: 8px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+      }
+
+      input[type='range']::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      input[type='range']::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      /* Sensor Card Enhancements */
+      .sensor-card {
+        transition: all 0.3s ease;
+        border-radius: 16px !important;
+      }
+
+      .sensor-card:hover {
+        transform: translateY(-4px);
+      }
+
+      /* Toast Notification Enhancement */
+      #toast-container {
+        z-index: 9999;
+      }
+
+      .toast {
+        backdrop-filter: blur(10px);
+        border-radius: 12px !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+      }
+
+      /* Smooth Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+      }
+
+      /* Loading Animation */
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .loading {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      /* Table Enhancements */
+      table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      th {
+        background: #ffffff !important;
+        color: #1f2937 !important;
+        font-weight: 600;
+        padding: 16px !important;
+        border-bottom: 2px solid #e5e7eb;
+      }
+
+      tr:hover {
+        background: rgba(102, 126, 234, 0.05);
+        transition: background 0.3s ease;
+      }
+
+      /* Language & Theme Selector Styles */
+      .language-selector {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .lang-btn {
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .lang-btn:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+        transform: translateY(-2px);
+      }
+
+      .lang-btn.active {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      .theme-selector {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+
+      .theme-color-btn {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 16px;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .theme-color-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .theme-color-btn.active {
+        border-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3);
+      }
+
+      .theme-color-btn::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .theme-color-btn.active::after {
+        opacity: 1;
+      }
+
+      /* Sticky Header Styles */
+      .page-header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin: 0 -2rem;
+        padding: 0 2rem;
+      }
+
+      .page-header.scrolled {
+        padding: 0.5rem 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .page-header.scrolled .header-content {
+        padding: 1rem;
+      }
+
+      .page-header.scrolled h1 {
+        font-size: 1.125rem;
+      }
+
+      .page-header.scrolled p {
+        display: none;
+      }
+
+      /* Hidden class for non-home pages */
+      .header-hidden {
+        display: none !important;
+      }
+      /* Force white background for settings cards in dark mode */
+      body.dark-theme #settings-page .bg-white {
+        background-color: #ffffff !important;
+        color: #1f2937 !important;
+      }
+
+      body.dark-theme #settings-page .text-gray-700 {
+        color: #374151 !important;
+      }
+
+      body.dark-theme #settings-page .text-gray-600 {
+        color: #4b5563 !important;
+      }
+
+      body.dark-theme #settings-page .text-gray-500 {
+        color: #6b7280 !important;
+      }
+
+      body.dark-theme #settings-page .bg-gray-50 {
+        background-color: #f9fafb !important;
+      }
+
+      body.dark-theme #settings-page h2 {
+        color: #ffffff !important;
+      }
+
+      /* Settings page visibility fix */
+      #settings-page {
+        min-height: 80vh;
+      }
+
+      body.dark-theme .lang-btn {
+        background: #2a2a3e;
+        border-color: #3a3a4e;
+        color: #e0e0e0;
+      }
+
+      body.dark-theme .lang-btn:hover {
+        border-color: #667eea;
+        background: #3a3a4e;
+      }
+
+      body.dark-theme .lang-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      /* Settings Page Styles */
+
+      /* Settings Page Styles */
+      .theme-btn {
+        text-align: center;
+        cursor: pointer;
+      }
+      .theme-btn.active {
+        border-color: #3b82f6 !important;
+        background-color: #eff6ff;
+      }
+
+      /* Clock Styles */
+      #realtime-clock {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: auto;
+      }
+
+      @media (max-width: 768px) {
+        #realtime-clock {
+          font-size: 0.75rem;
+          padding: 0.5rem;
+        }
+        #clock-date {
+          display: none;
+        }
+      }
+
+      /* Offline Chart Message */
+      .offline-chart-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        color: white;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .offline-chart-message i {
+        font-size: 4rem;
+        opacity: 0.8;
+        margin-bottom: 1rem;
+      }
+
+      /* Profile & Theme Styles */
+      .user-profile-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .user-profile-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .nav-divider {
+        margin: 20px 24px;
+        padding: 8px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+      }
+
+      .theme-selector {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+
+      .theme-color-btn {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 12px;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .theme-color-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .theme-color-btn.active {
+        border-color: #ffffff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .theme-color-btn::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .theme-color-btn.active::after {
+        opacity: 1;
+      }
+
+      .language-selector {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .lang-btn {
+        padding: 12px;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+      }
+
+      .lang-btn:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+      }
+
+      .lang-btn.active {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      /* Dark Theme */
+      body.dark-theme {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      }
+
+      body.dark-theme .card {
+        background: rgba(30, 30, 46, 0.95);
+        color: #e0e0e0;
+      }
+
+      body.dark-theme .sidebar {
+        background: linear-gradient(180deg, #0f0f1e 0%, #050510 100%);
+      }
+
+      body.dark-theme .main-content {
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      body.dark-theme .bg-white {
+        background-color: #1e1e2e !important;
+        color: #e0e0e0 !important;
+      }
+
+      body.dark-theme .text-gray-700 {
+        color: #d0d0d0 !important;
+      }
+
+      body.dark-theme .text-gray-600 {
+        color: #b0b0b0 !important;
+      }
+
+      body.dark-theme .text-gray-500 {
+        color: #909090 !important;
+      }
+
+      /* Profile Modal */
+      .profile-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 60;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .profile-modal.active {
+        display: flex;
+      }
+
+      .profile-modal-content {
+        background: white;
+        border-radius: 20px;
+        padding: 32px;
+        max-width: 500px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      body.dark-theme .profile-modal-content {
+        background: #1e1e2e;
+        color: #e0e0e0;
+      }
+
+      .profile-avatar-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: bold;
+        color: white;
+        margin: 0 auto 20px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      body.dark-theme .form-group label {
+        color: #d0d0d0;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      body.dark-theme .form-group input {
+        background: #2a2a3e;
+        border-color: #3a3a4e;
+        color: #e0e0e0;
+      }
+      /* Table styling in dark mode */
+      body.dark-theme table {
+        background: #ffffff !important;
+      }
+
+      body.dark-theme th {
+        background: #ffffff !important;
+        color: #1f2937 !important;
+      }
+
+      body.dark-theme td {
+        background: #ffffff !important;
+        color: #1f2937 !important;
+      }
+
+      body.dark-theme tr:hover {
+        background: #f9fafb !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+      <i class="ph ph-list text-2xl"></i>
+    </button>
+
+    <!-- Overlay สำหรับ mobile -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Loading Indicator -->
+    <div
+      id="initial-loader"
+      class="fixed inset-0 bg-gray-800 bg-opacity-75 z-[100] flex flex-col items-center justify-center"
+    >
+      <i class="ph ph-circle-notch animate-spin text-5xl text-white mb-4"></i>
+      <p class="text-white text-xl">กำลังโหลดข้อมูล Dashboard...</p>
+    </div>
+
+    <div class="app-container">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar" id="sidebar">
+        <!-- User Profile Section -->
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+            <i class="ph-fill ph-gauge"></i>
+            <span data-translate="app_title">Air Quality</span>
+          </div>
+        </div>
+
+        <div class="user-profile-btn" onclick="openProfileModal()">
+          <div class="user-avatar" id="user-avatar">U</div>
+          <div style="flex: 1; min-width: 0">
+            <div
+              style="
+                font-weight: 600;
+                font-size: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="user-display-name"
+            >
+              User
+            </div>
+            <div
+              style="font-size: 12px; opacity: 0.7"
+              data-translate="view_profile"
+            >
+              View Profile
+            </div>
+          </div>
+          <i class="ph ph-caret-right"></i>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="nav-item active" onclick="showPage(event,'home')">
+            <i class="ph ph-house"></i>
+            <span data-translate="nav_home">Home</span>
+          </a>
+
+          <!-- System Divider -->
+          <div class="nav-divider" data-translate="nav_system">SYSTEM</div>
+
+          <a class="nav-item" onclick="showPage(event,'sensors')">
+            <i class="ph ph-cpu"></i>
+            <span data-translate="nav_sensors">Sensors</span>
+          </a>
+
+          <a class="nav-item" onclick="showPage(event,'reports')">
+            <i class="ph ph-file-text"></i>
+            <span data-translate="nav_reports">Reports</span>
+          </a>
+
+          <a class="nav-item" onclick="showPage(event, 'settings')">
+            <i class="ph ph-gear"></i>
+            <span data-translate="nav_settings">Settings</span>
+          </a>
+
+          <a
+            class="nav-item"
+            onclick="handleLogout()"
+            style="margin-top: 20px; color: #ef4444"
+          >
+            <i class="ph ph-sign-out"></i>
+            <span data-translate="nav_logout">Logout</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <!-- Header with Real-time Clock -->
+        <div
+          id="page-header"
+          class="page-header flex justify-between items-center bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg shadow-lg mb-6"
+        >
+          <div
+            class="header-content flex justify-between items-center w-full p-4 transition-all"
+          >
+            <div class="flex items-center gap-4">
+              <i class="ph ph-gauge text-3xl"></i>
+              <div>
+                <h1 class="text-xl font-bold transition-all">
+                  Air Quality Dashboard
+                </h1>
+                <p class="text-sm opacity-80 transition-all">
+                  ระบบติดตามคุณภาพอากาศ
+                </p>
+              </div>
+            </div>
+            <div
+              id="realtime-clock"
+              class="text-white text-sm font-mono bg-blue-700 px-4 py-2 rounded-lg flex items-center gap-2"
+            >
+              <i class="ph ph-clock text-lg"></i>
+              <div>
+                <div id="clock-time" class="text-lg font-bold">00:00:00</div>
+                <div id="clock-date" class="text-xs opacity-80">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 sm:p-6 md:p-8" style="min-height: 100vh">
+          <!-- HOME PAGE -->
+          <div id="home-page" class="content-page active">
+            <div id="main-dashboard-view">
+              <section
+                id="summary-section"
+                class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6"
+              >
+                <div
+                  class="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center justify-center border-t-4 border-green-500"
+                >
+                  <h3 class="text-sm font-semibold text-gray-500 mb-1">
+                    Online Sensors
+                  </h3>
+                  <p id="online-count" class="text-xl font-bold text-green-600">
+                    0 / 0
+                  </p>
+                </div>
+
+                <div
+                  class="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center justify-center border-t-4 border-purple-500"
+                >
+                  <h3 class="text-sm font-semibold text-gray-500 mb-1">
+                    PM1 เฉลี่ย
+                  </h3>
+                  <p id="avg-pm1" class="text-xl font-bold text-purple-600">
+                    0.00
+                    <span class="text-xs">µg/m³</span>
+                  </p>
+                </div>
+
+                <div
+                  class="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center justify-center border-t-4 border-yellow-500"
+                >
+                  <h3 class="text-sm font-semibold text-gray-500 mb-1">
+                    PM2.5 เฉลี่ย
+                  </h3>
+                  <p id="avg-pm25" class="text-xl font-bold text-yellow-600">
+                    0.00
+                    <span class="text-xs">µg/m³</span>
+                  </p>
+                </div>
+
+                <div
+                  class="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center justify-center border-t-4 border-orange-500"
+                >
+                  <h3 class="text-sm font-semibold text-gray-500 mb-1">
+                    PM10 เฉลี่ย
+                  </h3>
+                  <p id="avg-pm10" class="text-xl font-bold text-orange-600">
+                    0.00
+                    <span class="text-xs">µg/m³</span>
+                  </p>
+                </div>
+
+                <div
+                  class="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center justify-center border-t-4 border-blue-500"
+                >
+                  <h3 class="text-sm font-semibold text-gray-500 mb-1">
+                    ความชื้นเฉลี่ย
+                  </h3>
+                  <p id="avg-humidity" class="text-xl font-bold text-blue-600">
+                    0.00
+                    <span class="text-xs">%</span>
+                  </p>
+                </div>
+
+                <div
+                  class="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center justify-center border-t-4 border-red-500"
+                >
+                  <h3 class="text-sm font-semibold text-gray-500 mb-1">
+                    อุณหภูมิเฉลี่ย
+                  </h3>
+                  <p id="avg-temp" class="text-xl font-bold text-red-600">
+                    0.00
+                    <span class="text-xs">°C</span>
+                  </p>
+                </div>
+              </section>
+
+              <div class="dashboard">
+                <div class="card full-width">
+                  <h2>PM ตามเวลา (พร้อมสภาพอากาศ)</h2>
+                  <div class="chart-container">
+                    <canvas id="lineChart"></canvas>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <h2>สัดส่วนคุณภาพอากาศและการแนะนำ</h2>
+                  <div class="chart-container" style="height: 250px">
+                    <canvas id="doughnutChart"></canvas>
+                  </div>
+
+                  <div class="metrics" id="metrics"></div>
+
+                  <div id="advice-display" class="advice-box"></div>
+                </div>
+              </div>
+
+              <!-- air-quality-dashboard.js stub — ข้อมูลจริงมาจาก API script ด้านล่าง -->
+            </div>
+          </div>
+
+          <!-- SENSORS PAGE -->
+          <div id="sensors-page" class="content-page">
+            <!-- DETAIL VIEW (ซ่อนไว้ในตอนแรก) -->
+            <div id="detail-view" class="hidden">
+              <div class="mb-6 flex items-center justify-between">
+                <button
+                  id="back-to-dashboard-btn"
+                  class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="ph ph-arrow-left"></i>
+                  กลับ
+                </button>
+                <h2 id="detail-title" class="text-2xl font-bold text-gray-700">
+                  รายละเอียด Sensor
+                </h2>
+                <div class="flex gap-2">
+                  <button
+                    id="detail-summary-btn"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  >
+                    <i class="ph ph-file-pdf"></i>
+                    สรุป PDF
+                  </button>
+                  <button
+                    id="detail-log-btn"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  >
+                    <i class="ph ph-file-excel"></i>
+                    Log Excel
+                  </button>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                <p id="detail-last-updated" class="text-sm text-gray-500 mb-4">
+                  อัปเดตล่าสุด: -
+                </p>
+                <div id="detail-data-container" class="space-y-4"></div>
+              </div>
+
+              <!-- กราฟสำหรับ Detail View -->
+              <div class="grid grid-cols-1 gap-6">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                  <h3 class="text-lg font-semibold text-gray-700 mb-4">
+                    กราฟข้อมูล Sensor
+                  </h3>
+                  <div class="chart-container" style="height: 300px">
+                    <canvas id="detail-line-chart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MAIN DASHBOARD VIEW -->
+            <div id="sensors-dashboard-view">
+              <h2 class="text-2xl font-bold text-gray-700 mb-4">
+                สถานะภาพรวม (คลิกเพื่อดูรายละเอียด)
+              </h2>
+              <main
+                id="sensors-container"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-4 gap-6"
+              ></main>
+            </div>
+          </div>
+
+          <!-- REPORTS PAGE -->
+          <div id="reports-page" class="content-page">
+            <div
+              class="bg-white rounded-xl shadow-md p-6 w-full max-w-full lg:max-w-6xl xl:max-w-7xl"
+            >
+              <h2
+                class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2"
+              >
+                <i class="ph ph-file-text"></i>
+                Report Actions
+              </h2>
+              <p class="text-sm text-gray-500 mb-6">
+                เลือกรูปแบบรายงานที่ต้องการสร้างหรือดาวน์โหลด
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- Summary -->
+                <button
+                  id="summary-report-btn-all"
+                  class="group flex flex-col items-center justify-center gap-2 p-5 rounded-xl border hover:border-blue-500 hover:bg-blue-50 transition"
+                >
+                  <i
+                    class="ph ph-table text-3xl text-blue-600 group-hover:scale-110 transition"
+                  ></i>
+                  <span class="font-semibold text-gray-700">
+                    Summary Report
+                  </span>
+                </button>
+
+                <!-- Log -->
+                <button
+                  id="log-report-btn-all"
+                  class="group flex flex-col items-center justify-center gap-2 p-5 rounded-xl border hover:border-gray-600 hover:bg-gray-50 transition"
+                >
+                  <i
+                    class="ph ph-file-csv text-3xl text-gray-700 group-hover:scale-110 transition"
+                  ></i>
+                  <span class="font-semibold text-gray-700">Log Report</span>
+                </button>
+
+                <!-- Poster -->
+                <button
+                  id="create-poster-btn"
+                  class="group flex flex-col items-center justify-center gap-2 p-5 rounded-xl border hover:border-purple-500 hover:bg-purple-50 transition"
+                >
+                  <i
+                    class="ph ph-image text-3xl text-purple-600 group-hover:scale-110 transition"
+                  ></i>
+                  <span class="font-semibold text-gray-700">สร้างโปสเตอร์</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SETTINGS PAGE -->
+          <div id="settings-page" class="content-page">
+            <h2 class="text-2xl font-bold text-gray-700 mb-6">
+              ⚙️
+              <span data-translate="settings_title">ตั้งค่า</span>
+            </h2>
+
+            <div class="max-w-2xl mx-auto space-y-6">
+            
+
+              <!-- Theme Settings -->
+              <div class="bg-white rounded-xl shadow-md p-6">
+                <h3
+                  class="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2"
+                >
+                  <i class="ph ph-palette"></i>
+                  <span data-translate="theme_title">ธีมและสี</span>
+                </h3>
+
+                <!-- Dark/Light Mode Toggle -->
+                <div class="mb-6">
+                  <label
+                    class="text-gray-600 mb-3 block"
+                    data-translate="theme_mode"
+                  >
+                    โหมดธีม
+                  </label>
+                  <div class="flex gap-3">
+                    <button
+                      onclick="setThemeMode('light')"
+                      class="flex-1 py-3 px-4 rounded-lg border-2 transition"
+                      id="light-mode-btn"
+                      style="
+                        border-color: #667eea;
+                        background: linear-gradient(
+                          135deg,
+                          #667eea 0%,
+                          #764ba2 100%
+                        );
+                        color: white;
+                      "
+                    >
+                      <i class="ph-fill ph-sun text-xl"></i>
+                      <div class="text-sm mt-1" data-translate="theme_light">
+                        สว่าง
+                      </div>
+                    </button>
+                    <button
+                      onclick="setThemeMode('dark')"
+                      class="flex-1 py-3 px-4 rounded-lg border-2 border-gray-300 bg-white transition"
+                      id="dark-mode-btn"
+                    >
+                      <i class="ph-fill ph-moon text-xl"></i>
+                      <div class="text-sm mt-1" data-translate="theme_dark">
+                        มืด
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Color Theme -->
+                <div>
+                  <label
+                    class="text-gray-600 mb-3 block"
+                    data-translate="theme_color"
+                  >
+                    สีธีม
+                  </label>
+                  <div class="theme-selector">
+                    <button
+                      class="theme-color-btn active"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #667eea 0%,
+                          #764ba2 100%
+                        );
+                      "
+                      onclick="setThemeColor('purple')"
+                      data-color="purple"
+                    ></button>
+                    <button
+                      class="theme-color-btn"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #f093fb 0%,
+                          #f5576c 100%
+                        );
+                      "
+                      onclick="setThemeColor('pink')"
+                      data-color="pink"
+                    ></button>
+                    <button
+                      class="theme-color-btn"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #4facfe 0%,
+                          #00f2fe 100%
+                        );
+                      "
+                      onclick="setThemeColor('blue')"
+                      data-color="blue"
+                    ></button>
+                    <button
+                      class="theme-color-btn"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #43e97b 0%,
+                          #38f9d7 100%
+                        );
+                      "
+                      onclick="setThemeColor('green')"
+                      data-color="green"
+                    ></button>
+                    <button
+                      class="theme-color-btn"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #fa709a 0%,
+                          #fee140 100%
+                        );
+                      "
+                      onclick="setThemeColor('sunset')"
+                      data-color="sunset"
+                    ></button>
+                    <button
+                      class="theme-color-btn"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #30cfd0 0%,
+                          #330867 100%
+                        );
+                      "
+                      onclick="setThemeColor('ocean')"
+                      data-color="ocean"
+                    ></button>
+                    <button
+                      class="theme-color-btn"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #a8edea 0%,
+                          #fed6e3 100%
+                        );
+                      "
+                      onclick="setThemeColor('pastel')"
+                      data-color="pastel"
+                    ></button>
+                    <button
+                      class="theme-color-btn"
+                      style="
+                        background: linear-gradient(
+                          135deg,
+                          #ff9a56 0%,
+                          #ff6a88 100%
+                        );
+                      "
+                      onclick="setThemeColor('orange')"
+                      data-color="orange"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Font Size -->
+              <div class="bg-white rounded-xl shadow-md p-6">
+                <h3
+                  class="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2"
+                >
+                  <i class="ph ph-text-aa"></i>
+                  <span data-translate="font_title">ขนาดตัวอักษร</span>
+                </h3>
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <label
+                      for="font-size"
+                      class="text-gray-600"
+                      data-translate="font_label"
+                    >
+                      ขนาดตัวอักษรพื้นฐาน
+                    </label>
+                    <div class="flex items-center gap-3">
+                      <input
+                        type="range"
+                        id="font-size"
+                        min="12"
+                        max="20"
+                        step="1"
+                        value="16"
+                        class="w-48"
+                      />
+                      <span
+                        id="font-size-value"
+                        class="text-blue-600 font-bold min-w-[60px]"
+                      >
+                        16 px
+                      </span>
+                    </div>
+                  </div>
+                  <p
+                    id="preview-text"
+                    class="text-gray-700 mt-3 p-3 bg-gray-50 rounded-lg"
+                    style="font-size: 16px"
+                    data-translate="font_preview"
+                  >
+                    ตัวอย่าง: PM2.5 คุณภาพอากาศดีมาก 🌳
+                  </p>
+                </div>
+              </div>
+
+              <!-- Reset Button -->
+              <div class="text-center pt-4">
+                <button
+                  id="reset-settings-btn"
+                  class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2 mx-auto"
+                >
+                  <i class="ph ph-arrow-counter-clockwise"></i>
+                  <span data-translate="reset_settings">
+                    รีเซ็ตการตั้งค่าทั้งหมด
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </main>
+    </div>
+
+    <!-- ส่วน Modals และ Scripts ยังคงเหมือนเดิม -->
+    <div
+      id="log-modal"
+      class="modal fixed inset-0 w-full h-full bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4 hidden"
+    >
+      <div
+        class="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col"
+      >
+        <div class="flex justify-between items-center p-4 border-b">
+          <h2 id="log-modal-title" class="text-xl font-bold text-gray-800">
+            Log Report
+          </h2>
+          <div class="flex items-center gap-4">
+            <button
+              id="download-log-csv-btn"
+              class="bg-green-600 text-white font-bold py-2 px-3 rounded-lg hover:bg-green-700 transition duration-300 flex items-center gap-2 text-sm"
+            >
+              <i class="ph ph-download-simple"></i>
+              Download CSV
+            </button>
+            <button
+              id="close-log-modal"
+              class="text-gray-500 hover:text-gray-800"
+            >
+              <i class="ph-bold ph-x text-2xl"></i>
+            </button>
+          </div>
+        </div>
+        <!-- เพิ่มตรงนี้: Tabs สำหรับเลือกวัน (เหมือน Summary แต่เพิ่ม 15) -->
+        <div class="flex flex-wrap gap-2 p-4 border-b bg-gray-50">
+          <button
+            data-days="1"
+            class="log-tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            1 วัน
+          </button>
+          <button
+            data-days="3"
+            class="log-tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            3 วัน
+          </button>
+          <button
+            data-days="7"
+            class="log-tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            7 วัน
+          </button>
+          <button
+            data-days="15"
+            class="log-tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            15 วัน
+          </button>
+          <button
+            data-days="30"
+            class="log-tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            30 วัน
+          </button>
+          <button
+            data-days="60"
+            class="log-tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            60 วัน
+          </button>
+          <button
+            data-days="90"
+            class="log-tab-btn px-4 py-2 rounded-lg font-medium transition bg-blue-600 text-white"
+          >
+            90 วัน
+          </button>
+
+          <div class="flex flex-wrap items-end gap-3 ml-4">
+            <div>
+              <label class="text-sm text-gray-600">ตั้งแต่วันที่</label>
+              <input
+                type="date"
+                id="log-date-from"
+                class="border rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label class="text-sm text-gray-600">ถึงวันที่</label>
+              <input
+                type="date"
+                id="log-date-to"
+                class="border rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <button
+              id="log-apply-date-range"
+              class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-700"
+            >
+              ใช้ช่วงวันที่
+            </button>
+          </div>
+        </div>
+
+        <div class="p-6 overflow-y-auto">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Timestamp
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Pole ID
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Status
+                  </th>
+                  <!-- เพิ่มคอลัมน์ PM1, PM10 -->
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    PM1
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    PM2.5
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    PM10
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Humidity
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Temperature
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="log-table-body"
+                class="bg-white divide-y divide-gray-200"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="summary-modal"
+      class="modal fixed inset-0 w-full h-full bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4 hidden"
+    >
+      <div
+        class="bg-white rounded-lg shadow-2xl w-full max-w-6xl max-h-[95vh] flex flex-col"
+      >
+        <div class="flex justify-between items-center p-4 border-b">
+          <h2 id="summary-modal-title" class="text-xl font-bold text-gray-800">
+            Summary Report
+          </h2>
+          <button
+            id="close-summary-modal"
+            class="text-gray-500 hover:text-gray-800"
+          >
+            <i class="ph-bold ph-x text-2xl"></i>
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-2 p-4 border-b bg-gray-50">
+          <button
+            data-days="1"
+            class="tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            1 วัน
+          </button>
+          <button
+            data-days="3"
+            class="tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            3 วัน
+          </button>
+          <button
+            data-days="7"
+            class="tab-btn px-4 py-2 rounded-lg font-medium transition bg-blue-600 text-white"
+          >
+            7 วัน
+          </button>
+          <button
+            data-days="30"
+            class="tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            30 วัน
+          </button>
+          <button
+            data-days="60"
+            class="tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            60 วัน
+          </button>
+          <button
+            data-days="90"
+            class="tab-btn px-4 py-2 rounded-lg font-medium transition bg-gray-200 text-gray-700"
+          >
+            90 วัน
+          </button>
+        </div>
+        <div class="p-6 flex-1 overflow-hidden flex flex-col">
+          <p class="text-sm text-yellow-700 bg-yellow-100 p-3 rounded-md mb-4">
+            <strong>หมายเหตุ:</strong>
+            ข้อมูลนี้คำนวณจาก Log ในฐานข้อมูล (ย้อนหลังสูงสุด 90 วัน)
+          </p>
+          <div
+            id="summary-container"
+            class="flex-1 bg-white rounded-lg border shadow-sm overflow-hidden transition-all duration-300"
+          >
+            <div
+              class="flex justify-between items-center p-3 bg-gray-100 border-b"
+              id="table-header"
+            >
+              <h3
+                id="current-period-title"
+                class="font-semibold text-gray-700 cursor-pointer flex-1"
+              >
+                กำลังโหลด...
+              </h3>
+              <div class="flex items-center gap-4">
+                <button
+                  id="download-summary-pdf-btn"
+                  class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-red-700 transition"
+                >
+                  <i class="ph ph-file-pdf"></i>
+                  Export PDF
+                </button>
+                <button
+                  id="download-summary-excel-btn"
+                  class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-green-700 transition"
+                >
+                  <i class="ph ph-file-xls"></i>
+                  Export Excel
+                </button>
+                <button
+                  id="toggle-fullscreen"
+                  class="text-gray-600 hover:text-gray-900"
+                >
+                  <i class="ph ph-arrows-out text-xl"></i>
+                </button>
+              </div>
+            </div>
+            <div
+              id="summary-table-wrapper"
+              class="overflow-auto"
+              style="max-height: 320px"
+            >
+              <div class="p-8 text-center text-gray-500">
+                <i
+                  class="ph ph-circle-notch text-5xl text-blue-500 mb-4 animate-spin-rainbow"
+                ></i>
+                <br />
+                กำลังโหลดข้อมูลสรุป...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="toast-container"
+      class="fixed top-5 right-5 z-[101] space-y-3"
+    ></div>
+
+    <!-- Profile Modal -->
+    <div class="profile-modal" id="profile-modal">
+      <div class="profile-modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold" data-translate="profile_title">
+            โปรไฟล์ผู้ใช้
+          </h2>
+          <button
+            onclick="closeProfileModal()"
+            class="text-gray-500 hover:text-gray-800"
+          >
+            <i class="ph ph-x text-2xl"></i>
+          </button>
+        </div>
+
+        <!-- Current User Section -->
+        <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+          <h3 class="font-bold text-lg mb-4 text-gray-800">ข้อมูลบัญชีของคุณ</h3>
+          
+          <div class="profile-avatar-large" id="profile-avatar-large">U</div>
+
+          <div class="form-group">
+            <label data-translate="profile_username">ชื่อผู้ใช้</label>
+            <input
+              type="text"
+              id="profile-username"
+              placeholder="Enter username"
+            />
+          </div>
+
+          <div class="form-group">
+            <label data-translate="profile_email">อีเมล</label>
+            <input type="email" id="profile-email" placeholder="Enter email" />
+          </div>
+
+          <div class="form-group">
+            <label data-translate="profile_password">รหัสผ่าน</label>
+            <input type="password" id="profile-password" placeholder="••••••••" />
+          </div>
+
+          <div class="form-group">
+            <label>สิทธิ์การใช้งาน</label>
+            <select id="profile-role" class="w-full p-3 border-2 border-gray-300 rounded-lg">
+              <option value="user">ผู้ใช้ทั่วไป</option>
+              <option value="admin">ผู้ดูแลระบบ</option>
+            </select>
+          </div>
+
+          <div class="flex gap-3 mt-4">
+            <button
+              onclick="saveProfile()"
+              class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:opacity-90 transition font-semibold"
+            >
+              <span data-translate="profile_save">บันทึก</span>
+            </button>
+            <button
+              onclick="closeProfileModal()"
+              class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-semibold"
+            >
+              <span data-translate="profile_cancel">ยกเลิก</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- User Management Section -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-lg text-gray-800">
+              <i class="ph ph-users-three"></i> จัดการผู้ใช้ทั้งหมด
+            </h3>
+            <button
+              onclick="showAddUserForm()"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-sm flex items-center gap-2"
+            >
+              <i class="ph ph-plus-circle"></i> เพิ่มผู้ใช้ใหม่
+            </button>
+          </div>
+
+          <!-- Add User Form (Hidden by default) -->
+          <div id="add-user-form" class="mb-4 p-4 bg-white border-2 border-green-200 rounded-lg" style="display: none;">
+            <h4 class="font-bold mb-3 text-green-700">เพิ่มผู้ใช้ใหม่</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-semibold mb-1">ชื่อผู้ใช้ *</label>
+                <input
+                  type="text"
+                  id="new-username"
+                  placeholder="กรอกชื่อผู้ใช้"
+                  class="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1">อีเมล</label>
+                <input
+                  type="email"
+                  id="new-email"
+                  placeholder="กรอกอีเมล"
+                  class="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1">รหัสผ่าน *</label>
+                <input
+                  type="password"
+                  id="new-password"
+                  placeholder="กรอกรหัสผ่าน (อย่างน้อย 6 ตัว)"
+                  class="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1">สิทธิ์</label>
+                <select id="new-role" class="w-full p-2 border rounded-lg">
+                  <option value="user">ผู้ใช้ทั่วไป</option>
+                  <option value="admin">ผู้ดูแลระบบ</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button
+                onclick="saveNewUser()"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-sm"
+              >
+                <i class="ph ph-check"></i> บันทึก
+              </button>
+              <button
+                onclick="cancelAddUser()"
+                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-semibold text-sm"
+              >
+                <i class="ph ph-x"></i> ยกเลิก
+              </button>
+            </div>
+          </div>
+
+          <!-- Edit User Form (Hidden by default) -->
+          <div id="edit-user-form" class="mb-4 p-4 bg-white border-2 border-blue-200 rounded-lg" style="display: none;">
+            <h4 class="font-bold mb-3 text-blue-700">แก้ไขข้อมูลผู้ใช้</h4>
+            <input type="hidden" id="edit-user-id" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-semibold mb-1">ชื่อผู้ใช้ *</label>
+                <input
+                  type="text"
+                  id="edit-username"
+                  placeholder="กรอกชื่อผู้ใช้"
+                  class="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1">อีเมล</label>
+                <input
+                  type="email"
+                  id="edit-email"
+                  placeholder="กรอกอีเมล"
+                  class="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1">รหัสผ่าน *</label>
+                <input
+                  type="password"
+                  id="edit-password"
+                  placeholder="กรอกรหัสผ่าน"
+                  class="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1">สิทธิ์</label>
+                <select id="edit-role" class="w-full p-2 border rounded-lg">
+                  <option value="user">ผู้ใช้ทั่วไป</option>
+                  <option value="admin">ผู้ดูแลระบบ</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button
+                onclick="saveEditUser()"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold text-sm"
+              >
+                <i class="ph ph-check"></i> บันทึก
+              </button>
+              <button
+                onclick="cancelEditUser()"
+                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-semibold text-sm"
+              >
+                <i class="ph ph-x"></i> ยกเลิก
+              </button>
+            </div>
+          </div>
+
+          <!-- Users List -->
+          <div id="users-list" class="space-y-2">
+            <div class="text-center text-gray-500 py-4">
+              <i class="ph ph-circle-notch text-3xl animate-spin"></i>
+              <p class="mt-2">กำลังโหลดรายการผู้ใช้...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      /* User Card Styles */
+      .user-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+      }
+
+      .user-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+
+      .user-avatar-small {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 16px;
+      }
+
+      .user-details {
+        flex: 1;
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .user-email {
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 2px;
+      }
+
+      .current-user-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .admin-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .user-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn-edit,
+      .btn-delete {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .btn-edit {
+        background: #e0f2fe;
+        color: #0369a1;
+      }
+
+      .btn-edit:hover {
+        background: #0ea5e9;
+        color: white;
+      }
+
+      .btn-delete {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      .btn-delete:hover {
+        background: #ef4444;
+        color: white;
+      }
+
+      /* Form Group Styles */
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #334155;
+        font-size: 14px;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      /* Toast Styles */
+      .toast {
+        background: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        min-width: 300px;
+        transform: translateX(400px);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .toast.show {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      .toast i {
+        font-size: 24px;
+      }
+
+      .toast-success {
+        border-left: 4px solid #10b981;
+        color: #065f46;
+      }
+
+      .toast-success i {
+        color: #10b981;
+      }
+
+      .toast-error {
+        border-left: 4px solid #ef4444;
+        color: #991b1b;
+      }
+
+      .toast-error i {
+        color: #ef4444;
+      }
+
+      .toast-info {
+        border-left: 4px solid #3b82f6;
+        color: #1e40af;
+      }
+
+      .toast-info i {
+        color: #3b82f6;
+      }
+
+      .toast-warning {
+        border-left: 4px solid #f59e0b;
+        color: #92400e;
+      }
+
+      .toast-warning i {
+        color: #f59e0b;
+      }
+    </style>
+
+    <!-- ===== STUB สำหรับ external JS ที่ไม่มีไฟล์ ===== -->
+    <script>
+      // Stub functions เพื่อไม่ให้ error
+      function requireAuth() { return true; }
+      function loadProfile() {}
+      function showToast(msg, type) {
+        console.log('[Toast]', type, msg);
+      }
+      function showPage(e, page) {
+        if (e) e.preventDefault();
+        document.querySelectorAll('.content-page').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const el = document.getElementById(page + '-page');
+        if (el) el.classList.remove('hidden');
+        if (e && e.currentTarget) e.currentTarget.classList.add('active');
+        if (page === 'home') loadDashboard();
+        if (page === 'sensors') loadSensorsPage();
+      }
+      // Stub functions ที่ dashboard-core.js อาจเรียก
+      window.allSensorsData = [];
+      window.allLogsData = [];
+    </script>
+
+    <script>
+      // ======== AUTHENTICATION CHECK ========
+      // ตรวจสอบการเข้าสู่ระบบก่อนโหลดหน้า
+      if (!requireAuth()) {
+        // Will redirect to login.html if not authenticated
+      }
+
+      // Theme Colors
+      const themeColors = {
+        purple: { from: '#667eea', to: '#764ba2' },
+        pink: { from: '#f093fb', to: '#f5576c' },
+        blue: { from: '#4facfe', to: '#00f2fe' },
+        green: { from: '#43e97b', to: '#38f9d7' },
+        sunset: { from: '#fa709a', to: '#fee140' },
+        ocean: { from: '#30cfd0', to: '#330867' },
+        pastel: { from: '#a8edea', to: '#fed6e3' },
+        orange: { from: '#ff9a56', to: '#ff6a88' },
+      };
+
+      function setThemeColor(color) {
+        const theme = themeColors[color];
+        if (!theme) return;
+
+        document.documentElement.style.setProperty('--theme-from', theme.from);
+        document.documentElement.style.setProperty('--theme-to', theme.to);
+
+        // Update gradient backgrounds
+        const gradient = `linear-gradient(135deg, ${theme.from} 0%, ${theme.to} 100%)`;
+        document.body.style.background = gradient;
+        document.body.style.backgroundAttachment = 'fixed';
+
+        // Update active button
+        document.querySelectorAll('.theme-color-btn').forEach((btn) => {
+          btn.classList.remove('active');
+          if (btn.getAttribute('data-color') === color) {
+            btn.classList.add('active');
+          }
+        });
+
+        localStorage.setItem('theme_color', color);
+        showToast('Theme color updated!', 'success');
+      }
+
+      function setThemeMode(mode) {
+        if (mode === 'dark') {
+          document.body.classList.add('dark-theme');
+          document.getElementById('light-mode-btn').style.borderColor =
+            '#e2e8f0';
+          document.getElementById('light-mode-btn').style.background = 'white';
+          document.getElementById('light-mode-btn').style.color = '#374151';
+          document.getElementById('dark-mode-btn').style.borderColor =
+            '#667eea';
+          document.getElementById('dark-mode-btn').style.background =
+            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+          document.getElementById('dark-mode-btn').style.color = 'white';
+        } else {
+          document.body.classList.remove('dark-theme');
+          document.getElementById('dark-mode-btn').style.borderColor =
+            '#e2e8f0';
+          document.getElementById('dark-mode-btn').style.background = 'white';
+          document.getElementById('dark-mode-btn').style.color = '#374151';
+          document.getElementById('light-mode-btn').style.borderColor =
+            '#667eea';
+          document.getElementById('light-mode-btn').style.background =
+            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+          document.getElementById('light-mode-btn').style.color = 'white';
+        }
+
+        localStorage.setItem('theme_mode', mode);
+        showToast(
+          `${mode.charAt(0).toUpperCase() + mode.slice(1)} mode activated!`,
+          'success'
+        );
+      }
+
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', () => {
+      
+        loadProfile();
+
+        // Load theme settings
+        const savedColor = localStorage.getItem('theme_color') || 'purple';
+        const savedMode = localStorage.getItem('theme_mode') || 'light';
+
+        setThemeColor(savedColor);
+        setThemeMode(savedMode);
+      });
+    </script>
+  <!-- ===================================================
+       SENSOR API INTEGRATION
+       ดึงข้อมูลจริงจาก ngrok → Flask API → MySQL (XAMPP)
+       =================================================== -->
+  <script>
+  (function () {
+    // ── CONFIG ──────────────────────────────────────────
+    const API_BASE    = 'https://unimpressionable-ambroise-unsmug.ngrok-free.dev';
+    const HEADERS     = { 'ngrok-skip-browser-warning': 'true' };
+    const REFRESH_MS  = 15000;   // อัปเดตทุก 15 วินาที
+    const OFFLINE_MIN = 10;      // ถ้าไม่ส่งข้อมูลนาน 10 นาที = offline
+
+    // ── HELPERS ─────────────────────────────────────────
+    async function apiFetch(path) {
+      const r = await fetch(API_BASE + path, { headers: HEADERS });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }
+
+    function minutesAgo(ts) {
+      return (Date.now() - new Date(ts).getTime()) / 60000;
+    }
+
+    function pmColor(v) {
+      if (v <= 12)  return '#16a34a';
+      if (v <= 35)  return '#ca8a04';
+      if (v <= 75)  return '#ea580c';
+      return '#dc2626';
+    }
+    function pmLabel(v) {
+      if (v <= 12)  return '😊 ดีมาก';
+      if (v <= 35)  return '😐 ปานกลาง';
+      if (v <= 75)  return '😷 ไม่ดี';
+      return '🚨 อันตราย';
+    }
+    function pmBg(v) {
+      if (v <= 12)  return '#dcfce7';
+      if (v <= 35)  return '#fef9c3';
+      if (v <= 75)  return '#ffedd5';
+      return '#fee2e2';
+    }
+
+    // ── CHARTS ──────────────────────────────────────────
+    let lineChart = null, doughnutChart = null, detailChart = null;
+
+    function initLineChart(labels, pm1, pm25, pm10) {
+      const ctx = document.getElementById('lineChart');
+      if (!ctx) return;
+      if (lineChart) lineChart.destroy();
+      lineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            { label: 'PM1', data: pm1,  borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,.08)', borderWidth: 2, pointRadius: 0, tension: .3, fill: true },
+            { label: 'PM2.5', data: pm25, borderColor: '#eab308', backgroundColor: 'rgba(234,179,8,.08)', borderWidth: 2, pointRadius: 0, tension: .3, fill: true },
+            { label: 'PM10', data: pm10, borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,.08)', borderWidth: 2, pointRadius: 0, tension: .3, fill: true },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { position: 'top' } },
+          scales: {
+            x: { ticks: { maxTicksLimit: 10, font: { size: 11 } } },
+            y: { beginAtZero: true, title: { display: true, text: 'µg/m³' } }
+          }
+        }
+      });
+    }
+
+    function initDoughnutChart(good, mod, bad, danger) {
+      const ctx = document.getElementById('doughnutChart');
+      if (!ctx) return;
+      if (doughnutChart) doughnutChart.destroy();
+      doughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['ดีมาก (≤12)', 'ปานกลาง (≤35)', 'ไม่ดี (≤75)', 'อันตราย (>75)'],
+          datasets: [{ data: [good, mod, bad, danger], backgroundColor: ['#16a34a','#ca8a04','#ea580c','#dc2626'], borderWidth: 2 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+      });
+    }
+
+    function initDetailChart(labels, datasets) {
+      const ctx = document.getElementById('detail-line-chart');
+      if (!ctx) return;
+      if (detailChart) detailChart.destroy();
+      detailChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'top' } },
+          scales: { x: { ticks: { maxTicksLimit: 10, font:{size:11} } }, y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    // ── SENSOR CARDS ────────────────────────────────────
+    function renderSensorCards(sensors) {
+      const container = document.getElementById('sensors-container');
+      if (!container) return;
+      if (!sensors.length) {
+        container.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-10">ไม่พบ Sensor</p>';
+        return;
+      }
+      container.innerHTML = sensors.map(s => {
+        const d       = s.data;
+        const offline = minutesAgo(s.timestamp) > OFFLINE_MIN;
+        const status  = offline ? 'offline' : s.status;
+        const pm25    = d['pm2.5'] || 0;
+        const col     = pmColor(pm25);
+        const bg      = pmBg(pm25);
+        const lbl     = pmLabel(pm25);
+        const borderC = offline ? '#9ca3af' : col;
+        return `
+        <div class="sensor-card bg-white rounded-2xl shadow-md p-5 cursor-pointer border-l-4"
+             style="border-left-color:${borderC}"
+             onclick="openSensorDetail('${s.id}')">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-bold text-gray-700 text-lg">${s.id}</h3>
+            <span class="text-xs font-semibold px-2 py-1 rounded-full"
+                  style="background:${offline?'#f3f4f6':'#dcfce7'};color:${offline?'#6b7280':'#16a34a'}">
+              ${offline ? '🔴 Offline' : '🟢 Online'}
+            </span>
+          </div>
+          <div class="inline-block text-xs font-bold px-2 py-1 rounded-lg mb-3"
+               style="background:${bg};color:${col}">${lbl}</div>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="bg-gray-50 rounded-lg p-2">
+              <div class="text-gray-400 text-xs">PM2.5</div>
+              <div class="font-bold" style="color:${col}">${pm25.toFixed(1)} <span class="text-xs text-gray-400">µg/m³</span></div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-2">
+              <div class="text-gray-400 text-xs">PM10</div>
+              <div class="font-bold text-orange-500">${(d['pm10']||0).toFixed(1)} <span class="text-xs text-gray-400">µg/m³</span></div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-2">
+              <div class="text-gray-400 text-xs">อุณหภูมิ</div>
+              <div class="font-bold text-red-500">${(d['temperature']||0).toFixed(1)}<span class="text-xs text-gray-400">°C</span></div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-2">
+              <div class="text-gray-400 text-xs">ความชื้น</div>
+              <div class="font-bold text-blue-500">${(d['humidity']||0).toFixed(1)}<span class="text-xs text-gray-400">%</span></div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-400 mt-3 truncate">${s.timestamp}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── STATS BAR ────────────────────────────────────────
+    function updateStats(sensors) {
+      const online = sensors.filter(s => minutesAgo(s.timestamp) <= OFFLINE_MIN).length;
+      const set = (id, val, unit='') => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = val + (unit ? `<span class="text-xs">${unit}</span>` : '');
+      };
+      set('online-count', `${online} / ${sensors.length}`);
+
+      const avg = key => {
+        const vals = sensors.map(s => s.data[key] || 0);
+        return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : '0.00';
+      };
+      set('avg-pm1',    avg('pm1'), ' µg/m³');
+      set('avg-pm25',   avg('pm2.5'), ' µg/m³');
+      set('avg-pm10',   avg('pm10'), ' µg/m³');
+      set('avg-humidity', avg('humidity'), ' %');
+      set('avg-temp',   avg('temperature'), ' °C');
+    }
+
+    // ── DASHBOARD HOME CHARTS ────────────────────────────
+    async function loadDashboard() {
+      try {
+        const [liveJson, logsJson] = await Promise.all([
+          apiFetch('/api/sensor-data'),
+          apiFetch('/api/logs?days=1&limit=200')
+        ]);
+        const sensors = liveJson.sensors || [];
+        const logs    = (logsJson.logs || []).slice().reverse();
+
+        window.allSensorsData = sensors;
+        updateStats(sensors);
+
+        // Line chart
+        const labels = logs.map(l => {
+          const d = new Date(l.timestamp);
+          return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+        });
+        initLineChart(
+          labels,
+          logs.map(l => l.data['pm1']   || 0),
+          logs.map(l => l.data['pm2.5'] || 0),
+          logs.map(l => l.data['pm10']  || 0)
+        );
+
+        // Doughnut — นับจาก sensor ล่าสุด
+        let good=0, mod=0, bad=0, danger=0;
+        sensors.forEach(s => {
+          const v = s.data['pm2.5'] || 0;
+          if (v<=12) good++;
+          else if (v<=35) mod++;
+          else if (v<=75) bad++;
+          else danger++;
+        });
+        initDoughnutChart(good, mod, bad, danger);
+
+        // Metrics box
+        const metrics = document.getElementById('metrics');
+        if (metrics) {
+          const avgPm25 = sensors.length
+            ? (sensors.reduce((a,s)=>a+(s.data['pm2.5']||0),0)/sensors.length).toFixed(1)
+            : 0;
+          metrics.innerHTML = `
+            <div class="flex items-center gap-2 mt-3 p-3 rounded-lg"
+                 style="background:${pmBg(avgPm25)};color:${pmColor(avgPm25)}">
+              <span class="text-2xl">${avgPm25 <= 12 ? '😊' : avgPm25 <= 35 ? '😐' : '😷'}</span>
+              <div>
+                <div class="font-bold">PM2.5 เฉลี่ย: ${avgPm25} µg/m³</div>
+                <div class="text-sm">${pmLabel(Number(avgPm25))}</div>
+              </div>
+            </div>`;
+        }
+        const advice = document.getElementById('advice-display');
+        if (advice) {
+          const avgPm25 = sensors.length
+            ? sensors.reduce((a,s)=>a+(s.data['pm2.5']||0),0)/sensors.length : 0;
+          advice.innerHTML = avgPm25 <= 12
+            ? '<div class="mt-3 p-3 bg-green-50 rounded-lg text-green-700 text-sm">✅ คุณภาพอากาศดี สามารถทำกิจกรรมกลางแจ้งได้ตามปกติ</div>'
+            : avgPm25 <= 35
+            ? '<div class="mt-3 p-3 bg-yellow-50 rounded-lg text-yellow-700 text-sm">⚠️ คุณภาพอากาศปานกลาง ผู้ที่มีโรคระบบทางเดินหายใจควรระวัง</div>'
+            : '<div class="mt-3 p-3 bg-red-50 rounded-lg text-red-700 text-sm">🚨 คุณภาพอากาศไม่ดี ควรสวมหน้ากาก N95 และหลีกเลี่ยงการอยู่กลางแจ้ง</div>';
+        }
+
+      } catch(e) {
+        console.error('[API] loadDashboard error:', e);
+      }
+    }
+
+    // ── SENSORS PAGE ─────────────────────────────────────
+    async function loadSensorsPage() {
+      try {
+        const json = await apiFetch('/api/sensor-data');
+        window.allSensorsData = json.sensors || [];
+        renderSensorCards(json.sensors || []);
+      } catch(e) {
+        console.error('[API] loadSensorsPage error:', e);
+      }
+    }
+
+    // ── DETAIL VIEW ──────────────────────────────────────
+    async function openSensorDetail(id) {
+      try {
+        const dv = document.getElementById('detail-view');
+        const mv = document.getElementById('sensors-dashboard-view');
+        if (dv) dv.classList.remove('hidden');
+        if (mv) mv.classList.add('hidden');
+
+        const el = document.getElementById('detail-title');
+        if (el) el.textContent = 'รายละเอียด: ' + id;
+
+        const [liveJson, logsJson] = await Promise.all([
+          apiFetch('/api/sensor-data'),
+          apiFetch('/api/logs?sensor_id=' + id + '&days=7&limit=300')
+        ]);
+        const sensor = (liveJson.sensors||[]).find(s=>s.id===id);
+        const logs   = (logsJson.logs||[]).slice().reverse();
+
+        // Populate detail-data-container
+        const ddc = document.getElementById('detail-data-container');
+        if (ddc && sensor) {
+          const d = sensor.data;
+          ddc.innerHTML = `
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              ${[['PM1', d['pm1'], 'µg/m³','#a855f7'],['PM2.5', d['pm2.5'], 'µg/m³','#eab308'],
+                 ['PM10', d['pm10'], 'µg/m³','#f97316'],['อุณหภูมิ', d['temperature'], '°C','#ef4444'],
+                 ['ความชื้น', d['humidity'], '%','#3b82f6']].map(([name,val,unit,col])=>`
+                <div class="bg-gray-50 rounded-xl p-4 text-center">
+                  <div class="text-gray-400 text-sm">${name}</div>
+                  <div class="text-2xl font-bold mt-1" style="color:${col}">${(val||0).toFixed(1)}</div>
+                  <div class="text-gray-400 text-xs">${unit}</div>
+                </div>`).join('')}
+            </div>`;
+          const lu = document.getElementById('detail-last-updated');
+          if (lu) lu.textContent = 'อัปเดตล่าสุด: ' + sensor.timestamp;
+        }
+
+        // Detail chart
+        const labels = logs.map(l => {
+          const d = new Date(l.timestamp);
+          return (d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+        });
+        initDetailChart(labels, [
+          { label:'PM2.5', data: logs.map(l=>l.data['pm2.5']||0), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,.07)', borderWidth:2, pointRadius:0, tension:.3, fill:true },
+          { label:'PM10',  data: logs.map(l=>l.data['pm10'] ||0), borderColor:'#f97316', backgroundColor:'rgba(249,115,22,.07)', borderWidth:2, pointRadius:0, tension:.3, fill:true },
+        ]);
+
+        // Back button
+        const backBtn = document.getElementById('back-to-dashboard-btn');
+        if (backBtn) {
+          backBtn.onclick = () => {
+            if (dv) dv.classList.add('hidden');
+            if (mv) mv.classList.remove('hidden');
+          };
+        }
+      } catch(e) {
+        console.error('[API] openSensorDetail error:', e);
+      }
+    }
+    window.openSensorDetail = openSensorDetail;
+
+    // ── LOG TABLE ────────────────────────────────────────
+    async function loadLogTable(days=7, sensorId='', startDate='', endDate='') {
+      const tbody = document.getElementById('log-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-gray-400">กำลังโหลด...</td></tr>';
+      try {
+        let path = '/api/logs?days=' + days + '&limit=500';
+        if (sensorId) path += '&sensor_id=' + sensorId;
+        if (startDate && endDate) path += '&start_date=' + startDate + '&end_date=' + endDate;
+        const json = await apiFetch(path);
+        const logs = json.logs || [];
+        if (!logs.length) {
+          tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-gray-400">ไม่พบข้อมูล</td></tr>';
+          return;
+        }
+        window.allLogsData = logs;
+        tbody.innerHTML = logs.map(l => {
+          const d = l.data;
+          const offline = minutesAgo(l.timestamp) > OFFLINE_MIN;
+          return `<tr class="hover:bg-gray-50">
+            <td class="px-6 py-3 text-sm text-gray-600 whitespace-nowrap">${l.timestamp}</td>
+            <td class="px-6 py-3 text-sm font-semibold text-gray-700">${l.id}</td>
+            <td class="px-6 py-3">
+              <span class="text-xs px-2 py-1 rounded-full font-bold
+                ${offline ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
+                ${offline ? 'Offline' : 'Online'}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-sm">${(d['pm1']||0).toFixed(1)}</td>
+            <td class="px-6 py-3 text-sm font-bold" style="color:${pmColor(d['pm2.5']||0)}">${(d['pm2.5']||0).toFixed(1)}</td>
+            <td class="px-6 py-3 text-sm">${(d['pm10']||0).toFixed(1)}</td>
+            <td class="px-6 py-3 text-sm">${(d['humidity']||0).toFixed(1)}</td>
+            <td class="px-6 py-3 text-sm">${(d['temperature']||0).toFixed(1)}</td>
+          </tr>`;
+        }).join('');
+      } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-red-400">โหลดข้อมูลไม่ได้: ' + e.message + '</td></tr>';
+      }
+    }
+    window.loadLogTable = loadLogTable;
+
+    // ── LOG MODAL CONTROLS ───────────────────────────────
+    function hookLogModal() {
+      // ปุ่มกรองในตาราง log
+      const applyBtn = document.getElementById('log-apply-date-range');
+      if (applyBtn) {
+        applyBtn.onclick = () => {
+          const s = document.getElementById('log-start-date')?.value;
+          const e = document.getElementById('log-end-date')?.value;
+          const sid = document.getElementById('log-sensor-filter')?.value || '';
+          loadLogTable(90, sid, s, e);
+        };
+      }
+      // tab buttons ใน log modal
+      document.querySelectorAll('[data-days]').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const days = parseInt(this.getAttribute('data-days'));
+          document.querySelectorAll('[data-days]').forEach(b => {
+            b.classList.remove('bg-blue-600','text-white');
+            b.classList.add('bg-gray-200','text-gray-700');
+          });
+          this.classList.add('bg-blue-600','text-white');
+          this.classList.remove('bg-gray-200','text-gray-700');
+          loadLogTable(days);
+        });
+      });
+    }
+
+    // ── SIDEBAR NAVIGATION ───────────────────────────────
+    function hookNav() {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          // หา page จาก onclick attribute
+          const onclickAttr = this.getAttribute('onclick');
+          if (onclickAttr) {
+            const m = onclickAttr.match(/showPage\([^,]+,\s*'([^']+)'\)/);
+            if (m) showPage(e, m[1]);
+          }
+        });
+      });
+      // hamburger
+      const hamburger = document.getElementById('hamburger-btn') || document.querySelector('[onclick*="toggleSidebar"]');
+      if (hamburger) {
+        hamburger.onclick = () => {
+          const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
+          if (sidebar) sidebar.classList.toggle('open');
+        };
+      }
+    }
+
+    // ── LAST UPDATE INDICATOR ────────────────────────────
+    function updateRefreshBadge() {
+      let badge = document.getElementById('_api_refresh_badge');
+      if (!badge) {
+        badge = document.createElement('div');
+        badge.id = '_api_refresh_badge';
+        badge.style.cssText = 'position:fixed;bottom:16px;right:16px;background:rgba(0,0,0,.7);color:#fff;' +
+          'padding:6px 14px;border-radius:20px;font-size:12px;z-index:9999;pointer-events:none;';
+        document.body.appendChild(badge);
+      }
+      badge.textContent = '🔄 Live — อัปเดตล่าสุด: ' + new Date().toLocaleTimeString('th-TH');
+    }
+
+    // ── BOOT ─────────────────────────────────────────────
+    async function boot() {
+      // ซ่อน loader อัตโนมัติหลัง 8 วิ กันค้าง
+      setTimeout(() => {
+        const loader = document.getElementById('initial-loader');
+        if (loader) loader.style.display = 'none';
+      }, 8000);
+      // แสดง home page ก่อน
+      document.querySelectorAll('.content-page').forEach(p => p.classList.add('hidden'));
+      const home = document.getElementById('home-page') || document.querySelector('.content-page');
+      if (home) home.classList.remove('hidden');
+
+      hookNav();
+      hookLogModal();
+
+      await loadDashboard();
+      await loadSensorsPage();
+      updateRefreshBadge();
+
+      // ซ่อน loading screen
+      const loader = document.getElementById('initial-loader');
+      if (loader) loader.style.display = 'none';
+
+      // Auto-refresh
+      setInterval(async () => {
+        await loadDashboard();
+        // รีเฟรช sensors page ถ้ากำลังแสดงอยู่
+        const sp = document.getElementById('sensors-page');
+        if (sp && !sp.classList.contains('hidden')) {
+          await loadSensorsPage();
+        }
+        updateRefreshBadge();
+      }, REFRESH_MS);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
+  })();
+  </script>
+
+  </body>
+</html>
