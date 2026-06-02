@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Air Quality Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f5f0;
+  --surface: #ffffff;
+  --surface2: #f0ede8;
+  --border: #e0ddd8;
+  --border-strong: #c8c4be;
+  --text: #1a1a18;
+  --text-2: #6b6860;
+  --text-3: #9b9890;
+
+  --aqi-good: #2d7a3a;
+  --aqi-good-bg: #eaf4ec;
+  --aqi-good-border: #b4d9bb;
+
+  --aqi-mod: #b07800;
+  --aqi-mod-bg: #fff8e6;
+  --aqi-mod-border: #f0d070;
+
+  --aqi-usg: #c05020;
+  --aqi-usg-bg: #fef0e8;
+  --aqi-usg-border: #f0b898;
+
+  --aqi-bad: #b02828;
+  --aqi-bad-bg: #feeaea;
+  --aqi-bad-border: #e89898;
+
+  --aqi-vbad: #7a0a60;
+  --aqi-vbad-bg: #f8eaf4;
+  --aqi-vbad-border: #d8a0c8;
+
+  --aqi-haz: #5a0010;
+  --aqi-haz-bg: #f5e8ec;
+  --aqi-haz-border: #c88090;
+
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-body: 'IBM Plex Sans Thai', sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141412;
+    --surface: #1e1e1a;
+    --surface2: #272723;
+    --border: #2e2e28;
+    --border-strong: #3e3e38;
+    --text: #e8e6e0;
+    --text-2: #9a9890;
+    --text-3: #686660;
+    --aqi-good: #5dba6e;
+    --aqi-good-bg: #162018;
+    --aqi-good-border: #2a4a2e;
+    --aqi-mod: #e0a020;
+    --aqi-mod-bg: #201a08;
+    --aqi-mod-border: #4a3a10;
+    --aqi-usg: #e87848;
+    --aqi-usg-bg: #201408;
+    --aqi-usg-border: #4a2a18;
+    --aqi-bad: #e05050;
+    --aqi-bad-bg: #200a0a;
+    --aqi-bad-border: #4a1818;
+    --aqi-vbad: #c060a0;
+    --aqi-vbad-bg: #1a0818;
+    --aqi-vbad-border: #3a1430;
+    --aqi-haz: #d04060;
+    --aqi-haz-bg: #1a0808;
+    --aqi-haz-border: #3a1018;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--aqi-good);
+  flex-shrink: 0;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+
+.header-title h1 {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.header-meta {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 4px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--aqi-good); }
+.chip .dot.err { background: var(--aqi-bad); }
+
+.btn-refresh {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-2);
+  padding: 5px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.18s;
+  letter-spacing: 0.05em;
+}
+.btn-refresh:hover { background: var(--surface2); color: var(--text); border-color: var(--border-strong); }
+
+/* ── MAIN ── */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+
+/* ── STATUS BAR ── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 0.8rem;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+}
+.status-indicator {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  flex-shrink: 0;
+}
+.status-indicator.ok { background: var(--aqi-good); }
+.status-indicator.err { background: var(--aqi-bad); }
+.status-time { margin-left: auto; font-size: 0.7rem; }
+
+/* ── ERROR BOX ── */
+.err-box {
+  background: var(--aqi-bad-bg);
+  border: 1px solid var(--aqi-bad-border);
+  color: var(--aqi-bad);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* ── AQI LEGEND ── */
+.legend-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+.legend-title {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+}
+.legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+}
+.legend-swatch {
+  width: 12px; height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.legend-text {}
+.legend-label {
+  font-weight: 600;
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
+.legend-range {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  opacity: 0.75;
+  margin-top: 1px;
+}
+
+.l-good  { background: var(--aqi-good-bg); border-color: var(--aqi-good-border); color: var(--aqi-good); }
+.l-mod   { background: var(--aqi-mod-bg); border-color: var(--aqi-mod-border); color: var(--aqi-mod); }
+.l-usg   { background: var(--aqi-usg-bg); border-color: var(--aqi-usg-border); color: var(--aqi-usg); }
+.l-bad   { background: var(--aqi-bad-bg); border-color: var(--aqi-bad-border); color: var(--aqi-bad); }
+.l-vbad  { background: var(--aqi-vbad-bg); border-color: var(--aqi-vbad-border); color: var(--aqi-vbad); }
+.l-haz   { background: var(--aqi-haz-bg); border-color: var(--aqi-haz-border); color: var(--aqi-haz); }
+
+/* ── SENSOR GRID ── */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.sensor-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.sensor-card:hover { border-color: var(--border-strong); }
+.sensor-card.offline { opacity: 0.6; }
+
+/* top accent bar */
+.card-accent {
+  height: 4px;
+  width: 100%;
+}
+
+.card-body { padding: 16px 18px 14px; }
+
+/* card top row */
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.sensor-id {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+.sensor-badge {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.badge-online { background: var(--aqi-good-bg); color: var(--aqi-good); border-color: var(--aqi-good-border); }
+.badge-offline { background: var(--aqi-bad-bg); color: var(--aqi-bad); border-color: var(--aqi-bad-border); }
+
+/* AQI level banner inside card */
+.aqi-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+  border: 1px solid;
+}
+.aqi-level-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.aqi-pm-large {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1;
+}
+.aqi-pm-unit {
+  font-size: 0.62rem;
+  opacity: 0.7;
+  margin-top: 1px;
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+/* metrics row */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.metric {
+  background: var(--surface2);
+  border-radius: 6px;
+  padding: 8px 8px 7px;
+}
+.metric-lbl {
+  font-size: 0.58rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+  margin-bottom: 3px;
+}
+.metric-val {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1;
+}
+.metric-unit-s {
+  font-size: 0.58rem;
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+.card-footer {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-3);
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.offline-note {
+  font-size: 0.65rem;
+  color: var(--aqi-bad);
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+}
+
+/* ── CHART ── */
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.chart-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.chart-controls select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 7px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+  flex: 1;
+  min-width: 110px;
+  max-width: 200px;
+  -webkit-appearance: none;
+}
+.chart-controls select:hover { border-color: var(--border-strong); }
+.btn-load {
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  padding: 7px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.06em;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.btn-load:hover { opacity: 0.8; }
+
+canvas#chart { width: 100% !important; }
+
+/* ── LOADING ── */
+.loading-msg {
+  text-align: center;
+  padding: 48px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-3);
+  letter-spacing: 0.1em;
+  animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes blink { 50% { opacity: 0.25; } }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 500px) {
+  header { padding: 12px 14px; }
+  .header-title h1 { font-size: 0.75rem; }
+  .header-meta { width: 100%; }
+  main { padding: 16px 12px; }
+  .sensor-grid { grid-template-columns: 1fr; gap: 10px; }
+  .legend-grid { grid-template-columns: 1fr 1fr; }
+  .metrics-row { grid-template-columns: repeat(2, 1fr); }
+  .chart-controls select { max-width: 100%; }
+}
+@media (min-width: 501px) and (max-width: 800px) {
+  .sensor-grid { grid-template-columns: repeat(2, 1fr); }
+  .legend-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <div class="live-dot" id="liveDot"></div>
+    <h1>Air Quality Monitor</h1>
+  </div>
+  <div class="header-meta">
+    <div class="chip">
+      <div class="dot" id="badgeDot"></div>
+      <span id="onlineCount">— / —</span>
+      <span>online</span>
+    </div>
+    <button class="btn-refresh" onclick="loadAll()">↻ Refresh</button>
+  </div>
+</header>
+
+<main>
+  <div class="status-bar">
+    <div class="status-indicator" id="statusDot"></div>
+    <span id="statusText">กำลังเชื่อมต่อ…</span>
+    <span class="status-time" id="lastUpdate"></span>
+  </div>
+
+  <div class="err-box" id="errBox"></div>
+
+  <!-- AQI LEGEND -->
+  <div class="legend-card">
+    <div class="legend-title">เกณฑ์คุณภาพอากาศ PM2.5 (μg/m³)</div>
+    <div class="legend-grid">
+      <div class="legend-item l-good">
+        <div class="legend-swatch" style="background:var(--aqi-good)"></div>
+        <div class="legend-text">
+          <div class="legend-label">ดี</div>
+          <div class="legend-range">0 – 12 μg/m³</div>
+        </div>
+      </div>
+      <div class="legend-item l-mod">
+        <div class="legend-swatch" style="background:var(--aqi-mod)"></div>
+        <div class="legend-text">
+          <div class="legend-label">ปานกลาง</div>
+          <div class="legend-range">12.1 – 35 μg/m³</div>
+        </div>
+      </div>
+      <div class="legend-item l-usg">
+        <div class="legend-swatch" style="background:var(--aqi-usg)"></div>
+        <div class="legend-text">
+          <div class="legend-label">ไม่ดีสำหรับกลุ่มเสี่ยง</div>
+          <div class="legend-range">35.1 – 75 μg/m³</div>
+        </div>
+      </div>
+      <div class="legend-item l-bad">
+        <div class="legend-swatch" style="background:var(--aqi-bad)"></div>
+        <div class="legend-text">
+          <div class="legend-label">ไม่ดี</div>
+          <div class="legend-range">75.1 – 150 μg/m³</div>
+        </div>
+      </div>
+      <div class="legend-item l-vbad">
+        <div class="legend-swatch" style="background:var(--aqi-vbad)"></div>
+        <div class="legend-text">
+          <div class="legend-label">แย่มาก</div>
+          <div class="legend-range">150.1 – 250 μg/m³</div>
+        </div>
+      </div>
+      <div class="legend-item l-haz">
+        <div class="legend-swatch" style="background:var(--aqi-haz)"></div>
+        <div class="legend-text">
+          <div class="legend-label">อันตราย</div>
+          <div class="legend-range">250.1+ μg/m³</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Live Sensors</div>
+  <div class="sensor-grid" id="sensorGrid">
+    <div class="loading-msg">กำลังโหลดข้อมูล…</div>
+  </div>
+
+  <div class="section-label">History Chart</div>
+  <div class="chart-card">
+    <div class="chart-controls">
+      <select id="chartSensor"><option value="">— ทุก Sensor —</option></select>
+      <select id="chartMetric">
+        <option value="pm2.5">PM2.5</option>
+        <option value="pm10">PM10</option>
+        <option value="pm1">PM1</option>
+        <option value="temperature">อุณหภูมิ (°C)</option>
+        <option value="humidity">ความชื้น (%)</option>
+      </select>
+      <select id="chartDays">
+        <option value="1">24 ชั่วโมง</option>
+        <option value="7" selected>7 วัน</option>
+        <option value="30">30 วัน</option>
+      </select>
+      <button class="btn-load" onclick="loadChart()">โหลดกราฟ</button>
+    </div>
+    <canvas id="chart" height="220"></canvas>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const BASE_URL    = 'https://unimpressionable-ambroise-unsmug.ngrok-free.dev';
+const OFFLINE_MIN = 10;
+const REFRESH_MS  = 15000;
+let chartInstance = null;
+
+async function apiFetch(path) {
+  const res = await fetch(BASE_URL + path, {
+    headers: { 'ngrok-skip-browser-warning': 'true' }
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function minutesAgo(ts) {
+  return (Date.now() - new Date(ts).getTime()) / 60000;
+}
+function isOnline(sensor) {
+  return sensor.status === 'online' && minutesAgo(sensor.timestamp) <= OFFLINE_MIN;
+}
+
+// AQI classification for PM2.5
+function getAQI(pm) {
+  if (pm <= 12)    return { cls:'good',  label:'ดี',                    bg:'var(--aqi-good-bg)',  border:'var(--aqi-good-border)',  color:'var(--aqi-good)',  accent:'#2d7a3a' };
+  if (pm <= 35)    return { cls:'mod',   label:'ปานกลาง',              bg:'var(--aqi-mod-bg)',   border:'var(--aqi-mod-border)',   color:'var(--aqi-mod)',   accent:'#b07800' };
+  if (pm <= 75)    return { cls:'usg',   label:'ไม่ดีสำหรับกลุ่มเสี่ยง', bg:'var(--aqi-usg-bg)',   border:'var(--aqi-usg-border)',   color:'var(--aqi-usg)',   accent:'#c05020' };
+  if (pm <= 150)   return { cls:'bad',   label:'ไม่ดี',                 bg:'var(--aqi-bad-bg)',   border:'var(--aqi-bad-border)',   color:'var(--aqi-bad)',   accent:'#b02828' };
+  if (pm <= 250)   return { cls:'vbad',  label:'แย่มาก',               bg:'var(--aqi-vbad-bg)',  border:'var(--aqi-vbad-border)',  color:'var(--aqi-vbad)', accent:'#7a0a60' };
+  return               { cls:'haz',   label:'อันตราย',              bg:'var(--aqi-haz-bg)',   border:'var(--aqi-haz-border)',   color:'var(--aqi-haz)',   accent:'#5a0010' };
+}
+
+function renderCards(sensors) {
+  const grid = document.getElementById('sensorGrid');
+  if (!sensors.length) {
+    grid.innerHTML = '<div class="loading-msg">ไม่พบข้อมูล Sensor</div>';
+    return;
+  }
+
+  const onlineList = sensors.filter(s => isOnline(s));
+  document.getElementById('onlineCount').textContent = `${onlineList.length} / ${sensors.length}`;
+  const badgeDot = document.getElementById('badgeDot');
+  badgeDot.className = onlineList.length > 0 ? 'dot' : 'dot err';
+
+  grid.innerHTML = sensors.map(s => {
+    const d      = s.data;
+    const online = isOnline(s);
+    const pm25   = d['pm2.5'] || 0;
+    const aqi    = getAQI(pm25);
+    const minsAgo = Math.floor(minutesAgo(s.timestamp));
+
+    const tsFormatted = (() => {
+      try {
+        return new Date(s.timestamp).toLocaleString('th-TH', {
+          day:'2-digit', month:'2-digit',
+          hour:'2-digit', minute:'2-digit'
+        });
+      } catch(e) { return s.timestamp; }
+    })();
+
+    return `
+    <div class="sensor-card${online?'':' offline'}">
+      <div class="card-accent" style="background:${aqi.accent}"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="sensor-id">${s.id}</div>
+          <div class="sensor-badge ${online?'badge-online':'badge-offline'}">${online?'Online':'Offline'}</div>
+        </div>
+
+        <div class="aqi-banner" style="background:${aqi.bg};border-color:${aqi.border};color:${aqi.color}">
+          <div>
+            <div class="aqi-level-name">${aqi.label}</div>
+            <div style="font-size:0.65rem;opacity:0.75;font-family:var(--font-mono);">PM2.5</div>
+          </div>
+          <div>
+            <div class="aqi-pm-large">${pm25.toFixed(1)}</div>
+            <div class="aqi-pm-unit">μg/m³</div>
+          </div>
+        </div>
+
+        ${!online ? `<div class="offline-note">⚠ ไม่มีข้อมูลมา ${minsAgo} นาทีแล้ว</div>` : ''}
+
+        <div class="metrics-row">
+          <div class="metric">
+            <div class="metric-lbl">PM10</div>
+            <div class="metric-val">${(d['pm10']||0).toFixed(1)}<span class="metric-unit-s"> μg</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-lbl">PM1</div>
+            <div class="metric-val">${(d['pm1']||0).toFixed(1)}<span class="metric-unit-s"> μg</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-lbl">Temp</div>
+            <div class="metric-val">${(d['temperature']||0).toFixed(1)}<span class="metric-unit-s">°C</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-lbl">RH</div>
+            <div class="metric-val">${(d['humidity']||0).toFixed(0)}<span class="metric-unit-s">%</span></div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span>อัปเดตล่าสุด</span>
+          <span>${tsFormatted}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const sel = document.getElementById('chartSensor');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— ทุก Sensor —</option>' +
+    sensors.map(s => `<option value="${s.id}"${s.id===cur?' selected':''}>${s.id}</option>`).join('');
+}
+
+async function loadAll() {
+  const dot  = document.getElementById('statusDot');
+  const stxt = document.getElementById('statusText');
+  const err  = document.getElementById('errBox');
+  try {
+    const json = await apiFetch('/api/sensor-data');
+    renderCards(json.sensors || []);
+    dot.className = 'status-indicator ok';
+    stxt.textContent = `เชื่อมต่อสำเร็จ — พบ ${json.sensors.length} sensor`;
+    document.getElementById('lastUpdate').textContent =
+      'อัปเดต ' + new Date().toLocaleTimeString('th-TH');
+    err.style.display = 'none';
+  } catch(e) {
+    dot.className = 'status-indicator err';
+    stxt.textContent = 'เชื่อมต่อไม่ได้';
+    err.style.display = 'block';
+    err.textContent = 'ERROR: ' + e.message;
+    document.getElementById('sensorGrid').innerHTML = '<div class="loading-msg">ไม่สามารถโหลดข้อมูลได้</div>';
+  }
+}
+
+function getChartColorForMetric(metric) {
+  const map = {
+    'pm2.5':       { line: '#c05020', fill: 'rgba(192,80,32,0.08)' },
+    'pm10':        { line: '#b07800', fill: 'rgba(176,120,0,0.08)' },
+    'pm1':         { line: '#b02828', fill: 'rgba(176,40,40,0.08)' },
+    'temperature': { line: '#185fa5', fill: 'rgba(24,95,165,0.08)' },
+    'humidity':    { line: '#0f6e56', fill: 'rgba(15,110,86,0.08)' },
+  };
+  return map[metric] || { line: '#888', fill: 'rgba(136,136,136,0.08)' };
+}
+
+async function loadChart() {
+  const sensorId = document.getElementById('chartSensor').value;
+  const metric   = document.getElementById('chartMetric').value;
+  const days     = document.getElementById('chartDays').value;
+  let url = `/api/logs?days=${days}&limit=300`;
+  if (sensorId) url += `&sensor_id=${sensorId}`;
+
+  try {
+    const json = await apiFetch(url);
+    const logs = (json.logs || []).reverse();
+    const labels = logs.map(l => {
+      const d = new Date(l.timestamp);
+      return d.toLocaleDateString('th-TH', { day:'2-digit', month:'2-digit' }) + ' ' +
+             d.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' });
+    });
+    const colors = getChartColorForMetric(metric);
+    const metricLabels = {
+      'pm2.5':'PM2.5 (μg/m³)', 'pm10':'PM10 (μg/m³)', 'pm1':'PM1 (μg/m³)',
+      'temperature':'อุณหภูมิ (°C)', 'humidity':'ความชื้น (%)'
+    };
+    if (chartInstance) chartInstance.destroy();
+    const isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+    const gridColor  = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+    const tickColor  = isDark ? '#686660' : '#9b9890';
+    const legendColor = isDark ? '#e8e6e0' : '#1a1a18';
+
+    chartInstance = new Chart(document.getElementById('chart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: metricLabels[metric] || metric,
+          data: logs.map(l => l.data[metric] ?? 0),
+          borderColor: colors.line,
+          backgroundColor: colors.fill,
+          borderWidth: 1.8,
+          pointRadius: 0,
+          tension: 0.35,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode:'index', intersect:false },
+        plugins: {
+          legend: {
+            labels: {
+              color: legendColor,
+              font: { family:'IBM Plex Mono', size: 11 },
+              boxWidth: 12,
+              padding: 16,
+            }
+          },
+          tooltip: {
+            backgroundColor: isDark ? '#1e1e1a' : '#ffffff',
+            borderColor: isDark ? '#3e3e38' : '#e0ddd8',
+            borderWidth: 1,
+            titleColor: isDark ? '#e8e6e0' : '#1a1a18',
+            bodyColor: isDark ? '#9a9890' : '#6b6860',
+            titleFont: { family:'IBM Plex Mono', size:11 },
+            bodyFont: { family:'IBM Plex Mono', size:11 },
+            padding: 10,
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: tickColor, font:{ family:'IBM Plex Mono', size:10 }, maxTicksLimit:8 },
+            grid: { color: gridColor }
+          },
+          y: {
+            ticks: { color: tickColor, font:{ family:'IBM Plex Mono', size:10 } },
+            grid: { color: gridColor }
+          }
+        }
+      }
+    });
+  } catch(e) {
+    alert('โหลดกราฟไม่ได้: ' + e.message);
+  }
+}
+
+loadAll();
+setInterval(loadAll, REFRESH_MS);
+</script>
+</body>
+</html>
