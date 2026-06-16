@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Air Quality Monitor — Burapha University</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f5f0;
+  --surface: #ffffff;
+  --surface2: #f0ede8;
+  --border: #e0ddd8;
+  --border-strong: #c8c4be;
+  --text: #1a1a18;
+  --text-2: #6b6860;
+  --text-3: #9b9890;
+
+  --aqi-good: #2d7a3a;
+  --aqi-good-bg: #eaf4ec;
+  --aqi-good-border: #b4d9bb;
+  --aqi-mod: #b07800;
+  --aqi-mod-bg: #fff8e6;
+  --aqi-mod-border: #f0d070;
+  --aqi-usg: #c05020;
+  --aqi-usg-bg: #fef0e8;
+  --aqi-usg-border: #f0b898;
+  --aqi-bad: #b02828;
+  --aqi-bad-bg: #feeaea;
+  --aqi-bad-border: #e89898;
+  --aqi-vbad: #7a0a60;
+  --aqi-vbad-bg: #f8eaf4;
+  --aqi-vbad-border: #d8a0c8;
+  --aqi-haz: #5a0010;
+  --aqi-haz-bg: #f5e8ec;
+  --aqi-haz-border: #c88090;
+
+  /* Burapha brand */
+  --bu-navy: #0a2a5e;
+  --bu-navy-mid: #123580;
+  --bu-green: #3a8c3f;
+  --bu-gold: #c8a820;
+
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-body: 'IBM Plex Sans Thai', sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141412;
+    --surface: #1e1e1a;
+    --surface2: #272723;
+    --border: #2e2e28;
+    --border-strong: #3e3e38;
+    --text: #e8e6e0;
+    --text-2: #9a9890;
+    --text-3: #686660;
+    --aqi-good: #5dba6e;
+    --aqi-good-bg: #162018;
+    --aqi-good-border: #2a4a2e;
+    --aqi-mod: #e0a020;
+    --aqi-mod-bg: #201a08;
+    --aqi-mod-border: #4a3a10;
+    --aqi-usg: #e87848;
+    --aqi-usg-bg: #201408;
+    --aqi-usg-border: #4a2a18;
+    --aqi-bad: #e05050;
+    --aqi-bad-bg: #200a0a;
+    --aqi-bad-border: #4a1818;
+    --aqi-vbad: #c060a0;
+    --aqi-vbad-bg: #1a0818;
+    --aqi-vbad-border: #3a1430;
+    --aqi-haz: #d04060;
+    --aqi-haz-bg: #1a0808;
+    --aqi-haz-border: #3a1018;
+    --bu-navy: #0d3570;
+    --bu-navy-mid: #1a4a9e;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ══════════════════════════════════════════
+   NEW HERO HEADER — matches mockup image
+   ══════════════════════════════════════════ */
+.hero-header {
+  position: relative;
+  background: linear-gradient(135deg, var(--bu-navy) 0%, var(--bu-navy-mid) 55%, #1a5a8a 100%);
+  overflow: hidden;
+  min-height: 220px;
+}
+
+/* Subtle animated wave lines in background */
+.hero-bg-waves {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hero-bg-waves svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  opacity: 0.18;
+}
+
+/* Particle / dot grid overlay */
+.hero-bg-waves::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.5;
+}
+
+/* Green accent bar at bottom of hero */
+.hero-footer-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 8px;
+  background: linear-gradient(90deg, var(--bu-green) 0%, #5ab85f 60%, var(--bu-gold) 100%);
+}
+
+/* Hero inner layout */
+.hero-inner {
+  position: relative;
+  z-index: 10;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 28px 24px 32px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+
+/* LEFT — logo + university name */
+.hero-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Logo circle */
+.bu-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bu-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+/* SVG fallback shown when no img src */
+.bu-logo-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: rgba(255,255,255,0.7);
+}
+.bu-logo-fallback svg { width: 44px; height: 44px; }
+.bu-logo-fallback span {
+  font-size: 0.44rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.hero-uni-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.uni-name-th {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+.uni-name-en {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.65);
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* DIVIDER */
+.hero-divider {
+  width: 1px;
+  height: 72px;
+  background: rgba(255,255,255,0.25);
+  margin: 0 4px;
+}
+
+/* CENTER — PM title area */
+.hero-center {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.hero-center-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Cloud/air icon */
+.air-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.air-icon svg { width: 30px; height: 30px; }
+
+.hero-title-block {}
+.hero-title-sub {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.7);
+  font-family: var(--font-body);
+  margin-bottom: 2px;
+  letter-spacing: 0.02em;
+}
+.hero-title-main {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+/* BIG PM 2.5 display */
+.pm-display {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  line-height: 1;
+}
+.pm-text {
+  font-family: var(--font-mono);
+  font-size: 3.2rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  letter-spacing: -0.02em;
+}
+.pm-dot {
+  font-family: var(--font-mono);
+  font-size: 3.2rem;
+  font-weight: 600;
+  color: var(--bu-green);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.pm-decimal {
+  font-family: var(--font-mono);
+  font-size: 3.2rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.pm-leaf {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+
+/* Realtime badge + tagline */
+.hero-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.badge-realtime {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 99px;
+  padding: 4px 12px 4px 8px;
+  font-size: 0.7rem;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.badge-realtime .pulse-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #5dda6e;
+  box-shadow: 0 0 6px #5dda6e;
+  animation: rtpulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes rtpulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-tagline {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.65);
+  border-left: 2px solid rgba(255,255,255,0.3);
+  padding-left: 10px;
+  line-height: 1.3;
+}
+
+/* RIGHT — datetime + sensor count + refresh */
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+/* Datetime card */
+.hero-datetime-card {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 10px 16px;
+  min-width: 160px;
+  text-align: right;
+}
+.datetime-label {
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.datetime-date {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+.datetime-time {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+/* Sensor online card */
+.hero-sensor-card {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 160px;
+}
+.wifi-icon {
+  color: rgba(255,255,255,0.8);
+  flex-shrink: 0;
+}
+.sensor-count-block {}
+.sensor-count-label {
+  font-size: 0.58rem;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.sensor-count-value {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+.sensor-count-value span.cnt-online { color: #5dda6e; }
+
+/* Refresh button */
+.hero-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255,255,255,0.92);
+  color: var(--bu-navy);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.18s, transform 0.12s;
+  white-space: nowrap;
+  min-width: 140px;
+  justify-content: center;
+}
+.hero-refresh-btn:hover { background: #ffffff; transform: translateY(-1px); }
+.hero-refresh-btn:active { transform: translateY(0); }
+.hero-refresh-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* FEATURES BAR (below hero) */
+.features-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+.features-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.features-inner::-webkit-scrollbar { display: none; }
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.feature-item:first-child { padding-left: 4px; }
+.feature-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.feature-text {}
+.feature-text-top {
+  font-size: 0.7rem;
+  color: var(--text-2);
+  line-height: 1.1;
+}
+.feature-text-bot {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+.feature-text-bot.green { color: var(--bu-green); }
+.feature-text-bot.orange { color: #d4750a; }
+
+/* ── OLD NAV STRIP (hidden — replaced by hero) ── */
+
+/* ── MAIN ── */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+
+/* ── STATUS BAR ── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 0.8rem;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+}
+.status-indicator { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); flex-shrink: 0; }
+.status-indicator.ok { background: var(--aqi-good); }
+.status-indicator.err { background: var(--aqi-bad); }
+.status-time { margin-left: auto; font-size: 0.7rem; }
+
+.err-box {
+  background: var(--aqi-bad-bg);
+  border: 1px solid var(--aqi-bad-border);
+  color: var(--aqi-bad);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* ── AQI LEGEND ── */
+.legend-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+}
+.legend-title {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+}
+.legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+}
+.legend-face { font-size: 1.3rem; flex-shrink: 0; line-height: 1; margin-top: 1px; }
+.legend-label { font-weight: 600; font-size: 0.78rem; line-height: 1.2; }
+.legend-range { font-family: var(--font-mono); font-size: 0.62rem; opacity: 0.75; margin-top: 1px; }
+.l-good  { background: var(--aqi-good-bg); border-color: var(--aqi-good-border); color: var(--aqi-good); }
+.l-mod   { background: var(--aqi-mod-bg); border-color: var(--aqi-mod-border); color: var(--aqi-mod); }
+.l-usg   { background: var(--aqi-usg-bg); border-color: var(--aqi-usg-border); color: var(--aqi-usg); }
+.l-bad   { background: var(--aqi-bad-bg); border-color: var(--aqi-bad-border); color: var(--aqi-bad); }
+.l-vbad  { background: var(--aqi-vbad-bg); border-color: var(--aqi-vbad-border); color: var(--aqi-vbad); }
+.l-haz   { background: var(--aqi-haz-bg); border-color: var(--aqi-haz-border); color: var(--aqi-haz); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── SENSOR GRID ── */
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.sensor-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.sensor-card:hover { border-color: var(--border-strong); }
+.sensor-card.offline { opacity: 0.6; }
+.card-accent { height: 4px; width: 100%; }
+.card-body { padding: 16px 18px 14px; }
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.sensor-title-block { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sensor-id { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 600; color: var(--text); letter-spacing: 0.04em; }
+.sensor-location { font-family: var(--font-body); font-size: 0.72rem; color: var(--text-2); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sensor-badge { font-family: var(--font-mono); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 4px; border: 1px solid; white-space: nowrap; text-transform: uppercase; flex-shrink: 0; }
+.badge-online { background: var(--aqi-good-bg); color: var(--aqi-good); border-color: var(--aqi-good-border); }
+.badge-offline { background: var(--aqi-bad-bg); color: var(--aqi-bad); border-color: var(--aqi-bad-border); }
+
+.aqi-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+  border: 1px solid;
+  gap: 10px;
+}
+.aqi-face-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2.5px solid currentColor;
+  flex-shrink: 0;
+  font-size: 1.9rem;
+  line-height: 1;
+  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 12%, transparent);
+}
+.aqi-label-block { flex: 1; min-width: 0; }
+.aqi-level-name { font-weight: 600; font-size: 0.88rem; line-height: 1.2; }
+.aqi-pm-label { font-size: 0.63rem; opacity: 0.7; font-family: var(--font-mono); margin-top: 2px; }
+.aqi-value-block { text-align: right; flex-shrink: 0; }
+.aqi-pm-large { font-family: var(--font-mono); font-size: 1.7rem; font-weight: 600; line-height: 1; }
+.aqi-pm-unit { font-size: 0.6rem; opacity: 0.7; margin-top: 2px; font-family: var(--font-mono); }
+
+.metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
+.metric { background: var(--surface2); border-radius: 6px; padding: 8px 8px 7px; }
+.metric-lbl { font-size: 0.58rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--font-mono); margin-bottom: 3px; }
+.metric-val { font-family: var(--font-mono); font-size: 0.88rem; font-weight: 600; color: var(--text); line-height: 1; }
+.metric-unit-s { font-size: 0.58rem; color: var(--text-3); font-weight: 400; }
+.card-footer { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-3); padding-top: 8px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.offline-note { font-size: 0.65rem; color: var(--aqi-bad); margin-bottom: 6px; font-family: var(--font-mono); }
+
+/* ── CHART ── */
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.chart-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+.chart-controls select {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 7px 12px; font-family: var(--font-mono); font-size: 0.72rem;
+  border-radius: var(--radius-sm); outline: none; cursor: pointer;
+  flex: 1; min-width: 110px; max-width: 200px; -webkit-appearance: none;
+}
+.chart-controls select:hover { border-color: var(--border-strong); }
+.btn-load {
+  background: var(--text); color: var(--bg); border: none;
+  padding: 7px 18px; font-family: var(--font-mono); font-size: 0.72rem;
+  font-weight: 600; cursor: pointer; border-radius: var(--radius-sm);
+  letter-spacing: 0.06em; transition: opacity 0.15s; white-space: nowrap;
+}
+.btn-load:hover { opacity: 0.8; }
+canvas#chart { width: 100% !important; }
+
+/* ── LOADING ── */
+.loading-msg {
+  text-align: center; padding: 48px 20px;
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--text-3); letter-spacing: 0.1em;
+  animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes blink { 50% { opacity: 0.25; } }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 500px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 16px; padding: 20px 16px 26px; }
+  .hero-left { flex-direction: row; }
+  .bu-logo { width: 60px; height: 60px; }
+  .uni-name-th { font-size: 0.9rem; }
+  .hero-right { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .hero-datetime-card, .hero-sensor-card { min-width: 140px; }
+  .pm-text, .pm-dot, .pm-decimal { font-size: 2.4rem; }
+  main { padding: 16px 12px; }
+  .sensor-grid { grid-template-columns: 1fr; gap: 10px; }
+  .legend-grid { grid-template-columns: 1fr 1fr; }
+  .metrics-row { grid-template-columns: repeat(2, 1fr); }
+  .features-inner { padding: 0; }
+  .feature-item { padding: 12px 14px; }
+}
+@media (min-width: 501px) and (max-width: 900px) {
+  .hero-inner { grid-template-columns: auto 1fr; gap: 16px; }
+  .hero-right { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 10px; }
+  .sensor-grid { grid-template-columns: repeat(2, 1fr); }
+  .legend-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 901px) {
+  .hero-divider { display: block; }
+}
+@media (max-width: 900px) {
+  .hero-divider { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HERO HEADER ══ -->
+<header class="hero-header">
+  <!-- Background waves SVG -->
+  <div class="hero-bg-waves">
+    <svg viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 C200,140 400,20 600,80 C800,140 1000,20 1200,80 C1320,115 1400,90 1440,80 L1440,200 L0,200 Z" fill="rgba(255,255,255,0.06)"/>
+      <path d="M0,120 C180,80 360,160 540,120 C720,80 900,160 1080,120 C1260,80 1380,110 1440,120 L1440,200 L0,200 Z" fill="rgba(58,140,63,0.15)"/>
+      <!-- Animated data lines -->
+      <polyline points="0,160 100,140 180,155 280,130 380,145 480,125 580,140 680,120 780,135 880,115 980,130 1080,110 1180,125 1300,105 1440,115" fill="none" stroke="rgba(93,218,110,0.3)" stroke-width="1.5"/>
+      <polyline points="0,175 120,158 220,168 340,150 440,162 540,145 640,158 740,140 840,155 940,138 1040,150 1140,132 1280,145 1440,135" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <div class="hero-inner">
+
+    <!-- LEFT: Logo + University name -->
+    <div class="hero-left">
+      <div class="bu-logo" id="buLogoWrap">
+        <img src="Logo_of_Burapha_University.svg" alt="มหาวิทยาลัยบูรพา">
+      </div>
+
+      <div class="hero-uni-name">
+        <div class="uni-name-th">มหาวิทยาลัยบูรพา</div>
+        <div class="uni-name-en">BURAPHA UNIVERSITY</div>
+      </div>
+
+      <div class="hero-divider"></div>
+    </div>
+
+    <!-- CENTER: PM 2.5 title + big number -->
+    <div class="hero-center">
+      <div class="hero-center-top">
+        <div class="air-icon">
+          <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Cloud with wind lines -->
+            <path d="M22,12.5 C22,9.5 19.8,7 17,7 C15.3,7 13.8,7.8 12.8,9 C12.2,8.4 11.4,8 10.5,8 C8.6,8 7,9.6 7,11.5 C7,11.7 7,11.8 7.1,12 C5.3,12.5 4,14.1 4,16 C4,18.2 5.8,20 8,20 L21,20 C23.2,20 25,18.2 25,16 C25,14.1 23.7,12.5 22,12.5 Z" fill="rgba(255,255,255,0.7)"/>
+            <!-- Wind lines -->
+            <line x1="6" y1="24" x2="16" y2="24" stroke="rgba(93,218,110,0.8)" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="9" y1="27" x2="22" y2="27" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Small particles -->
+            <circle cx="19" cy="24" r="1.2" fill="rgba(255,255,255,0.6)"/>
+            <circle cx="23" cy="27" r="1" fill="rgba(93,218,110,0.6)"/>
+          </svg>
+        </div>
+        <div class="hero-title-block">
+          <div class="hero-title-sub">ระบบตรวจวัดคุณภาพอากาศ</div>
+          <div class="hero-title-main">วิทยาเขตบางแสน</div>
+        </div>
+      </div>
+
+      <div class="pm-display">
+        <span class="pm-text">PM </span>
+        <span class="pm-dot">2</span>
+        <span class="pm-decimal">.5</span>
+        <span class="pm-leaf">🍃</span>
+      </div>
+
+      <div class="hero-badges">
+        <div class="badge-realtime">
+          <div class="pulse-dot"></div>
+          แบบเรียลไทม์
+        </div>
+        <div class="hero-tagline">เพื่ออากาศที่สะอาดและคุณภาพชีวิตที่ดีของทุกคน</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Datetime + Sensor count + Refresh -->
+    <div class="hero-right">
+      <div class="hero-datetime-card">
+        <div class="datetime-label">วันที่และเวลา</div>
+        <div class="datetime-date" id="heroDate">—</div>
+        <div class="datetime-time" id="heroTime">—</div>
+      </div>
+
+      <div class="hero-sensor-card">
+        <div class="wifi-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.5,9 C4.5,6 8,4.5 12,4.5 C16,4.5 19.5,6 22.5,9" stroke="rgba(255,255,255,0.5)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            <path d="M4.5,12 C6.8,9.8 9.2,8.5 12,8.5 C14.8,8.5 17.2,9.8 19.5,12" stroke="rgba(255,255,255,0.7)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            <path d="M7.5,15 C9,13.5 10.4,12.5 12,12.5 C13.6,12.5 15,13.5 16.5,15" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            <circle cx="12" cy="18.5" r="1.5" fill="rgba(93,218,110,0.9)"/>
+          </svg>
+        </div>
+        <div class="sensor-count-block">
+          <div class="sensor-count-label">Sensors Online</div>
+          <div class="sensor-count-value">
+            <span class="cnt-online" id="heroCntOnline">—</span>
+            <span style="color:rgba(255,255,255,0.5)"> / </span>
+            <span id="heroCntTotal">—</span>
+            <span style="font-size:0.65rem;color:rgba(255,255,255,0.5);margin-left:3px;">จุด</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="hero-refresh-btn" onclick="loadAll()">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.5,8 C13.5,11.09 11.09,13.5 8,13.5 C4.91,13.5 2.5,11.09 2.5,8 C2.5,4.91 4.91,2.5 8,2.5 C9.8,2.5 11.4,3.3 12.5,4.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          <polyline points="12.5,2 12.5,4.6 10,4.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Green bar at bottom -->
+  <div class="hero-footer-bar"></div>
+</header>
+
+<!-- ══ FEATURES BAR ══ -->
+<div class="features-bar">
+  <div class="features-inner">
+    <div class="feature-item">
+      <div class="feature-icon">📍</div>
+      <div class="feature-text">
+        <div class="feature-text-top">ครอบคลุมพื้นที่</div>
+        <div class="feature-text-bot green">วิทยาเขตบางแสน</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🌿</div>
+      <div class="feature-text">
+        <div class="feature-text-top">ร่วมดูแลสิ่งแวดล้อม</div>
+        <div class="feature-text-bot green">เพื่ออนาคตที่ยั่งยืน</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-text">
+        <div class="feature-text-top">รู้ทันฝุ่น</div>
+        <div class="feature-text-bot">ปกป้องสุขภาพ</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">📊</div>
+      <div class="feature-text">
+        <div class="feature-text-top">ข้อมูลแม่นยำ</div>
+        <div class="feature-text-bot">เชื่อถือได้</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🔔</div>
+      <div class="feature-text">
+        <div class="feature-text-top">แจ้งเตือนทันที</div>
+        <div class="feature-text-bot orange">เมื่อค่าฝุ่นเปลี่ยนแปลง</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="status-bar">
+    <div class="status-indicator" id="statusDot"></div>
+    <span id="statusText">กำลังเชื่อมต่อ…</span>
+    <span class="status-time" id="lastUpdate"></span>
+  </div>
+
+  <div class="err-box" id="errBox"></div>
+
+  <!-- AQI LEGEND -->
+  <div class="legend-card">
+    <div class="legend-title">เกณฑ์คุณภาพอากาศ PM2.5 (μg/m³)</div>
+    <div class="legend-grid">
+      <div class="legend-item l-good"><div class="legend-face">😊</div><div class="legend-text"><div class="legend-label">ดี</div><div class="legend-range">0 – 12 μg/m³</div></div></div>
+      <div class="legend-item l-mod"><div class="legend-face">😐</div><div class="legend-text"><div class="legend-label">ปานกลาง</div><div class="legend-range">12.1 – 35 μg/m³</div></div></div>
+      <div class="legend-item l-usg"><div class="legend-face">😷</div><div class="legend-text"><div class="legend-label">ไม่ดีสำหรับกลุ่มเสี่ยง</div><div class="legend-range">35.1 – 75 μg/m³</div></div></div>
+      <div class="legend-item l-bad"><div class="legend-face">🤢</div><div class="legend-text"><div class="legend-label">ไม่ดี</div><div class="legend-range">75.1 – 150 μg/m³</div></div></div>
+      <div class="legend-item l-vbad"><div class="legend-face">🤮</div><div class="legend-text"><div class="legend-label">แย่มาก</div><div class="legend-range">150.1 – 250 μg/m³</div></div></div>
+      <div class="legend-item l-haz"><div class="legend-face">☠️</div><div class="legend-text"><div class="legend-label">อันตราย</div><div class="legend-range">250.1+ μg/m³</div></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">Live Sensors</div>
+  <div class="sensor-grid" id="sensorGrid">
+    <div class="loading-msg">กำลังโหลดข้อมูล…</div>
+  </div>
+
+  <div class="section-label">History Chart</div>
+  <div class="chart-card">
+    <div class="chart-controls">
+      <select id="chartSensor"><option value="">— ทุก Sensor —</option></select>
+      <select id="chartMetric">
+        <option value="pm2.5">PM2.5</option>
+        <option value="pm10">PM10</option>
+        <option value="pm1">PM1</option>
+        <option value="temperature">อุณหภูมิ (°C)</option>
+        <option value="humidity">ความชื้น (%)</option>
+      </select>
+      <select id="chartDays">
+        <option value="1">24 ชั่วโมง</option>
+        <option value="7" selected>7 วัน</option>
+        <option value="30">30 วัน</option>
+      </select>
+      <button class="btn-load" onclick="loadChart()">โหลดกราฟ</button>
+    </div>
+    <canvas id="chart" height="220"></canvas>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const BASE_URL    = 'https://unimpressionable-ambroise-unsmug.ngrok-free.dev';
+const OFFLINE_MIN = 10;
+const REFRESH_MS  = 15000;
+let chartInstance = null;
+
+const SENSOR_LOCATIONS = {
+  'SOS1':'สํานักงานอธิการบดี','SOS2':'อาคาร KB','SOS3':'ป้ายรถหน้ามหาวิทยาลัย',
+  'SOS4':'คณะสหเวชศาสตร์','SOS5':'หอพักนิสิตแพทย์','SOS6':'หอพักนานาชาติ',
+  'SOS7':'สํานักหอสมุด','SOS8':'โรงเรียนสาธิตฯ','SOS9':'โรงเรียนสาธิตฯ อินเตอร์',
+  'SOS10':'คณะบริหาร','SOS11':'สระว่ายน้ํา','SOS12':'อาคารที่พักบุคลากร',
+  'SOS13':'อาคารพักอาศัยเสนาะ','SOS14':'หอพักเทาทอง 4','SOS15':'หอพักเทาทอง 2',
+  'SOS16':'โรงอาหารโภชนาการ','SOS17':'ลานเกือกม้า','SOS18':'ป้ายรถกองกิจ',
+  'SOS19':'สํานักบริการวิชาการ','SOS20':'คณะมนุษย์ฯ',
+};
+
+function getSensorLocation(id) {
+  if (SENSOR_LOCATIONS[id]) return SENSOR_LOCATIONS[id];
+  const upper = id.toUpperCase();
+  return SENSOR_LOCATIONS[upper] || null;
+}
+
+// ── Live clock in hero ──
+function updateClock() {
+  const now = new Date();
+  const dateEl = document.getElementById('heroDate');
+  const timeEl = document.getElementById('heroTime');
+  if (dateEl) {
+    dateEl.textContent = now.toLocaleDateString('th-TH', {
+      day: '2-digit', month: 'long', year: 'numeric'
+    });
+  }
+  if (timeEl) {
+    timeEl.textContent = now.toLocaleTimeString('th-TH', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+  }
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+async function apiFetch(path) {
+  const res = await fetch(BASE_URL + path, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function minutesAgo(ts) { return (Date.now() - new Date(ts).getTime()) / 60000; }
+function isOnline(sensor) { return sensor.status === 'online' && minutesAgo(sensor.timestamp) <= OFFLINE_MIN; }
+
+function getAQI(pm) {
+  if (pm <= 12)  return { label:'ดี',                       face:'😊', bg:'var(--aqi-good-bg)', border:'var(--aqi-good-border)', color:'var(--aqi-good)',  accent:'#2d7a3a' };
+  if (pm <= 35)  return { label:'ปานกลาง',                 face:'😐', bg:'var(--aqi-mod-bg)',  border:'var(--aqi-mod-border)',  color:'var(--aqi-mod)',   accent:'#b07800' };
+  if (pm <= 75)  return { label:'ไม่ดีสำหรับกลุ่มเสี่ยง', face:'😷', bg:'var(--aqi-usg-bg)',  border:'var(--aqi-usg-border)',  color:'var(--aqi-usg)',   accent:'#c05020' };
+  if (pm <= 150) return { label:'ไม่ดี',                    face:'🤢', bg:'var(--aqi-bad-bg)',  border:'var(--aqi-bad-border)',  color:'var(--aqi-bad)',   accent:'#b02828' };
+  if (pm <= 250) return { label:'แย่มาก',                  face:'🤮', bg:'var(--aqi-vbad-bg)', border:'var(--aqi-vbad-border)', color:'var(--aqi-vbad)', accent:'#7a0a60' };
+  return             { label:'อันตราย',                 face:'☠️', bg:'var(--aqi-haz-bg)',  border:'var(--aqi-haz-border)',  color:'var(--aqi-haz)',   accent:'#5a0010' };
+}
+
+function renderCards(sensors) {
+  const grid = document.getElementById('sensorGrid');
+  if (!sensors.length) { grid.innerHTML = '<div class="loading-msg">ไม่พบข้อมูล Sensor</div>'; return; }
+
+  const onlineList = sensors.filter(s => isOnline(s));
+  document.getElementById('heroCntOnline').textContent = onlineList.length;
+  document.getElementById('heroCntTotal').textContent  = sensors.length;
+  document.getElementById('onlineCountLegacy') && (document.getElementById('onlineCountLegacy').textContent = `${onlineList.length} / ${sensors.length}`);
+
+  grid.innerHTML = sensors.map(s => {
+    const d = s.data;
+    const online = isOnline(s);
+    const pm25 = d['pm2.5'] || 0;
+    const aqi = getAQI(pm25);
+    const minsAgo = Math.floor(minutesAgo(s.timestamp));
+    const location = getSensorLocation(s.id);
+    const tsFormatted = (() => {
+      try { return new Date(s.timestamp).toLocaleString('th-TH', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }); }
+      catch(e) { return s.timestamp; }
+    })();
+    return `
+    <div class="sensor-card${online ? '' : ' offline'}">
+      <div class="card-accent" style="background:${aqi.accent}"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="sensor-title-block">
+            <div class="sensor-id">${s.id}</div>
+            ${location ? `<div class="sensor-location">📍 ${location}</div>` : ''}
+          </div>
+          <div class="sensor-badge ${online ? 'badge-online' : 'badge-offline'}">${online ? 'Online' : 'Offline'}</div>
+        </div>
+        <div class="aqi-banner" style="background:${aqi.bg};border-color:${aqi.border};color:${aqi.color}">
+          <div class="aqi-face-wrap">${aqi.face}</div>
+          <div class="aqi-label-block">
+            <div class="aqi-level-name">${aqi.label}</div>
+            <div class="aqi-pm-label">PM2.5</div>
+          </div>
+          <div class="aqi-value-block">
+            <div class="aqi-pm-large">${pm25.toFixed(1)}</div>
+            <div class="aqi-pm-unit">μg/m³</div>
+          </div>
+        </div>
+        ${!online ? `<div class="offline-note">⚠ ไม่มีข้อมูลมา ${minsAgo} นาทีแล้ว</div>` : ''}
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-lbl">PM10</div><div class="metric-val">${(d['pm10']||0).toFixed(1)}<span class="metric-unit-s"> μg</span></div></div>
+          <div class="metric"><div class="metric-lbl">PM1</div><div class="metric-val">${(d['pm1']||0).toFixed(1)}<span class="metric-unit-s"> μg</span></div></div>
+          <div class="metric"><div class="metric-lbl">Temp</div><div class="metric-val">${(d['temperature']||0).toFixed(1)}<span class="metric-unit-s">°C</span></div></div>
+          <div class="metric"><div class="metric-lbl">RH</div><div class="metric-val">${(d['humidity']||0).toFixed(0)}<span class="metric-unit-s">%</span></div></div>
+        </div>
+        <div class="card-footer">
+          <span>อัปเดตล่าสุด</span><span>${tsFormatted}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const sel = document.getElementById('chartSensor');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— ทุก Sensor —</option>' +
+    sensors.map(s => {
+      const loc = getSensorLocation(s.id);
+      const label = loc ? `${s.id} – ${loc}` : s.id;
+      return `<option value="${s.id}"${s.id === cur ? ' selected' : ''}>${label}</option>`;
+    }).join('');
+}
+
+async function loadAll() {
+  const dot = document.getElementById('statusDot');
+  const stxt = document.getElementById('statusText');
+  const err = document.getElementById('errBox');
+  try {
+    const json = await apiFetch('/api/sensor-data');
+    renderCards(json.sensors || []);
+    dot.className = 'status-indicator ok';
+    stxt.textContent = `เชื่อมต่อสำเร็จ — พบ ${json.sensors.length} sensor`;
+    document.getElementById('lastUpdate').textContent = 'อัปเดต ' + new Date().toLocaleTimeString('th-TH');
+    err.style.display = 'none';
+  } catch(e) {
+    dot.className = 'status-indicator err';
+    stxt.textContent = 'เชื่อมต่อไม่ได้';
+    err.style.display = 'block';
+    err.textContent = 'ERROR: ' + e.message;
+    document.getElementById('sensorGrid').innerHTML = '<div class="loading-msg">ไม่สามารถโหลดข้อมูลได้</div>';
+  }
+}
+
+function getChartColorForMetric(metric) {
+  const map = {
+    'pm2.5':      { line:'#c05020', fill:'rgba(192,80,32,0.08)' },
+    'pm10':       { line:'#b07800', fill:'rgba(176,120,0,0.08)' },
+    'pm1':        { line:'#b02828', fill:'rgba(176,40,40,0.08)' },
+    'temperature':{ line:'#185fa5', fill:'rgba(24,95,165,0.08)' },
+    'humidity':   { line:'#0f6e56', fill:'rgba(15,110,86,0.08)' },
+  };
+  return map[metric] || { line:'#888', fill:'rgba(136,136,136,0.08)' };
+}
+
+async function loadChart() {
+  const sensorId = document.getElementById('chartSensor').value;
+  const metric   = document.getElementById('chartMetric').value;
+  const days     = document.getElementById('chartDays').value;
+  let url = `/api/logs?days=${days}&limit=300`;
+  if (sensorId) url += `&sensor_id=${sensorId}`;
+  try {
+    const json = await apiFetch(url);
+    const logs = (json.logs || []).reverse();
+    const labels = logs.map(l => {
+      const d = new Date(l.timestamp);
+      return d.toLocaleDateString('th-TH',{day:'2-digit',month:'2-digit'}) + ' ' +
+             d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+    });
+    const colors = getChartColorForMetric(metric);
+    const metricLabels = {'pm2.5':'PM2.5 (μg/m³)','pm10':'PM10 (μg/m³)','pm1':'PM1 (μg/m³)','temperature':'อุณหภูมิ (°C)','humidity':'ความชื้น (%)'};
+    if (chartInstance) chartInstance.destroy();
+    const isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+    const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+    const tickColor = isDark ? '#686660' : '#9b9890';
+    const legendColor = isDark ? '#e8e6e0' : '#1a1a18';
+    chartInstance = new Chart(document.getElementById('chart'), {
+      type:'line',
+      data:{ labels, datasets:[{
+        label: metricLabels[metric] || metric,
+        data: logs.map(l => l.data[metric] ?? 0),
+        borderColor: colors.line, backgroundColor: colors.fill,
+        borderWidth: 1.8, pointRadius: 0, tension: 0.35, fill: true
+      }]},
+      options:{
+        responsive:true,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{ labels:{ color:legendColor, font:{family:'IBM Plex Mono',size:11}, boxWidth:12, padding:16 } },
+          tooltip:{ backgroundColor:isDark?'#1e1e1a':'#ffffff', borderColor:isDark?'#3e3e38':'#e0ddd8', borderWidth:1, titleColor:isDark?'#e8e6e0':'#1a1a18', bodyColor:isDark?'#9a9890':'#6b6860', titleFont:{family:'IBM Plex Mono',size:11}, bodyFont:{family:'IBM Plex Mono',size:11}, padding:10 }
+        },
+        scales:{
+          x:{ ticks:{color:tickColor,font:{family:'IBM Plex Mono',size:10},maxTicksLimit:8}, grid:{color:gridColor} },
+          y:{ ticks:{color:tickColor,font:{family:'IBM Plex Mono',size:10}}, grid:{color:gridColor} }
+        }
+      }
+    });
+  } catch(e) {
+    alert('โหลดกราฟไม่ได้: ' + e.message);
+  }
+}
+
+loadAll();
+setInterval(loadAll, REFRESH_MS);
+</script>
+</body>
+</html>
