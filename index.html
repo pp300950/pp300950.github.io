@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ฝึกคำศัพท์อังกฤษ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
+
+  :root{
+    --ink:#1c2b2d;
+    --paper:#f6f1e4;
+    --paper-2:#efe7d3;
+    --card:#fffdf7;
+    --moss:#5c7a5e;
+    --moss-dark:#3f5a41;
+    --clay:#b5502f;
+    --clay-soft:#e8b7a3;
+    --ok:#3f7a4f;
+    --ok-bg:#e3f0e3;
+    --bad:#b5402f;
+    --bad-bg:#f6e2dd;
+    --line:#d8cdae;
+    --shadow: 4px 4px 0 rgba(28,43,45,0.12);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 8%, rgba(92,122,94,0.08), transparent 40%),
+      radial-gradient(circle at 90% 90%, rgba(181,80,47,0.06), transparent 45%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans Thai','Space Grotesk',sans-serif;
+    min-height:100vh;
+    padding:24px 16px 60px;
+  }
+
+  .wrap{max-width:640px; margin:0 auto;}
+
+  header{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:18px; flex-wrap:wrap; gap:8px;
+  }
+  .brand{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700; font-size:1.5rem; letter-spacing:-0.02em;
+    color:var(--moss-dark);
+  }
+  .brand span{color:var(--clay);}
+  .streak{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.85rem;
+    color:var(--ink);
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:100px;
+    padding:5px 12px;
+  }
+
+  .setbar{
+    display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:16px;
+    scrollbar-width:thin;
+  }
+  .set-chip{
+    flex:0 0 auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    padding:7px 13px;
+    border-radius:8px;
+    border:1.5px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .set-chip.active{
+    background:var(--moss-dark);
+    border-color:var(--moss-dark);
+    color:#fff;
+  }
+
+  .modebar{
+    display:flex; gap:8px; margin-bottom:20px;
+  }
+  .mode-btn{
+    flex:1;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:0.88rem;
+    padding:10px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    background:var(--paper-2);
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .mode-btn.active{
+    background:var(--clay);
+    border-color:var(--clay);
+    color:#fff;
+  }
+
+  .card{
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    padding:26px 22px;
+    position:relative;
+  }
+
+  .progress-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:#7a7160;
+    margin-bottom:14px;
+  }
+  .progress-track{
+    height:5px; background:var(--paper-2); border-radius:4px; overflow:hidden; margin-bottom:20px;
+  }
+  .progress-fill{
+    height:100%; background:var(--moss); border-radius:4px; transition:width .3s ease;
+  }
+
+  .prompt-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--moss-dark);
+    margin-bottom:6px;
+  }
+  .prompt-th{
+    font-family:'Noto Sans Thai',sans-serif;
+    font-weight:700;
+    font-size:1.7rem;
+    color:var(--ink);
+    line-height:1.3;
+    margin-bottom:22px;
+  }
+
+  /* ---- Spelling mode ---- */
+  .letters-row{
+    display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; min-height:52px;
+  }
+  .letter-box{
+    width:38px; height:46px;
+    border:2px solid var(--line);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600; font-size:1.15rem;
+    background:var(--paper-2);
+    color:var(--ink);
+    text-transform:uppercase;
+    transition:all .15s ease;
+  }
+  .letter-box.space{ border:none; background:transparent; width:16px; }
+  .letter-box.correct{ background:var(--ok-bg); border-color:var(--ok); color:var(--ok); }
+  .letter-box.wrong{ background:var(--bad-bg); border-color:var(--bad); color:var(--bad); }
+  .letter-box.pending{ border-style:dashed; }
+
+  .spell-input-row{ display:flex; gap:10px; margin-bottom:14px; }
+  #spellInput{
+    flex:1;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:1.05rem;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    background:#fff;
+    color:var(--ink);
+    outline:none;
+  }
+  #spellInput:focus{ border-color:var(--moss); }
+
+  .btn{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:0.92rem;
+    padding:11px 18px;
+    border-radius:10px;
+    border:1.5px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    cursor:pointer;
+    transition:transform .1s ease;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn.secondary{
+    background:transparent;
+    color:var(--ink);
+  }
+  .btn.reveal{
+    background:transparent;
+    border-color:var(--clay);
+    color:var(--clay);
+  }
+  .btn.reveal:hover{ background:var(--clay); color:#fff; }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .action-row{
+    display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;
+  }
+
+  /* ---- Multiple choice mode ---- */
+  .choices{
+    display:flex; flex-direction:column; gap:10px; margin-bottom:18px;
+  }
+  .choice-btn{
+    text-align:left;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1rem;
+    font-weight:500;
+    padding:14px 16px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    background:var(--paper-2);
+    color:var(--ink);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    transition:all .12s ease;
+  }
+  .choice-btn:hover:not(:disabled){ border-color:var(--moss); }
+  .choice-letter{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.75rem;
+    color:#8a8168;
+    width:18px;
+  }
+  .choice-btn.correct{ background:var(--ok-bg); border-color:var(--ok); }
+  .choice-btn.correct .choice-letter{ color:var(--ok); }
+  .choice-btn.wrong{ background:var(--bad-bg); border-color:var(--bad); }
+  .choice-btn.wrong .choice-letter{ color:var(--bad); }
+  .choice-btn:disabled{ cursor:default; }
+
+  .feedback{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:0.95rem;
+    padding:10px 14px;
+    border-radius:10px;
+    margin-bottom:14px;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.ok{ background:var(--ok-bg); color:var(--ok); }
+  .feedback.bad{ background:var(--bad-bg); color:var(--bad); }
+  .feedback.hint{ background:#efe6f3; color:#6b4b7a; }
+
+  .answer-reveal{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.9rem;
+    color:var(--clay);
+    margin-bottom:14px;
+    display:none;
+  }
+  .answer-reveal.show{ display:block; }
+
+  footer{
+    text-align:center;
+    margin-top:26px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:#9a917a;
+  }
+
+  @media (max-width:420px){
+    .letter-box{ width:30px; height:40px; font-size:1rem; }
+    .prompt-th{ font-size:1.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">Vocab<span>Drill</span></div>
+    <div class="streak" id="streakDisplay">ถูก 0 · ผิด 0</div>
+  </header>
+
+  <div class="setbar" id="setBar"></div>
+
+  <div class="modebar">
+    <button class="mode-btn active" id="modeSpellBtn">✍️ สะกดคำ</button>
+    <button class="mode-btn" id="modeChoiceBtn">☑️ 4 ตัวเลือก</button>
+  </div>
+
+  <div class="card">
+    <div class="progress-row">
+      <span id="progressText">ข้อ 1 / 20</span>
+      <span id="setNameTag">—</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:5%"></div></div>
+
+    <div class="prompt-label">แปลคำนี้เป็นภาษาอังกฤษ</div>
+    <div class="prompt-th" id="promptTh">—</div>
+
+    <!-- SPELL MODE -->
+    <div id="spellArea">
+      <div class="letters-row" id="lettersRow"></div>
+      <div class="spell-input-row">
+        <input type="text" id="spellInput" placeholder="พิมพ์คำตอบที่นี่..." autocomplete="off" autocapitalize="off" spellcheck="false">
+      </div>
+      <div class="feedback" id="spellFeedback"></div>
+      <div class="answer-reveal" id="spellAnswer"></div>
+      <div class="action-row">
+        <button class="btn" id="checkBtn">ตรวจคำตอบ</button>
+        <button class="btn reveal" id="revealBtnSpell">👁 ดูเฉลย</button>
+        <button class="btn secondary" id="nextBtnSpell">ข้อถัดไป →</button>
+      </div>
+    </div>
+
+    <!-- CHOICE MODE -->
+    <div id="choiceArea" style="display:none;">
+      <div class="choices" id="choicesList"></div>
+      <div class="feedback" id="choiceFeedback"></div>
+      <div class="action-row">
+        <button class="btn reveal" id="revealBtnChoice">👁 ดูเฉลย</button>
+        <button class="btn secondary" id="nextBtnChoice">ข้อถัดไป →</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>ฝึกคำศัพท์จากชีท IT Vocabulary &amp; General Vocabulary · ทำได้ไม่จำกัดรอบ</footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+  // ---------- State ----------
+  let currentSetName = Object.keys(VOCAB_SETS)[0];
+  let pool = [];          // shuffled working list for current set
+  let idx = 0;            // index in pool
+  let mode = 'spell';     // 'spell' | 'choice'
+  let correctCount = 0;
+  let wrongCount = 0;
+  let currentWord = null;
+  let revealed = false;
+  let answered = false;
+
+  const els = {
+    setBar: document.getElementById('setBar'),
+    modeSpellBtn: document.getElementById('modeSpellBtn'),
+    modeChoiceBtn: document.getElementById('modeChoiceBtn'),
+    spellArea: document.getElementById('spellArea'),
+    choiceArea: document.getElementById('choiceArea'),
+    progressText: document.getElementById('progressText'),
+    setNameTag: document.getElementById('setNameTag'),
+    progressFill: document.getElementById('progressFill'),
+    promptTh: document.getElementById('promptTh'),
+    lettersRow: document.getElementById('lettersRow'),
+    spellInput: document.getElementById('spellInput'),
+    spellFeedback: document.getElementById('spellFeedback'),
+    spellAnswer: document.getElementById('spellAnswer'),
+    checkBtn: document.getElementById('checkBtn'),
+    revealBtnSpell: document.getElementById('revealBtnSpell'),
+    nextBtnSpell: document.getElementById('nextBtnSpell'),
+    choicesList: document.getElementById('choicesList'),
+    choiceFeedback: document.getElementById('choiceFeedback'),
+    revealBtnChoice: document.getElementById('revealBtnChoice'),
+    nextBtnChoice: document.getElementById('nextBtnChoice'),
+    streakDisplay: document.getElementById('streakDisplay'),
+  };
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function buildSetBar(){
+    els.setBar.innerHTML = '';
+    Object.keys(VOCAB_SETS).forEach(name=>{
+      const chip = document.createElement('button');
+      chip.className = 'set-chip' + (name===currentSetName ? ' active' : '');
+      chip.textContent = name;
+      chip.onclick = () => { currentSetName = name; startSet(); buildSetBar(); };
+      els.setBar.appendChild(chip);
+    });
+  }
+
+  function startSet(){
+    pool = shuffle(VOCAB_SETS[currentSetName]);
+    idx = 0;
+    correctCount = 0;
+    wrongCount = 0;
+    updateStreak();
+    loadQuestion();
+  }
+
+  function updateStreak(){
+    els.streakDisplay.textContent = `ถูก ${correctCount} · ผิด ${wrongCount}`;
+  }
+
+  function updateProgress(){
+    els.progressText.textContent = `ข้อ ${idx+1} / ${pool.length}`;
+    els.setNameTag.textContent = currentSetName;
+    els.progressFill.style.width = `${((idx+1)/pool.length)*100}%`;
+  }
+
+  function loadQuestion(){
+    if(idx >= pool.length){
+      pool = shuffle(pool);
+      idx = 0;
+    }
+    currentWord = pool[idx];
+    revealed = false;
+    answered = false;
+    updateProgress();
+    els.promptTh.textContent = currentWord.th;
+
+    if(mode === 'spell'){
+      renderSpell();
+    } else {
+      renderChoice();
+    }
+  }
+
+  // ---------- SPELL MODE ----------
+  function renderSpell(){
+    els.spellInput.value = '';
+    els.spellInput.disabled = false;
+    els.spellFeedback.className = 'feedback';
+    els.spellFeedback.textContent = '';
+    els.spellAnswer.className = 'answer-reveal';
+    els.spellAnswer.textContent = '';
+    buildLetterBoxes(currentWord.en, '');
+    setTimeout(()=> els.spellInput.focus(), 50);
+  }
+
+  function buildLetterBoxes(answer, typed){
+    els.lettersRow.innerHTML = '';
+    for(let i=0;i<answer.length;i++){
+      const ch = answer[i];
+      const box = document.createElement('div');
+      if(ch === ' '){
+        box.className = 'letter-box space';
+      } else {
+        box.className = 'letter-box pending';
+        box.textContent = typed[i] ? typed[i] : '';
+      }
+      els.lettersRow.appendChild(box);
+    }
+  }
+
+  function checkSpelling(){
+    if(answered) return;
+    const typed = els.spellInput.value;
+    const answer = currentWord.en;
+    const boxes = els.lettersRow.querySelectorAll('.letter-box:not(.space)');
+    let letterIdx = 0;
+    let allCorrect = typed.length === answer.length;
+
+    for(let i=0;i<answer.length;i++){
+      if(answer[i] === ' ') continue;
+      const box = boxes[letterIdx];
+      const typedCh = typed[i] || '';
+      box.textContent = typedCh;
+      box.classList.remove('pending');
+      if(typedCh.toLowerCase() === answer[i].toLowerCase() && typedCh !== ''){
+        box.classList.add('correct');
+      } else {
+        box.classList.add('wrong');
+        allCorrect = false;
+      }
+      letterIdx++;
+    }
+
+    answered = true;
+    els.spellInput.disabled = true;
+
+    if(allCorrect){
+      correctCount++;
+      els.spellFeedback.className = 'feedback show ok';
+      els.spellFeedback.textContent = '✓ ถูกต้อง! เก่งมาก';
+    } else {
+      wrongCount++;
+      els.spellFeedback.className = 'feedback show bad';
+      els.spellFeedback.textContent = '✗ ยังไม่ถูก ลองดูเฉลยหรือไปข้อถัดไปได้เลย';
+      els.spellAnswer.className = 'answer-reveal show';
+      els.spellAnswer.textContent = `เฉลย: ${answer}`;
+    }
+    updateStreak();
+  }
+
+  function revealSpell(){
+    revealed = true;
+    els.spellAnswer.className = 'answer-reveal show';
+    els.spellAnswer.textContent = `เฉลย: ${currentWord.en}`;
+    buildLetterBoxes(currentWord.en, currentWord.en);
+    const boxes = els.lettersRow.querySelectorAll('.letter-box:not(.space)');
+    boxes.forEach(b => { b.classList.remove('pending','wrong'); b.classList.add('correct'); });
+  }
+
+  // ---------- CHOICE MODE ----------
+  function getDistractors(correctWord, count){
+    // Pull distractors from same set first, then from all sets if needed
+    let candidates = VOCAB_SETS[currentSetName].filter(w => w.en !== correctWord.en);
+    if(candidates.length < count){
+      const all = Object.values(VOCAB_SETS).flat();
+      candidates = all.filter(w => w.en !== correctWord.en);
+    }
+    return shuffle(candidates).slice(0, count);
+  }
+
+  function renderChoice(){
+    els.choiceFeedback.className = 'feedback';
+    els.choiceFeedback.textContent = '';
+
+    const distractors = getDistractors(currentWord, 3);
+    const options = shuffle([currentWord, ...distractors]);
+    const letters = ['A','B','C','D'];
+
+    els.choicesList.innerHTML = '';
+    options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.innerHTML = `<span class="choice-letter">${letters[i]}</span><span>${opt.en}</span>`;
+      btn.onclick = () => handleChoice(opt, btn);
+      els.choicesList.appendChild(btn);
+    });
+  }
+
+  function handleChoice(opt, btnEl){
+    if(answered) return;
+    answered = true;
+    const allBtns = els.choicesList.querySelectorAll('.choice-btn');
+    allBtns.forEach(b => b.disabled = true);
+
+    const isCorrect = opt.en === currentWord.en;
+    if(isCorrect){
+      btnEl.classList.add('correct');
+      correctCount++;
+      els.choiceFeedback.className = 'feedback show ok';
+      els.choiceFeedback.textContent = '✓ ถูกต้อง! เก่งมาก';
+    } else {
+      btnEl.classList.add('wrong');
+      wrongCount++;
+      allBtns.forEach(b => {
+        if(b.textContent.trim() === currentWord.en) b.classList.add('correct');
+      });
+      els.choiceFeedback.className = 'feedback show bad';
+      els.choiceFeedback.textContent = `✗ ยังไม่ถูก คำตอบคือ "${currentWord.en}"`;
+    }
+    updateStreak();
+  }
+
+  function revealChoice(){
+    if(answered) return;
+    revealed = true;
+    const allBtns = els.choicesList.querySelectorAll('.choice-btn');
+    allBtns.forEach(b => {
+      b.disabled = true;
+      if(b.textContent.trim() === currentWord.en) b.classList.add('correct');
+    });
+    els.choiceFeedback.className = 'feedback show hint';
+    els.choiceFeedback.textContent = `เฉลย: ${currentWord.en}`;
+    answered = true;
+  }
+
+  // ---------- Mode switching ----------
+  function setMode(newMode){
+    mode = newMode;
+    els.modeSpellBtn.classList.toggle('active', mode==='spell');
+    els.modeChoiceBtn.classList.toggle('active', mode==='choice');
+    els.spellArea.style.display = mode==='spell' ? 'block' : 'none';
+    els.choiceArea.style.display = mode==='choice' ? 'block' : 'none';
+    loadQuestion();
+  }
+
+  // ---------- Events ----------
+  els.checkBtn.onclick = checkSpelling;
+  els.spellInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter'){
+      if(!answered) checkSpelling();
+      else { idx++; loadQuestion(); }
+    }
+  });
+  els.spellInput.addEventListener('input', () => {
+    if(!answered) buildLetterBoxes(currentWord.en, els.spellInput.value);
+  });
+  els.revealBtnSpell.onclick = () => { if(!answered) revealSpell(); };
+  els.nextBtnSpell.onclick = () => { idx++; loadQuestion(); };
+
+  els.revealBtnChoice.onclick = revealChoice;
+  els.nextBtnChoice.onclick = () => { idx++; loadQuestion(); };
+
+  els.modeSpellBtn.onclick = () => setMode('spell');
+  els.modeChoiceBtn.onclick = () => setMode('choice');
+
+  // ---------- Init ----------
+  buildSetBar();
+  startSet();
+</script>
+</body>
+</html>
