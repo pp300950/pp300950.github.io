@@ -51,6 +51,8 @@
 ### 🃏 Card Battle
 🔗 https://pp300950.github.io/Card_battle/main5.html  
 เกมการ์ดต่อสู้แบบ Turn-based
+🔗 https://fast-api-v81f.onrender.com 
+การ์ดออนไลน์ เล่นกับเพื่อนได้
 
 ### 📖 Story Game (Play)
 🔗 https://pp300950.github.io/Story_Game/main4.html  
