@@ -479,6 +479,46 @@ body {
 .feature-text-bot.green { color: var(--bu-green); }
 .feature-text-bot.orange { color: #d4750a; }
 
+/* ── TAB NAV ── */
+.tab-nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.tab-nav-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 4px;
+}
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 16px 11px;
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--bu-navy); border-bottom-color: var(--bu-green); font-weight: 600; }
+@media (prefers-color-scheme: dark) {
+  .tab-btn.active { color: #7fc6ff; }
+}
+.tab-btn-icon { font-size: 0.95rem; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
 /* ── OLD NAV STRIP (hidden — replaced by hero) ── */
 
 /* ── MAIN ── */
@@ -510,6 +550,50 @@ main { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
   margin-bottom: 16px;
   display: none;
 }
+
+/* ── RANKING BANNER (best/worst 3) ── */
+.ranking-banner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.ranking-col {
+  border-radius: var(--radius);
+  padding: 16px 18px 14px;
+  border: 1px solid;
+}
+.ranking-best  { background: var(--aqi-good-bg); border-color: var(--aqi-good-border); }
+.ranking-worst { background: var(--aqi-bad-bg);  border-color: var(--aqi-bad-border); }
+.ranking-col-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.8rem; font-weight: 600; margin-bottom: 12px;
+  letter-spacing: 0.01em;
+}
+.ranking-best .ranking-col-title  { color: var(--aqi-good); }
+.ranking-worst .ranking-col-title { color: var(--aqi-bad); }
+.ranking-col-icon { font-size: 1rem; }
+.ranking-list { display: flex; flex-direction: column; gap: 8px; }
+.ranking-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+}
+.ranking-rank {
+  font-family: var(--font-mono); font-weight: 600; font-size: 0.85rem;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: #fff;
+}
+.ranking-best .ranking-rank  { background: var(--aqi-good); }
+.ranking-worst .ranking-rank { background: var(--aqi-bad); }
+.ranking-info { flex: 1; min-width: 0; }
+.ranking-loc { font-size: 0.8rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ranking-id  { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-3); }
+.ranking-aqi { font-family: var(--font-mono); font-weight: 600; font-size: 0.95rem; flex-shrink: 0; text-align: right; }
+.ranking-empty { font-size: 0.75rem; color: var(--text-3); padding: 8px 0; }
 
 /* ── AQI LEGEND ── */
 .legend-card {
@@ -550,6 +634,14 @@ main { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
 .l-bad   { background: var(--aqi-bad-bg); border-color: var(--aqi-bad-border); color: var(--aqi-bad); }
 .l-vbad  { background: var(--aqi-vbad-bg); border-color: var(--aqi-vbad-border); color: var(--aqi-vbad); }
 .l-haz   { background: var(--aqi-haz-bg); border-color: var(--aqi-haz-border); color: var(--aqi-haz); }
+.legend-note {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--text-2);
+}
 
 /* ── SECTION LABEL ── */
 .section-label {
@@ -660,6 +752,76 @@ main { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
 }
 .btn-load:hover { opacity: 0.8; }
 canvas#chart { width: 100% !important; }
+.chart-card-title { font-size: 0.8rem; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+
+/* ── SUMMARY STAT CARDS ── */
+.summary-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.summary-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.summary-stat-label {
+  font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 8px;
+}
+.summary-stat-value { font-family: var(--font-mono); font-size: 1.7rem; font-weight: 600; color: var(--text); line-height: 1; }
+.summary-stat-value .unit { font-size: 0.85rem; color: var(--text-2); font-weight: 500; margin-left: 3px; }
+.summary-stat-sub { font-size: 0.72rem; color: var(--text-2); margin-top: 6px; }
+
+/* ── SUMMARY TWO-COL CHARTS ── */
+.summary-two-col {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* ── EXPORT BAR ── */
+.export-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.export-bar-desc { flex: 1; min-width: 220px; }
+.export-bar-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.export-bar-sub { font-size: 0.75rem; color: var(--text-2); }
+.export-bar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.export-btn {
+  display: flex; align-items: center; gap: 7px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface2);
+  color: var(--text);
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.export-btn:hover { transform: translateY(-1px); border-color: var(--bu-green); }
+.export-btn:active { transform: translateY(0); }
+.export-btn-icon { font-size: 1rem; }
+.export-status {
+  width: 100%;
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--bu-green);
+  min-height: 1em;
+}
+.export-status.err { color: var(--aqi-bad); }
 
 /* ── LOADING ── */
 .loading-msg {
@@ -686,8 +848,18 @@ canvas#chart { width: 100% !important; }
   .metrics-row { grid-template-columns: repeat(2, 1fr); }
   .features-inner { padding: 0; }
   .feature-item { padding: 12px 14px; }
+  .ranking-banner { grid-template-columns: 1fr; }
+  .tab-nav-inner { padding: 0 12px; }
+  .tab-btn { padding: 11px 12px 9px; font-size: 0.78rem; }
+  .summary-stat-grid { grid-template-columns: 1fr 1fr; }
+  .summary-two-col { grid-template-columns: 1fr; }
+  .export-bar { flex-direction: column; align-items: stretch; }
+  .export-bar-actions { flex-direction: column; }
+  .export-btn { justify-content: center; }
 }
 @media (min-width: 501px) and (max-width: 900px) {
+  .summary-stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .summary-two-col { grid-template-columns: 1fr; }
   .hero-inner { grid-template-columns: auto 1fr; gap: 16px; }
   .hero-right { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 10px; }
   .sensor-grid { grid-template-columns: repeat(2, 1fr); }
@@ -852,6 +1024,18 @@ canvas#chart { width: 100% !important; }
   </div>
 </div>
 
+<!-- ══ TAB NAV ══ -->
+<div class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="live" onclick="switchTab('live')">
+      <span class="tab-btn-icon">📡</span> Live Sensors
+    </button>
+    <button class="tab-btn" data-tab="summary" onclick="switchTab('summary')">
+      <span class="tab-btn-icon">📊</span> สรุปข้อมูล & ดาวน์โหลด
+    </button>
+  </div>
+</div>
+
 <main>
   <div class="status-bar">
     <div class="status-indicator" id="statusDot"></div>
@@ -861,47 +1045,124 @@ canvas#chart { width: 100% !important; }
 
   <div class="err-box" id="errBox"></div>
 
-  <!-- AQI LEGEND -->
-  <div class="legend-card">
-    <div class="legend-title">เกณฑ์คุณภาพอากาศ PM2.5 (μg/m³)</div>
-    <div class="legend-grid">
-      <div class="legend-item l-good"><div class="legend-face">😊</div><div class="legend-text"><div class="legend-label">ดี</div><div class="legend-range">0 – 12 μg/m³</div></div></div>
-      <div class="legend-item l-mod"><div class="legend-face">😐</div><div class="legend-text"><div class="legend-label">ปานกลาง</div><div class="legend-range">12.1 – 35 μg/m³</div></div></div>
-      <div class="legend-item l-usg"><div class="legend-face">😷</div><div class="legend-text"><div class="legend-label">ไม่ดีสำหรับกลุ่มเสี่ยง</div><div class="legend-range">35.1 – 75 μg/m³</div></div></div>
-      <div class="legend-item l-bad"><div class="legend-face">🤢</div><div class="legend-text"><div class="legend-label">ไม่ดี</div><div class="legend-range">75.1 – 150 μg/m³</div></div></div>
-      <div class="legend-item l-vbad"><div class="legend-face">🤮</div><div class="legend-text"><div class="legend-label">แย่มาก</div><div class="legend-range">150.1 – 250 μg/m³</div></div></div>
-      <div class="legend-item l-haz"><div class="legend-face">☠️</div><div class="legend-text"><div class="legend-label">อันตราย</div><div class="legend-range">250.1+ μg/m³</div></div></div>
+  <!-- ══ TAB PANEL: LIVE ══ -->
+  <div class="tab-panel active" id="tabLive">
+
+    <!-- TOP/BOTTOM RANKING BANNER -->
+    <div class="ranking-banner" id="rankingBanner" style="display:none">
+      <div class="ranking-col ranking-best">
+        <div class="ranking-col-title"><span class="ranking-col-icon">🌿</span>อากาศดีที่สุด 3 อันดับ (AQI PM2.5)</div>
+        <div class="ranking-list" id="rankingBestList"></div>
+      </div>
+      <div class="ranking-col ranking-worst">
+        <div class="ranking-col-title"><span class="ranking-col-icon">⚠️</span>อากาศแย่ที่สุด 3 อันดับ (AQI PM2.5)</div>
+        <div class="ranking-list" id="rankingWorstList"></div>
+      </div>
+    </div>
+
+    <!-- AQI LEGEND -->
+    <div class="legend-card">
+      <div class="legend-title">ดัชนีคุณภาพอากาศ AQI (คำนวณจาก PM2.5 ตามมาตรฐาน US EPA)</div>
+      <div class="legend-grid">
+        <div class="legend-item l-good"><div class="legend-face">😊</div><div class="legend-text"><div class="legend-label">ดี</div><div class="legend-range">AQI 0 – 50</div></div></div>
+        <div class="legend-item l-mod"><div class="legend-face">😐</div><div class="legend-text"><div class="legend-label">ปานกลาง</div><div class="legend-range">AQI 51 – 100</div></div></div>
+        <div class="legend-item l-usg"><div class="legend-face">😷</div><div class="legend-text"><div class="legend-label">ไม่ดีสำหรับกลุ่มเสี่ยง</div><div class="legend-range">AQI 101 – 150</div></div></div>
+        <div class="legend-item l-bad"><div class="legend-face">🤢</div><div class="legend-text"><div class="legend-label">ไม่ดี</div><div class="legend-range">AQI 151 – 200</div></div></div>
+        <div class="legend-item l-vbad"><div class="legend-face">🤮</div><div class="legend-text"><div class="legend-label">แย่มาก</div><div class="legend-range">AQI 201 – 300</div></div></div>
+        <div class="legend-item l-haz"><div class="legend-face">☠️</div><div class="legend-text"><div class="legend-label">อันตราย</div><div class="legend-range">AQI 301+</div></div></div>
+      </div>
+      <div class="legend-note">ℹ️ ค่า AQI ที่แสดงคำนวณจาก PM2.5 เพียงอย่างเดียว (สูตรมาตรฐาน US EPA) ยังไม่รวมมลพิษชนิดอื่น เช่น O₃, CO, SO₂, NO₂ ซึ่งเซนเซอร์ปัจจุบันยังไม่รองรับ อาจแตกต่างจากค่า AQI ที่ประกาศโดยหน่วยงานทางการที่วัดครบทุกมลพิษ</div>
+    </div>
+
+    <div class="section-label">Live Sensors</div>
+    <div class="sensor-grid" id="sensorGrid">
+      <div class="loading-msg">กำลังโหลดข้อมูล…</div>
+    </div>
+
+    <div class="section-label">History Chart</div>
+    <div class="chart-card">
+      <div class="chart-controls">
+        <select id="chartSensor"><option value="">— ทุก Sensor —</option></select>
+        <select id="chartMetric">
+          <option value="pm2.5">PM2.5</option>
+          <option value="pm10">PM10</option>
+          <option value="pm1">PM1</option>
+          <option value="temperature">อุณหภูมิ (°C)</option>
+          <option value="humidity">ความชื้น (%)</option>
+        </select>
+        <select id="chartDays">
+          <option value="1">24 ชั่วโมง</option>
+          <option value="7" selected>7 วัน</option>
+          <option value="30">30 วัน</option>
+        </select>
+        <button class="btn-load" onclick="loadChart()">โหลดกราฟ</button>
+      </div>
+      <canvas id="chart" height="220"></canvas>
     </div>
   </div>
 
-  <div class="section-label">Live Sensors</div>
-  <div class="sensor-grid" id="sensorGrid">
-    <div class="loading-msg">กำลังโหลดข้อมูล…</div>
-  </div>
+  <!-- ══ TAB PANEL: SUMMARY ══ -->
+  <div class="tab-panel" id="tabSummary">
 
-  <div class="section-label">History Chart</div>
-  <div class="chart-card">
-    <div class="chart-controls">
-      <select id="chartSensor"><option value="">— ทุก Sensor —</option></select>
-      <select id="chartMetric">
-        <option value="pm2.5">PM2.5</option>
-        <option value="pm10">PM10</option>
-        <option value="pm1">PM1</option>
-        <option value="temperature">อุณหภูมิ (°C)</option>
-        <option value="humidity">ความชื้น (%)</option>
-      </select>
-      <select id="chartDays">
-        <option value="1">24 ชั่วโมง</option>
-        <option value="7" selected>7 วัน</option>
-        <option value="30">30 วัน</option>
-      </select>
-      <button class="btn-load" onclick="loadChart()">โหลดกราฟ</button>
+    <div class="section-label">ภาพรวมคุณภาพอากาศ</div>
+    <div class="summary-stat-grid" id="summaryStatGrid">
+      <div class="loading-msg">กำลังโหลดข้อมูล…</div>
     </div>
-    <canvas id="chart" height="220"></canvas>
+
+    <div class="section-label">แนวโน้ม AQI (PM2.5) เฉลี่ยรายชั่วโมง</div>
+    <div class="chart-card">
+      <div class="chart-controls">
+        <select id="summaryDays">
+          <option value="1">24 ชั่วโมง</option>
+          <option value="7" selected>7 วัน</option>
+          <option value="30">30 วัน</option>
+        </select>
+        <button class="btn-load" onclick="loadSummary()">อัปเดตข้อมูลสรุป</button>
+      </div>
+      <canvas id="summaryTrendChart" height="220"></canvas>
+    </div>
+
+    <div class="summary-two-col">
+      <div class="chart-card">
+        <div class="chart-card-title">เปรียบเทียบ AQI (PM2.5) เฉลี่ยตามจุดตรวจวัด</div>
+        <canvas id="summaryBarChart" height="260"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">สัดส่วนระดับคุณภาพอากาศ</div>
+        <canvas id="summaryDonutChart" height="260"></canvas>
+      </div>
+    </div>
+
+    <div class="section-label">ดาวน์โหลดข้อมูล</div>
+    <div class="export-bar">
+      <div class="export-bar-desc">
+        <div class="export-bar-title">ส่งออกข้อมูลย้อนหลัง</div>
+        <div class="export-bar-sub">ข้อมูลตามช่วงเวลาที่เลือกด้านบน (<span id="exportRangeLabel">7 วัน</span>) จากทุก Sensor</div>
+      </div>
+      <div class="export-bar-actions">
+        <button class="export-btn export-btn-excel" onclick="exportData('excel')">
+          <span class="export-btn-icon">📗</span> Excel (.xlsx)
+        </button>
+        <button class="export-btn export-btn-pdf" onclick="exportData('pdf')">
+          <span class="export-btn-icon">📕</span> PDF
+        </button>
+        <button class="export-btn export-btn-word" onclick="exportData('word')">
+          <span class="export-btn-icon">📘</span> Word (.doc)
+        </button>
+        <button class="export-btn export-btn-csv" onclick="exportData('csv')">
+          <span class="export-btn-icon">📄</span> CSV
+        </button>
+      </div>
+      <div class="export-status" id="exportStatus"></div>
+    </div>
+
   </div>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
 const BASE_URL    = 'https://unimpressionable-ambroise-unsmug.ngrok-free.dev';
 const OFFLINE_MIN = 10;
@@ -943,6 +1204,18 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
+// ── Tab switching ──
+let summaryLoadedOnce = false;
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.getElementById('tabLive').classList.toggle('active', name === 'live');
+  document.getElementById('tabSummary').classList.toggle('active', name === 'summary');
+  if (name === 'summary' && !summaryLoadedOnce) {
+    summaryLoadedOnce = true;
+    loadSummary();
+  }
+}
+
 async function apiFetch(path) {
   const res = await fetch(BASE_URL + path, { headers: { 'ngrok-skip-browser-warning': 'true' } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -952,25 +1225,101 @@ async function apiFetch(path) {
 function minutesAgo(ts) { return (Date.now() - new Date(ts).getTime()) / 60000; }
 function isOnline(sensor) { return sensor.status === 'online' && minutesAgo(sensor.timestamp) <= OFFLINE_MIN; }
 
-function getAQI(pm) {
-  if (pm <= 12)  return { label:'ดี',                       face:'😊', bg:'var(--aqi-good-bg)', border:'var(--aqi-good-border)', color:'var(--aqi-good)',  accent:'#2d7a3a' };
-  if (pm <= 35)  return { label:'ปานกลาง',                 face:'😐', bg:'var(--aqi-mod-bg)',  border:'var(--aqi-mod-border)',  color:'var(--aqi-mod)',   accent:'#b07800' };
-  if (pm <= 75)  return { label:'ไม่ดีสำหรับกลุ่มเสี่ยง', face:'😷', bg:'var(--aqi-usg-bg)',  border:'var(--aqi-usg-border)',  color:'var(--aqi-usg)',   accent:'#c05020' };
-  if (pm <= 150) return { label:'ไม่ดี',                    face:'🤢', bg:'var(--aqi-bad-bg)',  border:'var(--aqi-bad-border)',  color:'var(--aqi-bad)',   accent:'#b02828' };
-  if (pm <= 250) return { label:'แย่มาก',                  face:'🤮', bg:'var(--aqi-vbad-bg)', border:'var(--aqi-vbad-border)', color:'var(--aqi-vbad)', accent:'#7a0a60' };
-  return             { label:'อันตราย',                 face:'☠️', bg:'var(--aqi-haz-bg)',  border:'var(--aqi-haz-border)',  color:'var(--aqi-haz)',   accent:'#5a0010' };
+// Extract numeric part of sensor id (e.g. "SOS12" -> 12) for natural sort order
+function sensorNumber(id) {
+  const m = String(id).match(/(\d+)/);
+  return m ? parseInt(m[1], 10) : Number.MAX_SAFE_INTEGER;
 }
+
+// Sort: online sensors first (by sensor number, ascending), then offline sensors (by sensor number, ascending)
+function sortSensorsForDisplay(sensors) {
+  return [...sensors].sort((a, b) => {
+    const aOn = isOnline(a) ? 0 : 1;
+    const bOn = isOnline(b) ? 0 : 1;
+    if (aOn !== bOn) return aOn - bOn;
+    return sensorNumber(a.id) - sensorNumber(b.id);
+  });
+}
+
+// US EPA PM2.5 AQI breakpoints (24-hr standard, µg/m³ -> AQI 0-500)
+// This is the standard "overall" air quality index used internationally,
+// not the raw concentration — comparable across pollutants and locations.
+const AQI_BREAKPOINTS = [
+  { cLo: 0.0,   cHi: 12.0,  iLo: 0,   iHi: 50  },
+  { cLo: 12.1,  cHi: 35.4,  iLo: 51,  iHi: 100 },
+  { cLo: 35.5,  cHi: 55.4,  iLo: 101, iHi: 150 },
+  { cLo: 55.5,  cHi: 150.4, iLo: 151, iHi: 200 },
+  { cLo: 150.5, cHi: 250.4, iLo: 201, iHi: 300 },
+  { cLo: 250.5, cHi: 350.4, iLo: 301, iHi: 400 },
+  { cLo: 350.5, cHi: 500.4, iLo: 401, iHi: 500 },
+];
+
+function pm25ToAQI(pm) {
+  const c = Math.max(0, pm);
+  let bp = AQI_BREAKPOINTS[AQI_BREAKPOINTS.length - 1];
+  for (const b of AQI_BREAKPOINTS) {
+    if (c <= b.cHi) { bp = b; break; }
+  }
+  const aqi = ((bp.iHi - bp.iLo) / (bp.cHi - bp.cLo)) * (c - bp.cLo) + bp.iLo;
+  return Math.round(aqi);
+}
+
+function getAQI(pm) {
+  const aqi = pm25ToAQI(pm);
+  if (aqi <= 50)  return { aqi, label:'ดี',                       face:'😊', bg:'var(--aqi-good-bg)', border:'var(--aqi-good-border)', color:'var(--aqi-good)',  accent:'#2d7a3a' };
+  if (aqi <= 100) return { aqi, label:'ปานกลาง',                 face:'😐', bg:'var(--aqi-mod-bg)',  border:'var(--aqi-mod-border)',  color:'var(--aqi-mod)',   accent:'#b07800' };
+  if (aqi <= 150) return { aqi, label:'ไม่ดีสำหรับกลุ่มเสี่ยง', face:'😷', bg:'var(--aqi-usg-bg)',  border:'var(--aqi-usg-border)',  color:'var(--aqi-usg)',   accent:'#c05020' };
+  if (aqi <= 200) return { aqi, label:'ไม่ดี',                    face:'🤢', bg:'var(--aqi-bad-bg)',  border:'var(--aqi-bad-border)',  color:'var(--aqi-bad)',   accent:'#b02828' };
+  if (aqi <= 300) return { aqi, label:'แย่มาก',                  face:'🤮', bg:'var(--aqi-vbad-bg)', border:'var(--aqi-vbad-border)', color:'var(--aqi-vbad)', accent:'#7a0a60' };
+  return             { aqi, label:'อันตราย',                 face:'☠️', bg:'var(--aqi-haz-bg)',  border:'var(--aqi-haz-border)',  color:'var(--aqi-haz)',   accent:'#5a0010' };
+}
+
+function renderRankingBanner(onlineSensors) {
+  const banner = document.getElementById('rankingBanner');
+  if (!onlineSensors.length) { banner.style.display = 'none'; return; }
+  banner.style.display = 'grid';
+
+  const withAqi = onlineSensors.map(s => {
+    const pm25 = s.data['pm2.5'] || 0;
+    return { s, aqi: getAQI(pm25), pm25 };
+  });
+
+  const byAqiAsc  = [...withAqi].sort((a, b) => a.aqi.aqi - b.aqi.aqi);
+  const byAqiDesc = [...withAqi].sort((a, b) => b.aqi.aqi - a.aqi.aqi);
+
+  const renderList = (list) => list.slice(0, 3).map((item, i) => {
+    const loc = getSensorLocation(item.s.id) || item.s.id;
+    return `
+    <div class="ranking-row">
+      <div class="ranking-rank">${i + 1}</div>
+      <div class="ranking-info">
+        <div class="ranking-loc">${loc}</div>
+        <div class="ranking-id">${item.s.id}</div>
+      </div>
+      <div class="ranking-aqi" style="color:${item.aqi.color}">${item.aqi.aqi} <span style="font-size:0.6rem;opacity:0.7">${item.aqi.face}</span></div>
+    </div>`;
+  }).join('') || '<div class="ranking-empty">ไม่มีข้อมูล</div>';
+
+  document.getElementById('rankingBestList').innerHTML  = renderList(byAqiAsc);
+  document.getElementById('rankingWorstList').innerHTML = renderList(byAqiDesc);
+}
+
+let latestSensors = [];
 
 function renderCards(sensors) {
   const grid = document.getElementById('sensorGrid');
   if (!sensors.length) { grid.innerHTML = '<div class="loading-msg">ไม่พบข้อมูล Sensor</div>'; return; }
 
+  latestSensors = sensors;
   const onlineList = sensors.filter(s => isOnline(s));
   document.getElementById('heroCntOnline').textContent = onlineList.length;
   document.getElementById('heroCntTotal').textContent  = sensors.length;
-  document.getElementById('onlineCountLegacy') && (document.getElementById('onlineCountLegacy').textContent = `${onlineList.length} / ${sensors.length}`);
 
-  grid.innerHTML = sensors.map(s => {
+  renderRankingBanner(onlineList);
+
+  const sorted = sortSensorsForDisplay(sensors);
+
+  grid.innerHTML = sorted.map(s => {
     const d = s.data;
     const online = isOnline(s);
     const pm25 = d['pm2.5'] || 0;
@@ -996,17 +1345,17 @@ function renderCards(sensors) {
           <div class="aqi-face-wrap">${aqi.face}</div>
           <div class="aqi-label-block">
             <div class="aqi-level-name">${aqi.label}</div>
-            <div class="aqi-pm-label">PM2.5</div>
+            <div class="aqi-pm-label">ดัชนีคุณภาพอากาศ AQI (PM2.5)</div>
           </div>
           <div class="aqi-value-block">
-            <div class="aqi-pm-large">${pm25.toFixed(1)}</div>
-            <div class="aqi-pm-unit">μg/m³</div>
+            <div class="aqi-pm-large">${aqi.aqi}</div>
+            <div class="aqi-pm-unit">AQI</div>
           </div>
         </div>
         ${!online ? `<div class="offline-note">⚠ ไม่มีข้อมูลมา ${minsAgo} นาทีแล้ว</div>` : ''}
         <div class="metrics-row">
+          <div class="metric"><div class="metric-lbl">PM2.5</div><div class="metric-val">${pm25.toFixed(1)}<span class="metric-unit-s"> μg</span></div></div>
           <div class="metric"><div class="metric-lbl">PM10</div><div class="metric-val">${(d['pm10']||0).toFixed(1)}<span class="metric-unit-s"> μg</span></div></div>
-          <div class="metric"><div class="metric-lbl">PM1</div><div class="metric-val">${(d['pm1']||0).toFixed(1)}<span class="metric-unit-s"> μg</span></div></div>
           <div class="metric"><div class="metric-lbl">Temp</div><div class="metric-val">${(d['temperature']||0).toFixed(1)}<span class="metric-unit-s">°C</span></div></div>
           <div class="metric"><div class="metric-lbl">RH</div><div class="metric-val">${(d['humidity']||0).toFixed(0)}<span class="metric-unit-s">%</span></div></div>
         </div>
@@ -1020,7 +1369,7 @@ function renderCards(sensors) {
   const sel = document.getElementById('chartSensor');
   const cur = sel.value;
   sel.innerHTML = '<option value="">— ทุก Sensor —</option>' +
-    sensors.map(s => {
+    sortSensorsForDisplay(sensors).map(s => {
       const loc = getSensorLocation(s.id);
       const label = loc ? `${s.id} – ${loc}` : s.id;
       return `<option value="${s.id}"${s.id === cur ? ' selected' : ''}>${label}</option>`;
@@ -1103,6 +1452,328 @@ async function loadChart() {
   } catch(e) {
     alert('โหลดกราฟไม่ได้: ' + e.message);
   }
+}
+
+// ══════════════════════════════════════════
+// SUMMARY TAB — stats + charts + export
+// ══════════════════════════════════════════
+let summaryTrendChart = null;
+let summaryBarChart = null;
+let summaryDonutChart = null;
+let lastSummaryLogs = [];   // flattened logs used for export
+let lastSummaryDays = 7;
+
+function chartTextColors() {
+  const isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  return {
+    grid: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+    tick: isDark ? '#686660' : '#9b9890',
+    legend: isDark ? '#e8e6e0' : '#1a1a18',
+    tooltipBg: isDark ? '#1e1e1a' : '#ffffff',
+    tooltipBorder: isDark ? '#3e3e38' : '#e0ddd8',
+  };
+}
+
+async function loadSummary() {
+  const days = document.getElementById('summaryDays').value;
+  lastSummaryDays = days;
+  document.getElementById('exportRangeLabel').textContent =
+    days === '1' ? '24 ชั่วโมง' : days === '7' ? '7 วัน' : '30 วัน';
+
+  const statGrid = document.getElementById('summaryStatGrid');
+  statGrid.innerHTML = '<div class="loading-msg">กำลังโหลดข้อมูล…</div>';
+
+  try {
+    const sensors = latestSensors.length ? latestSensors : (await apiFetch('/api/sensor-data')).sensors || [];
+    const json = await apiFetch(`/api/logs?days=${days}&limit=3000`);
+    const logs = json.logs || [];
+    lastSummaryLogs = logs;
+
+    renderSummaryStats(sensors, logs);
+    renderSummaryTrendChart(logs);
+    renderSummaryBarChart(sensors, logs);
+    renderSummaryDonutChart(sensors);
+  } catch (e) {
+    statGrid.innerHTML = `<div class="loading-msg">ไม่สามารถโหลดข้อมูลสรุปได้: ${e.message}</div>`;
+  }
+}
+
+function renderSummaryStats(sensors, logs) {
+  const grid = document.getElementById('summaryStatGrid');
+  const onlineList = sensors.filter(s => isOnline(s));
+  const aqiValues = onlineList.map(s => pm25ToAQI(s.data['pm2.5'] || 0));
+  const avgAqi = aqiValues.length ? Math.round(aqiValues.reduce((a,b)=>a+b,0) / aqiValues.length) : 0;
+  const maxAqi = aqiValues.length ? Math.max(...aqiValues) : 0;
+  const minAqi = aqiValues.length ? Math.min(...aqiValues) : 0;
+  const avgLevelInfo = (() => {
+    if (avgAqi <= 50) return { label:'ดี', color:'var(--aqi-good)' };
+    if (avgAqi <= 100) return { label:'ปานกลาง', color:'var(--aqi-mod)' };
+    if (avgAqi <= 150) return { label:'ไม่ดีสำหรับกลุ่มเสี่ยง', color:'var(--aqi-usg)' };
+    if (avgAqi <= 200) return { label:'ไม่ดี', color:'var(--aqi-bad)' };
+    if (avgAqi <= 300) return { label:'แย่มาก', color:'var(--aqi-vbad)' };
+    return { label:'อันตราย', color:'var(--aqi-haz)' };
+  })();
+
+  grid.innerHTML = `
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">AQI (PM2.5) เฉลี่ยตอนนี้</div>
+      <div class="summary-stat-value" style="color:${avgLevelInfo.color}">${avgAqi}<span class="unit">AQI</span></div>
+      <div class="summary-stat-sub">${avgLevelInfo.label}</div>
+    </div>
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">AQI (PM2.5) สูงสุดตอนนี้</div>
+      <div class="summary-stat-value">${maxAqi}<span class="unit">AQI</span></div>
+      <div class="summary-stat-sub">จุดที่มีค่าฝุ่นมากที่สุด</div>
+    </div>
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">AQI (PM2.5) ต่ำสุดตอนนี้</div>
+      <div class="summary-stat-value">${minAqi}<span class="unit">AQI</span></div>
+      <div class="summary-stat-sub">จุดที่อากาศดีที่สุด</div>
+    </div>
+    <div class="summary-stat-card">
+      <div class="summary-stat-label">จำนวนบันทึกข้อมูล</div>
+      <div class="summary-stat-value">${logs.length.toLocaleString()}<span class="unit">รายการ</span></div>
+      <div class="summary-stat-sub">ในช่วงเวลาที่เลือก</div>
+    </div>`;
+}
+
+function renderSummaryTrendChart(logs) {
+  const c = chartTextColors();
+  // group by hour bucket, average AQI across all sensors in that bucket
+  const buckets = {};
+  logs.forEach(l => {
+    const d = new Date(l.timestamp);
+    d.setMinutes(0,0,0);
+    const key = d.getTime();
+    const pm = l.data['pm2.5'] || 0;
+    if (!buckets[key]) buckets[key] = [];
+    buckets[key].push(pm25ToAQI(pm));
+  });
+  const keys = Object.keys(buckets).map(Number).sort((a,b)=>a-b);
+  const labels = keys.map(k => {
+    const d = new Date(k);
+    return d.toLocaleDateString('th-TH',{day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('th-TH',{hour:'2-digit'});
+  });
+  const data = keys.map(k => {
+    const arr = buckets[k];
+    return Math.round(arr.reduce((a,b)=>a+b,0) / arr.length);
+  });
+
+  if (summaryTrendChart) summaryTrendChart.destroy();
+  summaryTrendChart = new Chart(document.getElementById('summaryTrendChart'), {
+    type: 'line',
+    data: { labels, datasets: [{
+      label: 'AQI เฉลี่ยรายชั่วโมง',
+      data,
+      borderColor: '#185fa5', backgroundColor: 'rgba(24,95,165,0.08)',
+      borderWidth: 1.8, pointRadius: 0, tension: 0.35, fill: true,
+    }]},
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: c.legend, font: { family: 'IBM Plex Mono', size: 11 }, boxWidth: 12, padding: 16 } },
+        tooltip: { backgroundColor: c.tooltipBg, borderColor: c.tooltipBorder, borderWidth: 1, titleColor: c.legend, bodyColor: c.tick, titleFont: { family: 'IBM Plex Mono', size: 11 }, bodyFont: { family: 'IBM Plex Mono', size: 11 }, padding: 10 }
+      },
+      scales: {
+        x: { ticks: { color: c.tick, font: { family: 'IBM Plex Mono', size: 10 }, maxTicksLimit: 8 }, grid: { color: c.grid } },
+        y: { ticks: { color: c.tick, font: { family: 'IBM Plex Mono', size: 10 } }, grid: { color: c.grid } }
+      }
+    }
+  });
+}
+
+function renderSummaryBarChart(sensors, logs) {
+  const c = chartTextColors();
+  // average AQI per sensor over the period (fallback to current reading if no logs)
+  const bySensor = {};
+  logs.forEach(l => {
+    const id = l.sensor_id || l.id;
+    if (!id) return;
+    if (!bySensor[id]) bySensor[id] = [];
+    bySensor[id].push(pm25ToAQI(l.data['pm2.5'] || 0));
+  });
+  let entries = Object.keys(bySensor).map(id => ({
+    id,
+    avg: Math.round(bySensor[id].reduce((a,b)=>a+b,0) / bySensor[id].length)
+  }));
+  if (!entries.length) {
+    entries = sensors.map(s => ({ id: s.id, avg: pm25ToAQI(s.data['pm2.5'] || 0) }));
+  }
+  entries.sort((a, b) => sensorNumber(a.id) - sensorNumber(b.id));
+
+  const labels = entries.map(e => getSensorLocation(e.id) || e.id);
+  const data = entries.map(e => e.avg);
+  const barColorsFinal = data.map(aqiVal => {
+    if (aqiVal <= 50) return '#2d7a3a';
+    if (aqiVal <= 100) return '#b07800';
+    if (aqiVal <= 150) return '#c05020';
+    if (aqiVal <= 200) return '#b02828';
+    if (aqiVal <= 300) return '#7a0a60';
+    return '#5a0010';
+  });
+
+  if (summaryBarChart) summaryBarChart.destroy();
+  summaryBarChart = new Chart(document.getElementById('summaryBarChart'), {
+    type: 'bar',
+    data: { labels, datasets: [{
+      label: 'AQI เฉลี่ย',
+      data,
+      backgroundColor: barColorsFinal,
+      borderRadius: 4,
+      maxBarThickness: 28,
+    }]},
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { backgroundColor: c.tooltipBg, borderColor: c.tooltipBorder, borderWidth: 1, titleColor: c.legend, bodyColor: c.tick, titleFont: { family: 'IBM Plex Mono', size: 11 }, bodyFont: { family: 'IBM Plex Mono', size: 11 }, padding: 10 }
+      },
+      scales: {
+        x: { ticks: { color: c.tick, font: { family: 'IBM Plex Mono', size: 10 } }, grid: { color: c.grid } },
+        y: { ticks: { color: c.tick, font: { family: 'IBM Plex Sans Thai', size: 10 } }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderSummaryDonutChart(sensors) {
+  const c = chartTextColors();
+  const onlineList = sensors.filter(s => isOnline(s));
+  const buckets = { 'ดี':0, 'ปานกลาง':0, 'ไม่ดีสำหรับกลุ่มเสี่ยง':0, 'ไม่ดี':0, 'แย่มาก':0, 'อันตราย':0 };
+  onlineList.forEach(s => {
+    const aqi = getAQI(s.data['pm2.5'] || 0);
+    buckets[aqi.label] = (buckets[aqi.label] || 0) + 1;
+  });
+  const labels = Object.keys(buckets).filter(k => buckets[k] > 0);
+  const data = labels.map(k => buckets[k]);
+  const colorMap = {
+    'ดี':'#2d7a3a', 'ปานกลาง':'#b07800', 'ไม่ดีสำหรับกลุ่มเสี่ยง':'#c05020',
+    'ไม่ดี':'#b02828', 'แย่มาก':'#7a0a60', 'อันตราย':'#5a0010'
+  };
+  const colors = labels.map(k => colorMap[k]);
+
+  if (summaryDonutChart) summaryDonutChart.destroy();
+  summaryDonutChart = new Chart(document.getElementById('summaryDonutChart'), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: c.tooltipBg }] },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: c.legend, font: { family: 'IBM Plex Sans Thai', size: 11 }, boxWidth: 12, padding: 12 } },
+        tooltip: { backgroundColor: c.tooltipBg, borderColor: c.tooltipBorder, borderWidth: 1, titleColor: c.legend, bodyColor: c.tick, padding: 10 }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+// EXPORT — Excel / PDF / Word / CSV
+// ══════════════════════════════════════════
+function buildExportRows() {
+  return lastSummaryLogs.map(l => {
+    const id = l.sensor_id || l.id || '';
+    const loc = getSensorLocation(id) || '';
+    const pm25 = l.data['pm2.5'] || 0;
+    const aqi = pm25ToAQI(pm25);
+    let ts;
+    try { ts = new Date(l.timestamp).toLocaleString('th-TH'); } catch(e) { ts = l.timestamp; }
+    return {
+      'เวลา': ts,
+      'Sensor ID': id,
+      'สถานที่': loc,
+      'AQI (PM2.5)': aqi,
+      'PM2.5 (μg/m³)': pm25.toFixed(1),
+      'PM10 (μg/m³)': (l.data['pm10'] || 0).toFixed(1),
+      'PM1 (μg/m³)': (l.data['pm1'] || 0).toFixed(1),
+      'อุณหภูมิ (°C)': (l.data['temperature'] || 0).toFixed(1),
+      'ความชื้น (%)': (l.data['humidity'] || 0).toFixed(0),
+    };
+  });
+}
+
+function setExportStatus(msg, isErr) {
+  const el = document.getElementById('exportStatus');
+  el.textContent = msg;
+  el.classList.toggle('err', !!isErr);
+}
+
+async function exportData(format) {
+  if (!lastSummaryLogs.length) {
+    setExportStatus('ไม่มีข้อมูลให้ดาวน์โหลด กรุณาโหลดข้อมูลสรุปก่อน', true);
+    return;
+  }
+  const rows = buildExportRows();
+  const rangeLabel = document.getElementById('exportRangeLabel').textContent;
+  const fname = `air-quality-report-${lastSummaryDays}d-${Date.now()}`;
+
+  try {
+    setExportStatus('กำลังเตรียมไฟล์…', false);
+
+    if (format === 'csv') {
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const csv = XLSX.utils.sheet_to_csv(ws);
+      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+      downloadBlob(blob, fname + '.csv');
+    }
+
+    else if (format === 'excel') {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws['!cols'] = Object.keys(rows[0] || {}).map(() => ({ wch: 18 }));
+      XLSX.utils.book_append_sheet(wb, ws, 'Air Quality Data');
+      XLSX.writeFile(wb, fname + '.xlsx');
+    }
+
+    else if (format === 'pdf') {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'landscape' });
+      doc.setFontSize(14);
+      doc.text('Air Quality Report - Burapha University', 14, 14);
+      doc.setFontSize(9);
+      doc.text(`Range: ${rangeLabel} | Generated: ${new Date().toLocaleString('th-TH')}`, 14, 20);
+      const head = [Object.keys(rows[0] || {})];
+      const body = rows.map(r => Object.values(r));
+      doc.autoTable({
+        head, body, startY: 26, styles: { fontSize: 7 },
+        headStyles: { fillColor: [10, 42, 94] },
+        margin: { left: 10, right: 10 },
+      });
+      doc.save(fname + '.pdf');
+    }
+
+    else if (format === 'word') {
+      const headerCells = Object.keys(rows[0] || {}).map(k => `<th style="border:1px solid #ccc;padding:6px 10px;background:#0a2a5e;color:#fff;font-size:11px;">${k}</th>`).join('');
+      const bodyRows = rows.map(r => `<tr>${Object.values(r).map(v => `<td style="border:1px solid #ccc;padding:5px 10px;font-size:10px;">${v}</td>`).join('')}</tr>`).join('');
+      const html = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset="utf-8"><title>Air Quality Report</title></head>
+        <body style="font-family:'Tahoma',sans-serif;">
+          <h2>รายงานคุณภาพอากาศ — มหาวิทยาลัยบูรพา</h2>
+          <p>ช่วงเวลา: ${rangeLabel} &nbsp; | &nbsp; สร้างเมื่อ: ${new Date().toLocaleString('th-TH')}</p>
+          <table style="border-collapse:collapse;width:100%;">
+            <thead><tr>${headerCells}</tr></thead>
+            <tbody>${bodyRows}</tbody>
+          </table>
+        </body></html>`;
+      const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+      downloadBlob(blob, fname + '.doc');
+    }
+
+    setExportStatus(`ดาวน์โหลดสำเร็จ — ${rows.length.toLocaleString()} รายการ (${format.toUpperCase()})`, false);
+  } catch (e) {
+    setExportStatus('เกิดข้อผิดพลาดในการสร้างไฟล์: ' + e.message, true);
+  }
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 loadAll();
