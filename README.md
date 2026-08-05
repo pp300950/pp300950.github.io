@@ -86,7 +86,7 @@ https://pp300950.github.io/pack_box/index.html
 เว็บบีบอัดรูปภาพ เพื่อลดขนาดไฟล์
 
 ### 📊 Sensor Monitoring Dashboard
-🔗 https://pp300950.github.io/Sensor_Monitoring_Dashboar/index.html  
+🔗 https://pp300950.github.io/Sensor_Monitoring_Dashboar/air_quality_monitor.html
 แดชบอร์ดแสดงข้อมูลเซนเซอร์ (แนว IoT)
 
 ### 🎨 Poster Template
