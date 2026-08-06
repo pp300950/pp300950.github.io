@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>คำศัพท์จีน — ทดสอบความจำ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F7F1E3;
+    --paper-line: #E4D9C0;
+    --ink: #2B2620;
+    --ink-soft: #5B5245;
+    --red: #B23A2E;
+    --red-soft: #D97D6F;
+    --tan: #8C7A5B;
+    --green: #3D5A4A;
+    --card: #FFFCF4;
+    --shadow: rgba(43,38,32,0.18);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    min-height:100vh;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 37px,
+        var(--paper-line) 38px
+      ),
+      var(--paper);
+    font-family:'Noto Serif Thai', serif;
+    color:var(--ink);
+  }
+
+  body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 32px 16px 80px;
+  }
+
+  /* faint margin rule like a school notebook */
+  body::before{
+    content:"";
+    position:fixed;
+    top:0; bottom:0; left:56px;
+    width:1.5px;
+    background: rgba(178,58,46,0.28);
+    z-index:0;
+  }
+  @media (max-width:600px){
+    body::before{ left:28px; }
+  }
+
+  header{
+    width:100%;
+    max-width:640px;
+    text-align:center;
+    margin-bottom:28px;
+    position:relative;
+    z-index:1;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--tan);
+    margin-bottom:6px;
+  }
+
+  h1{
+    font-size: clamp(28px,6vw,40px);
+    margin:0 0 6px;
+    font-weight:700;
+    color:var(--ink);
+  }
+
+  h1 .accent{
+    color:var(--red);
+    font-family:'Noto Serif SC', serif;
+    font-weight:900;
+  }
+
+  .subtitle{
+    color:var(--ink-soft);
+    font-size:15px;
+    margin:0;
+  }
+
+  main{
+    width:100%;
+    max-width:640px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* progress + score row */
+  .status-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+
+  .status-row .score{
+    color:var(--green);
+    font-weight:600;
+  }
+
+  .progress-track{
+    width:100%;
+    height:6px;
+    background:var(--paper-line);
+    border-radius:4px;
+    overflow:hidden;
+    margin-bottom:22px;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--red);
+    border-radius:4px;
+    transition:width .4s ease;
+  }
+
+  /* the flashcard */
+  .card{
+    background:var(--card);
+    border-radius:6px;
+    box-shadow: 0 10px 0 -4px var(--shadow), 0 18px 34px var(--shadow);
+    padding: 46px 32px 34px;
+    position:relative;
+    border:1px solid rgba(140,122,91,0.25);
+    min-height: 340px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+
+  /* torn/stapled top corner detail */
+  .card::before{
+    content:"";
+    position:absolute;
+    top:14px; left:50%;
+    transform:translateX(-50%);
+    width:34px; height:10px;
+    background: repeating-linear-gradient(90deg, var(--tan) 0 2px, transparent 2px 6px);
+    opacity:0.5;
+    border-radius:2px;
+  }
+
+  .card-index{
+    position:absolute;
+    top:16px; left:20px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--tan);
+  }
+
+  .hanzi{
+    font-family:'Noto Serif SC', serif;
+    font-weight:700;
+    font-size: clamp(64px, 16vw, 96px);
+    line-height:1;
+    color:var(--ink);
+    margin-bottom: 26px;
+    letter-spacing: 0.02em;
+  }
+
+  .prompt-label{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+
+  form.answer-form{
+    width:100%;
+    max-width:380px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:6px;
+  }
+
+  input[type="text"]{
+    font-family:'Noto Serif Thai', serif;
+    font-size:18px;
+    padding:12px 16px;
+    border-radius:6px;
+    border:2px solid var(--paper-line);
+    background:#fff;
+    color:var(--ink);
+    text-align:center;
+    outline:none;
+    transition: border-color .2s ease;
+  }
+  input[type="text"]:focus{
+    border-color: var(--tan);
+  }
+  input[type="text"].correct{
+    border-color: var(--green);
+  }
+  input[type="text"].wrong{
+    border-color: var(--red);
+  }
+
+  .btn-row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+  }
+
+  button{
+    font-family:'Noto Serif Thai', serif;
+    font-weight:600;
+    font-size:15px;
+    padding:11px 22px;
+    border-radius:6px;
+    border:none;
+    cursor:pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  button:focus-visible{
+    outline: 3px solid var(--green);
+    outline-offset:2px;
+  }
+  button:active{ transform: translateY(1px); }
+
+  .btn-check{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .btn-check:hover{ background:#171310; }
+
+  .btn-next{
+    background:var(--red);
+    color:#fff;
+  }
+  .btn-next:hover{ background:#983025; }
+
+  .btn-skip{
+    background:transparent;
+    color:var(--ink-soft);
+    border:1.5px solid var(--paper-line);
+  }
+  .btn-skip:hover{ border-color:var(--tan); color:var(--ink); }
+
+  /* reveal / stamp area */
+  .reveal{
+    margin-top: 18px;
+    width:100%;
+    max-width:380px;
+    opacity:0;
+    max-height:0;
+    overflow:hidden;
+    transition: opacity .35s ease, max-height .45s ease;
+  }
+  .reveal.show{
+    opacity:1;
+    max-height:220px;
+  }
+
+  .reveal-inner{
+    border:2px solid var(--red);
+    border-radius:8px;
+    padding:14px 18px;
+    position:relative;
+    transform: rotate(-1.2deg) scale(0.9);
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+  }
+  .reveal.show .reveal-inner{
+    transform: rotate(-1.2deg) scale(1);
+  }
+
+  .reveal-inner.wrong-mark{
+    border-color: var(--red);
+  }
+  .reveal-inner.correct-mark{
+    border-color: var(--green);
+  }
+
+  .stamp{
+    position:absolute;
+    top:-16px; right:-10px;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:0.06em;
+    padding:3px 9px;
+    border-radius:20px;
+    transform: rotate(8deg);
+  }
+  .stamp.ok{ background:var(--green); color:#fff; }
+  .stamp.no{ background:var(--red); color:#fff; }
+
+  .meaning-th{
+    font-size:19px;
+    font-weight:600;
+    color:var(--ink);
+    margin:0 0 6px;
+  }
+
+  .pinyin{
+    font-family:'JetBrains Mono', monospace;
+    font-size:15px;
+    color:var(--tan);
+    margin:0;
+  }
+
+  /* results screen */
+  .results{
+    text-align:center;
+    padding: 40px 10px 10px;
+  }
+  .results .big-score{
+    font-family:'Noto Serif SC', serif;
+    font-weight:900;
+    font-size: 64px;
+    color:var(--red);
+    line-height:1;
+    margin-bottom:8px;
+  }
+  .results .big-score span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:26px;
+    color:var(--ink-soft);
+    font-weight:400;
+  }
+  .results p.msg{
+    color:var(--ink-soft);
+    margin-bottom:26px;
+  }
+
+  .missed-list{
+    text-align:left;
+    max-width:380px;
+    margin: 0 auto 26px;
+    border-top:1px dashed var(--paper-line);
+    padding-top:14px;
+  }
+  .missed-list h3{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--tan);
+    font-family:'JetBrains Mono', monospace;
+    font-weight:600;
+    margin:0 0 10px;
+  }
+  .missed-item{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    padding:6px 0;
+    border-bottom:1px solid var(--paper-line);
+    font-size:14px;
+  }
+  .missed-item .mi-hanzi{
+    font-family:'Noto Serif SC', serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--ink);
+    min-width:34px;
+  }
+  .missed-item .mi-meaning{ color:var(--ink); font-weight:600; }
+  .missed-item .mi-pinyin{ font-family:'JetBrains Mono', monospace; color:var(--tan); font-size:12px; }
+
+  footer{
+    margin-top:30px;
+    text-align:center;
+    color:var(--tan);
+    font-size:12px;
+    font-family:'JetBrains Mono', monospace;
+    position:relative;
+    z-index:1;
+  }
+
+  .hint-text{
+    font-size:12px;
+    color:var(--tan);
+    margin-top:-4px;
+  }
+
+  .mode-tabs{
+    display:inline-flex;
+    gap:6px;
+    margin-top:18px;
+    background:var(--paper-line);
+    padding:4px;
+    border-radius:8px;
+  }
+  .mode-tab{
+    font-family:'Noto Serif Thai', serif;
+    font-weight:600;
+    font-size:14px;
+    padding:8px 18px;
+    border:none;
+    border-radius:6px;
+    background:transparent;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .mode-tab.active{
+    background:var(--card);
+    color:var(--red);
+    box-shadow: 0 2px 6px var(--shadow);
+  }
+  .mode-tab:hover:not(.active){
+    color:var(--ink);
+  }
+
+  /* number pad style for numbers mode */
+  .number-display{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size: clamp(52px, 13vw, 76px);
+    color:var(--green);
+    letter-spacing: 0.04em;
+    margin-bottom:6px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+
+  /* ===== study-mode tabs (flashcard / choice / type) ===== */
+  .study-tabs{
+    display:inline-flex;
+    gap:6px;
+    margin-top:10px;
+    background:var(--paper-line);
+    padding:4px;
+    border-radius:8px;
+  }
+  .study-tab{
+    font-family:'Noto Serif Thai', serif;
+    font-weight:600;
+    font-size:13px;
+    padding:7px 14px;
+    border:none;
+    border-radius:6px;
+    background:transparent;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .study-tab.active{
+    background:var(--red);
+    color:#fff;
+    box-shadow: 0 2px 6px var(--shadow);
+  }
+  .study-tab:hover:not(.active){ color:var(--ink); }
+
+  /* ===== flashcard mode ===== */
+  .flip-card{
+    width:100%;
+    max-width:380px;
+    min-height:170px;
+    perspective:1200px;
+    cursor:pointer;
+    margin-top:6px;
+  }
+  .flip-card-inner{
+    position:relative;
+    width:100%;
+    height:100%;
+    min-height:170px;
+    transition: transform .5s cubic-bezier(.4,.2,.2,1);
+    transform-style:preserve-3d;
+  }
+  .flip-card.flipped .flip-card-inner{
+    transform: rotateY(180deg);
+  }
+  .flip-face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+    border:2px dashed var(--paper-line);
+    padding:18px;
+  }
+  .flip-face.front{ background:#fff; }
+  .flip-face.back{
+    transform: rotateY(180deg);
+    background:#fff;
+    border-style:solid;
+    border-color:var(--green);
+  }
+  .flip-hint{
+    font-size:12px;
+    color:var(--tan);
+    margin-top:14px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .flash-nav{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-top:16px;
+  }
+  .flash-known-row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-top:10px;
+  }
+  .btn-fail{
+    background:transparent;
+    color:var(--red);
+    border:1.5px solid var(--red-soft);
+  }
+  .btn-fail:hover{ background:rgba(178,58,46,0.08); }
+  .btn-know{
+    background:var(--green);
+    color:#fff;
+  }
+  .btn-know:hover{ background:#2c463a; }
+
+  /* ===== choice mode ===== */
+  .choice-list{
+    width:100%;
+    max-width:380px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:8px;
+  }
+  .choice-opt{
+    font-family:'Noto Serif Thai', serif;
+    font-size:16px;
+    text-align:left;
+    padding:13px 16px;
+    border-radius:8px;
+    border:2px solid var(--paper-line);
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+    transition: border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .choice-opt:hover:not(:disabled){
+    border-color:var(--tan);
+    background: #FFFCF4;
+  }
+  .choice-opt:active:not(:disabled){ transform: translateY(1px); }
+  .choice-opt:disabled{ cursor:default; }
+  .choice-opt.correct-opt{
+    border-color:var(--green);
+    background: rgba(61,90,74,0.1);
+    color:var(--green);
+    font-weight:600;
+  }
+  .choice-opt.wrong-opt{
+    border-color:var(--red);
+    background: rgba(178,58,46,0.08);
+    color:var(--red);
+  }
+
+  @media (max-width:420px){
+    .study-tab{ font-size:12px; padding:6px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">แบบฝึกคำศัพท์จีน · 汉语词汇</div>
+  <h1 id="main-title">ทาย<span class="accent">คำนี้</span>แปลว่าอะไร</h1>
+  <p class="subtitle" id="main-subtitle">ดูตัวอักษรจีน แล้วพิมพ์คำแปลภาษาไทย — เฉลยจะมีพินอินให้อ่านด้วย</p>
+
+  <div class="mode-tabs" role="tablist" aria-label="เลือกชุดคำศัพท์">
+    <button type="button" class="mode-tab active" id="tab-vocab" role="tab" aria-selected="true">คำศัพท์</button>
+    <button type="button" class="mode-tab" id="tab-numbers" role="tab" aria-selected="false">ตัวเลข 0-100</button>
+  </div>
+  <br>
+  <div class="study-tabs" role="tablist" aria-label="เลือกรูปแบบฝึก">
+    <button type="button" class="study-tab" id="study-flash" role="tab" aria-selected="false">ท่องจำ (พลิกบัตร)</button>
+    <button type="button" class="study-tab" id="study-choice" role="tab" aria-selected="false">ปรนัย 4 ตัวเลือก</button>
+    <button type="button" class="study-tab active" id="study-type" role="tab" aria-selected="true">พิมพ์คำตอบ</button>
+  </div>
+</header>
+
+<main>
+
+  <div id="quiz-screen">
+    <div class="status-row">
+      <span id="progress-label">ข้อ 1 / 21</span>
+      <span class="score">ตอบถูก <span id="score-count">0</span></span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- TYPE MODE CARD -->
+    <div class="card" id="type-card">
+      <span class="card-index" id="card-index">#01</span>
+      <div class="prompt-label">ตัวอักษรจีนนี้แปลว่าอะไร</div>
+      <div class="hanzi" id="hanzi-display">你好</div>
+
+      <form class="answer-form" id="answer-form" autocomplete="off">
+        <input type="text" id="answer-input" placeholder="พิมพ์คำแปลภาษาไทย..." aria-label="คำตอบภาษาไทย">
+        <div class="btn-row">
+          <button type="submit" class="btn-check" id="check-btn">ตรวจคำตอบ</button>
+          <button type="button" class="btn-skip" id="skip-btn">ข้าม</button>
+        </div>
+      </form>
+
+      <div class="reveal" id="reveal-box">
+        <div class="reveal-inner" id="reveal-inner">
+          <span class="stamp" id="stamp"></span>
+          <p class="meaning-th" id="reveal-meaning"></p>
+          <p class="pinyin" id="reveal-pinyin"></p>
+        </div>
+        <div class="btn-row" style="margin-top:14px; justify-content:center;">
+          <button type="button" class="btn-next" id="next-btn">ข้อต่อไป →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHOICE MODE CARD -->
+    <div class="card" id="choice-card" style="display:none;">
+      <span class="card-index" id="choice-card-index">#01</span>
+      <div class="prompt-label">ตัวอักษรจีนนี้แปลว่าอะไร</div>
+      <div class="hanzi" id="choice-hanzi-display">你好</div>
+
+      <div class="choice-list" id="choice-list"></div>
+
+      <div class="reveal" id="choice-reveal-box">
+        <div class="reveal-inner" id="choice-reveal-inner">
+          <span class="stamp" id="choice-stamp"></span>
+          <p class="meaning-th" id="choice-reveal-meaning"></p>
+          <p class="pinyin" id="choice-reveal-pinyin"></p>
+        </div>
+        <div class="btn-row" style="margin-top:14px; justify-content:center;">
+          <button type="button" class="btn-next" id="choice-next-btn">ข้อต่อไป →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLASHCARD MODE -->
+    <div class="card" id="flash-card" style="display:none;">
+      <span class="card-index" id="flash-card-index">#01</span>
+      <div class="prompt-label">แตะบัตรเพื่อดูเฉลย</div>
+
+      <div class="flip-card" id="flip-card">
+        <div class="flip-card-inner" id="flip-card-inner">
+          <div class="flip-face front">
+            <div class="hanzi" id="flash-hanzi-display" style="margin-bottom:0;">你好</div>
+          </div>
+          <div class="flip-face back">
+            <p class="meaning-th" id="flash-reveal-meaning">สวัสดี</p>
+            <p class="pinyin" id="flash-reveal-pinyin">nǐ hǎo</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-hint" id="flip-hint">แตะที่บัตรเพื่อพลิกดูคำแปล</div>
+
+      <div class="flash-known-row">
+        <button type="button" class="btn-fail" id="flash-fail-btn">ยังไม่แม่น</button>
+        <button type="button" class="btn-know" id="flash-know-btn">จำได้แล้ว</button>
+      </div>
+      <div class="flash-nav">
+        <button type="button" class="btn-skip" id="flash-prev-btn">← ก่อนหน้า</button>
+        <button type="button" class="btn-skip" id="flash-next-btn">ถัดไป →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="results-screen" style="display:none;">
+    <div class="card results">
+      <div class="eyebrow">สรุปผล</div>
+      <div class="big-score"><span id="final-score">0</span><span>/<span id="final-total">21</span></span></div>
+      <p class="msg" id="final-msg"></p>
+
+      <div class="missed-list" id="missed-list" style="display:none;">
+        <h3>คำที่ควรทบทวนอีกครั้ง</h3>
+        <div id="missed-items"></div>
+      </div>
+
+      <div class="btn-row" style="justify-content:center;">
+        <button type="button" class="btn-check" id="restart-btn">เริ่มใหม่</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>ชลบุรีเทคโนโลยี · แบบฝึกหัดจากสมุดจดคำศัพท์</footer>
+
+<script>
+const VOCAB = [
+  { hanzi: "你好", pinyin: "nǐ hǎo", thai: "สวัสดี", accept: ["สวัสดี"] },
+  { hanzi: "谢谢", pinyin: "xièxiè", thai: "ขอบคุณ", accept: ["ขอบคุณ"] },
+  { hanzi: "大家", pinyin: "dàjiā", thai: "ทุกคน", accept: ["ทุกคน"] },
+  { hanzi: "学生", pinyin: "xuéshēng", thai: "นักเรียน", accept: ["นักเรียน"] },
+  { hanzi: "大家好", pinyin: "dàjiā hǎo", thai: "สวัสดีทุกคน", accept: ["สวัสดีทุกคน"] },
+  { hanzi: "我是泰国人", pinyin: "wǒ shì Tàiguó rén", thai: "ฉันเป็นคนไทย", accept: ["ฉันเป็นคนไทย", "ฉันเป็นคนไทย"] },
+  { hanzi: "叫", pinyin: "jiào", thai: "ชื่อ (เขาชื่อ.../ฉันชื่อ...)", accept: ["ชื่อ", "ชื่อ (กริยา)"] },
+  { hanzi: "名字", pinyin: "míngzì", thai: "ชื่อ (คำนาม)", accept: ["ชื่อ", "ชื่อ (คำนาม)"] },
+  { hanzi: "对不起", pinyin: "duìbuqǐ", thai: "ขอโทษ", accept: ["ขอโทษ"] },
+  { hanzi: "高兴", pinyin: "gāoxìng", thai: "ดีใจ / มีความสุข", accept: ["ดีใจ", "มีความสุข", "ดีใจมาก"] },
+  { hanzi: "人", pinyin: "rén", thai: "คน", accept: ["คน"] },
+  { hanzi: "中文", pinyin: "zhōngwén", thai: "ภาษาจีน", accept: ["ภาษาจีน"] },
+  { hanzi: "这是谁", pinyin: "zhè shì shéi", thai: "นี่คือใคร", accept: ["นี่คือใคร"] },
+  { hanzi: "她也是泰国人", pinyin: "tā yě shì Tàiguó rén", thai: "เธอก็เป็นคนไทยเหมือนกัน", accept: ["เธอก็เป็นคนไทยเหมือนกัน", "เขาก็เป็นคนไทยเหมือนกัน"] },
+  { hanzi: "这", pinyin: "zhè", thai: "นี่", accept: ["นี่"] },
+  { hanzi: "谁", pinyin: "shéi / shuí", thai: "ใคร", accept: ["ใคร"] },
+  { hanzi: "女朋友", pinyin: "nǚpéngyǒu", thai: "แฟนสาว", accept: ["แฟนสาว", "แฟน"] },
+  { hanzi: "工作", pinyin: "gōngzuò", thai: "ทำงาน", accept: ["ทำงาน", "งาน"] },
+  { hanzi: "忙", pinyin: "máng", thai: "ยุ่ง", accept: ["ยุ่ง"] },
+  { hanzi: "我们", pinyin: "wǒmen", thai: "พวกเรา", accept: ["พวกเรา", "เรา"] },
+  { hanzi: "妹妹", pinyin: "mèimei", thai: "น้องสาว", accept: ["น้องสาว"] },
+];
+
+const NUMBERS = [
+  { hanzi: "零", pinyin: "líng", thai: "ศูนย์ (0)", accept: ["ศูนย์","0"] },
+  { hanzi: "一", pinyin: "yī", thai: "หนึ่ง (1)", accept: ["หนึ่ง","1"] },
+  { hanzi: "二", pinyin: "èr", thai: "สอง (2)", accept: ["สอง","2"] },
+  { hanzi: "三", pinyin: "sān", thai: "สาม (3)", accept: ["สาม","3"] },
+  { hanzi: "四", pinyin: "sì", thai: "สี่ (4)", accept: ["สี่","4"] },
+  { hanzi: "五", pinyin: "wǔ", thai: "ห้า (5)", accept: ["ห้า","5"] },
+  { hanzi: "六", pinyin: "liù", thai: "หก (6)", accept: ["หก","6"] },
+  { hanzi: "七", pinyin: "qī", thai: "เจ็ด (7)", accept: ["เจ็ด","7"] },
+  { hanzi: "八", pinyin: "bā", thai: "แปด (8)", accept: ["แปด","8"] },
+  { hanzi: "九", pinyin: "jiǔ", thai: "เก้า (9)", accept: ["เก้า","9"] },
+  { hanzi: "十", pinyin: "shí", thai: "สิบ (10)", accept: ["สิบ","10"] },
+  { hanzi: "十一", pinyin: "shíyī", thai: "สิบเอ็ด (11)", accept: ["สิบเอ็ด","11"] },
+  { hanzi: "十二", pinyin: "shí'èr", thai: "สิบสอง (12)", accept: ["สิบสอง","12"] },
+  { hanzi: "十五", pinyin: "shíwǔ", thai: "สิบห้า (15)", accept: ["สิบห้า","15"] },
+  { hanzi: "二十", pinyin: "èrshí", thai: "ยี่สิบ (20)", accept: ["ยี่สิบ","20"] },
+  { hanzi: "二十一", pinyin: "èrshíyī", thai: "ยี่สิบเอ็ด (21)", accept: ["ยี่สิบเอ็ด","21"] },
+  { hanzi: "三十", pinyin: "sānshí", thai: "สามสิบ (30)", accept: ["สามสิบ","30"] },
+  { hanzi: "四十", pinyin: "sìshí", thai: "สี่สิบ (40)", accept: ["สี่สิบ","40"] },
+  { hanzi: "五十", pinyin: "wǔshí", thai: "ห้าสิบ (50)", accept: ["ห้าสิบ","50"] },
+  { hanzi: "六十", pinyin: "liùshí", thai: "หกสิบ (60)", accept: ["หกสิบ","60"] },
+  { hanzi: "七十", pinyin: "qīshí", thai: "เจ็ดสิบ (70)", accept: ["เจ็ดสิบ","70"] },
+  { hanzi: "八十", pinyin: "bāshí", thai: "แปดสิบ (80)", accept: ["แปดสิบ","80"] },
+  { hanzi: "九十", pinyin: "jiǔshí", thai: "เก้าสิบ (90)", accept: ["เก้าสิบ","90"] },
+  { hanzi: "一百", pinyin: "yìbǎi", thai: "หนึ่งร้อย (100)", accept: ["หนึ่งร้อย","ร้อย","100"] },
+];
+
+let DATASET = VOCAB;
+let currentMode = 'vocab';     // 'vocab' | 'numbers'
+let studyMode = 'type';        // 'flash' | 'choice' | 'type'
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+let order = shuffle(VOCAB.map((_,i)=>i));
+let current = 0;
+let score = 0;
+let missed = [];
+let answered = false;
+let knownCount = 0; // for flashcard mode "known" tally
+
+/* shared elements */
+const progressLabel = document.getElementById('progress-label');
+const progressFill = document.getElementById('progress-fill');
+const scoreCount = document.getElementById('score-count');
+const quizScreen = document.getElementById('quiz-screen');
+const resultsScreen = document.getElementById('results-screen');
+const finalScore = document.getElementById('final-score');
+const finalMsg = document.getElementById('final-msg');
+const missedList = document.getElementById('missed-list');
+const missedItems = document.getElementById('missed-items');
+const restartBtn = document.getElementById('restart-btn');
+const mainTitle = document.getElementById('main-title');
+const mainSubtitle = document.getElementById('main-subtitle');
+
+/* type-mode elements */
+const typeCard = document.getElementById('type-card');
+const hanziEl = document.getElementById('hanzi-display');
+const cardIndexEl = document.getElementById('card-index');
+const answerForm = document.getElementById('answer-form');
+const answerInput = document.getElementById('answer-input');
+const revealBox = document.getElementById('reveal-box');
+const revealInner = document.getElementById('reveal-inner');
+const revealMeaning = document.getElementById('reveal-meaning');
+const revealPinyin = document.getElementById('reveal-pinyin');
+const stampEl = document.getElementById('stamp');
+const nextBtn = document.getElementById('next-btn');
+const skipBtn = document.getElementById('skip-btn');
+const checkBtn = document.getElementById('check-btn');
+
+/* choice-mode elements */
+const choiceCard = document.getElementById('choice-card');
+const choiceHanziEl = document.getElementById('choice-hanzi-display');
+const choiceCardIndexEl = document.getElementById('choice-card-index');
+const choiceList = document.getElementById('choice-list');
+const choiceRevealBox = document.getElementById('choice-reveal-box');
+const choiceRevealInner = document.getElementById('choice-reveal-inner');
+const choiceRevealMeaning = document.getElementById('choice-reveal-meaning');
+const choiceRevealPinyin = document.getElementById('choice-reveal-pinyin');
+const choiceStamp = document.getElementById('choice-stamp');
+const choiceNextBtn = document.getElementById('choice-next-btn');
+
+/* flashcard-mode elements */
+const flashCard = document.getElementById('flash-card');
+const flashCardIndexEl = document.getElementById('flash-card-index');
+const flipCard = document.getElementById('flip-card');
+const flashHanziEl = document.getElementById('flash-hanzi-display');
+const flashRevealMeaning = document.getElementById('flash-reveal-meaning');
+const flashRevealPinyin = document.getElementById('flash-reveal-pinyin');
+const flashKnowBtn = document.getElementById('flash-know-btn');
+const flashFailBtn = document.getElementById('flash-fail-btn');
+const flashPrevBtn = document.getElementById('flash-prev-btn');
+const flashNextBtn = document.getElementById('flash-next-btn');
+
+function normalize(str){
+  return str.trim().toLowerCase().replace(/\s+/g,'');
+}
+
+function updateStatusRow(){
+  progressLabel.textContent = `ข้อ ${current+1} / ${DATASET.length}`;
+  progressFill.style.width = (current/DATASET.length*100) + '%';
+  scoreCount.textContent = studyMode === 'flash' ? knownCount : score;
+}
+
+/* ---------- TYPE MODE ---------- */
+function loadTypeCard(){
+  answered = false;
+  answerInput.value = '';
+  answerInput.className = '';
+  answerInput.disabled = false;
+  revealBox.classList.remove('show');
+  checkBtn.style.display = '';
+  skipBtn.style.display = '';
+  answerInput.focus();
+
+  const item = DATASET[order[current]];
+  hanziEl.textContent = item.hanzi;
+  hanziEl.classList.toggle('number-display', currentMode === 'numbers');
+  cardIndexEl.textContent = '#' + String(current+1).padStart(2,'0');
+  updateStatusRow();
+}
+
+function showReveal(isCorrect){
+  const item = DATASET[order[current]];
+  revealMeaning.textContent = item.thai;
+  revealPinyin.textContent = item.pinyin;
+
+  revealInner.classList.remove('correct-mark','wrong-mark');
+  stampEl.classList.remove('ok','no');
+
+  if(isCorrect){
+    revealInner.classList.add('correct-mark');
+    stampEl.classList.add('ok');
+    stampEl.textContent = 'ถูกต้อง ✓';
+  } else {
+    revealInner.classList.add('wrong-mark');
+    stampEl.classList.add('no');
+    stampEl.textContent = 'ทบทวนอีกครั้ง';
+  }
+
+  revealBox.classList.add('show');
+  checkBtn.style.display = 'none';
+  skipBtn.style.display = 'none';
+  answerInput.disabled = true;
+  nextBtn.focus();
+}
+
+function checkAnswer(){
+  if(answered) return;
+  const val = normalize(answerInput.value);
+  if(!val) { answerInput.focus(); return; }
+
+  const item = DATASET[order[current]];
+  const isCorrect = item.accept.some(a => normalize(a) === val);
+
+  answered = true;
+  if(isCorrect){
+    score++;
+    answerInput.className = 'correct';
+  } else {
+    answerInput.className = 'wrong';
+    missed.push(item);
+  }
+  showReveal(isCorrect);
+}
+
+function skipCard(){
+  if(answered) return;
+  answered = true;
+  const item = DATASET[order[current]];
+  missed.push(item);
+  answerInput.className = 'wrong';
+  showReveal(false);
+}
+
+/* ---------- CHOICE MODE ---------- */
+function buildChoices(item){
+  const pool = DATASET.filter(d => d.hanzi !== item.hanzi);
+  const distractors = shuffle(pool).slice(0, 3);
+  const options = shuffle([item, ...distractors]);
+  return options;
+}
+
+function loadChoiceCard(){
+  answered = false;
+  choiceRevealBox.classList.remove('show');
+
+  const item = DATASET[order[current]];
+  choiceHanziEl.textContent = item.hanzi;
+  choiceHanziEl.classList.toggle('number-display', currentMode === 'numbers');
+  choiceCardIndexEl.textContent = '#' + String(current+1).padStart(2,'0');
+  updateStatusRow();
+
+  const options = buildChoices(item);
+  choiceList.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'choice-opt';
+    btn.textContent = opt.thai;
+    btn.addEventListener('click', () => selectChoice(opt, item, btn));
+    choiceList.appendChild(btn);
+  });
+}
+
+function selectChoice(selected, correctItem, btnEl){
+  if(answered) return;
+  answered = true;
+
+  const isCorrect = selected.hanzi === correctItem.hanzi;
+  if(isCorrect){
+    score++;
+  } else {
+    missed.push(correctItem);
+  }
+
+  // disable all, mark correct/wrong
+  Array.from(choiceList.children).forEach(btn => {
+    btn.disabled = true;
+    if(btn.textContent === correctItem.thai) btn.classList.add('correct-opt');
+  });
+  if(!isCorrect) btnEl.classList.add('wrong-opt');
+
+  choiceRevealMeaning.textContent = correctItem.thai;
+  choiceRevealPinyin.textContent = correctItem.pinyin;
+  choiceRevealInner.classList.remove('correct-mark','wrong-mark');
+  choiceStamp.classList.remove('ok','no');
+  if(isCorrect){
+    choiceRevealInner.classList.add('correct-mark');
+    choiceStamp.classList.add('ok');
+    choiceStamp.textContent = 'ถูกต้อง ✓';
+  } else {
+    choiceRevealInner.classList.add('wrong-mark');
+    choiceStamp.classList.add('no');
+    choiceStamp.textContent = 'ทบทวนอีกครั้ง';
+  }
+  choiceRevealBox.classList.add('show');
+  choiceNextBtn.focus();
+}
+
+/* ---------- FLASHCARD MODE ---------- */
+function loadFlashCard(){
+  flipCard.classList.remove('flipped');
+  const item = DATASET[order[current]];
+  flashHanziEl.textContent = item.hanzi;
+  flashHanziEl.classList.toggle('number-display', currentMode === 'numbers');
+  flashRevealMeaning.textContent = item.thai;
+  flashRevealPinyin.textContent = item.pinyin;
+  flashCardIndexEl.textContent = '#' + String(current+1).padStart(2,'0');
+  updateStatusRow();
+}
+
+function flashPrev(){
+  current = (current - 1 + DATASET.length) % DATASET.length;
+  loadFlashCard();
+}
+function flashNext(){
+  current = (current + 1) % DATASET.length;
+  loadFlashCard();
+}
+
+/* ---------- NAV / RESULTS ---------- */
+function nextCard(){
+  current++;
+  if(current >= DATASET.length){
+    showResults();
+  } else {
+    loadCurrentCard();
+  }
+}
+
+function loadCurrentCard(){
+  if(studyMode === 'type') loadTypeCard();
+  else if(studyMode === 'choice') loadChoiceCard();
+  else loadFlashCard();
+}
+
+function showResults(){
+  quizScreen.style.display = 'none';
+  resultsScreen.style.display = 'block';
+  const displayScore = studyMode === 'flash' ? knownCount : score;
+  finalScore.textContent = displayScore;
+  document.getElementById('final-total').textContent = DATASET.length;
+
+  let msg;
+  const pct = displayScore / DATASET.length;
+  if(studyMode === 'flash'){
+    msg = missed.length > 0
+      ? "ทบทวนครบทุกใบแล้ว ลองพลิกดูคำที่ยังไม่แม่นด้านล่างอีกครั้ง แล้วไปต่อโหมดปรนัยหรือพิมพ์คำตอบ"
+      : "เก่งมาก จำได้ครบทุกใบ! ลองไปโหมดปรนัยหรือพิมพ์คำตอบเพื่อเช็กความแม่นอีกที";
+  } else if(pct === 1) msg = "เยี่ยมมาก จำได้ครบทุกคำ! 太棒了";
+  else if(pct >= 0.8) msg = "ดีมาก เกือบครบแล้ว ทบทวนอีกนิดเดียว";
+  else if(pct >= 0.5) msg = "พอใช้ได้ ลองทบทวนคำที่พลาดอีกรอบนะ";
+  else msg = "ยังไม่แม่นเท่าไหร่ ลองท่องคำด้านล่างแล้วทำใหม่อีกครั้ง";
+  finalMsg.textContent = msg;
+
+  if(missed.length > 0){
+    missedList.style.display = 'block';
+    missedItems.innerHTML = '';
+    const seen = new Set();
+    missed.forEach(item => {
+      if(seen.has(item.hanzi)) return;
+      seen.add(item.hanzi);
+      const row = document.createElement('div');
+      row.className = 'missed-item';
+      row.innerHTML = `
+        <span class="mi-hanzi">${item.hanzi}</span>
+        <span class="mi-meaning">${item.thai}</span>
+        <span class="mi-pinyin">${item.pinyin}</span>
+      `;
+      missedItems.appendChild(row);
+    });
+  } else {
+    missedList.style.display = 'none';
+  }
+}
+
+function showActiveCard(){
+  typeCard.style.display = studyMode === 'type' ? 'flex' : 'none';
+  choiceCard.style.display = studyMode === 'choice' ? 'flex' : 'none';
+  flashCard.style.display = studyMode === 'flash' ? 'flex' : 'none';
+}
+
+function restart(){
+  order = shuffle(DATASET.map((_,i)=>i));
+  current = 0;
+  score = 0;
+  knownCount = 0;
+  missed = [];
+  resultsScreen.style.display = 'none';
+  quizScreen.style.display = 'block';
+  showActiveCard();
+  loadCurrentCard();
+}
+
+/* ---------- dataset tabs (vocab / numbers) ---------- */
+const tabVocab = document.getElementById('tab-vocab');
+const tabNumbers = document.getElementById('tab-numbers');
+
+function switchMode(mode){
+  currentMode = mode;
+  if(mode === 'vocab'){
+    DATASET = VOCAB;
+    tabVocab.classList.add('active');
+    tabNumbers.classList.remove('active');
+    tabVocab.setAttribute('aria-selected','true');
+    tabNumbers.setAttribute('aria-selected','false');
+  } else {
+    DATASET = NUMBERS;
+    tabNumbers.classList.add('active');
+    tabVocab.classList.remove('active');
+    tabNumbers.setAttribute('aria-selected','true');
+    tabVocab.setAttribute('aria-selected','false');
+  }
+  updateTitles();
+  restart();
+}
+
+/* ---------- study-mode tabs (flash / choice / type) ---------- */
+const studyFlashTab = document.getElementById('study-flash');
+const studyChoiceTab = document.getElementById('study-choice');
+const studyTypeTab = document.getElementById('study-type');
+
+function switchStudyMode(mode){
+  studyMode = mode;
+  [studyFlashTab, studyChoiceTab, studyTypeTab].forEach(t => {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected','false');
+  });
+  if(mode === 'flash'){ studyFlashTab.classList.add('active'); studyFlashTab.setAttribute('aria-selected','true'); }
+  else if(mode === 'choice'){ studyChoiceTab.classList.add('active'); studyChoiceTab.setAttribute('aria-selected','true'); }
+  else { studyTypeTab.classList.add('active'); studyTypeTab.setAttribute('aria-selected','true'); }
+
+  updateTitles();
+  restart();
+}
+
+function updateTitles(){
+  const subject = currentMode === 'vocab' ? 'คำ' : 'เลขจีน';
+  if(studyMode === 'flash'){
+    mainTitle.innerHTML = currentMode === 'vocab'
+      ? 'ท่องจำ<span class="accent">คำศัพท์</span>จีน'
+      : 'ท่องจำ<span class="accent">ตัวเลข</span>จีน';
+    mainSubtitle.textContent = 'แตะบัตรเพื่อพลิกดูคำแปลและพินอิน กดจำได้แล้ว/ยังไม่แม่น เพื่อไปใบถัดไป';
+  } else if(studyMode === 'choice'){
+    mainTitle.innerHTML = currentMode === 'vocab'
+      ? 'เลือกคำแปลที่<span class="accent">ถูกต้อง</span>'
+      : 'เลือกคำอ่านที่<span class="accent">ถูกต้อง</span>';
+    mainSubtitle.textContent = 'ดูตัวอักษรจีน แล้วแตะเลือกคำตอบที่ถูกจาก 4 ตัวเลือก';
+  } else {
+    mainTitle.innerHTML = currentMode === 'vocab'
+      ? 'ทาย<span class="accent">คำนี้</span>แปลว่าอะไร'
+      : 'อ่าน<span class="accent">เลขจีน</span>นี้ว่าอะไร';
+    mainSubtitle.textContent = currentMode === 'vocab'
+      ? 'ดูตัวอักษรจีน แล้วพิมพ์คำแปลภาษาไทย — เฉลยจะมีพินอินให้อ่านด้วย'
+      : 'ดูตัวเลขจีน แล้วพิมพ์คำอ่านหรือตัวเลขไทย — เฉลยจะมีพินอินให้อ่านด้วย';
+  }
+}
+
+tabVocab.addEventListener('click', () => switchMode('vocab'));
+tabNumbers.addEventListener('click', () => switchMode('numbers'));
+studyFlashTab.addEventListener('click', () => switchStudyMode('flash'));
+studyChoiceTab.addEventListener('click', () => switchStudyMode('choice'));
+studyTypeTab.addEventListener('click', () => switchStudyMode('type'));
+
+/* type mode listeners */
+answerForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  checkAnswer();
+});
+nextBtn.addEventListener('click', nextCard);
+skipBtn.addEventListener('click', skipCard);
+
+/* choice mode listeners */
+choiceNextBtn.addEventListener('click', nextCard);
+
+/* flashcard mode listeners */
+flipCard.addEventListener('click', () => flipCard.classList.toggle('flipped'));
+flashKnowBtn.addEventListener('click', () => { knownCount++; scoreCount.textContent = knownCount; nextCard(); });
+flashFailBtn.addEventListener('click', () => { missed.push(DATASET[order[current]]); nextCard(); });
+flashPrevBtn.addEventListener('click', flashPrev);
+flashNextBtn.addEventListener('click', flashNext);
+
+restartBtn.addEventListener('click', restart);
+
+// allow Enter to advance once answered (type mode)
+document.addEventListener('keydown', (e) => {
+  if(studyMode === 'type' && e.key === 'Enter' && answered && revealBox.classList.contains('show')){
+    e.preventDefault();
+    nextCard();
+  }
+  if(studyMode === 'choice' && e.key === 'Enter' && answered && choiceRevealBox.classList.contains('show')){
+    e.preventDefault();
+    nextCard();
+  }
+});
+
+updateTitles();
+showActiveCard();
+loadCurrentCard();
+</script>
+
+</body>
+</html>
