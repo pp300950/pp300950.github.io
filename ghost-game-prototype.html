@@ -260,38 +260,58 @@
    ============================================================ */
 
 // ---------- STORY DATA ----------
-// Each "beat" = a point along the path where the walk pauses and text plays.
-// position: world Z coordinate where the walk stops (path goes -Z direction)
+// Each "beat" = a stop point along the curved path where the walk pauses and text plays.
+// t: progress along the path spline, 0 = start, 1 = end (path is curved, not straight)
 // text: narrative line(s) to type out
-// lightFlicker: optional bool to trigger a flicker effect
+// lightFlicker / ghostReveal: optional trigger flags
 const STORY_BEATS = [
   {
-    position: 0,
+    t: 0.0,
     text: "เสียงเปิดประตูรั้วเหล็กดังเอี๊ยด แม้จะไม่มีใครแตะต้องมันมาหลายปีแล้ว"
   },
   {
-    position: -14,
+    t: 0.18,
     text: "หญ้าสูงท่วมเข่าขึ้นปกคลุมทางเดินเก่า กลิ่นดินชื้นปนกลิ่นธูปจางๆ ลอยมาตามลม"
   },
   {
-    position: -28,
+    t: 0.36,
+    text: "ทางเดินคดเคี้ยวผ่านแนวต้นไม้ทึบ กิ่งก้านบิดตัวเหมือนจงใจปิดกั้นแสงจันทร์"
+  },
+  {
+    t: 0.54,
     text: "บ้านหลังนี้เคยมีคนอยู่... นานมาแล้ว ก่อนที่ทุกอย่างจะเงียบไปในคืนเดียว"
   },
   {
-    position: -42,
+    t: 0.7,
     text: "หน้าต่างบานหนึ่งเปิดแง้มอยู่ ม่านสีขาวที่เคยขาวพลิ้วไหวราวกับมีคนอยู่ข้างใน",
     lightFlicker: true
   },
   {
-    position: -56,
+    t: 0.86,
     text: "มีบางอย่างขยับอยู่ในความมืดข้างหน้า... หรือเป็นแค่เงาของกิ่งไม้",
     ghostReveal: true
   },
   {
-    position: -70,
+    t: 1.0,
     text: "เสียงกระซิบแผ่วเบาเรียกชื่อที่คุณไม่เคยบอกใคร"
   }
 ];
+
+// ---------- PATH DEFINITION ----------
+// Waypoints for a winding path (X = left/right sway, Z = forward progress, always negative/decreasing).
+// This replaces the old straight-line walk. Curve is built with CatmullRomCurve3 for smooth turns.
+const PATH_WAYPOINTS = [
+  new THREE.Vector3(0, 1.6, 6),
+  new THREE.Vector3(1.2, 1.6, -4),
+  new THREE.Vector3(-1.8, 1.6, -14),
+  new THREE.Vector3(-0.5, 1.6, -24),
+  new THREE.Vector3(2.0, 1.6, -34),
+  new THREE.Vector3(1.0, 1.6, -46),
+  new THREE.Vector3(-1.2, 1.6, -58),
+  new THREE.Vector3(-1.5, 1.6, -70),
+  new THREE.Vector3(0, 1.6, -84)
+];
+let pathCurve = null;
 
 // ---------- SCENE SETUP ----------
 let scene, camera, renderer;
@@ -306,8 +326,11 @@ let clock = new THREE.Clock();
 
 function initScene() {
   scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0a0908, 0.045);
+  scene.fog = new THREE.FogExp2(0x0a0908, 0.05);
   scene.background = new THREE.Color(0x0a0908);
+
+  // Build the winding path curve once, reused for camera movement + ground placement
+  pathCurve = new THREE.CatmullRomCurve3(PATH_WAYPOINTS, false, 'catmullrom', 0.5);
 
   // Portrait-friendly camera: narrower FOV feels less "wide angle horror movie", more intimate
   camera = new THREE.PerspectiveCamera(
@@ -316,8 +339,10 @@ function initScene() {
     0.1,
     100
   );
-  camera.position.set(0, 1.6, 4); // eye height ~1.6m, start behind spawn
-  camera.lookAt(0, 1.6, -1);
+  const startPoint = pathCurve.getPointAt(0);
+  const startLook = pathCurve.getPointAt(0.02);
+  camera.position.copy(startPoint);
+  camera.lookAt(startLook.x, startPoint.y, startLook.z);
 
   renderer = new THREE.WebGLRenderer({
     antialias: false, // OFF for low-end GPU performance (GT730-class)
@@ -339,8 +364,8 @@ function buildEnvironment() {
   pathGroup = new THREE.Group();
   scene.add(pathGroup);
 
-  // Ground - long strip, dirt path color
-  const groundGeo = new THREE.PlaneGeometry(20, 120);
+  // Ground - wide flat plane under everything, dirt color
+  const groundGeo = new THREE.PlaneGeometry(30, 120);
   const groundMat = new THREE.MeshStandardMaterial({
     color: 0x2b2620,
     roughness: 1,
@@ -348,80 +373,248 @@ function buildEnvironment() {
   });
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.rotation.x = -Math.PI / 2;
-  ground.position.z = -50;
+  ground.position.set(0, 0, -40);
   pathGroup.add(ground);
 
-  // Path strip (slightly lighter, worn dirt trail)
-  const trailGeo = new THREE.PlaneGeometry(2.2, 120);
+  // Winding trail strip that actually follows the curved path (worn dirt color),
+  // built by sampling the curve and generating a ribbon of quads along it.
+  buildTrailRibbon();
+
+  // Branch-like low-poly trees, scattered along both sides of the curved path.
+  // Built from a trunk + several angled branch cylinders instead of a plain cone,
+  // so silhouettes read as bare/gnarled trees rather than Christmas-tree shapes.
+  buildForest();
+
+  // The house - simple low-poly silhouette, placed at the far end
+  buildHouse();
+
+  // A few grave-marker-like stones for atmosphere (Thai rural horror staple),
+  // offset out from sampled points along the curved path.
+  const stoneGeo = new THREE.BoxGeometry(0.4, 0.6, 0.15);
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0x4a4640, flatShading: true, roughness: 1 });
+  const stoneTs = [0.28, 0.32, 0.44, 0.48, 0.6];
+  stoneTs.forEach((t) => {
+    const pt = pathCurve.getPointAt(t);
+    const side = Math.random() > 0.5 ? 1 : -1;
+    const stone = new THREE.Mesh(stoneGeo, stoneMat);
+    stone.position.set(pt.x + side * (3.2 + Math.random() * 1.5), 0.3, pt.z);
+    stone.rotation.y = Math.random() * 0.6 - 0.3;
+    stone.rotation.z = Math.random() * 0.15;
+    pathGroup.add(stone);
+  });
+}
+
+// ---------- WINDING TRAIL RIBBON ----------
+// Samples the path curve and builds a flat ribbon mesh that visually traces the walk route.
+function buildTrailRibbon() {
+  const segments = 60;
+  const halfWidth = 1.1;
+  const positions = [];
+  const indices = [];
+
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const point = pathCurve.getPointAt(t);
+    const tangent = pathCurve.getTangentAt(t);
+    // perpendicular on the XZ plane
+    const perp = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
+
+    const left = point.clone().addScaledVector(perp, halfWidth);
+    const right = point.clone().addScaledVector(perp, -halfWidth);
+
+    positions.push(left.x, 0.015, left.z);
+    positions.push(right.x, 0.015, right.z);
+
+    if (i < segments) {
+      const a = i * 2, b = i * 2 + 1, c = i * 2 + 2, d = i * 2 + 3;
+      indices.push(a, b, c, b, d, c);
+    }
+  }
+
+  const trailGeo = new THREE.BufferGeometry();
+  trailGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  trailGeo.setIndex(indices);
+  trailGeo.computeVertexNormals();
+
   const trailMat = new THREE.MeshStandardMaterial({
     color: 0x3d3528,
     roughness: 1,
     flatShading: true
   });
   const trail = new THREE.Mesh(trailGeo, trailMat);
-  trail.rotation.x = -Math.PI / 2;
-  trail.position.set(0, 0.01, -50);
   pathGroup.add(trail);
+}
 
-  // Simple low-poly trees lining the path (instanced-ish via loop, kept low count)
-  const trunkGeo = new THREE.CylinderGeometry(0.15, 0.22, 2.2, 5);
-  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x1c1712, flatShading: true });
-  const leavesGeo = new THREE.ConeGeometry(1.1, 2.4, 6);
-  const leavesMat = new THREE.MeshStandardMaterial({ color: 0x232b1f, flatShading: true });
+// ---------- FOREST (branch-style trees along the curve) ----------
+function buildForest() {
+  const treeCount = 26;
+  for (let i = 0; i < treeCount; i++) {
+    // Spread trees across the whole path length, alternating sides,
+    // with jitter so it doesn't look like a planted row.
+    const t = 0.04 + (i / treeCount) * 0.94 + (Math.random() * 0.02 - 0.01);
+    const point = pathCurve.getPointAt(Math.min(Math.max(t, 0), 1));
+    const tangent = pathCurve.getTangentAt(Math.min(Math.max(t, 0), 1));
+    const perp = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
 
-  for (let i = 0; i < 18; i++) {
-    const side = i % 2 === 0 ? -1 : 1;
-    const z = -i * 6.5 - 2;
-    const x = side * (3.5 + Math.random() * 2.5);
+    const side = i % 2 === 0 ? 1 : -1;
+    const offset = 2.8 + Math.random() * 3.5; // distance from path center
+    const pos = point.clone().addScaledVector(perp, side * offset);
 
-    const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-    trunk.position.set(x, 1.1, z);
-    trunk.rotation.y = Math.random() * Math.PI;
-    pathGroup.add(trunk);
-
-    const leaves = new THREE.Mesh(leavesGeo, leavesMat);
-    leaves.position.set(x, 2.6, z);
-    pathGroup.add(leaves);
-  }
-
-  // The house - simple low-poly silhouette, placed at the far end
-  buildHouse();
-
-  // A few grave-marker-like stones for atmosphere (Thai rural horror staple)
-  const stoneGeo = new THREE.BoxGeometry(0.4, 0.6, 0.15);
-  const stoneMat = new THREE.MeshStandardMaterial({ color: 0x4a4640, flatShading: true, roughness: 1 });
-  for (let i = 0; i < 5; i++) {
-    const stone = new THREE.Mesh(stoneGeo, stoneMat);
-    stone.position.set(-5.5 - Math.random() * 2, 0.3, -20 - i * 8);
-    stone.rotation.y = Math.random() * 0.6 - 0.3;
-    stone.rotation.z = Math.random() * 0.15;
-    pathGroup.add(stone);
+    const scale = 0.75 + Math.random() * 0.7;
+    const tree = buildTree(scale);
+    tree.position.set(pos.x, 0, pos.z);
+    tree.rotation.y = Math.random() * Math.PI * 2;
+    pathGroup.add(tree);
   }
 }
 
+// Builds one gnarled low-poly tree: a leaning trunk plus several angled branch
+// cylinders (no leaf canopy), so it reads as bare/dead rather than a Christmas tree.
+const treeTrunkMat = new THREE.MeshStandardMaterial({ color: 0x1c1712, flatShading: true, roughness: 1 });
+const treeBranchMat = new THREE.MeshStandardMaterial({ color: 0x161210, flatShading: true, roughness: 1 });
+
+function buildTree(scale) {
+  const tree = new THREE.Group();
+
+  const trunkHeight = 2.4 * scale;
+  const trunkGeo = new THREE.CylinderGeometry(0.08 * scale, 0.22 * scale, trunkHeight, 5);
+  const trunk = new THREE.Mesh(trunkGeo, treeTrunkMat);
+  trunk.position.y = trunkHeight / 2;
+  trunk.rotation.z = (Math.random() - 0.5) * 0.15; // slight lean
+  tree.add(trunk);
+
+  // 3-5 gnarled branches jutting out at irregular angles from the upper trunk
+  const branchCount = 3 + Math.floor(Math.random() * 3);
+  for (let b = 0; b < branchCount; b++) {
+    const branchLen = (0.8 + Math.random() * 0.9) * scale;
+    const branchGeo = new THREE.CylinderGeometry(0.03 * scale, 0.07 * scale, branchLen, 4);
+    const branch = new THREE.Mesh(branchGeo, treeBranchMat);
+
+    const heightAlongTrunk = trunkHeight * (0.55 + Math.random() * 0.4);
+    const angleAroundTrunk = Math.random() * Math.PI * 2;
+    const tiltFromVertical = 0.9 + Math.random() * 0.6; // mostly horizontal-ish, gnarled
+
+    branch.position.set(
+      Math.cos(angleAroundTrunk) * 0.15 * scale,
+      heightAlongTrunk,
+      Math.sin(angleAroundTrunk) * 0.15 * scale
+    );
+    branch.rotation.z = tiltFromVertical * (Math.random() > 0.5 ? 1 : -1);
+    branch.rotation.y = angleAroundTrunk;
+    // shift branch outward along its own tilted axis so it juts from the trunk surface
+    branch.translateY(branchLen / 2);
+    tree.add(branch);
+  }
+
+  return tree;
+}
+
+// Two-story Thai-style wooden house on stilts (เรือนไทย), aged and eerie:
+// tall stilt legs, an underfloor void, an upper living floor, a steep gable roof
+// with the crossed "ปั้นลม" ridge horns silhouette, a wraparound railing, and one
+// warm flickering window. All built from low-poly primitives, no textures needed.
 function buildHouse() {
   const houseGroup = new THREE.Group();
-  houseGroup.position.set(0, 0, -78);
+  const housePoint = pathCurve.getPointAt(1.0);
+  const houseTangent = pathCurve.getTangentAt(1.0);
+  houseGroup.position.set(housePoint.x, 0, housePoint.z - 6);
+  houseGroup.rotation.y = Math.atan2(houseTangent.x, houseTangent.z);
 
-  const wallMat = new THREE.MeshStandardMaterial({ color: 0x1a1512, flatShading: true, roughness: 1 });
-  const roofMat = new THREE.MeshStandardMaterial({ color: 0x100d0a, flatShading: true, roughness: 1 });
+  const woodDark = new THREE.MeshStandardMaterial({ color: 0x1a1512, flatShading: true, roughness: 1 });
+  const woodMid = new THREE.MeshStandardMaterial({ color: 0x241d17, flatShading: true, roughness: 1 });
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0x0e0b09, flatShading: true, roughness: 1 });
+  const railMat = new THREE.MeshStandardMaterial({ color: 0x1e1710, flatShading: true, roughness: 1 });
 
-  const base = new THREE.Mesh(new THREE.BoxGeometry(8, 4, 6), wallMat);
-  base.position.y = 2;
-  houseGroup.add(base);
+  const stiltHeight = 2.4;
+  const floorW = 7, floorD = 5.5;
 
-  const roof = new THREE.Mesh(new THREE.ConeGeometry(6.2, 2.5, 4), roofMat);
-  roof.position.y = 5.2;
-  roof.rotation.y = Math.PI / 4;
-  houseGroup.add(roof);
+  // --- Stilts (ใต้ถุนบ้าน - the raised understory, classic Thai house feature) ---
+  const stiltGeo = new THREE.CylinderGeometry(0.16, 0.2, stiltHeight, 5);
+  const stiltOffsets = [
+    [-floorW/2+0.4, -floorD/2+0.4], [floorW/2-0.4, -floorD/2+0.4],
+    [-floorW/2+0.4, floorD/2-0.4],  [floorW/2-0.4, floorD/2-0.4],
+    [0, -floorD/2+0.4], [0, floorD/2-0.4]
+  ];
+  stiltOffsets.forEach(([x, z]) => {
+    const stilt = new THREE.Mesh(stiltGeo, woodDark);
+    stilt.position.set(x, stiltHeight / 2, z);
+    houseGroup.add(stilt);
+  });
 
-  // Glowing window (flicker target)
-  const windowGeo = new THREE.PlaneGeometry(0.9, 1.2);
+  // --- Main floor / first story body ---
+  const bodyH = 2.6;
+  const body = new THREE.Mesh(new THREE.BoxGeometry(floorW, bodyH, floorD), woodMid);
+  body.position.y = stiltHeight + bodyH / 2;
+  houseGroup.add(body);
+
+  // --- Wraparound railing (ระเบียง) - thin box strips instead of true balusters, cheap on polys ---
+  const railGeo = new THREE.BoxGeometry(floorW + 0.6, 0.08, 0.08);
+  const railSideGeo = new THREE.BoxGeometry(0.08, 0.08, floorD + 0.6);
+  const railY = stiltHeight - 0.15;
+  const railFront = new THREE.Mesh(railGeo, railMat);
+  railFront.position.set(0, railY, floorD/2 + 0.3);
+  houseGroup.add(railFront);
+  const railBack = railFront.clone();
+  railBack.position.z = -floorD/2 - 0.3;
+  houseGroup.add(railBack);
+  const railLeft = new THREE.Mesh(railSideGeo, railMat);
+  railLeft.position.set(-floorW/2 - 0.3, railY, 0);
+  houseGroup.add(railLeft);
+  const railRight = railLeft.clone();
+  railRight.position.x = floorW/2 + 0.3;
+  houseGroup.add(railRight);
+
+  // --- Upper second story (smaller footprint, sits back like a Thai house's second floor) ---
+  const upperW = floorW * 0.72, upperD = floorD * 0.72, upperH = 2.3;
+  const upperBody = new THREE.Mesh(new THREE.BoxGeometry(upperW, upperH, upperD), woodMid);
+  upperBody.position.y = stiltHeight + bodyH + upperH / 2;
+  houseGroup.add(upperBody);
+
+  // --- Steep gable roof over the upper story ---
+  const roofBase = new THREE.Mesh(new THREE.ConeGeometry(upperW * 0.85, 2.6, 4), roofMat);
+  roofBase.position.y = stiltHeight + bodyH + upperH + 1.3;
+  roofBase.rotation.y = Math.PI / 4;
+  houseGroup.add(roofBase);
+
+  // Smaller secondary roof cap over the ground-floor body for a layered Thai-roof silhouette
+  const roofLower = new THREE.Mesh(new THREE.ConeGeometry(floorW * 0.62, 1.1, 4), roofMat);
+  roofLower.position.y = stiltHeight + bodyH + 0.4;
+  roofLower.rotation.y = Math.PI / 4;
+  roofLower.scale.set(1.5, 1, 1);
+  houseGroup.add(roofLower);
+
+  // --- Crossed roof-ridge horns (ปั้นลม silhouette) - two thin angled struts at the peak ---
+  const hornGeo = new THREE.CylinderGeometry(0.03, 0.03, 1.4, 4);
+  const hornY = stiltHeight + bodyH + upperH + 2.5;
+  const hornL = new THREE.Mesh(hornGeo, woodDark);
+  hornL.position.set(0, hornY, upperD/2);
+  hornL.rotation.x = 0.5;
+  houseGroup.add(hornL);
+  const hornR = hornL.clone();
+  hornR.position.z = -upperD/2;
+  hornR.rotation.x = -0.5;
+  houseGroup.add(hornR);
+
+  // --- Glowing window on the upper floor (flicker target - the "someone's home" light) ---
+  const windowGeo = new THREE.PlaneGeometry(0.9, 1.3);
   const windowMat = new THREE.MeshBasicMaterial({ color: 0x8a5a3c, transparent: true, opacity: 0.55 });
   const win = new THREE.Mesh(windowGeo, windowMat);
-  win.position.set(-1.5, 2.3, 3.01);
+  win.position.set(-upperW/2 + 1.1, stiltHeight + bodyH + upperH/2, upperD/2 + 0.02);
   houseGroup.add(win);
   houseGroup.userData.window = win;
+
+  // A second, dark (dead) window beside it for asymmetry/unease
+  const winDark = win.clone();
+  winDark.material = new THREE.MeshBasicMaterial({ color: 0x050403, transparent: true, opacity: 0.9 });
+  winDark.position.x = upperW/2 - 1.1;
+  houseGroup.add(winDark);
+
+  // --- Ground-floor door, slightly ajar-looking via dark plane ---
+  const doorGeo = new THREE.PlaneGeometry(1.1, 1.9);
+  const doorMat = new THREE.MeshBasicMaterial({ color: 0x030201 });
+  const door = new THREE.Mesh(doorGeo, doorMat);
+  door.position.set(0, stiltHeight + 0.95, floorD/2 + 0.02);
+  houseGroup.add(door);
 
   pathGroup.add(houseGroup);
   pathGroup.userData.house = houseGroup;
@@ -444,7 +637,13 @@ function buildGhostPlaceholder() {
   body.position.y = 1.1;
   ghostSlot.add(body);
 
-  ghostSlot.position.set(-1.2, 0, -60);
+  // Position just off the path near the ghostReveal story beat (t ≈ 0.86)
+  const ghostT = 0.82;
+  const ghostPoint = pathCurve.getPointAt(ghostT);
+  const ghostTangent = pathCurve.getTangentAt(ghostT);
+  const ghostPerp = new THREE.Vector3(-ghostTangent.z, 0, ghostTangent.x).normalize();
+  const ghostPos = ghostPoint.clone().addScaledVector(ghostPerp, -2.2);
+  ghostSlot.position.set(ghostPos.x, 0, ghostPos.z);
   ghostSlot.visible = false;
   pathGroup.add(ghostSlot);
 }
@@ -461,8 +660,8 @@ function buildGhostPlaceholder() {
   });
 
   Note: r128 three.min.js does NOT include GLTFLoader by default -
-  you'll need to also include:
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
+  you'll need to also add this script include in the <head> or before this
+  script block: cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js
 */
 
 // ---------- LIGHTING ----------
@@ -480,40 +679,56 @@ function buildLighting() {
   scene.add(flickerLight);
 }
 
-// ---------- CAMERA WALK ----------
+// ---------- CAMERA WALK (follows the curved path spline) ----------
+let currentPathT = 0; // where the camera currently sits along the curve, 0-1
+
 function walkToBeat(index) {
   if (index >= STORY_BEATS.length) return;
   isWalking = true;
   hideNarrativeBox();
 
-  const targetZ = STORY_BEATS[index].position;
-  const startZ = camera.position.z;
-  const distance = Math.abs(startZ - (4 + -targetZ * -1)); // computed below properly
-  const duration = 2600; // ms, consistent slow dread-walk pace
-  const startTime = performance.now();
-  const fromZ = camera.position.z;
-  const toZ = targetZ + 4; // camera stays 4 units "behind" narrative marker for framing... simplified below
+  const fromT = currentPathT;
+  const toT = STORY_BEATS[index].t;
+  // Pace the walk by distance along the curve so short and long stretches feel consistent
+  const duration = 1800 + Math.abs(toT - fromT) * 4200;
 
-  animateWalk(fromZ, targetZ, duration, () => {
+  animateWalk(fromT, toT, duration, () => {
     isWalking = false;
+    currentPathT = toT;
     currentBeat = index;
     triggerBeatEffects(STORY_BEATS[index]);
     showNarrativeText(STORY_BEATS[index].text);
   });
 }
 
-function animateWalk(fromZ, toZ, duration, onComplete) {
+function animateWalk(fromT, toT, duration, onComplete) {
   const start = performance.now();
   function step(now) {
-    const t = Math.min((now - start) / duration, 1);
-    const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; // ease-in-out-quad
-    camera.position.z = fromZ + (toZ - fromZ) * eased;
+    const rawT = Math.min((now - start) / duration, 1);
+    const eased = rawT < 0.5 ? 2 * rawT * rawT : 1 - Math.pow(-2 * rawT + 2, 2) / 2; // ease-in-out-quad
+    const pathT = fromT + (toT - fromT) * eased;
 
-    // subtle handheld sway for unease, dampened on mobile-friendly scale
-    camera.position.x = Math.sin(now * 0.0012) * 0.05;
-    camera.position.y = 1.6 + Math.sin(now * 0.0022) * 0.03;
+    // Sample the curve for position, and slightly ahead for a look-at target
+    // so the camera naturally turns into upcoming bends instead of staying forward-locked.
+    const clampedT = Math.min(Math.max(pathT, 0), 1);
+    const lookAheadT = Math.min(clampedT + 0.03, 1);
+    const point = pathCurve.getPointAt(clampedT);
+    const lookPoint = pathCurve.getPointAt(lookAheadT);
 
-    if (t < 1) {
+    // subtle handheld sway for unease, applied as a small offset perpendicular to travel direction
+    const tangent = pathCurve.getTangentAt(clampedT);
+    const perp = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
+    const sway = Math.sin(now * 0.0012) * 0.06;
+    const bob = Math.sin(now * 0.0022) * 0.035;
+
+    camera.position.set(
+      point.x + perp.x * sway,
+      1.6 + bob,
+      point.z + perp.z * sway
+    );
+    camera.lookAt(lookPoint.x, 1.6, lookPoint.z);
+
+    if (rawT < 1) {
       requestAnimationFrame(step);
     } else {
       onComplete();
