@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>บ้านเก่า - Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600&family=Sarabun:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-black: #0a0908;
+    --fog-green: #3a4a3f;
+    --candle: #8a5a3c;
+    --paper: #d4c9a8;
+    --blood: #5c1a1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-black);
+    overflow: hidden;
+    font-family: 'Sarabun', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #game-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Vignette overlay for horror atmosphere */
+  #vignette {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+    z-index: 10;
+  }
+
+  /* Loading screen */
+  #loading-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--bg-black);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: opacity 1s ease;
+  }
+
+  #loading-screen h1 {
+    font-family: 'Noto Serif Thai', serif;
+    color: var(--paper);
+    font-size: 1.8rem;
+    letter-spacing: 0.1em;
+    opacity: 0.85;
+    margin-bottom: 2rem;
+  }
+
+  .loading-bar-track {
+    width: 60%;
+    max-width: 300px;
+    height: 2px;
+    background: rgba(212,201,168,0.15);
+  }
+
+  .loading-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--candle);
+    transition: width 0.3s ease;
+  }
+
+  #loading-hint {
+    margin-top: 1.5rem;
+    color: var(--fog-green);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Start screen */
+  #start-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(10,9,8,0.92);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 90;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  #start-screen.visible { display: flex; }
+
+  #start-screen h1 {
+    font-family: 'Noto Serif Thai', serif;
+    color: var(--paper);
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  #start-screen p {
+    color: var(--fog-green);
+    font-size: 0.9rem;
+    margin-bottom: 3rem;
+    max-width: 280px;
+    line-height: 1.6;
+  }
+
+  #start-btn {
+    font-family: 'Noto Serif Thai', serif;
+    background: transparent;
+    border: 1px solid var(--candle);
+    color: var(--paper);
+    padding: 0.9rem 2.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  #start-btn:active {
+    background: var(--candle);
+    color: var(--bg-black);
+  }
+
+  /* Narrative text box */
+  #narrative-box {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem 1.5rem 2.5rem;
+    background: linear-gradient(to top, rgba(10,9,8,0.97) 40%, rgba(10,9,8,0.8) 80%, transparent 100%);
+    z-index: 20;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+
+  #narrative-box.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #narrative-text {
+    font-family: 'Noto Serif Thai', serif;
+    color: var(--paper);
+    font-size: 1.05rem;
+    line-height: 1.9;
+    min-height: 3.8em;
+    letter-spacing: 0.02em;
+  }
+
+  #narrative-text .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--candle);
+    margin-left: 2px;
+    animation: blink 1s step-start infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  #continue-hint {
+    margin-top: 1rem;
+    text-align: right;
+    color: var(--fog-green);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  #continue-hint.visible {
+    opacity: 0.7;
+    animation: pulse-hint 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-hint {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.9; }
+  }
+
+  /* Tap anywhere overlay */
+  #tap-layer {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 15;
+  }
+
+  /* Debug/dev info - can remove later */
+  #dev-info {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    color: rgba(212,201,168,0.3);
+    font-size: 0.65rem;
+    font-family: monospace;
+    z-index: 50;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <h1>บ้านเก่า</h1>
+  <div class="loading-bar-track"><div class="loading-bar-fill" id="loading-fill"></div></div>
+  <div id="loading-hint">กำลังโหลด...</div>
+</div>
+
+<div id="start-screen">
+  <h1>บ้านเก่า</h1>
+  <p>เรื่องเล่าเกี่ยวกับบ้านร้างหลังหนึ่ง<br>ที่ไม่มีใครกล้าเข้าไปอีกเลย<br><br>แตะเพื่อเดินต่อไปเรื่อยๆ</p>
+  <button id="start-btn">เริ่มเรื่อง</button>
+</div>
+
+<div id="game-container">
+  <div id="vignette"></div>
+  <div id="tap-layer"></div>
+  <div id="narrative-box">
+    <div id="narrative-text"></div>
+    <div id="continue-hint">แตะเพื่อไปต่อ</div>
+  </div>
+  <div id="dev-info"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============================================================
+   บ้านเก่า - Ghost Walking-Sim Prototype
+   Auto-walk narrative horror game, portrait-optimized
+   ============================================================ */
+
+// ---------- STORY DATA ----------
+// Each "beat" = a point along the path where the walk pauses and text plays.
+// position: world Z coordinate where the walk stops (path goes -Z direction)
+// text: narrative line(s) to type out
+// lightFlicker: optional bool to trigger a flicker effect
+const STORY_BEATS = [
+  {
+    position: 0,
+    text: "เสียงเปิดประตูรั้วเหล็กดังเอี๊ยด แม้จะไม่มีใครแตะต้องมันมาหลายปีแล้ว"
+  },
+  {
+    position: -14,
+    text: "หญ้าสูงท่วมเข่าขึ้นปกคลุมทางเดินเก่า กลิ่นดินชื้นปนกลิ่นธูปจางๆ ลอยมาตามลม"
+  },
+  {
+    position: -28,
+    text: "บ้านหลังนี้เคยมีคนอยู่... นานมาแล้ว ก่อนที่ทุกอย่างจะเงียบไปในคืนเดียว"
+  },
+  {
+    position: -42,
+    text: "หน้าต่างบานหนึ่งเปิดแง้มอยู่ ม่านสีขาวที่เคยขาวพลิ้วไหวราวกับมีคนอยู่ข้างใน",
+    lightFlicker: true
+  },
+  {
+    position: -56,
+    text: "มีบางอย่างขยับอยู่ในความมืดข้างหน้า... หรือเป็นแค่เงาของกิ่งไม้",
+    ghostReveal: true
+  },
+  {
+    position: -70,
+    text: "เสียงกระซิบแผ่วเบาเรียกชื่อที่คุณไม่เคยบอกใคร"
+  }
+];
+
+// ---------- SCENE SETUP ----------
+let scene, camera, renderer;
+let pathGroup, ghostSlot;
+let currentBeat = -1;
+let isWalking = false;
+let isTyping = false;
+let typeInterval = null;
+let ghostModel = null; // will hold loaded .glb model later
+let flickerLight = null;
+let clock = new THREE.Clock();
+
+function initScene() {
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0a0908, 0.045);
+  scene.background = new THREE.Color(0x0a0908);
+
+  // Portrait-friendly camera: narrower FOV feels less "wide angle horror movie", more intimate
+  camera = new THREE.PerspectiveCamera(
+    55,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+  );
+  camera.position.set(0, 1.6, 4); // eye height ~1.6m, start behind spawn
+  camera.lookAt(0, 1.6, -1);
+
+  renderer = new THREE.WebGLRenderer({
+    antialias: false, // OFF for low-end GPU performance (GT730-class)
+    powerPreference: "low-power"
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // cap pixel ratio, big perf win on mobile
+  renderer.shadowMap.enabled = false; // shadows are expensive, skip for prototype
+  document.getElementById('game-container').appendChild(renderer.domElement);
+
+  buildEnvironment();
+  buildLighting();
+
+  window.addEventListener('resize', onResize);
+}
+
+// ---------- LOW-POLY ENVIRONMENT ----------
+function buildEnvironment() {
+  pathGroup = new THREE.Group();
+  scene.add(pathGroup);
+
+  // Ground - long strip, dirt path color
+  const groundGeo = new THREE.PlaneGeometry(20, 120);
+  const groundMat = new THREE.MeshStandardMaterial({
+    color: 0x2b2620,
+    roughness: 1,
+    flatShading: true
+  });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.z = -50;
+  pathGroup.add(ground);
+
+  // Path strip (slightly lighter, worn dirt trail)
+  const trailGeo = new THREE.PlaneGeometry(2.2, 120);
+  const trailMat = new THREE.MeshStandardMaterial({
+    color: 0x3d3528,
+    roughness: 1,
+    flatShading: true
+  });
+  const trail = new THREE.Mesh(trailGeo, trailMat);
+  trail.rotation.x = -Math.PI / 2;
+  trail.position.set(0, 0.01, -50);
+  pathGroup.add(trail);
+
+  // Simple low-poly trees lining the path (instanced-ish via loop, kept low count)
+  const trunkGeo = new THREE.CylinderGeometry(0.15, 0.22, 2.2, 5);
+  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x1c1712, flatShading: true });
+  const leavesGeo = new THREE.ConeGeometry(1.1, 2.4, 6);
+  const leavesMat = new THREE.MeshStandardMaterial({ color: 0x232b1f, flatShading: true });
+
+  for (let i = 0; i < 18; i++) {
+    const side = i % 2 === 0 ? -1 : 1;
+    const z = -i * 6.5 - 2;
+    const x = side * (3.5 + Math.random() * 2.5);
+
+    const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+    trunk.position.set(x, 1.1, z);
+    trunk.rotation.y = Math.random() * Math.PI;
+    pathGroup.add(trunk);
+
+    const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+    leaves.position.set(x, 2.6, z);
+    pathGroup.add(leaves);
+  }
+
+  // The house - simple low-poly silhouette, placed at the far end
+  buildHouse();
+
+  // A few grave-marker-like stones for atmosphere (Thai rural horror staple)
+  const stoneGeo = new THREE.BoxGeometry(0.4, 0.6, 0.15);
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0x4a4640, flatShading: true, roughness: 1 });
+  for (let i = 0; i < 5; i++) {
+    const stone = new THREE.Mesh(stoneGeo, stoneMat);
+    stone.position.set(-5.5 - Math.random() * 2, 0.3, -20 - i * 8);
+    stone.rotation.y = Math.random() * 0.6 - 0.3;
+    stone.rotation.z = Math.random() * 0.15;
+    pathGroup.add(stone);
+  }
+}
+
+function buildHouse() {
+  const houseGroup = new THREE.Group();
+  houseGroup.position.set(0, 0, -78);
+
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x1a1512, flatShading: true, roughness: 1 });
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0x100d0a, flatShading: true, roughness: 1 });
+
+  const base = new THREE.Mesh(new THREE.BoxGeometry(8, 4, 6), wallMat);
+  base.position.y = 2;
+  houseGroup.add(base);
+
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(6.2, 2.5, 4), roofMat);
+  roof.position.y = 5.2;
+  roof.rotation.y = Math.PI / 4;
+  houseGroup.add(roof);
+
+  // Glowing window (flicker target)
+  const windowGeo = new THREE.PlaneGeometry(0.9, 1.2);
+  const windowMat = new THREE.MeshBasicMaterial({ color: 0x8a5a3c, transparent: true, opacity: 0.55 });
+  const win = new THREE.Mesh(windowGeo, windowMat);
+  win.position.set(-1.5, 2.3, 3.01);
+  houseGroup.add(win);
+  houseGroup.userData.window = win;
+
+  pathGroup.add(houseGroup);
+  pathGroup.userData.house = houseGroup;
+}
+
+// ---------- GHOST MODEL SLOT ----------
+// Placeholder box now; swap for GLTFLoader when a .glb is provided.
+function buildGhostPlaceholder() {
+  ghostSlot = new THREE.Group();
+
+  // Simple silhouette placeholder - a tall thin shrouded shape
+  const bodyGeo = new THREE.ConeGeometry(0.5, 2.2, 8, 1, true);
+  const bodyMat = new THREE.MeshStandardMaterial({
+    color: 0x0d0d0d,
+    flatShading: true,
+    roughness: 1,
+    side: THREE.DoubleSide
+  });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.position.y = 1.1;
+  ghostSlot.add(body);
+
+  ghostSlot.position.set(-1.2, 0, -60);
+  ghostSlot.visible = false;
+  pathGroup.add(ghostSlot);
+}
+
+/*
+  HOW TO SWAP IN A REAL .glb MODEL LATER:
+
+  const loader = new THREE.GLTFLoader();
+  loader.load('models/ghost.glb', (gltf) => {
+    ghostModel = gltf.scene;
+    ghostModel.scale.set(1, 1, 1);
+    ghostSlot.add(ghostModel);
+    body.visible = false; // hide placeholder once real model loads
+  });
+
+  Note: r128 three.min.js does NOT include GLTFLoader by default -
+  you'll need to also include:
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
+*/
+
+// ---------- LIGHTING ----------
+function buildLighting() {
+  const ambient = new THREE.AmbientLight(0x3a4a3f, 0.35);
+  scene.add(ambient);
+
+  const moonLight = new THREE.DirectionalLight(0x4a5a5f, 0.4);
+  moonLight.position.set(-5, 10, 5);
+  scene.add(moonLight);
+
+  // Warm flickering light near the house window
+  flickerLight = new THREE.PointLight(0x8a5a3c, 1.2, 12);
+  flickerLight.position.set(-1.5, 2.3, -75);
+  scene.add(flickerLight);
+}
+
+// ---------- CAMERA WALK ----------
+function walkToBeat(index) {
+  if (index >= STORY_BEATS.length) return;
+  isWalking = true;
+  hideNarrativeBox();
+
+  const targetZ = STORY_BEATS[index].position;
+  const startZ = camera.position.z;
+  const distance = Math.abs(startZ - (4 + -targetZ * -1)); // computed below properly
+  const duration = 2600; // ms, consistent slow dread-walk pace
+  const startTime = performance.now();
+  const fromZ = camera.position.z;
+  const toZ = targetZ + 4; // camera stays 4 units "behind" narrative marker for framing... simplified below
+
+  animateWalk(fromZ, targetZ, duration, () => {
+    isWalking = false;
+    currentBeat = index;
+    triggerBeatEffects(STORY_BEATS[index]);
+    showNarrativeText(STORY_BEATS[index].text);
+  });
+}
+
+function animateWalk(fromZ, toZ, duration, onComplete) {
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; // ease-in-out-quad
+    camera.position.z = fromZ + (toZ - fromZ) * eased;
+
+    // subtle handheld sway for unease, dampened on mobile-friendly scale
+    camera.position.x = Math.sin(now * 0.0012) * 0.05;
+    camera.position.y = 1.6 + Math.sin(now * 0.0022) * 0.03;
+
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      onComplete();
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function triggerBeatEffects(beat) {
+  if (beat.ghostReveal && ghostSlot) {
+    ghostSlot.visible = true;
+  }
+  if (beat.lightFlicker) {
+    doLightFlicker();
+  }
+}
+
+function doLightFlicker() {
+  let flickers = 0;
+  const maxFlickers = 6;
+  const interval = setInterval(() => {
+    flickerLight.intensity = flickerLight.intensity > 0.3 ? 0.15 : 1.3;
+    flickers++;
+    if (flickers >= maxFlickers) {
+      clearInterval(interval);
+      flickerLight.intensity = 1.2;
+    }
+  }, 140);
+}
+
+// ---------- NARRATIVE TEXT (typewriter) ----------
+const narrativeBox = document.getElementById('narrative-box');
+const narrativeText = document.getElementById('narrative-text');
+const continueHint = document.getElementById('continue-hint');
+
+function showNarrativeText(text) {
+  narrativeBox.classList.add('visible');
+  continueHint.classList.remove('visible');
+  narrativeText.innerHTML = '<span class="cursor"></span>';
+  isTyping = true;
+
+  let i = 0;
+  clearInterval(typeInterval);
+  typeInterval = setInterval(() => {
+    if (i < text.length) {
+      narrativeText.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
+      i++;
+    } else {
+      clearInterval(typeInterval);
+      isTyping = false;
+      continueHint.classList.add('visible');
+    }
+  }, 45); // typing speed
+}
+
+function hideNarrativeBox() {
+  narrativeBox.classList.remove('visible');
+  continueHint.classList.remove('visible');
+}
+
+function skipTyping() {
+  const fullText = STORY_BEATS[currentBeat].text;
+  clearInterval(typeInterval);
+  narrativeText.innerHTML = fullText;
+  isTyping = false;
+  continueHint.classList.add('visible');
+}
+
+// ---------- INPUT ----------
+document.getElementById('tap-layer').addEventListener('click', handleTap);
+
+function handleTap() {
+  if (isWalking) return; // ignore taps mid-walk, prevents skipping animation awkwardly
+
+  if (isTyping) {
+    skipTyping();
+    return;
+  }
+
+  const nextIndex = currentBeat + 1;
+  if (nextIndex < STORY_BEATS.length) {
+    walkToBeat(nextIndex);
+  } else {
+    // Story end for this prototype
+    narrativeText.innerHTML = "— จบ Prototype —";
+    continueHint.classList.remove('visible');
+  }
+}
+
+document.getElementById('start-btn').addEventListener('click', () => {
+  document.getElementById('start-screen').classList.remove('visible');
+  walkToBeat(0);
+});
+
+// ---------- RESIZE ----------
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// ---------- RENDER LOOP ----------
+function animate() {
+  requestAnimationFrame(animate);
+  const elapsed = clock.getElapsedTime();
+
+  // gentle ambient window glow pulse even when not flickering deliberately
+  if (flickerLight && !isWalking) {
+    flickerLight.intensity = 1.2 + Math.sin(elapsed * 2) * 0.08;
+  }
+
+  // idle bob for ghost placeholder once revealed
+  if (ghostSlot && ghostSlot.visible) {
+    ghostSlot.position.y = Math.sin(elapsed * 1.2) * 0.08;
+  }
+
+  renderer.render(scene, camera);
+}
+
+// ---------- BOOT SEQUENCE ----------
+function boot() {
+  initScene();
+  buildGhostPlaceholder();
+  animate();
+
+  // Fake short loading bar (real asset loading will replace this later)
+  const fill = document.getElementById('loading-fill');
+  let progress = 0;
+  const loadTimer = setInterval(() => {
+    progress += 18;
+    fill.style.width = Math.min(progress, 100) + '%';
+    if (progress >= 100) {
+      clearInterval(loadTimer);
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+          document.getElementById('start-screen').classList.add('visible');
+        }, 1000);
+      }, 200);
+    }
+  }, 90);
+
+  // Dev info for testing on your machine - shows FPS-ish frame timing
+  const devInfo = document.getElementById('dev-info');
+  let frames = 0, lastCheck = performance.now();
+  setInterval(() => {
+    devInfo.textContent = `beat: ${currentBeat + 1}/${STORY_BEATS.length}`;
+  }, 300);
+}
+
+boot();
+</script>
+</body>
+</html>
