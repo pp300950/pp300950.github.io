@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>HSK1 ท่องศัพท์</title>
+<style>
+  @font-face {
+    font-family: 'system';
+  }
+  :root{
+    --paper:#F6F1E7;
+    --ink:#2B2620;
+    --seal:#B23A2E;
+    --seal-dark:#8C2C22;
+    --gold:#C79A3E;
+    --line:#D8CCB0;
+    --card:#FFFDF8;
+    --green:#4C7A5E;
+    --muted:#8A7F68;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 15% 8%, rgba(178,58,46,0.05), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(199,154,62,0.07), transparent 45%);
+    color:var(--ink);
+    font-family:'Noto Sans Thai','Noto Sans','Segoe UI',sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:24px 16px 60px;
+  }
+  .wrap{width:100%;max-width:480px;}
+
+  header{
+    text-align:center;
+    margin-bottom:22px;
+    position:relative;
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.22em;
+    color:var(--seal);
+    text-transform:uppercase;
+    font-weight:700;
+  }
+  h1{
+    font-family:'Noto Serif Thai','Georgia',serif;
+    font-size:30px;
+    margin:4px 0 2px;
+    font-weight:700;
+    letter-spacing:.01em;
+  }
+  .sub{font-size:13px;color:var(--muted);}
+
+  .progress-row{
+    display:flex;align-items:center;gap:10px;
+    margin:18px 0 4px;
+  }
+  .progress-track{
+    flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;background:linear-gradient(90deg,var(--gold),var(--seal));
+    width:0%;transition:width .35s ease;
+  }
+  .progress-num{
+    font-variant-numeric:tabular-nums;
+    font-size:13px;color:var(--muted);white-space:nowrap;
+  }
+
+  .stats{
+    display:flex;justify-content:space-between;
+    font-size:12px;color:var(--muted);margin-bottom:18px;
+  }
+  .stats b{color:var(--ink);}
+  .stat-ok{color:var(--green);font-weight:700;}
+  .stat-no{color:var(--seal);font-weight:700;}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:38px 26px 30px;
+    text-align:center;
+    box-shadow:0 1px 0 rgba(0,0,0,0.03), 0 12px 30px -18px rgba(43,38,32,0.35);
+    position:relative;
+    min-height:230px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .card-index{
+    position:absolute;top:16px;left:18px;
+    font-size:12px;color:var(--muted);
+    font-variant-numeric:tabular-nums;
+    letter-spacing:.05em;
+  }
+  .card-mode{
+    position:absolute;top:16px;right:18px;
+    font-size:10.5px;color:var(--gold);
+    text-transform:uppercase;letter-spacing:.14em;font-weight:700;
+    border:1px solid var(--gold);
+    border-radius:20px;
+    padding:3px 10px;
+  }
+  .prompt-label{
+    font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:.05em;
+  }
+  .prompt-text{
+    font-family:'Noto Serif Thai','Georgia',serif;
+    font-size:34px;
+    font-weight:700;
+    line-height:1.25;
+    word-break:break-word;
+  }
+  .prompt-text.pinyin{color:var(--seal-dark);}
+  .prompt-text.thai{color:var(--ink); font-size:28px;}
+
+  form{margin-top:22px;width:100%;}
+  input[type=text]{
+    width:100%;
+    font-size:18px;
+    padding:13px 16px;
+    border-radius:12px;
+    border:1.5px solid var(--line);
+    background:#fff;
+    text-align:center;
+    color:var(--ink);
+    font-family:inherit;
+  }
+  input[type=text]:focus{
+    outline:none;
+    border-color:var(--seal);
+    box-shadow:0 0 0 3px rgba(178,58,46,0.12);
+  }
+  .actions{
+    display:flex;gap:10px;margin-top:14px;
+  }
+  button{
+    font-family:inherit;
+    font-size:15px;
+    font-weight:700;
+    border:none;
+    border-radius:12px;
+    padding:13px 18px;
+    cursor:pointer;
+    transition:transform .1s ease, opacity .15s ease;
+  }
+  button:active{transform:scale(0.97);}
+  .btn-submit{
+    flex:1;
+    background:var(--seal);
+    color:#fff;
+  }
+  .btn-idk{
+    background:transparent;
+    color:var(--muted);
+    border:1.5px solid var(--line);
+    padding:13px 16px;
+  }
+  .btn-next{
+    flex:1;
+    background:var(--ink);
+    color:#fff;
+  }
+
+  .feedback{
+    margin-top:16px;
+    border-radius:12px;
+    padding:14px 16px;
+    text-align:left;
+    font-size:14px;
+    line-height:1.55;
+    animation:pop .25s ease;
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+  .feedback.correct{
+    background:rgba(76,122,94,0.10);
+    border:1px solid rgba(76,122,94,0.35);
+  }
+  .feedback.wrong{
+    background:rgba(178,58,46,0.07);
+    border:1px solid rgba(178,58,46,0.28);
+  }
+  .feedback-title{
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .feedback.correct .feedback-title{color:var(--green);}
+  .feedback.wrong .feedback-title{color:var(--seal-dark);}
+  .feedback-answer{
+    font-family:'Noto Serif Thai','Georgia',serif;
+    font-size:17px;font-weight:700;
+  }
+  .feedback-your{
+    color:var(--muted);font-size:13px;margin-top:4px;
+  }
+
+  .done-wrap{
+    text-align:center;padding:20px 4px;
+  }
+  .done-seal{
+    width:72px;height:72px;border-radius:50%;
+    background:var(--seal);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:30px;margin:0 auto 16px;
+    box-shadow:0 8px 20px -8px rgba(178,58,46,0.6);
+  }
+  .done-title{font-family:'Noto Serif Thai',serif;font-size:24px;font-weight:700;margin-bottom:6px;}
+  .done-sub{color:var(--muted);font-size:14px;margin-bottom:22px;}
+  .done-stats{
+    display:flex;justify-content:center;gap:28px;margin-bottom:26px;
+  }
+  .done-stat b{display:block;font-size:26px;}
+  .done-stat span{font-size:12px;color:var(--muted);}
+
+  .review-list{
+    text-align:left;
+    max-height:200px;
+    overflow-y:auto;
+    border-top:1px solid var(--line);
+    margin-top:8px;
+    padding-top:12px;
+  }
+  .review-item{
+    display:flex;justify-content:space-between;
+    font-size:13px;
+    padding:6px 2px;
+    border-bottom:1px dashed var(--line);
+  }
+  .review-item .rp{color:var(--seal-dark);font-weight:700;}
+  .review-item .rt{color:var(--muted);}
+
+  .footer-actions{
+    display:flex;gap:10px;margin-top:20px;
+  }
+
+  .setup{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:28px 24px;
+    box-shadow:0 1px 0 rgba(0,0,0,0.03), 0 12px 30px -18px rgba(43,38,32,0.35);
+  }
+  .setup h2{
+    font-family:'Noto Serif Thai',serif;
+    font-size:19px;margin:0 0 4px;
+  }
+  .setup p{font-size:13px;color:var(--muted);margin:0 0 18px;}
+  .opt-group{margin-bottom:18px;}
+  .opt-label{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:.03em;}
+  .opt-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .opt-btn{
+    flex:1;
+    min-width:100px;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:11px 10px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--muted);
+    text-align:center;
+    cursor:pointer;
+  }
+  .opt-btn.active{
+    border-color:var(--seal);
+    color:var(--seal-dark);
+    background:rgba(178,58,46,0.06);
+  }
+  .range-row{display:flex;align-items:center;gap:10px;}
+  input[type=number]{
+    width:70px;padding:10px;border-radius:10px;border:1.5px solid var(--line);
+    text-align:center;font-size:15px;font-family:inherit;
+  }
+  .start-btn{
+    width:100%;background:var(--seal);color:#fff;padding:15px;font-size:16px;border-radius:12px;margin-top:6px;
+  }
+
+  .skip-link{
+    text-align:center;margin-top:16px;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">HSK 1 · 149 คำ</div>
+    <h1>ท่องศัพท์จีน</h1>
+    <div class="sub">เรียงตามลำดับเดิม ไม่มีอักษรจีน ใช้พินอินและคำแปล</div>
+  </header>
+
+  <div id="app"></div>
+</div>
+
+<script>
+const VOCAB = [
+{n:1,py:"bā",th:"แปด"},
+{n:2,py:"bàba",th:"พ่อ"},
+{n:3,py:"bēizi",th:"แก้ว"},
+{n:4,py:"Běijīng",th:"ปักกิ่ง"},
+{n:5,py:"běn",th:"เล่ม"},
+{n:6,py:"bú kèqi",th:"ไม่ต้องเกรงใจ"},
+{n:7,py:"bù",th:"ไม่"},
+{n:8,py:"cài",th:"ผัก"},
+{n:9,py:"chá",th:"ชา"},
+{n:10,py:"chī",th:"กิน"},
+{n:11,py:"chūzūchē",th:"รถแท็กซี่"},
+{n:12,py:"dǎ diànhuà",th:"คุยโทรศัพท์"},
+{n:13,py:"dà",th:"ใหญ่"},
+{n:14,py:"de",th:"ของ"},
+{n:15,py:"diǎn",th:"โมง, จุด"},
+{n:16,py:"diànnǎo",th:"คอมพิวเตอร์"},
+{n:17,py:"diànshì",th:"ทีวี"},
+{n:18,py:"diànyǐng",th:"ภาพยนตร์"},
+{n:19,py:"dōngxi",th:"สิ่งของ"},
+{n:20,py:"dōu",th:"ทั้งหมด"},
+{n:21,py:"dú",th:"อ่าน"},
+{n:22,py:"duìbuqǐ",th:"ขอโทษ"},
+{n:23,py:"duō",th:"มาก"},
+{n:24,py:"duōshǎo",th:"เท่าไหร่"},
+{n:25,py:"érzi",th:"ลูกชาย"},
+{n:26,py:"èr",th:"สอง (2)"},
+{n:27,py:"fànguǎn",th:"ร้านอาหาร"},
+{n:28,py:"fēijī",th:"เครื่องบิน"},
+{n:29,py:"fēnzhōng",th:"นาที"},
+{n:30,py:"gāoxìng",th:"ดีใจ"},
+{n:31,py:"gè",th:"อัน, ลูก, คน"},
+{n:32,py:"gōngzuò",th:"ทำงาน"},
+{n:33,py:"gǒu",th:"หมา"},
+{n:34,py:"Hànyǔ",th:"ภาษาจีน"},
+{n:35,py:"hǎo",th:"ดี"},
+{n:36,py:"hē",th:"ดื่ม"},
+{n:37,py:"hé",th:"และ, กับ"},
+{n:38,py:"hěn",th:"มาก"},
+{n:39,py:"hòumian",th:"ด้านหลัง"},
+{n:40,py:"huí",th:"กลับ"},
+{n:41,py:"huì",th:"ได้, สามารถ"},
+{n:42,py:"huǒchēzhàn",th:"สถานีรถไฟ"},
+{n:43,py:"jǐ",th:"กี่"},
+{n:44,py:"jiā",th:"บ้าน"},
+{n:45,py:"jiào",th:"เรียก"},
+{n:46,py:"jīntiān",th:"วันนี้"},
+{n:47,py:"jiǔ",th:"เก้า (9)"},
+{n:48,py:"kāi",th:"เปิด, ขับรถ"},
+{n:49,py:"kàn",th:"มอง, ดู"},
+{n:50,py:"kànjiàn",th:"มองเห็น"},
+{n:51,py:"kuài",th:"เหรียญ, ก้อน"},
+{n:52,py:"lái",th:"มา"},
+{n:53,py:"lǎoshī",th:"คุณครู"},
+{n:54,py:"le",th:"แล้ว"},
+{n:55,py:"lěng",th:"หนาว"},
+{n:56,py:"lǐ",th:"ใน"},
+{n:57,py:"líng",th:"ศูนย์ (0)"},
+{n:58,py:"liù",th:"หก (6)"},
+{n:59,py:"māma",th:"แม่"},
+{n:60,py:"ma",th:"ไหม"},
+{n:61,py:"mǎi",th:"ซื้อ"},
+{n:62,py:"māo",th:"แมว"},
+{n:63,py:"méi",th:"ไม่"},
+{n:64,py:"méiguānxi",th:"ไม่เป็นไร"},
+{n:65,py:"mǐfàn",th:"ข้าวสวย"},
+{n:66,py:"míngtiān",th:"พรุ่งนี้"},
+{n:67,py:"míngzi",th:"ชื่อ"},
+{n:68,py:"nǎ",th:"ไหน"},
+{n:69,py:"nǎr",th:"ที่ไหน"},
+{n:70,py:"nà",th:"นั่น"},
+{n:71,py:"nàr",th:"ที่นั่น"},
+{n:72,py:"ne",th:"ละ, นะ"},
+{n:73,py:"néng",th:"สามารถ"},
+{n:74,py:"nǐ",th:"เธอ, คุณ"},
+{n:75,py:"nián",th:"ขวบ, ปี"},
+{n:76,py:"nǚér",th:"ลูกสาว"},
+{n:77,py:"péngyǒu",th:"เพื่อน"},
+{n:78,py:"piàoliang",th:"สวย"},
+{n:79,py:"píngguǒ",th:"แอปเปิ้ล"},
+{n:80,py:"qī",th:"เจ็ด (7)"},
+{n:81,py:"qián",th:"เงิน"},
+{n:82,py:"qiánmian",th:"ด้านหน้า"},
+{n:83,py:"qǐng",th:"เชิญ"},
+{n:84,py:"qù",th:"ไป"},
+{n:85,py:"rè",th:"ร้อน"},
+{n:86,py:"rén",th:"คน"},
+{n:87,py:"rènshi",th:"รู้จัก"},
+{n:88,py:"rì",th:"วัน"},
+{n:89,py:"sān",th:"สาม (3)"},
+{n:90,py:"shāngdiàn",th:"ร้านค้า"},
+{n:91,py:"shàng",th:"บน, ขึ้น"},
+{n:92,py:"shàngwǔ",th:"ตอนเช้า"},
+{n:93,py:"shǎo",th:"น้อย"},
+{n:94,py:"shéi",th:"ใคร"},
+{n:95,py:"shénme",th:"อะไร"},
+{n:96,py:"shí",th:"สิบ (10)"},
+{n:97,py:"shì",th:"ใช่"},
+{n:98,py:"shū",th:"หนังสือ"},
+{n:99,py:"shuǐ",th:"น้ำ"},
+{n:100,py:"shuǐguǒ",th:"ผลไม้"},
+{n:101,py:"shuìjiào",th:"นอนหลับ"},
+{n:102,py:"shuōhuà",th:"พูดคุย"},
+{n:103,py:"sì",th:"สี่ (4)"},
+{n:104,py:"suì",th:"ขวบ, ปี"},
+{n:105,py:"tā",th:"เขา (ผู้ชาย)"},
+{n:106,py:"tā",th:"เขา (ผู้หญิง)"},
+{n:107,py:"tài",th:"เกินไป"},
+{n:108,py:"tiānqì",th:"อากาศ"},
+{n:109,py:"tīng",th:"ฟัง"},
+{n:110,py:"tóngxué",th:"เพื่อนนักเรียน"},
+{n:111,py:"wèi",th:"ฮัลโหล"},
+{n:112,py:"wǒ",th:"ฉัน"},
+{n:113,py:"wǒmen",th:"พวกเรา"},
+{n:114,py:"wǔ",th:"ห้า (5)"},
+{n:115,py:"xǐhuan",th:"ชอบ"},
+{n:116,py:"xià",th:"ล่าง, ลง"},
+{n:117,py:"xiàwǔ",th:"ตอนบ่าย"},
+{n:118,py:"xiānsheng",th:"คุณผู้ชาย"},
+{n:119,py:"xiànzài",th:"ตอนนี้"},
+{n:120,py:"xiǎo",th:"เล็ก"},
+{n:121,py:"xiǎojiě",th:"นางสาว"},
+{n:122,py:"xiē",th:"บ้าง"},
+{n:123,py:"xiě",th:"เขียน"},
+{n:124,py:"xièxie",th:"ขอบคุณ"},
+{n:125,py:"xīngqī",th:"สัปดาห์"},
+{n:126,py:"xuésheng",th:"นักเรียน"},
+{n:127,py:"xuéxí",th:"เรียน"},
+{n:128,py:"xuéxiào",th:"โรงเรียน"},
+{n:129,py:"yī",th:"หนึ่ง (1)"},
+{n:130,py:"yīfu",th:"เสื้อผ้า"},
+{n:131,py:"yīshēng",th:"หมอ"},
+{n:132,py:"yīyuàn",th:"โรงพยาบาล"},
+{n:133,py:"yǐzi",th:"เก้าอี้"},
+{n:134,py:"yǒu",th:"มี"},
+{n:135,py:"yuè",th:"เดือน"},
+{n:136,py:"zài",th:"อยู่"},
+{n:137,py:"zàijiàn",th:"ลาก่อน"},
+{n:138,py:"zěnme",th:"อย่างไร"},
+{n:139,py:"zěnmeyàng",th:"เป็นอย่างไร"},
+{n:140,py:"zhè",th:"นี่"},
+{n:141,py:"zhèr",th:"ที่นี่"},
+{n:142,py:"Zhōngguó",th:"ประเทศจีน"},
+{n:143,py:"zhōngwǔ",th:"ตอนกลางวัน"},
+{n:144,py:"zhù",th:"อาศัยอยู่"},
+{n:145,py:"zhuōzi",th:"โต๊ะ"},
+{n:146,py:"zì",th:"ตัวอักษร"},
+{n:147,py:"zuótiān",th:"เมื่อวานนี้"},
+{n:148,py:"zuò",th:"นั่ง"},
+{n:149,py:"zuò",th:"ทำ"}
+];
+</script>
+<script>
+const STORAGE_KEY = 'hsk1_progress_v1';
+
+let state = {
+  screen: 'setup', // setup | quiz | done
+  mode: 'py2th',    // py2th = show pinyin, guess thai | th2py = show thai, guess pinyin | mixed
+  startIndex: 0,    // 0-based index into VOCAB
+  endIndex: VOCAB.length - 1,
+  cursor: 0,        // current position in VOCAB (0-based)
+  correctCount: 0,
+  wrongCount: 0,
+  wrongList: [],    // list of {n,py,th}
+  currentAnswered: false,
+  lastCorrect: null,
+  lastUserAnswer: ''
+};
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return null;
+}
+function saveProgress(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      cursor: state.cursor,
+      mode: state.mode,
+      startIndex: state.startIndex,
+      endIndex: state.endIndex
+    }));
+  }catch(e){}
+}
+
+function normalize(str){
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // strip tone diacritics for pinyin comparison
+    .replace(/[^a-zก-๙0-9]/g,'')
+    .trim();
+}
+
+function currentWord(){
+  return VOCAB[state.cursor];
+}
+
+function currentDirection(){
+  if(state.mode === 'mixed'){
+    // deterministic-ish based on index so it's stable but varied
+    return (state.cursor % 2 === 0) ? 'py2th' : 'th2py';
+  }
+  return state.mode;
+}
+
+function render(){
+  const app = document.getElementById('app');
+  if(state.screen === 'setup') app.innerHTML = renderSetup();
+  else if(state.screen === 'quiz') app.innerHTML = renderQuiz();
+  else if(state.screen === 'done') app.innerHTML = renderDone();
+  attachHandlers();
+}
+
+function renderSetup(){
+  const saved = loadProgress();
+  const resumeBlock = saved ? `
+    <div class="skip-link" id="resumeLink">▸ ทำต่อจากคำที่ ${saved.cursor+1} (มีการบันทึกไว้)</div>
+  ` : '';
+
+  return `
+  <div class="setup">
+    <h2>ตั้งค่าก่อนเริ่ม</h2>
+    <p>เลือกรูปแบบคำถามและช่วงคำศัพท์</p>
+
+    <div class="opt-group">
+      <div class="opt-label">รูปแบบคำถาม</div>
+      <div class="opt-row">
+        <div class="opt-btn ${state.mode==='py2th'?'active':''}" data-mode="py2th">ดูพินอิน<br>ทายคำแปลไทย</div>
+        <div class="opt-btn ${state.mode==='th2py'?'active':''}" data-mode="th2py">ดูคำแปลไทย<br>ทายพินอิน</div>
+      </div>
+      <div class="opt-row" style="margin-top:8px;">
+        <div class="opt-btn ${state.mode==='mixed'?'active':''}" data-mode="mixed">สลับทั้งสองแบบ</div>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">ช่วงคำศัพท์ (ตามลำดับเดิม 1–149)</div>
+      <div class="range-row">
+        <span style="font-size:13px;color:var(--muted);">จาก</span>
+        <input type="number" id="startNum" min="1" max="149" value="${state.startIndex+1}">
+        <span style="font-size:13px;color:var(--muted);">ถึง</span>
+        <input type="number" id="endNum" min="1" max="149" value="${state.endIndex+1}">
+      </div>
+    </div>
+
+    <button class="start-btn" id="startBtn">เริ่มท่องศัพท์</button>
+    ${resumeBlock}
+  </div>
+  `;
+}
+
+function renderQuiz(){
+  const w = currentWord();
+  const dir = currentDirection();
+  const isPy2Th = dir === 'py2th';
+  const promptLabel = isPy2Th ? 'คำอ่านนี้ (พินอิน)' : 'คำแปลนี้ (ไทย)';
+  const promptText = isPy2Th ? w.py : w.th;
+  const promptClass = isPy2Th ? 'pinyin' : 'thai';
+  const askLabel = isPy2Th ? 'แปลว่าอะไร? พิมพ์คำแปลไทย' : 'อ่านว่าอะไร? พิมพ์พินอิน';
+
+  const total = state.endIndex - state.startIndex + 1;
+  const doneCount = state.cursor - state.startIndex;
+  const pct = Math.round((doneCount/total)*100);
+
+  let feedbackHtml = '';
+  if(state.currentAnswered){
+    const correctAns = isPy2Th ? w.th : w.py;
+    if(state.lastCorrect){
+      feedbackHtml = `
+        <div class="feedback correct">
+          <div class="feedback-title">✓ ถูกต้อง!</div>
+          <div class="feedback-answer">${escapeHtml(correctAns)}</div>
+        </div>`;
+    } else {
+      feedbackHtml = `
+        <div class="feedback wrong">
+          <div class="feedback-title">✗ ยังไม่ถูก — เฉลย:</div>
+          <div class="feedback-answer">${escapeHtml(correctAns)}</div>
+          <div class="feedback-your">คุณตอบ: ${escapeHtml(state.lastUserAnswer || '(ไม่ได้ตอบ)')}</div>
+        </div>`;
+    }
+  }
+
+  const formOrNext = state.currentAnswered ? `
+    <div class="actions">
+      <button class="btn-next" id="nextBtn">คำถัดไป →</button>
+    </div>
+  ` : `
+    <form id="answerForm" autocomplete="off">
+      <input type="text" id="answerInput" placeholder="${askLabel}" autocomplete="off" autocapitalize="off" spellcheck="false" />
+      <div class="actions">
+        <button type="button" class="btn-idk" id="idkBtn">ไม่รู้</button>
+        <button type="submit" class="btn-submit">ตอบ</button>
+      </div>
+    </form>
+  `;
+
+  return `
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="progress-num">${doneCount}/${total}</div>
+    </div>
+    <div class="stats">
+      <div>คำที่ <b>${w.n}</b> จาก 149</div>
+      <div><span class="stat-ok">✓ ${state.correctCount}</span> &nbsp; <span class="stat-no">✗ ${state.wrongCount}</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-index">#${w.n}</div>
+      <div class="card-mode">${isPy2Th ? 'พินอิน → ไทย' : 'ไทย → พินอิน'}</div>
+      <div class="prompt-label">${promptLabel}</div>
+      <div class="prompt-text ${promptClass}">${escapeHtml(promptText)}</div>
+
+      ${formOrNext}
+      ${feedbackHtml}
+    </div>
+    <div class="skip-link" id="quitBtn">■ หยุดพักและกลับหน้าตั้งค่า</div>
+  `;
+}
+
+function renderDone(){
+  const total = state.wrongCount + state.correctCount;
+  const pctCorrect = total ? Math.round((state.correctCount/total)*100) : 0;
+  const reviewHtml = state.wrongList.length ? `
+    <div class="review-list">
+      ${state.wrongList.map(w => `
+        <div class="review-item">
+          <span class="rp">#${w.n} ${escapeHtml(w.py)}</span>
+          <span class="rt">${escapeHtml(w.th)}</span>
+        </div>
+      `).join('')}
+    </div>
+  ` : `<div style="text-align:center;color:var(--muted);font-size:13px;margin-top:8px;">ไม่มีคำที่ตอบผิดเลย เก่งมาก!</div>`;
+
+  return `
+  <div class="card done-wrap">
+    <div class="done-seal">完</div>
+    <div class="done-title">จบชุดคำศัพท์แล้ว</div>
+    <div class="done-sub">คำที่ ${state.startIndex+1}–${state.endIndex+1}</div>
+    <div class="done-stats">
+      <div class="done-stat"><b class="stat-ok">${state.correctCount}</b><span>ตอบถูก</span></div>
+      <div class="done-stat"><b class="stat-no">${state.wrongCount}</b><span>ตอบผิด</span></div>
+      <div class="done-stat"><b>${pctCorrect}%</b><span>ความแม่นยำ</span></div>
+    </div>
+    ${state.wrongList.length ? '<div class="opt-label" style="text-align:left;">คำที่ควรทบทวน</div>' : ''}
+    ${reviewHtml}
+    <div class="footer-actions">
+      <button class="btn-idk" id="backSetupBtn" style="flex:1;">กลับหน้าตั้งค่า</button>
+      <button class="btn-submit" id="restartBtn" style="flex:1;">ทำซ้ำชุดนี้</button>
+    </div>
+  </div>
+  `;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function attachHandlers(){
+  if(state.screen === 'setup'){
+    document.querySelectorAll('.opt-btn[data-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.mode = btn.dataset.mode;
+        render();
+      });
+    });
+    document.getElementById('startBtn').addEventListener('click', () => {
+      const s = Math.min(Math.max(parseInt(document.getElementById('startNum').value)||1,1),149);
+      const e = Math.min(Math.max(parseInt(document.getElementById('endNum').value)||149,1),149);
+      state.startIndex = Math.min(s,e)-1;
+      state.endIndex = Math.max(s,e)-1;
+      state.cursor = state.startIndex;
+      state.correctCount = 0;
+      state.wrongCount = 0;
+      state.wrongList = [];
+      state.currentAnswered = false;
+      state.screen = 'quiz';
+      render();
+    });
+    const resumeLink = document.getElementById('resumeLink');
+    if(resumeLink){
+      resumeLink.addEventListener('click', () => {
+        const saved = loadProgress();
+        if(saved){
+          state.mode = saved.mode;
+          state.startIndex = saved.startIndex;
+          state.endIndex = saved.endIndex;
+          state.cursor = Math.min(saved.cursor, saved.endIndex);
+          state.correctCount = 0;
+          state.wrongCount = 0;
+          state.wrongList = [];
+          state.currentAnswered = false;
+          state.screen = 'quiz';
+          render();
+        }
+      });
+    }
+  } else if(state.screen === 'quiz'){
+    const form = document.getElementById('answerForm');
+    if(form){
+      const input = document.getElementById('answerInput');
+      input.focus();
+      form.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        submitAnswer(input.value);
+      });
+      document.getElementById('idkBtn').addEventListener('click', () => {
+        submitAnswer('');
+      });
+    }
+    const nextBtn = document.getElementById('nextBtn');
+    if(nextBtn){
+      nextBtn.addEventListener('click', advance);
+    }
+    document.getElementById('quitBtn').addEventListener('click', () => {
+      saveProgress();
+      state.screen = 'setup';
+      render();
+    });
+  } else if(state.screen === 'done'){
+    document.getElementById('backSetupBtn').addEventListener('click', () => {
+      try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+      state.screen = 'setup';
+      render();
+    });
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      state.cursor = state.startIndex;
+      state.correctCount = 0;
+      state.wrongCount = 0;
+      state.wrongList = [];
+      state.currentAnswered = false;
+      state.screen = 'quiz';
+      render();
+    });
+  }
+}
+
+function submitAnswer(raw){
+  const w = currentWord();
+  const dir = currentDirection();
+  const isPy2Th = dir === 'py2th';
+  const correctAns = isPy2Th ? w.th : w.py;
+
+  let isCorrect;
+  if(isPy2Th){
+    // Thai answer: normalize by stripping whitespace, compare loosely (must contain core word)
+    const userNorm = raw.trim().replace(/\s+/g,'');
+    const correctNorm = correctAns.trim().replace(/\s+/g,'');
+    isCorrect = userNorm.length>0 && (userNorm === correctNorm || correctNorm.includes(userNorm) && userNorm.length>=2);
+  } else {
+    // Pinyin answer: normalize by removing tone marks and spaces
+    const userNorm = normalize(raw);
+    const correctNorm = normalize(correctAns);
+    isCorrect = userNorm.length>0 && userNorm === correctNorm;
+  }
+
+  state.currentAnswered = true;
+  state.lastCorrect = isCorrect;
+  state.lastUserAnswer = raw;
+
+  if(isCorrect){
+    state.correctCount++;
+  } else {
+    state.wrongCount++;
+    state.wrongList.push({n:w.n, py:w.py, th:w.th});
+  }
+  render();
+}
+
+function advance(){
+  state.currentAnswered = false;
+  if(state.cursor >= state.endIndex){
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    state.screen = 'done';
+  } else {
+    state.cursor++;
+    saveProgress();
+  }
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
