@@ -228,6 +228,34 @@
             margin-top: 2rem; animation: fadeIn 1s ease-in-out;
             width: 100%; /* เพิ่มเพื่อให้เต็มความกว้างของ card */
         }
+        /* --- เข็มชี้วงล้อ (แสดงผลอย่างเดียว ไม่ยุ่งกับ logic ของวงล้อ) --- */
+        #wheel-wrapper {
+            position: relative;
+            display: inline-block;
+            line-height: 0;
+        }
+        #wheel-pointer {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 32px solid #FFD700;
+            filter: drop-shadow(0 3px 4px rgba(0,0,0,0.5));
+            z-index: 5;
+            pointer-events: none;
+        }
+        @media (max-width: 600px) {
+            #wheel-pointer {
+                border-left-width: 14px;
+                border-right-width: 14px;
+                border-top-width: 26px;
+                top: -4px;
+            }
+        }
         .action-button {
             margin-top: 20px; padding: 15px 35px;
             font-family: 'Kanit', sans-serif; font-size: 1.5rem;
@@ -389,7 +417,10 @@
             <button id="show-game-button" class="action-button hidden">ไปเล่นเกมกัน!</button>
 
             <div id="game-wheel-container">
-                <canvas id="canvas" width="400" height="400"></canvas>
+                <div id="wheel-wrapper">
+                    <div id="wheel-pointer"></div>
+                    <canvas id="canvas" width="400" height="400"></canvas>
+                </div>
                 <button id="spin-button" class="action-button">หมุนวงล้อลุ้นรางวัล!</button>
             </div>
         </div>
@@ -609,7 +640,7 @@
                     'textAlignment': 'center',
                     'textFontFamily' : 'Kanit',
                     'segments'     : [
-                       {'fillStyle' : '#20b2aa', 'text' : 'คำบอกรัก\nจากเค้า'},
+                    {'fillStyle' : '#20b2aa', 'text' : 'คำบอกรัก\nจากเค้า'},
                        {'fillStyle' : '#ff69b4', 'text' : 'เงิน 5 บูด\nจากเค้า รึป่าวนะ'},
                        {'fillStyle' : '#9370db', 'text' : 'ทำ1อย่างให้\nอะไรก็ได้'},
                        {'fillStyle' : '#ffa500', 'text' : 'เป็นอะไรก็ได้\nกับเธอ1วัน'},
@@ -672,4 +703,3 @@
 </body>
 
 </html>
-
