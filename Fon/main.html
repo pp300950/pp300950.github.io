@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สุขสันต์วันเกิดนะ ฝน</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --flame-color: #ffca3a;
+            --candle-color: #ffffff;
+            --wick-color: #333;
+        }
+        /* ---------- Splash / Profile Screen ---------- */
+        #profile-splash {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #0c0a1a;
+            z-index: 9999;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: fadeIn 1s ease-in-out;
+        }
+        #profile-splash .profile-photo-wrap {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #FFD700;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 107, 107, 0.3);
+            background-color: #1a1730;
+            animation: float 6s ease-in-out infinite;
+        }
+        #profile-splash .profile-photo-wrap img {
+            width: 100%;
+            height: 100%;
+            /* object-fit + object-position ช่วยครอบตัดรูปให้พอดีวงกลม
+               ถ้ารูปเอียงหรือหัวไม่อยู่กึ่งกลาง ปรับ object-position ตรงนี้ได้ (เช่น 50% 30%)
+               ถ้ารูปหมุนเอียงจริงๆ ปรับ --profile-rotate ด้านล่าง (หน่วยองศา) */
+            object-fit: cover;
+            object-position: var(--profile-photo-pos, center 30%);
+            transform: rotate(var(--profile-rotate, 0deg)) scale(var(--profile-scale, 1.15));
+            display: block;
+        }
+        #profile-splash .profile-name {
+            margin-top: 22px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #FFD700;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            letter-spacing: 1px;
+        }
+        #profile-splash .profile-sub {
+            margin-top: 8px;
+            font-size: 1rem;
+            color: #ccc;
+        }
+        @media (max-width: 600px) {
+            #profile-splash .profile-photo-wrap {
+                width: 160px;
+                height: 160px;
+            }
+            #profile-splash .profile-name {
+                font-size: 1.8rem;
+            }
+        }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            font-family: 'Kanit', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #0c0a1a;
+            /* เพิ่มเพื่อป้องกันการซูมโดยไม่ได้ตั้งใจบน iOS */
+            -webkit-text-size-adjust: 100%;
+        }
+        .background {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+            filter: blur(5px) brightness(0.7);
+            transform: scale(1.1);
+            z-index: -2;
+        }
+        #falling-words-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 10;
+        }
+        .falling-word {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.8rem;
+            animation: fall linear forwards;
+            user-select: none;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(105vh);
+                opacity: 0;
+            }
+        }
+        .container {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box; /* เพิ่มเพื่อให้ padding ถูกคำนวณในขนาด */
+        }
+        .sticker {
+            position: absolute;
+            font-size: 4rem;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.8;
+            z-index: 0;
+        }
+        .sticker.s1 { top: 15%; left: 10%; animation-delay: 0s; }
+        .sticker.s2 { top: 20%; right: 12%; animation-delay: -3s; }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .card {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 600px; /* กำหนดความกว้างสูงสุด */
+            width: 90%;      /* ใช้ความกว้างเป็น % เพื่อให้ยืดหยุ่น */
+            animation: fadeIn 1.5s ease-in-out;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-sizing: border-box;
+        }
+        .card h1 {
+            font-size: 3rem; margin-bottom: 20px;
+            font-weight: 700; color: #FFD700;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+        }
+        .card p { font-size: 1.1rem; line-height: 1.6; }
+        #candle-section {
+            display: flex; flex-direction: column; align-items: center;
+            width: 100%;
+        }
+        .speech-bubble {
+            position: relative; background: #ff6b6b; color: #fff;
+            padding: 10px 20px; border-radius: 20px;
+            margin-bottom: 20px; font-size: 1.2rem;
+            animation: bounce 2s infinite;
+            max-width: 90%;
+            /* --- ✨ [CSS ที่แก้ไข] 1. เพิ่ม transition --- */
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        /* --- ✨ [CSS ที่เพิ่มใหม่] 2. สร้าง class สำหรับซ่อน --- */
+        .speech-bubble.fade-out {
+            opacity: 0;
+            transform: translateY(-20px); /* ทำให้ดูเหมือนลอยขึ้นเล็กน้อยตอนหายไป */
+            pointer-events: none; /* ป้องกันไม่ให้คลิกโดนหลังจากที่มองไม่เห็นแล้ว */
+        }
+        
+        .speech-bubble:after {
+            content: ''; position: absolute; bottom: 0; left: 50%;
+            width: 0; height: 0;
+            border: 15px solid transparent; border-top-color: #ff6b6b;
+            border-bottom: 0; margin-left: -15px; margin-bottom: -15px;
+        }
+        #candle-container {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
+            max-width: 500px;
+            width: 100%; /* เพิ่มเพื่อให้จัดกลางถูกต้อง */
+        }
+        .candle {
+            position: relative; width: 20px; height: 80px;
+            background: var(--candle-color); border-radius: 5px; cursor: pointer;
+        }
+        .candle::before {
+            content: ''; position: absolute; top: -5px; left: 50%;
+            transform: translateX(-50%);
+            width: 4px; height: 6px; background: var(--wick-color);
+        }
+        .flame {
+            position: absolute; top: -25px; left: 50%;
+            transform: translateX(-50%);
+            width: 16px; height: 20px; background: var(--flame-color);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 1s infinite;
+            opacity: 1; transition: opacity 0.3s ease;
+        }
+        .candle.out .flame { opacity: 0; }
+        #final-message-container { display: none; }
+        #final-message-container h2 {
+            font-size: 3.5rem; color: #48ffc3; text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            margin-bottom: 25px;
+        }
+        #final-message-container p { font-size: 1.2rem; max-width: 600px; line-height: 1.7;}
+        #final-message-container .final-quote {
+            font-size: 1rem; color: #aaa; margin-top: 40px; font-style: italic;
+        }
+        .hidden { opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; pointer-events: none; }
+        .visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        #birthday-gate {
+            display: none; justify-content: center; align-items: center; text-align: center;
+            width: 100%; height: 100%; background-color: #000;
+            padding: 20px; box-sizing: border-box;
+        }
+        #birthday-gate h2 { font-size: 2.5rem; color: #FFD700;}
+        #birthday-gate p { font-size: 1.2rem; color: #ccc; }
+        
+        /* Game Wheel & Buttons CSS */
+        #game-wheel-container {
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            margin-top: 2rem; animation: fadeIn 1s ease-in-out;
+            width: 100%; /* เพิ่มเพื่อให้เต็มความกว้างของ card */
+        }
+        .action-button {
+            margin-top: 20px; padding: 15px 35px;
+            font-family: 'Kanit', sans-serif; font-size: 1.5rem;
+            font-weight: 700; color: #fff;
+            background: linear-gradient(45deg, #ff6b6b, #f06595);
+            border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        .action-button:disabled {
+            background: #888; cursor: not-allowed; transform: translateY(0);
+        }
+        .swal2-popup {
+            border-radius: 20px !important;
+            font-family: 'Kanit', sans-serif !important;
+        }
+        .swal2-title { color: #ff6b6b !important; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes flicker { 0%, 100% { transform: scale(1, 1) translateX(-50%); } 50% { transform: scale(1.1, 0.9) translateX(-50%); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+    
+        /* --- ✨ [ส่วนที่ปรับปรุงใหม่] CSS สำหรับ Responsive ✨ --- */
+        
+        /* สำหรับ Tablet และจอขนาดกลาง (<= 768px) */
+        @media (max-width: 768px) {
+            .card {
+                padding: 35px 30px;
+            }
+            .card h1 {
+                font-size: 2.7rem;
+            }
+            #final-message-container h2 {
+                font-size: 3rem;
+            }
+            .action-button {
+                font-size: 1.4rem;
+                padding: 14px 32px;
+            }
+        }
+        
+        /* สำหรับมือถือทั่วไป (<= 600px) */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 10px; /* ลด padding */
+            }
+            .card {
+                width: 95%; /* เพิ่มความกว้างให้เกือบเต็มจอ */
+                padding: 25px 20px;
+            }
+            .card h1, #final-message-container h2 {
+                font-size: 2rem; /* ปรับขนาดหัวข้อให้เล็กลง */
+                line-height: 1.3;
+            }
+            .card p, #final-message-container p {
+                font-size: 0.95rem;
+            }
+            .speech-bubble {
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+            .falling-word {
+                font-size: 1.5rem;
+            }
+            .sticker {
+                font-size: 3rem;
+            }
+            .sticker.s1 { left: 5%; top: 8%; }
+            .sticker.s2 { right: 5%; top: 12%; }
+            
+            /* --- 🎯 จุดแก้ไขสำคัญที่สุด: ทำให้ Canvas (วงล้อ) ตอบสนอง --- */
+            canvas#canvas {
+                /* ทำให้ canvas ปรับขนาดตามความกว้างจอ แต่ไม่เกิน 340px */
+                width: 90vw !important;
+                height: 90vw !important;
+                max-width: 340px !important;
+                max-height: 340px !important;
+            }
+            
+            .action-button {
+                font-size: 1.2rem;
+                padding: 12px 28px;
+                width: 90%; /* ทำให้ปุ่มกว้างขึ้น */
+                max-width: 320px;
+            }
+            #birthday-gate h2 { font-size: 2rem; }
+        }
+        
+        /* สำหรับมือถือจอเล็กมากๆ (<= 390px) */
+        @media (max-width: 390px) {
+            .card h1, #final-message-container h2 {
+                font-size: 1.8rem; /* ลดขนาดอีกสำหรับจอเล็กสุดๆ */
+            }
+            .card p, #final-message-container p {
+                font-size: 0.9rem;
+            }
+            .action-button {
+                font-size: 1.1rem;
+                padding: 11px 22px;
+            }
+            .falling-word {
+                font-size: 1.3rem;
+            }
+            #candle-container {
+                gap: 10px; /* ลดระยะห่างระหว่างเทียน */
+            }
+            .candle {
+                width: 18px;
+                height: 75px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ---------- หน้าเปิดแรก: รูปโปรไฟล์วงกลม + ชื่อฝน ---------- -->
+    <div id="profile-splash">
+        <div class="profile-photo-wrap">
+            <img src="./assets/profile.jpg" alt="ฝน">
+        </div>
+        <div class="profile-name">ฝน</div>
+        <div class="profile-sub">กำลังเตรียมเว็บของฝน...</div>
+    </div>
+
+    <div class="background"></div>
+    <div id="falling-words-container"></div>
+
+    <div id="main-content" class="container">
+        <span class="sticker s1">🎈</span>
+        <span class="sticker s2">🎁</span>
+        <div id="initial-card" class="card">
+              <h1>สุขสันต์วันเกิดนะ ฝน 🎂</h1>
+            <p>
+                วันนี้เป็นวันพิเศษของฝนอีกปีแล้วนะ เค้าเคยใช้เว็ปนี้สำหรับวันเกิดของน้องชายไปเเล้วคนนึ่ง
+                เธอคือที่สองที่เค้าจะได้ทำเว็ปนี้ให้เป็นของขวัญนะครับ
+                ก่อนจะไปอ่านคำอวยพรที่เค้าอยากบอก มีภารกิจเล็กๆ ให้ทำก่อนนะ...
+            </p>
+        </div>
+        <div id="candle-section">
+            <div class="speech-bubble">เป่าเทียนหน่อยนะฝน~ (คลิกที่เปลวไฟ ค่อยๆกด)</div>
+            <div id="candle-container"></div>
+        </div>
+        <div id="final-message-container" class="card">
+            <h2 id="msg1" class="hidden"></h2>
+            <p id="msg2" class="hidden">
+                อายุเท่านี้ คือประตูบานใหม่ของชีวิตฝนแล้วนะ ไม่ว่าจะเลือกเดินไปทางไหน เค้าก็จะเอาใจช่วยอยู่เสมอ
+                อย่ากังวลที่จะต้องโตขึ้นเลยนะ อายุก็แค่ตัวเลข แต่หัวใจของฝนยังน่ารักเหมือนเดิมตลอดไป
+                ขอให้ฝนมีความสุขมากๆ คิดสิ่งใดก็ขอให้สมหวังทุกประการ สุขภาพแข็งแรง เรียนดีๆ ไม่ต้องเครียดจนเกินไป
+                สุดท้ายนี้ขอให้มันเป็นวันเกิดที่พิเศษที่สุด เต็มไปด้วยความรัก ความสุข เสียงหัวเราะ และรอยยิ้ม
+                เค้าดีใจที่ได้รู้จักฝน และดีใจที่มีวันนี้ให้ได้บอกฝนตรงๆ ว่า สุขสันต์วันเกิดนะคุณเเมว 💛
+            </p>
+            <p id="msg3" class="hidden final-quote">
+                "ถ้าปีหน้าเค้าไม่ได้อยู่ตรงนี้... เว็บไซต์นี้ก็ยังทำงานอยู่นะ ในวันที่นี้ เดือนนี้ นะครับ"
+            </p>
+            
+            <button id="show-game-button" class="action-button hidden">ไปเล่นเกมกัน!</button>
+
+            <div id="game-wheel-container">
+                <canvas id="canvas" width="400" height="400"></canvas>
+                <button id="spin-button" class="action-button">หมุนวงล้อลุ้นรางวัล!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="birthday-gate">
+        <div>
+            <h2>ยังไม่ถึงวันเกิดเลย</h2>
+            <p>กลับมาใหม่ในวันที่ถูกต้องนะ!</p>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.2/gsap.min.js"></script>
+    <script src="./Winwheel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const BIRTHDAY_MONTH = 8;
+            const BIRTHDAY_DAY = 31;
+            const BASE_AGE = 17; // อายุ 17 ปีบริบูรณ์ในปี 2026
+            const BASE_YEAR = 2026;
+            
+            const today = new Date();
+            const currentMonth = today.getMonth() + 1;
+            const currentDay = today.getDate();
+            const currentYear = today.getFullYear();
+    
+            const gate = document.getElementById('birthday-gate');
+            const mainContent = document.getElementById('main-content');
+            
+            const ageDifference = currentYear - BASE_YEAR;
+            const currentAge = BASE_AGE + ageDifference;
+            
+            if (currentMonth === BIRTHDAY_MONTH && currentDay === BIRTHDAY_DAY) {
+                gate.style.display = 'none';
+                mainContent.style.display = 'flex';
+                startCelebration();
+            } else {
+                mainContent.style.display = 'none';
+                gate.style.display = 'flex';
+            }
+
+            // ---------- ซ่อนหน้าเปิด (รูปโปรไฟล์ + ชื่อฝน) หลังโหลดเสร็จ ----------
+            const splash = document.getElementById('profile-splash');
+            if (splash) {
+                setTimeout(() => {
+                    splash.style.transition = 'opacity 0.8s ease-out';
+                    splash.style.opacity = '0';
+                    setTimeout(() => { splash.style.display = 'none'; }, 800);
+                }, 2200);
+            }
+    
+            function startCelebration() {
+                document.getElementById('msg1').innerHTML = `สุขสันต์วันเกิด ${currentAge} ปีนะฝน!`;
+                const totalCandles = currentAge; // <-- จำนวนเทียนเท่ากับอายุ
+    
+                // --- ✨ ฟังก์ชันคำนวณระยะเวลารู้จักกัน (นับครั้งเดียวตอนเปิด) ✨ ---
+                function getKnownDurationText() {
+                    const metDate = new Date(2026, 5, 19, 20, 13, 0); // 19 มิถุนายน 2026 เวลา 20:13 (เดือนนับจาก 0 = มิ.ย.)
+                    const now = new Date();
+                    let diffMs = now - metDate;
+                    if (diffMs < 0) diffMs = 0;
+
+                    const totalSeconds = Math.floor(diffMs / 1000);
+                    const days = Math.floor(totalSeconds / 86400);
+                    const hours = Math.floor((totalSeconds % 86400) / 3600);
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
+                    const seconds = totalSeconds % 60;
+
+                    return `เค้ากับฝนรู้จักกันมาตั้งแต่วันที่ 19 มิถุนายน เวลา 20:13 น. `
+                         + `นับถึงตอนนี้ที่ฝนกำลังอ่านข้อความนี้อยู่ เราสองคนรู้จักกันมาแล้ว `
+                         + `${days} วัน ${hours} ชั่วโมง ${minutes} นาที ${seconds} วินาที `
+                         + `และเค้าอยากรู้จักฝนต่อไปอีกนานๆ เลยนะ 💛`;
+                }
+
+                // --- ✨ ข้อความตามอายุ (โทนเพื่อนกึ่งแฟน หวานๆ) ครบ 17 เล่ม ✨ ---
+                const ageMilestones = {
+                    1: "ปีแรก... ตอนนั้นฝนยังเดินไม่ได้เลยด้วยซ้ำ ยังแบเบาะอยู่เลยนะ น่ารักตั้งแต่ตอนนั้นเลยสิ",
+                    2: "2 ขวบ... เริ่มหัดพูด หัดเดินคล่องขึ้น ฝนตัวน้อยๆ คงวิ่งป่วนบ้านไม่หยุดเลยแหละ",
+                    3: "3 ขวบ... เริ่มมีความจำ เริ่มมีโลกของตัวเองแล้วสินะ อยากเห็นฝนตอนนั้นจังเลย",
+                    4: "4 ขวบ... คงเริ่มซนและถามคำถามเยอะแยะไปหมด เป็นวัยที่น่าเอ็นดูสุดๆ",
+                    5: "5 ขวบ... ฝนคงจะซนมาก วิ่งเก่ง และขี้สงสัย วัยกำลังน่าเอ็นดูเลยนะ",
+                    6: "6 ขวบ... ได้เข้าโรงเรียนประถมปีแรก เจอเพื่อนใหม่ๆ ได้เรียนรู้และเล่นซนกับเพื่อนเป็นครั้งแรก",
+                    7: "7 ขวบ... เริ่มโตขึ้น มีเพื่อนสนิท มีโลกส่วนตัวมากขึ้นเรื่อยๆ",
+                    8: "8 ขวบ... คงเริ่มมีความฝัน มีของที่ชอบเป็นพิเศษ อยากรู้จังว่าฝนตอนนั้นชอบอะไร",
+                    9: "9 ขวบ... ช่วงวัยที่สนุกที่สุดช่วงหนึ่ง ได้เล่น ได้หัวเราะ ได้เป็นเด็กเต็มที่",
+                    10: "10 ขวบ... ครึ่งทางของเลขสองหลักแรกแล้วนะ ฝนโตขึ้นมาไกลมากเลย",
+                    11: "11 ขวบ... ใกล้จะเข้าสู่วัยรุ่นแล้วสินะ ต้องเริ่มมีความคิดเป็นของตัวเองมากขึ้น",
+                    12: "12 ขวบ... ปีสุดท้ายก่อนเข้ามัธยม ช่วงเวลาที่เต็มไปด้วยความทรงจำดีๆ กับเพื่อนๆ",
+                    13: "13 ปี... ได้เรียนมัธยมเป็นครั้งแรก ต้องแยกจากเพื่อนบางคน แต่ก็ได้เจอโลกใบใหม่ที่กว้างขึ้น",
+                    14: "14 ปี... เริ่มมีความคิดความอ่านเป็นผู้ใหญ่ขึ้น มีความชอบและตัวตนที่ชัดเจนมากขึ้นเรื่อยๆ",
+                    15: "15 ปี... เข้าค่ายลูกเสือ ได้นอนร่วมห้องกับเพื่อน ได้ลองทำอาหารกินเอง ช่วงเวลาที่น่าหวนกลับไปคิดถึง",
+                    16: "16 ปี... เรียนจบ ม.ต้นแล้ว ขึ้นม.ปลายมา ฝนคงเหนื่อยมากเลยนะ ม.ปลายงานเยอะนิสนึง",
+                    17: getKnownDurationText()
+                };
+    
+                // --- ✨ [ส่วนที่เพิ่มใหม่] ฟังก์ชันแสดงข้อความ ✨ ---
+                function showToast(message) {
+                    const toast = document.createElement('div');
+                    toast.textContent = message;
+                    toast.style.position = 'fixed';
+                    toast.style.bottom = '20px';
+                    toast.style.left = '50%';
+                    toast.style.transform = 'translateX(-50%)';
+                    toast.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
+                    toast.style.color = '#fff';
+                    toast.style.padding = '12px 22px';
+                    toast.style.borderRadius = '18px';
+                    toast.style.zIndex = '1000';
+                    toast.style.opacity = '0';
+                    toast.style.transition = 'opacity 0.5s, bottom 0.5s';
+                    toast.style.maxWidth = '90vw';
+                    toast.style.width = 'max-content';
+                    toast.style.textAlign = 'center';
+                    toast.style.lineHeight = '1.5';
+                    toast.style.boxSizing = 'border-box';
+                    document.body.appendChild(toast);
+    
+                    setTimeout(() => {
+                        toast.style.opacity = '1';
+                        toast.style.bottom = '40px';
+                    }, 100);
+    
+                    const displayDuration = message.length > 80 ? 10000 : 6000;
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.bottom = '20px';
+                        setTimeout(() => toast.remove(), 500);
+                    }, displayDuration);
+                }
+    
+                // Falling Words Logic
+                const words = ['🎂', '🥳', '🎁', '💖'];
+                const container = document.getElementById('falling-words-container');
+                setInterval(() => {
+                    const wordElement = document.createElement('span');
+                    wordElement.classList.add('falling-word');
+                    wordElement.textContent = words[Math.floor(Math.random() * words.length)];
+                    if (Math.random() < 0.5) {
+                        wordElement.style.left = `${Math.random() * 20}vw`;
+                    } else {
+                        wordElement.style.left = `${80 + Math.random() * 18}vw`;
+                    }
+                    wordElement.style.animationDuration = `${Math.random() * 6 + 7}s`;
+                    wordElement.style.fontSize = `${Math.random() * 1.5 + 1.2}rem`;
+                    wordElement.style.top = '-5vh';
+                    container.appendChild(wordElement);
+                    setTimeout(() => wordElement.remove(), 13000);
+                }, 500);
+    
+                // Candle Blowing Game Logic
+                const candleContainer = document.getElementById('candle-container');
+                let candlesBlown = 0;
+                for (let i = 0; i < totalCandles; i++) {
+                    const candle = document.createElement('div');
+                    candle.className = 'candle';
+                    const flame = document.createElement('div');
+                    flame.className = 'flame';
+                    candle.appendChild(flame);
+                    
+                    // --- ✨ [ส่วนที่แก้ไข] เพิ่ม Event Listener ✨ ---
+                    candle.addEventListener('click', function() {
+                        if (!this.classList.contains('out')) {
+                            document.querySelector('.speech-bubble').classList.add('fade-out');
+                            this.classList.add('out');
+                            candlesBlown++;
+                            
+                            // ตรวจสอบและแสดงข้อความตาม Milestone
+                            if (ageMilestones[candlesBlown]) {
+                                showToast(ageMilestones[candlesBlown]);
+                            }
+                            
+                            if (candlesBlown === totalCandles) {
+                                setTimeout(triggerFinalSequence, 1200); // หน่วงเวลาเพิ่มเล็กน้อย
+                            }
+                        }
+                    });
+                    candleContainer.appendChild(candle);
+                }
+                
+                function triggerFinalSequence() {
+                    document.getElementById('initial-card').style.display = 'none';
+                    document.getElementById('candle-section').style.display = 'none';
+                    document.getElementById('final-message-container').style.display = 'block';
+    
+                    setTimeout(() => document.getElementById('msg1').classList.replace('hidden', 'visible'), 500);
+                    setTimeout(() => document.getElementById('msg2').classList.replace('hidden', 'visible'), 2000);
+                    setTimeout(() => document.getElementById('msg3').classList.replace('hidden', 'visible'), 4000);
+                    
+                    setTimeout(() => document.getElementById('show-game-button').classList.replace('hidden', 'visible'), 5500);
+                }
+            }
+    
+            // Game Wheel and Cookie Logic (ส่วนนี้ไม่ต้องแก้ไข)
+            let theWheel;
+            let wheelSpinning = false;
+    
+            document.getElementById('show-game-button').addEventListener('click', function() {
+                this.style.display = 'none';
+                setupGameWheel();
+            });
+    
+            function setupGameWheel() {
+                if (getCookie('hasSpunWheel')) {
+                    const wheelContainer = document.getElementById('game-wheel-container');
+                    wheelContainer.style.display = 'block';
+                    wheelContainer.innerHTML = '<p style="margin-top:2rem; font-size:1.2rem; color:#aaa;">นายได้รางวัลไปแล้วนะ!</p>';
+                    return;
+                }
+                
+                document.getElementById('game-wheel-container').style.display = 'flex';
+                theWheel = new Winwheel({
+                    'numSegments'  : 5,
+                    'outerRadius'  : 180,
+                    'textFontSize' : 16,
+                    'textAlignment': 'center',
+                    'textFontFamily' : 'Kanit',
+                    'segments'     : [
+                       {'fillStyle' : '#20b2aa', 'text' : 'คำบอกรัก\nจากเค้า'},
+                       {'fillStyle' : '#ff69b4', 'text' : 'เงิน 5 บูด\nจากเค้า รึป่าวนะ'},
+                       {'fillStyle' : '#9370db', 'text' : 'ให้เค้าเขียนเว็บ\nอะไรก็ได้ให้'},
+                       {'fillStyle' : '#ffa500', 'text' : 'รางวัลปริศนา\nของฝน!'},
+                       {'fillStyle' : '#3cb371', 'text' : 'สอนเขียนโปรแกรม\nพื้นฐาน'}
+                    ],
+                    'animation' : {
+                        'type'     : 'spinToStop',
+                        'duration' : 8,
+                        'spins'    : 10,
+                        'callbackFinished' : alertPrize,
+                        'callbackAfter' : () => { wheelSpinning = false; }
+                    }
+                });
+                document.getElementById('spin-button').addEventListener('click', startSpin);
+            }
+    
+            function startSpin() {
+                if (wheelSpinning === false) {
+                    document.getElementById('spin-button').disabled = true;
+                    theWheel.startAnimation();
+                    wheelSpinning = true;
+                }
+            }
+            
+            function alertPrize(indicatedSegment) {
+                Swal.fire({
+                    title: 'ยินดีด้วยนะฝน! ถ่ายภาพนี้ส่งมาให้เค้าดูด้วย คุณได้รับ:',
+                    html: `<h2 style="color:#333;">${indicatedSegment.text.replace(/\n/g, '<br>')}</h2>`,
+                    icon: 'success',
+                    confirmButtonText: 'สุดยอดไปเลย!',
+                    allowOutsideClick: false
+                }).then(() => {
+                    setCookie('hasSpunWheel', 'true', 365); 
+                    document.getElementById('spin-button').innerText = 'เล่นไปแล้วจ้า';
+                });
+            }
+            
+            function setCookie(name, value, days) {
+                let expires = "";
+                if (days) {
+                    let date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+            }
+    
+            function getCookie(name) {
+                let nameEQ = name + "=";
+                let ca = document.cookie.split(';');
+                for(let i=0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                }
+                return null;
+            }
+        });
+        </script>
+</body>
+
+</html>
+
